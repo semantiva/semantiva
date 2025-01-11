@@ -3,8 +3,13 @@ from abc import ABC, abstractmethod
 from .stop_watch import StopWatch
 from ..context_operations.context_operations import ContextOperation, ContextType
 from ..context_operations.context_observer import ContextObserver
-from ..data_operations.data_operations import BaseDataOperation, DataAlgorithm, DataProbe
+from ..data_operations.data_operations import (
+    BaseDataOperation,
+    DataAlgorithm,
+    DataProbe,
+)
 from ..data_types.data_types import BaseDataType
+
 
 class PayloadOperation(ContextObserver, ABC):
     """
@@ -15,14 +20,31 @@ class PayloadOperation(ContextObserver, ABC):
 
     Attributes:
         context (dict): Inherited from ContextObserver, stores context key-value pairs.
-        payload_metadata (dict): Metadata specific to the payload operation.
+        data (BaseDataType): An instance of a class derived from BaseDataType.
     """
+
     @abstractmethod
-    def _process(self, *args, **kwargs):
-        ...
+    def _process(self, *args, **kwargs): ...
 
     def process(self, *args, **kwargs):
+        """
+        Public method to execute the payload processing logic.
+
+        This method serves as an entry point to invoke the concrete implementation
+        of the `_process` method, which must be defined in subclasses.
+
+        Args:
+            *args: Variable-length positional arguments to be passed to the `_process` method.
+            **kwargs: Variable-length keyword arguments to be passed to the `_process` method.
+
+        Returns:
+            Any: The result of the `_process` method, as determined by the subclass implementation.
+
+        Raises:
+            NotImplementedError: If the `_process` method is not implemented in a subclass.
+        """
         return self._process(*args, **kwargs)
+
 
 class Node(PayloadOperation):
     """
@@ -37,12 +59,18 @@ class Node(PayloadOperation):
         operation_config (Dict): Configuration parameters for the data operation.
         stop_watch (StopWatch): Tracks the execution time of the node's operation.
     """
+
     data_operation: BaseDataOperation
     context_operation: ContextOperation
     operation_config: Dict
     stop_watch: StopWatch
 
-    def __init__(self, data_operation: BaseDataOperation, context_operation: ContextOperation, operation_parameters: Optional[Dict] = None):
+    def __init__(
+        self,
+        data_operation: BaseDataOperation,
+        context_operation: ContextOperation,
+        operation_parameters: Optional[Dict] = None,
+    ):
         """
         Initialize a Node with the specified data operation, context operation, and parameters.
 
@@ -58,9 +86,10 @@ class Node(PayloadOperation):
             self.operation_config = {}
         else:
             self.operation_config = operation_parameters
-            
 
-    def execute(self, data: Any, context: ContextType) -> BaseDataType, ContextType:
+    def _process(
+        self, data: Any, context: ContextType
+    ) -> tuple[BaseDataType, ContextType]:
         """
         Execute the data operation associated with this node.
 
@@ -111,7 +140,7 @@ class Node(PayloadOperation):
             return self.operation_config[name]
         else:
             return context.get_value(name)
-        
+
 
 class Pipeline(PayloadOperation):
     """
@@ -142,7 +171,7 @@ class Pipeline(PayloadOperation):
         """
         self.nodes.append(node)
 
-    def execute(self, data: Any) -> Any:
+    def _process(self, data: Any, context: ContextType) -> tuple[Any, ContextType]:
         """
         Execute the pipeline with the provided input data.
 
@@ -154,7 +183,7 @@ class Pipeline(PayloadOperation):
         """
         result = data
         for node in self.nodes:
-            result = node.execute(result)
+            result = node.process(result, context)
         return result
 
     def inspect(self) -> str:
@@ -199,6 +228,7 @@ class Pipeline(PayloadOperation):
             # Mock initialization logic
             print(f"Initializing node: {node.__class__.__name__}")
 
+
 class AlgorithmNode(Node):
     """
     A specialized node for executing algorithmic operations.
@@ -207,14 +237,18 @@ class AlgorithmNode(Node):
         data_operation (DataAlgorithm): The data algorithm associated with the node.
     """
 
-    def __init__(self, data_operation: DataAlgorithm):
+    def __init__(
+        self, data_operation: DataAlgorithm, context_operation: ContextOperation
+    ):
         """
         Initialize an AlgorithmNode with the specified data algorithm.
 
         Args:
             data_operation (DataAlgorithm): The data algorithm for this node.
+            context_operation (ContextOperation): The context operation for this node
         """
-        super().__init__(data_operation)
+        super().__init__(data_operation, context_operation)
+
 
 class ProbeNode(Node):
     """
@@ -232,6 +266,7 @@ class ProbeNode(Node):
             data_operation (DataProbe): The data probe for this node.
         """
         super().__init__(data_operation)
+
 
 class ProbeContextInjectornode(Node):
     """
@@ -264,6 +299,7 @@ class ProbeContextInjectornode(Node):
         if not self.context_keyword:
             raise ValueError("Context keyword is not set or invalid.")
         self.update_context(self.context_keyword, value)
+
 
 class ProbeResultColectorNode(Node):
     """
