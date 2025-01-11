@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, List
+from typing import Any, List, Optional
 from abc import ABC, abstractmethod
 from ..context_operations.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType
@@ -111,7 +111,7 @@ class DataAlgorithm(BaseDataOperation):
         """
         self.context_observer.context[key] = value
 
-    def __init__(self, context_observer: ContextObserver):
+    def __init__(self, context_observer: Optional[ContextObserver] = None):
         """
         Initialize the DataAlgorithm with a ContextObserver.
 

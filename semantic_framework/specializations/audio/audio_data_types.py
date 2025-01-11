@@ -23,8 +23,13 @@ class SingleChannelAudioDataType(BaseDataType):
         Raises:
             AssertionError: If the input data is not a numpy ndarray.
         """
-        assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
+        self.validate(data)
         self._data = data
+
+    def validate(self, data):
+        assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
+        assert data.ndim == 1, "Data must be single channel ndarray."
+
 
 class DualChannelAudioDataType(BaseDataType):
     """
@@ -47,5 +52,9 @@ class DualChannelAudioDataType(BaseDataType):
         Raises:
             AssertionError: If the input data is not a numpy ndarray.
         """
-        assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
+        self.validate(data)
         self._data = data
+
+    def validate(self, data):
+        assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
+        assert data.ndim == 2, "Data must be dual channel ndarray."
