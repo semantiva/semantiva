@@ -245,7 +245,7 @@ class AlgorithmNode(Node):
 
         Args:
             data_operation (DataAlgorithm): The data algorithm for this node.
-            context_operation (ContextOperation): The context operation for this node
+            context_operation (ContextOperation): The context operation for this node.
         """
         super().__init__(data_operation, context_operation)
 
@@ -256,6 +256,7 @@ class ProbeNode(Node):
 
     Attributes:
         data_operation (DataProbe): The data probe operation associated with the node.
+        context_operation (ContextOperation): The context operation associated with node.
     """
 
     def __init__(self, data_operation: DataProbe, context_operation: ContextOperation):
@@ -264,6 +265,7 @@ class ProbeNode(Node):
 
         Args:
             data_operation (DataProbe): The data probe for this node.
+            context_operation (ContextOperation): The context operation for this node.
         """
         super().__init__(data_operation, context_operation)
 
@@ -273,6 +275,8 @@ class ProbeContextInjectornode(Node):
     A node for injecting context-related information into the semantic framework.
 
     Attributes:
+        data_operation (DataProbe): The data probe for this node.
+        context_operation (ContextOperation): The context operation for this node.
         context_keyword (str): The keyword used for injecting context information.
     """
 
@@ -320,6 +324,7 @@ class ProbeResultColectorNode(Node):
 
         Args:
             data_operation (DataProbe): The data probe for this node.
+            context_operation (ContextOperation): The context operation for this node.
         """
         super().__init__(data_operation, context_operation)
         self._probed_data: List[Any] = []
