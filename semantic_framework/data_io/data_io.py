@@ -76,9 +76,10 @@ class PayloadSource(ABC):
             **kwargs: Keyword arguments for payload retrieval.
 
         Returns:
-            Any: The retrieved payload.
+            Tuple[BaseDataType, ContextType]: The retrieved payload and its context.
         """
         ...
+
 
     def get_payload(self, *args, **kwargs) -> Tuple[BaseDataType, ContextType]:
         """
@@ -89,7 +90,7 @@ class PayloadSource(ABC):
             **kwargs: Keyword arguments for payload retrieval.
 
         Returns:
-            Any: The retrieved payload.
+            Tuple[BaseDataType, ContextType]: The retrieved payload and its context
         """
         return self._get_payload(*args, **kwargs)
 
@@ -99,7 +100,7 @@ class PayloadSource(ABC):
         Define the type of payload provided by this source.
 
         Returns:
-            type: The payload type provided by the source.
+            BaseDataType: The data type provided by the source.
         """
         ...
 
@@ -149,6 +150,59 @@ class DataSink(ABC):
         Define the type of data consumed by this sink.
 
         Returns:
-            type: The data type consumed by the sink.
+            BaseDataType: The data type consumed by the sink.
+        """
+        ...
+
+
+class PayloadSink(ABC):
+    """
+    Abstract base class for payload sinks within the framework.
+
+    A `PayloadSink` represents an entity responsible for consuming and storing
+    both data and its associated context provided by other components in the framework.
+
+    Methods:
+        _send_payload: Abstract method to implement the logic for consuming data and context.
+        send_payload: Public method to consume data and context by invoking `_send_payload`.
+    """
+
+    @abstractmethod
+    def _send_payload(self, data: BaseDataType, context: ContextType, *args, **kwargs):
+        """
+        Abstract method to implement payload consumption logic.
+
+        Args:
+            data (BaseDataType): The data payload to consume.
+            context (ContextType): The context associated with the data.
+            *args: Additional positional arguments for payload consumption.
+            **kwargs: Additional keyword arguments for payload consumption.
+
+        Returns:
+            None
+        """
+        pass
+
+    def send_payload(self, data: BaseDataType, context: ContextType, *args, **kwargs):
+        """
+        Consume the provided data and context by invoking the `_send_payload` method.
+
+        Args:
+            data (BaseDataType): The data payload to consume.
+            context (ContextType): The context associated with the data.
+            *args: Additional positional arguments for payload consumption.
+            **kwargs: Additional keyword arguments for payload consumption.
+
+        Returns:
+            None
+        """
+        self._send_payload(data, context, *args, **kwargs)
+    @abstractmethod
+    def input_data_type(self) -> BaseDataType:
+        """
+        Define the type of data consumed by this sink.
+
+        Returns:
+            BaseDataType: The data type consumed by the sink.
         """
         ...

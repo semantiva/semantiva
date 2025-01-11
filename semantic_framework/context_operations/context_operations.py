@@ -65,3 +65,23 @@ class SequenceContextOperation(ContextOperation):
         Specific behavior must be implemented in a subclass that inherits this class.
     """
     pass
+
+class ContextPassthough(ContextOperation):
+    """
+    A context operation that passes the context unchanged.
+
+    This class is used as a default context operation for nodes when
+    no specific context operation is provided.
+    """
+
+    def _operate_context(self, context):
+        """
+        Pass the context unchanged.
+
+        Args:
+            context (ContextType): The context to be passed through.
+
+        Returns:
+            ContextType: The unchanged context.
+        """
+        return context
