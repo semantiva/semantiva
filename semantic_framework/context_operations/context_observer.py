@@ -2,7 +2,7 @@ class ContextObserver:
     """
     Class for managing and observing context updates within the semantic framework.
 
-    This class f>acilitates the tracking and updating of contextual information
+    This class facilitates the tracking and updating of contextual information
     that may influence the behavior of data operations and algorithms.
     """
 
