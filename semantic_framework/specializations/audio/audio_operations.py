@@ -15,7 +15,7 @@ class SingleChannelAudioAlgorithm(DataAlgorithm):
     """
 
     @classmethod
-    def input_data_type():
+    def input_data_type(cls):
         """
         Specify the input data type for the algorithm.
 
@@ -25,7 +25,7 @@ class SingleChannelAudioAlgorithm(DataAlgorithm):
         return SingleChannelAudioDataType
 
     @classmethod
-    def output_data_type():
+    def output_data_type(cls):
         """
         Specify the output data type for the algorithm.
 
@@ -33,6 +33,7 @@ class SingleChannelAudioAlgorithm(DataAlgorithm):
             type: `SingleChannelAudioDataType`, representing single-channel audio.
         """
         return SingleChannelAudioDataType
+
 
 class DualChannelAudioAlgorithm(DataAlgorithm):
     """
@@ -47,7 +48,7 @@ class DualChannelAudioAlgorithm(DataAlgorithm):
     """
 
     @classmethod
-    def input_data_type():
+    def input_data_type(cls):
         """
         Specify the input data type for the algorithm.
 
@@ -57,7 +58,7 @@ class DualChannelAudioAlgorithm(DataAlgorithm):
         return DualChannelAudioDataType
 
     @classmethod
-    def output_data_type():
+    def output_data_type(cls):
         """
         Specify the output data type for the algorithm.
 
@@ -65,6 +66,7 @@ class DualChannelAudioAlgorithm(DataAlgorithm):
             type: `DualChannelAudioDataType`, representing dual-channel audio.
         """
         return DualChannelAudioDataType
+
 
 class DualChannelMergerAlgorithm(DataAlgorithm):
     """
@@ -80,7 +82,7 @@ class DualChannelMergerAlgorithm(DataAlgorithm):
     """
 
     @classmethod
-    def input_data_type():
+    def input_data_type(cls):
         """
         Specify the input data type for the algorithm.
 
@@ -90,7 +92,7 @@ class DualChannelMergerAlgorithm(DataAlgorithm):
         return DualChannelAudioDataType
 
     @classmethod
-    def output_data_type():
+    def output_data_type(cls):
         """
         Specify the output data type for the algorithm.
 
@@ -98,6 +100,7 @@ class DualChannelMergerAlgorithm(DataAlgorithm):
             type: `SingleChannelAudioDataType`, representing single-channel audio.
         """
         return SingleChannelAudioDataType
+
 
 class SingleChannelExpanderAlgorithm(DataAlgorithm):
     """
@@ -113,7 +116,7 @@ class SingleChannelExpanderAlgorithm(DataAlgorithm):
     """
 
     @classmethod
-    def input_data_type():
+    def input_data_type(cls):
         """
         Specify the input data type for the algorithm.
 
@@ -123,7 +126,7 @@ class SingleChannelExpanderAlgorithm(DataAlgorithm):
         return SingleChannelAudioDataType
 
     @classmethod
-    def output_data_type():
+    def output_data_type(cls):
         """
         Specify the output data type for the algorithm.
 
@@ -131,6 +134,7 @@ class SingleChannelExpanderAlgorithm(DataAlgorithm):
             type: `DualChannelAudioDataType`, representing dual-channel audio.
         """
         return DualChannelAudioDataType
+
 
 class SingleChannelAudioProbe(DataProbe):
     """
@@ -146,7 +150,7 @@ class SingleChannelAudioProbe(DataProbe):
     """
 
     @classmethod
-    def input_data_type():
+    def input_data_type(cls):
         """
         Specify the input data type for the probe.
 
@@ -154,6 +158,7 @@ class SingleChannelAudioProbe(DataProbe):
             type: `SingleChannelAudioDataType`, representing single-channel audio.
         """
         return SingleChannelAudioDataType
+
 
 class DualChannelAudioProbe(DataProbe):
     """
@@ -169,7 +174,7 @@ class DualChannelAudioProbe(DataProbe):
     """
 
     @classmethod
-    def input_data_type():
+    def input_data_type(cls):
         """
         Specify the input data type for the probe.
 

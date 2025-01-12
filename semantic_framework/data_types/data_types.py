@@ -1,6 +1,7 @@
 from typing import Any
 from abc import ABC, abstractmethod
 
+
 class BaseDataType(ABC):
     """
     Abstract base class for all data types in the semantic framework.
@@ -21,10 +22,19 @@ class BaseDataType(ABC):
         Args:
             data (Any): The data to be encapsulated by this data type.
         """
+        self.validate(data)
+        self._data = data
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, data):
         self._data = data
 
     @abstractmethod
-    def validate(self) -> bool:
+    def validate(self, data: Any) -> bool:
         """
         Abstract method to validate the encapsulated data.
 
@@ -35,6 +45,7 @@ class BaseDataType(ABC):
             bool: True if the data is valid, False otherwise.
         """
         pass
+
 
 class DataSequence(BaseDataType):
     """
