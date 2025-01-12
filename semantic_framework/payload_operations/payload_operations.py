@@ -238,7 +238,10 @@ class AlgorithmNode(Node):
     """
 
     def __init__(
-        self, data_operation: DataAlgorithm, context_operation: ContextOperation
+        self,
+        data_operation: DataAlgorithm,
+        context_operation: ContextOperation,
+        operation_parameters: Optional[Dict] = None,
     ):
         """
         Initialize an AlgorithmNode with the specified data algorithm.
@@ -246,8 +249,9 @@ class AlgorithmNode(Node):
         Args:
             data_operation (DataAlgorithm): The data algorithm for this node.
             context_operation (ContextOperation): The context operation for this node.
+            operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
         """
-        super().__init__(data_operation, context_operation)
+        super().__init__(data_operation, context_operation, operation_parameters)
 
 
 class ProbeNode(Node):
@@ -257,9 +261,15 @@ class ProbeNode(Node):
     Attributes:
         data_operation (DataProbe): The data probe operation associated with the node.
         context_operation (ContextOperation): The context operation associated with node.
+        operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
     """
 
-    def __init__(self, data_operation: DataProbe, context_operation: ContextOperation):
+    def __init__(
+        self,
+        data_operation: DataProbe,
+        context_operation: ContextOperation,
+        operation_parameters: Optional[Dict] = None,
+    ):
         """
         Initialize a ProbeNode with the specified data probe.
 
@@ -267,7 +277,7 @@ class ProbeNode(Node):
             data_operation (DataProbe): The data probe for this node.
             context_operation (ContextOperation): The context operation for this node.
         """
-        super().__init__(data_operation, context_operation)
+        super().__init__(data_operation, context_operation, operation_parameters)
 
 
 class ProbeContextInjectornode(Node):
@@ -278,6 +288,7 @@ class ProbeContextInjectornode(Node):
         data_operation (DataProbe): The data probe for this node.
         context_operation (ContextOperation): The context operation for this node.
         context_keyword (str): The keyword used for injecting context information.
+        operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
     """
 
     def __init__(
@@ -285,6 +296,7 @@ class ProbeContextInjectornode(Node):
         data_operation: BaseDataOperation,
         context_operation: ContextOperation,
         context_keyword: str,
+        operation_parameters: Optional[Dict] = None,
     ):
         """
         Initialize a ProbeContextInjectornode with a data operation and context keyword.
@@ -293,7 +305,7 @@ class ProbeContextInjectornode(Node):
             data_operation (BaseDataOperation): The data operation for this node.
             context_keyword (str): The keyword for context injection.
         """
-        super().__init__(data_operation, context_operation)
+        super().__init__(data_operation, context_operation, operation_parameters)
         if not context_keyword or not isinstance(context_keyword, str):
             raise ValueError("context_keyword must be a non-empty string.")
         self.context_keyword = context_keyword
@@ -318,15 +330,21 @@ class ProbeResultColectorNode(Node):
         _probed_data (List[Any]): A list of data collected during probing operations.
     """
 
-    def __init__(self, data_operation: DataProbe, context_operation: ContextOperation):
+    def __init__(
+        self,
+        data_operation: DataProbe,
+        context_operation: ContextOperation,
+        operation_parameters: Optional[Dict] = None,
+    ):
         """
         Initialize a ProbeResultColectorNode with the specified data probe.
 
         Args:
             data_operation (DataProbe): The data probe for this node.
             context_operation (ContextOperation): The context operation for this node.
+            operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
         """
-        super().__init__(data_operation, context_operation)
+        super().__init__(data_operation, context_operation, operation_parameters)
         self._probed_data: List[Any] = []
 
     def collect(self, data: Any):

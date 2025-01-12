@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from ..context_operations.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType
 
+
 class BaseDataOperation(ABC):
     """
     Abstract base class for all data operations in the semantic framework.
@@ -12,8 +13,9 @@ class BaseDataOperation(ABC):
     processing operations, ensuring consistency and extensibility.
     """
 
+    @classmethod
     @abstractmethod
-    def input_data_type(self) -> BaseDataType:
+    def input_data_type(cls) -> BaseDataType:
         """
         Define the type of input data required for the operation.
 
@@ -64,7 +66,6 @@ class BaseDataOperation(ABC):
             Any: The result of the operation.
         """
         return self.process(data, *args, **kwargs)
-    
 
     def get_operation_parameter_names(self) -> List[str]:
         """
@@ -74,8 +75,11 @@ class BaseDataOperation(ABC):
             List[str]: A list of parameter names (excluding `data`).
         """
         signature = inspect.signature(self._operation)
-        return [param.name for param in signature.parameters.values()
-                if param.name != "data"]
+        return [
+            param.name
+            for param in signature.parameters.values()
+            if param.name != "data"
+        ]
 
 
 class DataAlgorithm(BaseDataOperation):
@@ -91,8 +95,9 @@ class DataAlgorithm(BaseDataOperation):
 
     context_observer: ContextObserver
 
+    @classmethod
     @abstractmethod
-    def output_data_type(self) -> BaseDataType:
+    def output_data_type(cls) -> BaseDataType:
         """
         Define the type of data output by the algorithm.
 
@@ -120,10 +125,12 @@ class DataAlgorithm(BaseDataOperation):
         """
         self.context_observer = context_observer
 
+
 class DataProbe(BaseDataOperation):
     """
     Represents a probe operation for monitoring or inspecting data.
 
     This class can be extended to implement specific probing functionalities.
     """
+
     pass

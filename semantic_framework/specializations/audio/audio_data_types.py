@@ -1,5 +1,5 @@
-from semantic_framework.data_types import BaseDataType
 import numpy as np
+from semantic_framework.data_types import BaseDataType
 
 
 class SingleChannelAudioDataType(BaseDataType):
@@ -23,8 +23,7 @@ class SingleChannelAudioDataType(BaseDataType):
         Raises:
             AssertionError: If the input data is not a numpy ndarray.
         """
-        self.validate(data)
-        self._data = data
+        super().__init__(data)
 
     def validate(self, data):
         assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
@@ -52,8 +51,7 @@ class DualChannelAudioDataType(BaseDataType):
         Raises:
             AssertionError: If the input data is not a numpy ndarray.
         """
-        self.validate(data)
-        self._data = data
+        super().__init__(data)
 
     def validate(self, data):
         assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
