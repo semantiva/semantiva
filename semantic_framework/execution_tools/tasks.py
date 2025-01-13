@@ -3,6 +3,7 @@ from typing import Type, Dict
 from ..data_io import DataSource, DataSink
 from ..payload_operations import PayloadOperation
 
+
 class ComputingTask(ABC):
     """
     Abstract base class for a computing task.
@@ -33,6 +34,7 @@ class ComputingTask(ABC):
             The result of the `_run` method.
         """
         return self._run(*args, **kwargs)
+
 
 class PayloadOperationTask(ComputingTask):
     """
@@ -102,10 +104,14 @@ class PayloadOperationTask(ComputingTask):
         data, context = self.data_source_class.get_data(**self.data_source_parameters)
 
         # Initialize and apply the payload operation
-        operation = PayloadOperation(self.payload_operation_class(self.payload_operation_config))
+        operation = PayloadOperation(
+            self.payload_operation_class(self.payload_operation_config)
+        )
         processed_data, processed_context = operation(data, context)
 
         # Send the processed data and context to the data sink
-        self.data_sink_class.send_payload(*processed_data, processed_context, *self.data_sink_parameters)
+        self.data_sink_class.send_payload(
+            *processed_data, processed_context, *self.data_sink_parameters
+        )
 
         return processed_data, processed_context

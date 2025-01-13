@@ -3,6 +3,7 @@ from typing import Tuple
 from ..data_types import BaseDataType
 from ..context_operations import ContextType
 
+
 class DataSource(ABC):
     """
     Abstract base class for data sources within the framework.
@@ -53,6 +54,7 @@ class DataSource(ABC):
         """
         ...
 
+
 class PayloadSource(ABC):
     """
     Abstract base class for payload sources within the framework.
@@ -80,7 +82,6 @@ class PayloadSource(ABC):
         """
         ...
 
-
     def get_payload(self, *args, **kwargs) -> Tuple[BaseDataType, ContextType]:
         """
         Retrieve a payload by invoking the `_get_payload` method.
@@ -103,6 +104,7 @@ class PayloadSource(ABC):
             BaseDataType: The data type provided by the source.
         """
         ...
+
 
 class DataSink(ABC):
     """
@@ -197,6 +199,7 @@ class PayloadSink(ABC):
             None
         """
         self._send_payload(data, context, *args, **kwargs)
+
     @abstractmethod
     def input_data_type(self) -> BaseDataType:
         """

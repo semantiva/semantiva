@@ -1,5 +1,7 @@
+from typing import List
 from abc import ABC, abstractmethod
 from .context_types import ContextType
+
 
 class ContextOperation(ABC):
     """
@@ -10,7 +12,7 @@ class ContextOperation(ABC):
     """
 
     @abstractmethod
-    def _operate_context(self, context: ContextType):
+    def _operate_context(self, context: ContextType) -> ContextType:
         """
         Perform the core logic of the context operation.
 
@@ -21,11 +23,11 @@ class ContextOperation(ABC):
             context (ContextType): The context on which the operation is performed.
 
         Returns:
-            None
+            ContextType: The modified (or unchanged) context after the operation.
         """
         ...
 
-    def operate_context(self, context: ContextType):
+    def operate_context(self, context: ContextType) -> ContextType:
         """
         Execute the context operation.
 
@@ -36,37 +38,48 @@ class ContextOperation(ABC):
             context (ContextType): The context to operate on.
 
         Returns:
-            None
+            ContextType: The result of the context operation.
         """
         return self._operate_context(context)
 
+    @abstractmethod
+    def get_required_keys(self) -> List[str]:
+        """
+        Retrieve a list of context keys required by this operation.
 
-class SingleContextOperation(ContextOperation):
-    """
-    A context operation designed to work on a single context instance.
+        Returns:
+            List[str]: A list of context keys that the operation expects to be present
+                       before execution.
+        """
+        pass
 
-    This class provides a specialized implementation of `ContextOperation`
-    tailored for operations involving individual context objects.
+    @abstractmethod
+    def get_created_keys(self) -> List[str]:
+        """
+        Retrieve a list of context keys that will be created by this operation.
 
-    Note:
-        Specific behavior must be implemented in a subclass that inherits this class.
-    """
-    pass
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+                       as a result of execution.
+        """
+        pass
+
+    @abstractmethod
+    def get_suppressed_keys(self) -> List[str]:
+        """
+        Retrieve a list of context keys that will be suppressed or removed by this operation.
+
+        Returns:
+            List[str]: A list of context keys that the operation will remove or render
+                       obsolete during its execution.
+        """
+        pass
+
+    def __str__(self):
+        return f"{self.__class__.__name__}"
 
 
-class SequenceContextOperation(ContextOperation):
-    """
-    A context operation designed to handle sequences of context instances.
-
-    This class extends `ContextOperation` to operate on collections of
-    contexts, such as lists or other iterable structures.
-
-    Note:
-        Specific behavior must be implemented in a subclass that inherits this class.
-    """
-    pass
-
-class ContextPassthough(ContextOperation):
+class ContextPassthrough(ContextOperation):
     """
     A context operation that passes the context unchanged.
 
@@ -74,7 +87,7 @@ class ContextPassthough(ContextOperation):
     no specific context operation is provided.
     """
 
-    def _operate_context(self, context):
+    def _operate_context(self, context: ContextType) -> ContextType:
         """
         Pass the context unchanged.
 
@@ -85,3 +98,24 @@ class ContextPassthough(ContextOperation):
             ContextType: The unchanged context.
         """
         return context
+
+    def get_required_keys(self) -> List[str]:
+        """
+        Since this operation does not require any specific keys,
+        it returns an empty list.
+        """
+        return []
+
+    def get_created_keys(self) -> List[str]:
+        """
+        Since this operation does not create any new keys,
+        it returns an empty list.
+        """
+        return []
+
+    def get_suppressed_keys(self) -> List[str]:
+        """
+        Since this operation does not suppress any keys,
+        it returns an empty list.
+        """
+        return []
