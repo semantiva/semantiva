@@ -1,7 +1,11 @@
 from typing import List, Any, Dict, Optional
 from abc import ABC, abstractmethod
 from .stop_watch import StopWatch
-from ..context_operations.context_operations import ContextOperation, ContextType
+from ..context_operations.context_operations import (
+    ContextOperation,
+    ContextType,
+    ContextPassthrough,
+)
 from ..context_operations.context_observer import ContextObserver
 from ..data_operations.data_operations import (
     BaseDataOperation,
@@ -69,7 +73,7 @@ class Node(PayloadOperation):
         self,
         data_operation: BaseDataOperation,
         context_operation: ContextOperation,
-        operation_parameters: Optional[Dict] = None,
+        operation_config: Optional[Dict] = None,
     ):
         """
         Initialize a Node with the specified data operation, context operation, and parameters.
@@ -80,21 +84,22 @@ class Node(PayloadOperation):
             operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
         """
         super().__init__()
-        self.data_operation = data_operation
+        self.data_operation = data_operation(self)
         self.context_operation = context_operation
-        if operation_parameters is None:
+        self.stop_watch = StopWatch()
+        if operation_config is None:
             self.operation_config = {}
         else:
-            self.operation_config = operation_parameters
+            self.operation_config = operation_config
 
     def _process(
-        self, data: Any, context: ContextType
+        self, data: BaseDataType, context: ContextType
     ) -> tuple[BaseDataType, ContextType]:
         """
         Execute the data operation associated with this node.
 
         Args:
-            data (Any): Input data for the operation.
+            data (BaseDataType): Input data for the operation.
             context (ContextType): Contextual information required for execution.
 
         Returns:
@@ -102,10 +107,12 @@ class Node(PayloadOperation):
             ContextType: Updated context after execution.
         """
         self.stop_watch.start()
-        parameters = self._get_operation_parameters(context)
+        updated_context = context
+        updated_context = self.context_operation.operate_context(updated_context)
+        parameters = self._get_operation_parameters(updated_context)
         output_data = self.data_operation.process(data, **parameters)
         self.stop_watch.stop()
-        return output_data
+        return output_data, updated_context
 
     def _get_operation_parameters(self, context: ContextType) -> dict:
         """
@@ -141,92 +148,136 @@ class Node(PayloadOperation):
         else:
             return context.get_value(name)
 
+    def __str__(self) -> str:
+        class_name = self.__class__.__name__
+        return (
+            f"{class_name}(\n"
+            f"     data_operation={self.data_operation},\n"
+            f"     context_operation={self.context_operation},\n"
+            f"     operation_config={self.operation_config},\n"
+            f"     Node execution summary: {self.stop_watch}"
+            f")"
+        )
+
 
 class Pipeline(PayloadOperation):
     """
     Represents a pipeline for orchestrating multiple payload operations.
 
-    A pipeline is a sequence of nodes or operations that processes data in a structured
-    manner. It facilitates the execution of complex workflows.
+    A pipeline is a structured sequence of nodes or operations designed to process
+    `BaseDataType` data and context in a systematic manner. It enables the execution
+    of complex workflows by chaining multiple `Node` instances together.
 
     Attributes:
-        nodes (List[Node]): The sequence of nodes in the pipeline.
-        node_sequence (List[str]): The sequence of node names in topological order.
+        pipeline_configuration (List[Dict]): A list of dictionaries defining the configuration
+                                             for each node in the pipeline.
+        nodes (List[Node]): The list of nodes that make up the pipeline.
+        stop_watch (StopWatch): Tracks the execution time of the pipeline.
     """
 
-    def __init__(self):
+    pipeline_configuration: List[str]
+    nodes: List[Node]
+    stop_watch: StopWatch
+
+    def __init__(self, pipeline_configuration: List[Dict]):
         """
-        Initialize an empty pipeline.
+        Initialize a pipeline based on the provided configuration.
+
+        Args:
+            pipeline_configuration (List[Dict]): A list of dictionaries where each dictionary
+                                                 specifies the configuration for a node in the
+                                                 pipeline.
+
+        Example:
+            pipeline_configuration = [
+                {"operation": DataAlgorithm, "context_operation": ContextOperation, "parameters": {}},
+                {"operation": DataProbe, "context_operation": ContextOperation, "parameters": {}}
+            ]
         """
         super().__init__()
         self.nodes: List[Node] = []
-        self.node_sequence: List[str] = []
+        self.pipeline_configuration: List[str] = pipeline_configuration
+        self.stop_watch = StopWatch()
+        self._initialize_nodes()
 
-    def add_node(self, node: Node):
+    def _add_node(self, node: Node):
         """
         Add a node to the pipeline.
 
         Args:
-            node (Node): The node to add.
+            node (Node): The node to add to the pipeline.
         """
+        if self.nodes:
+            last_node = self.nodes[-1]
+            if isinstance(self.nodes[-1], AlgorithmNode):
+                assert (
+                    last_node.data_operation.output_data_type()
+                    == node.data_operation.input_data_type()
+                ), f"Invalid pipeline topology: Output of {last_node.data_operation.__class__.__name__} not compatible with {node.data_operation.__class__.__name__}."
         self.nodes.append(node)
 
-    def _process(self, data: Any, context: ContextType) -> tuple[Any, ContextType]:
+    def _process(
+        self, data: BaseDataType, context: ContextType
+    ) -> tuple[BaseDataType, ContextType]:
         """
-        Execute the pipeline with the provided input data.
+        Execute the pipeline sequentially with the provided input data and context.
 
         Args:
-            data (Any): Input data for the pipeline.
+            data (BaseDataType): The input data to be processed by the pipeline.
+            context (ContextType): The context information to be updated during processing.
 
         Returns:
-            Any: The result of the pipeline execution.
+            tuple[BaseDataType, ContextType]: A tuple containing the final processed data
+                                              and the updated context after pipeline execution.
         """
-        result = data
+        self.stop_watch.start()
+        result_data, result_context = data, context
         for node in self.nodes:
-            result = node.process(result, context)
-        return result
+            result_data, result_context = node.process(result_data, result_context)
+        self.stop_watch.stop()
+        return result_data, result_context
 
     def inspect(self) -> str:
         """
-        Inspect the current pipeline structure and return its summary.
+        Inspect the current pipeline structure and return its summary, including execution time.
 
         Returns:
-            str: A summary of the pipeline including nodes and their sequence.
+            str: A summary of the pipeline including nodes and their sequence, as well as
+                 the total pipeline execution time.
         """
         summary = "Pipeline Structure:\n"
+
         for i, node in enumerate(self.nodes):
-            summary += f"{i + 1}. Node: {node.__class__.__name__}, Operation: {type(node.data_operation).__name__}\n"
+            summary += f"{i + 1}. Node: {node}\n"
+        summary += f"Pipeline {self.stop_watch}"
         return summary
 
-    def get_timers(self) -> dict:
+    def get_timers(self) -> str:
         """
-        Retrieve timing information for each node's execution (mock implementation).
+        Retrieve timing information for each node's execution.
 
         Returns:
-            dict: A dictionary with node names as keys and execution times as values.
+            str: A formatted string displaying node number, operation name,
+                elapsed CPU time, and elapsed wall time for each node.
         """
-        # Mock implementation for timing
-        timers = {f"Node {i + 1}": 0.1 * (i + 1) for i in range(len(self.nodes))}
-        return timers
-
-    def _check_node_topology(self):
-        """
-        Check the topological order of nodes to ensure the pipeline is valid.
-
-        Raises:
-            ValueError: If the topology is invalid.
-        """
-        if not self.nodes:
-            raise ValueError("Pipeline has no nodes to check topology.")
-        self.node_sequence = [f"Node {i + 1}" for i in range(len(self.nodes))]
+        timer_info = [
+            f"Node {i + 1}: {type(node.data_operation).__name__}; "
+            f"Elapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
+            f"Elapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s"
+            for i, node in enumerate(self.nodes)
+        ]
+        return "\n".join(timer_info)
 
     def _initialize_nodes(self):
         """
-        Initialize all nodes in the pipeline (mock implementation).
+        Initialize all nodes in the pipeline.
+
+        This method uses the `node_factory` function to create nodes from the provided
+        pipeline configuration. Each node is then added to the pipeline.
         """
-        for node in self.nodes:
-            # Mock initialization logic
-            print(f"Initializing node: {node.__class__.__name__}")
+        for node_config in self.pipeline_configuration:
+            node = node_factory(node_config)
+            self._add_node(node)
 
 
 class AlgorithmNode(Node):
@@ -251,6 +302,9 @@ class AlgorithmNode(Node):
             context_operation (ContextOperation): The context operation for this node.
             operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
         """
+        operation_parameters = (
+            {} if operation_parameters is None else operation_parameters
+        )
         super().__init__(data_operation, context_operation, operation_parameters)
 
 
@@ -370,3 +424,57 @@ class ProbeResultColectorNode(Node):
         Clear all collected data for reuse in iterative processes.
         """
         self._probed_data.clear()
+
+
+def node_factory(node_definition: Dict) -> Node:
+    """
+    Factory function to create a Node instance based on the given definition.
+
+    Args:
+        node_definition (Dict): A dictionary defining the node structure. Expected keys:
+            - "operation": An instance of DataOperation (required).
+            - "context_operation": An instance of ContextOperation (optional).
+            - "parameters": A dictionary of operation parameters (optional).
+            - "context_keyword": A string defining a context keyword (optional).
+
+    Returns:
+        Node: An instance of the appropriate Node subclass.
+
+    Raises:
+        ValueError: If the node definition is invalid or incompatible.
+    """
+    operation = node_definition.get("operation")
+    context_operation = node_definition.get("context_operation", ContextPassthrough())
+    parameters = node_definition.get("parameters", {})
+    context_keyword = node_definition.get("context_keyword")
+
+    if issubclass(operation, DataAlgorithm):
+        if context_keyword is not None:
+            raise ValueError(
+                "context_keyword must not be defined for DataAlgorithm nodes."
+            )
+        return AlgorithmNode(
+            data_operation=operation,
+            context_operation=context_operation,
+            operation_parameters=parameters,
+        )
+
+    elif issubclass(operation, DataProbe):
+        if context_keyword is not None:
+            return ProbeContextInjectornode(
+                data_operation=operation,
+                context_operation=context_operation,
+                context_keyword=context_keyword,
+                operation_parameters=parameters,
+            )
+        else:
+            return ProbeResultColectorNode(
+                data_operation=operation,
+                context_operation=context_operation,
+                operation_parameters=parameters,
+            )
+
+    else:
+        raise ValueError(
+            "Unsupported operation type. Operation must be of type DataAlgorithm or DataProbe."
+        )

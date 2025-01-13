@@ -81,6 +81,9 @@ class BaseDataOperation(ABC):
             if param.name != "data"
         ]
 
+    def __str__(self):
+        return f"{self.__class__.__name__}"
+
 
 class DataAlgorithm(BaseDataOperation):
     """
@@ -124,6 +127,9 @@ class DataAlgorithm(BaseDataOperation):
             context_observer (ContextObserver): An observer for managing context updates.
         """
         self.context_observer = context_observer
+
+    def __str__(self):
+        return f"{self.__class__.__name__}"
 
 
 class DataProbe(BaseDataOperation):

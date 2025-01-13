@@ -2,6 +2,7 @@ from abc import abstractmethod
 from semantic_framework.data_io import DataSource, DataSink, PayloadSource
 from .audio_data_types import SingleChannelAudioDataType, DualChannelAudioDataType
 
+
 class SingleChannelAudioSource(DataSource):
     """
     Abstract base class for single-channel audio data sources.
@@ -27,6 +28,7 @@ class SingleChannelAudioSource(DataSource):
             SingleChannelAudioDataType: The encapsulated audio data.
         """
         return self._get_data()
+
 
 class DualChannelAudioSource(DataSource):
     """
@@ -54,6 +56,7 @@ class DualChannelAudioSource(DataSource):
         """
         return self._get_data()
 
+
 class SingleChannelAudioSink(DataSink):
     """
     Abstract base class for single-channel audio data sinks.
@@ -79,6 +82,7 @@ class SingleChannelAudioSink(DataSink):
             data (SingleChannelAudioDataType): The audio data to store.
         """
         self._send_data(data)
+
 
 class DualChannelAudioSink(DataSink):
     """
@@ -106,6 +110,7 @@ class DualChannelAudioSink(DataSink):
         """
         self._send_data(data)
 
+
 class SingleChannelPayloadSource(PayloadSource):
     """
     Abstract base class for single-channel audio payload sources.
@@ -131,6 +136,7 @@ class SingleChannelPayloadSource(PayloadSource):
             SingleChannelAudioDataType: The encapsulated audio data payload.
         """
         return self._get_payload()
+
 
 class DualChannelPayloadSource(PayloadSource):
     """
@@ -158,6 +164,7 @@ class DualChannelPayloadSource(PayloadSource):
         """
         return self._get_payload()
 
+
 class SingleChannelPayloadSink(PayloadSink):
     """
     Abstract base class for single-channel audio payload sinks.
@@ -183,6 +190,7 @@ class SingleChannelPayloadSink(PayloadSink):
             payload (SingleChannelAudioDataType): The audio data payload to store.
         """
         self._send_payload(payload)
+
 
 class DualChannelPayloadSink(PayloadSink):
     """

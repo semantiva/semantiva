@@ -1,4 +1,5 @@
-from typing import Any
+from typing import Any, List, Tuple
+
 
 class ContextType:
     """
@@ -75,7 +76,7 @@ class ContextType:
         """
         self.context_container.clear()
 
-    def keys(self):
+    def values(self) -> List[str]:
         """
         Retrieve all keys in the context.
 
@@ -84,7 +85,7 @@ class ContextType:
         """
         return list(self.context_container.keys())
 
-    def values(self):
+    def values(self) -> List[Any]:
         """
         Retrieve all values in the context.
 
@@ -93,7 +94,7 @@ class ContextType:
         """
         return list(self.context_container.values())
 
-    def items(self):
+    def items(self) -> List[Tuple[str, Any]]:
         """
         Retrieve all key-value pairs in the context.
 
@@ -102,3 +103,6 @@ class ContextType:
                   its corresponding value.
         """
         return list(self.context_container.items())
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}(context_container={self.context_container})"
