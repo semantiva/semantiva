@@ -24,7 +24,7 @@ class ImageSubtraction(ImageAlgorithm):
 
         Parameters:
             data (ImageDataType): The original image data.
-            subtracting_image (ImageDataType): The image data to subtract.
+            image_to_subtract (ImageDataType): The image data to subtract.
 
         Returns:
             ImageDataType: The result of the subtraction operation.
@@ -53,13 +53,11 @@ class ImageAddition(ImageAlgorithm):
 
         Parameters:
             data (ImageDataType): The original image data.
-            added_image (ImageDataType): The image data to add.
+            image_to_add (ImageDataType): The image data to add.
 
         Returns:
             ImageDataType: The result of the addition operation.
         """
-        print(data)
-        print(image_to_add)
         return ImageDataType(np.add(data.data, image_to_add.data))
 
 

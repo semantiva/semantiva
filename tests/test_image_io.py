@@ -5,13 +5,13 @@ from semantic_framework.specializations.image.image_data_types import (
     ImageStackDataType,
 )
 from semantic_framework.specializations.image.image_loaders_savers_generators import (
-    ImageDataTypeDummyGenerator,
-    ImageStackDataTypeDummyGenerator,
+    ImageDataRandomGenerator,
+    ImageStackRandomGenerator,
     NpzImageDataTypeLoader,
-    NpzImageStackDataTypeLoader,
+    NpzImageStackDataLoader,
     PngImageLoader,
-    ImageDataTypeDummySink,
-    ImageStackDataTypeDummySink,
+    ImageDataDummySink,
+    ImageStackDummySink,
 )
 
 
@@ -20,7 +20,7 @@ def sample_image_data():
     """
     Fixture to provide a sample ImageDataType using the dummy generator.
     """
-    generator = ImageDataTypeDummyGenerator()
+    generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
 
 
@@ -29,7 +29,7 @@ def sample_stack_data():
     """
     Fixture to provide a sample ImageStackDataType using the dummy generator.
     """
-    generator = ImageStackDataTypeDummyGenerator()
+    generator = ImageStackRandomGenerator()
     return generator.get_data((10, 256, 256))
 
 
@@ -55,7 +55,7 @@ def test_npz_stack_loader(test_data_dir):
     """
     Test loading ImageStackDataType from an .npz file.
     """
-    loader = NpzImageStackDataTypeLoader()
+    loader = NpzImageStackDataLoader()
     stack_data = loader.get_data(f"{test_data_dir}/stack_data.npz")
     assert isinstance(stack_data, ImageStackDataType)
     assert stack_data.data.shape == (10, 256, 256)
@@ -73,7 +73,7 @@ def test_png_image_loader(test_data_dir):
 
 def test_dummy_image_data_type_sink(sample_image_data):
     """Test DummyImageDataTypeSink with valid and invalid inputs."""
-    sink = ImageDataTypeDummySink()
+    sink = ImageDataDummySink()
 
     # Valid input
     sink.send_data(sample_image_data)
@@ -85,7 +85,7 @@ def test_dummy_image_data_type_sink(sample_image_data):
 
 def test_dummy_image_stack_data_type_sink(sample_stack_data):
     """Test DummyImageStackDataTypeSink with valid and invalid inputs."""
-    sink = ImageStackDataTypeDummySink()
+    sink = ImageStackDummySink()
 
     # Valid input
     sink.send_data(sample_stack_data)

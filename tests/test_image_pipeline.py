@@ -11,8 +11,8 @@ from semantic_framework.specializations.image.image_algorithms import (
     StackToImageMeanProjector,
 )
 from semantic_framework.specializations.image.image_loaders_savers_generators import (
-    ImageDataTypeDummyGenerator,
-    ImageStackDataTypeDummyGenerator,
+    ImageDataRandomGenerator,
+    ImageStackRandomGenerator,
 )
 
 
@@ -21,7 +21,7 @@ def image_stack_data():
     """
     Pytest fixture for providing an ImageStackDataType instance using the dummy generator.
     """
-    generator = ImageStackDataTypeDummyGenerator()
+    generator = ImageStackRandomGenerator()
     return generator.get_data((10, 256, 256))
 
 
@@ -30,7 +30,7 @@ def random_image1():
     """
     Pytest fixture for providing a random 2D ImageDataType instance using the dummy generator.
     """
-    generator = ImageDataTypeDummyGenerator()
+    generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
 
 
@@ -39,7 +39,7 @@ def random_image2():
     """
     Pytest fixture for providing another random 2D ImageDataType instance using the dummy generator.
     """
-    generator = ImageDataTypeDummyGenerator()
+    generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
 
 

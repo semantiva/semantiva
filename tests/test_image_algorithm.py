@@ -7,22 +7,22 @@ from semantic_framework.specializations.image.image_algorithms import (
     StackToImageMeanProjector,
 )
 from semantic_framework.specializations.image.image_loaders_savers_generators import (
-    ImageDataTypeDummyGenerator,
-    ImageStackDataTypeDummyGenerator,
+    ImageDataRandomGenerator,
+    ImageStackRandomGenerator,
 )
 
 
 @pytest.fixture
 def dummy_image_data():
     """Fixture for generating dummy ImageDataType data."""
-    generator = ImageDataTypeDummyGenerator()
+    generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
 
 
 @pytest.fixture
 def dummy_image_stack_data():
     """Fixture for generating dummy ImageStackDataType data."""
-    generator = ImageStackDataTypeDummyGenerator()
+    generator = ImageStackRandomGenerator()
     return generator.get_data((10, 256, 256))
 
 

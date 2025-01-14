@@ -2,17 +2,17 @@ from PIL import Image
 import numpy as np
 from semantic_framework.context_operations.context_types import ContextType
 from .image_data_io import (
-    ImageDataTypeSource,
-    ImageStackDataTypeSource,
-    ImageDataTypeSink,
-    ImageStackDataTypeSink,
-    ImageDataTypePayloadSink,
-    ImageStackDataTypePayloadSource,
+    ImageDataSource,
+    ImageStackSource,
+    ImageDataSink,
+    ImageStackDataSink,
+    ImagePayloadSink,
+    ImageStackPayloadSource,
 )
 from .image_data_types import ImageDataType, ImageStackDataType
 
 
-class NpzImageDataTypeLoader(ImageDataTypeSource):
+class NpzImageDataTypeLoader(ImageDataSource):
     """
     Concrete implementation of ImageDataTypeSource for loading image data from .npz files.
 
@@ -62,7 +62,7 @@ class NpzImageDataTypeLoader(ImageDataTypeSource):
             raise ValueError(f"Error loading image data from {path}: {e}") from e
 
 
-class NpzImageDataTypeSaver(ImageDataTypeSink):
+class NpzImageDataSaver(ImageDataSink):
     """
     Concrete implementation of ImageDataTypeSink for saving `ImageDataType` objects to .npz files.
 
@@ -91,7 +91,7 @@ class NpzImageDataTypeSaver(ImageDataTypeSink):
             raise IOError(f"Error saving ImageDataType to {path}: {e}") from e
 
 
-class NpzImageStackDataTypeLoader(ImageStackDataTypeSource):
+class NpzImageStackDataLoader(ImageStackSource):
     """
     Concrete implementation of ImageStackDataTypeSource for loading image stack data from .npz files.
 
@@ -141,7 +141,7 @@ class NpzImageStackDataTypeLoader(ImageStackDataTypeSource):
             raise ValueError(f"Error loading image stack data from {path}: {e}") from e
 
 
-class NpzImageStackDataTypeSaver(ImageStackDataTypeSink):
+class NpzImageStackDataSaver(ImageStackDataSink):
     """
     Concrete implementation of ImageStackDataTypeSink for saving `ImageStackDataType` objects to .npz files.
 
@@ -170,7 +170,7 @@ class NpzImageStackDataTypeSaver(ImageStackDataTypeSink):
             raise IOError(f"Error saving ImageStackDataType to {path}: {e}") from e
 
 
-class PngImageLoader(ImageDataTypeSource):
+class PngImageLoader(ImageDataSource):
     """
     Concrete implementation of ImageDataTypeSource for loading image data from PNG files.
 
@@ -204,7 +204,7 @@ class PngImageLoader(ImageDataTypeSource):
             raise ValueError(f"Error loading PNG image from {path}: {e}") from e
 
 
-class PngImageSaver(ImageDataTypeSink):
+class PngImageSaver(ImageDataSink):
     """
     Concrete implementation of ImageDataTypeSink for saving image data to PNG files.
 
@@ -237,9 +237,9 @@ class PngImageSaver(ImageDataTypeSink):
             raise IOError(f"Error saving PNG image to {path}: {e}") from e
 
 
-class ImageDataTypeDummyGenerator(ImageDataTypeSource):
+class ImageDataRandomGenerator(ImageDataSource):
     """
-    A dummy generator for creating `ImageDataType` objects with random data.
+    A random generator for creating `ImageDataType` objects with random data.
 
     This class is used to generate dummy image data for testing and development purposes.
     The generated data is a 2D NumPy array of random values between 0 and 1, wrapped in an
@@ -272,9 +272,9 @@ class ImageDataTypeDummyGenerator(ImageDataTypeSource):
         return ImageDataType(np.random.rand(*shape))
 
 
-class ImageStackDataTypeDummyGenerator(ImageStackDataTypeSource):
+class ImageStackRandomGenerator(ImageStackSource):
     """
-    A dummy generator for creating `ImageStackDataType` objects with random data.
+    A random generator for creating `ImageStackDataType` objects with random data.
 
     This class is used to generate dummy image stack data for testing and development purposes.
     The generated data is a 3D NumPy array of random values between 0 and 1, wrapped in an
@@ -308,7 +308,7 @@ class ImageStackDataTypeDummyGenerator(ImageStackDataTypeSource):
         return ImageStackDataType(np.random.rand(*shape))
 
 
-class ImageDataTypeDummySink(ImageDataTypeSink):
+class ImageDataDummySink(ImageDataSink):
     """
     A sink for `ImageDataType` objects.
 
@@ -339,7 +339,7 @@ class ImageDataTypeDummySink(ImageDataTypeSink):
         pass
 
 
-class ImageStackDataTypeDummySink(ImageStackDataTypeSink):
+class ImageStackDummySink(ImageStackDataSink):
     """
     A sink for `ImageStackDataType` objects.
 
@@ -370,7 +370,7 @@ class ImageStackDataTypeDummySink(ImageStackDataTypeSink):
         pass
 
 
-class ImageDataTypePayloadDummySink(ImageDataTypePayloadSink):
+class ImagePayloadDummySink(ImagePayloadSink):
     """
     A dummy sink for payloads containing ImageDataType and ContextType.
 
@@ -404,9 +404,9 @@ class ImageDataTypePayloadDummySink(ImageDataTypePayloadSink):
         pass
 
 
-class ImageStackDataTypePayloadDummyGenerator(ImageStackDataTypePayloadSource):
+class ImageStackPayloadRandomGenerator(ImageStackPayloadSource):
     """
-    A dummy generator for producing payloads containing ImageStackDataType and ContextType.
+    A random generator for producing payloads containing ImageStackDataType and ContextType.
 
     This class generates dummy payloads for testing purposes or as a placeholder
     in pipelines where input data is not yet available. The generated payloads

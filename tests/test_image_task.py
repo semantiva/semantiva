@@ -2,9 +2,9 @@ import pytest
 from semantic_framework.execution_tools.tasks import PayloadOperationTask
 from semantic_framework.context_operations.context_types import ContextType
 from semantic_framework.specializations.image.image_loaders_savers_generators import (
-    ImageStackDataTypePayloadDummyGenerator,
-    ImageDataTypePayloadDummySink,
-    ImageDataTypeDummyGenerator,
+    ImageStackPayloadRandomGenerator,
+    ImagePayloadDummySink,
+    ImageDataRandomGenerator,
 )
 from semantic_framework.specializations.image.image_algorithms import (
     ImageAddition,
@@ -21,7 +21,7 @@ def random_image1():
     """
     Pytest fixture for providing a random 2D ImageDataType instance using the dummy generator.
     """
-    generator = ImageDataTypeDummyGenerator()
+    generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
 
 
@@ -30,7 +30,7 @@ def random_image2():
     """
     Pytest fixture for providing another random 2D ImageDataType instance using the dummy generator.
     """
-    generator = ImageDataTypeDummyGenerator()
+    generator = ImageDataRandomGenerator()
     return generator.get_data((256, 256))
 
 
@@ -57,11 +57,11 @@ def test_pipeline_task(random_image1, random_image2):
     ]
 
     payload_task = PayloadOperationTask(
-        ImageStackDataTypePayloadDummyGenerator,
+        ImageStackPayloadRandomGenerator,
         {},
         Pipeline,
         node_configurations,
-        ImageDataTypePayloadDummySink,
+        ImagePayloadDummySink,
         {},
     )
 

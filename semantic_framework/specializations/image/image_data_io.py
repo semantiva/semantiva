@@ -4,7 +4,7 @@ from semantic_framework.data_io import DataSource, PayloadSource, DataSink, Payl
 from .image_data_types import ImageDataType, ImageStackDataType
 
 
-class ImageDataTypeSource(DataSource):
+class ImageDataSource(DataSource):
     """
     Abstract base class for image data sources.
 
@@ -40,7 +40,7 @@ class ImageDataTypeSource(DataSource):
         return ImageDataType
 
 
-class ImageStackDataTypeSource(DataSource):
+class ImageStackSource(DataSource):
     """
     Abstract base class for image stack data sources.
 
@@ -76,7 +76,7 @@ class ImageStackDataTypeSource(DataSource):
         return ImageStackDataType
 
 
-class ImageDataTypeSink(DataSink):
+class ImageDataSink(DataSink):
     """
     Abstract base class for image data sinks.
 
@@ -112,7 +112,7 @@ class ImageDataTypeSink(DataSink):
         return ImageDataType
 
 
-class ImageStackDataTypeSink(DataSink):
+class ImageStackDataSink(DataSink):
     """
     Abstract base class for image stack data sinks.
 
@@ -148,7 +148,7 @@ class ImageStackDataTypeSink(DataSink):
         return ImageStackDataType
 
 
-class ImageDataTypePayloadSink(PayloadSink):
+class ImagePayloadSink(PayloadSink):
     """
     Abstract base class for sinks that consume and store `ImageDataType` objects with associated context.
 
@@ -193,7 +193,7 @@ class ImageDataTypePayloadSink(PayloadSink):
         return ImageDataType
 
 
-class ImageStackDataTypePayloadSource(PayloadSource):
+class ImageStackPayloadSource(PayloadSource):
     """
     Abstract base class for sources that provide `ImageStackDataType` objects with associated context.
 
