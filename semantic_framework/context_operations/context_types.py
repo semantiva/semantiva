@@ -76,7 +76,7 @@ class ContextType:
         """
         self.context_container.clear()
 
-    def values(self) -> List[str]:
+    def keys(self) -> List[str]:
         """
         Retrieve all keys in the context.
 
