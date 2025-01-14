@@ -9,6 +9,7 @@ from semantic_framework.payload_operations import Pipeline
 from test_audio_algorithm import (
     SingleChannelAudioMultiplyAlgorithm,
     DualChannelAudioMultiplyAlgorithm,
+    SingleChannelMockDataProbe,
 )
 
 
@@ -36,6 +37,13 @@ def test_pipeline_execution(single_channel_audio_data):
             "operation": SingleChannelAudioMultiplyAlgorithm,
             "parameters": {"factor": 0.5},
         },
+        {
+            "operation": SingleChannelMockDataProbe,
+        },
+        {
+            "operation": SingleChannelMockDataProbe,
+            "context_keyword": "mock_keyword",
+        },
     ]
 
     # Initialize the pipeline
@@ -50,8 +58,15 @@ def test_pipeline_execution(single_channel_audio_data):
         output_data.data, single_channel_audio_data.data * 2.0 * 0.5
     )
 
-    # Inspect the pipeline
     print("\n")
+    print("=========================Pipeline context output=========================")
+    print(output_context)
+    assert "mock_keyword" in output_context.keys()
+    # Retrieve data collected by probes
+    print("=========================Pipeline probed data=========================")
+    print(pipeline.get_probe_results())
+    assert "mock_keyword" in output_context.keys()
+    # Inspect the pipeline
     print(
         "==============================Pipeline inspection=============================="
     )

@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple
+from typing import Any, List, Tuple, Dict, Optional
 
 
 class ContextType:
@@ -9,18 +9,18 @@ class ContextType:
     information, facilitating access and updates to context data.
 
     Attributes:
-        context_container (dict): A dictionary that stores key-value pairs representing
+        _context_container (dict): A dictionary that stores key-value pairs representing
                      the context data.
     """
 
-    def __init__(self):
+    def __init__(self, context_dict: Optional[Dict] = None):
         """
         Initialize an empty context.
 
         The context is represented by an internal dictionary that stores
         all key-value pairs.
         """
-        self.context_container = {}
+        self._context_container = {} if context_dict is None else context_dict
 
     def get_value(self, key: str) -> Any:
         """
@@ -33,7 +33,7 @@ class ContextType:
             Any: The value corresponding to the key, or None if the key
                  does not exist.
         """
-        return self.context_container.get(key)
+        return self._context_container.get(key)
 
     def set_value(self, key: str, value: Any):
         """
@@ -46,7 +46,7 @@ class ContextType:
         Returns:
             None
         """
-        self.context_container[key] = value
+        self._context_container[key] = value
 
     def delete_value(self, key: str):
         """
@@ -61,9 +61,9 @@ class ContextType:
         Returns:
             None
         """
-        if key not in self.context_container:
+        if key not in self._context_container:
             raise KeyError(f"Key '{key}' not found in context.")
-        del self.context_container[key]
+        del self._context_container[key]
 
     def clear(self):
         """
@@ -74,16 +74,16 @@ class ContextType:
         Returns:
             None
         """
-        self.context_container.clear()
+        self._context_container.clear()
 
-    def values(self) -> List[str]:
+    def keys(self) -> List[str]:
         """
         Retrieve all keys in the context.
 
         Returns:
             list: A list of all keys currently stored in the context.
         """
-        return list(self.context_container.keys())
+        return list(self._context_container.keys())
 
     def values(self) -> List[Any]:
         """
@@ -92,7 +92,7 @@ class ContextType:
         Returns:
             list: A list of all values currently stored in the context.
         """
-        return list(self.context_container.values())
+        return list(self._context_container.values())
 
     def items(self) -> List[Tuple[str, Any]]:
         """
@@ -102,7 +102,7 @@ class ContextType:
             list: A list of tuples, where each tuple contains a key and
                   its corresponding value.
         """
-        return list(self.context_container.items())
+        return list(self._context_container.items())
 
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}(context_container={self.context_container})"
+        return f"{self.__class__.__name__}(context={self._context_container})"

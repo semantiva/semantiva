@@ -117,7 +117,10 @@ class DataAlgorithm(BaseDataOperation):
             key (str): The key associated with the context update.
             value (Any): The value to update in the context.
         """
-        self.context_observer.context[key] = value
+        if key not in self.context_keys():
+            raise KeyError(f"Invalid context key '{key}' for {self.__class__.__name__}")
+        if self.context_observer:
+            self.context_observer.observer_context.set_value(key, value)
 
     def __init__(self, context_observer: Optional[ContextObserver] = None):
         """
@@ -127,6 +130,25 @@ class DataAlgorithm(BaseDataOperation):
             context_observer (ContextObserver): An observer for managing context updates.
         """
         self.context_observer = context_observer
+
+    def context_keys(self) -> List[str]:
+        """
+        Retrieve the list of valid context keys for the algorithm.
+
+        This method defines the context keys that the algorithm can update
+        during its execution. Subclasses need to implement this method to provide
+        a list of keys that are relevant to their specific functionality.
+
+        Returns:
+            List[str]: A list of strings representing valid context keys.
+
+
+        Example:
+            For an algorithm that generates a 'status' key and an 'error_count' key
+            in the context, this method should return:
+            ["status", "error_count"]
+        """
+        return []
 
     def __str__(self):
         return f"{self.__class__.__name__}"
