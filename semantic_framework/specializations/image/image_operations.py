@@ -69,7 +69,7 @@ class ImageStackAlgorithm(DataAlgorithm):
         return ImageStackDataType
 
 
-class ImageStackFlattener(DataAlgorithm):
+class ImageStackToImageProjector(DataAlgorithm):
     """
     An algorithm specialized for flattening ImageStackDataType data.
 

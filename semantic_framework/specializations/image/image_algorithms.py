@@ -1,6 +1,6 @@
 import numpy as np
 from .image_data_types import ImageDataType, ImageStackDataType
-from .image_operations import ImageAlgorithm, ImageStackFlattener
+from .image_operations import ImageAlgorithm, ImageStackToImageProjector
 
 
 class ImageSubtraction(ImageAlgorithm):
@@ -103,7 +103,7 @@ class ImageClipping(ImageAlgorithm):
         return ImageDataType(clipped_data)
 
 
-class StackToImageMeanProjector(ImageStackFlattener):
+class StackToImageMeanProjector(ImageStackToImageProjector):
     """
     A concrete implementation of ImageStackFlattener that projects a stack of images
     into a single image by taking the mean along the slices.

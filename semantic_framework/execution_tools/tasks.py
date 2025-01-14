@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Type, Dict
+from typing import Type, Dict, Optional
 from ..data_io import PayloadSource, PayloadSink
 from ..payload_operations import PayloadOperation
 
@@ -58,8 +58,8 @@ class PayloadOperationTask(ComputingTask):
     payload_source_parameters: Dict
     payload_operation_class: Type[PayloadOperation]
     payload_operation_config: Dict
-    payload_sink_class: Type[PayloadSink]
-    payload_sink_parameters: Dict
+    payload_sink_class: Optional[Type[PayloadSink]]
+    payload_sink_parameters: Optional[Dict]
 
     def __init__(
         self,
@@ -67,8 +67,8 @@ class PayloadOperationTask(ComputingTask):
         payload_source_parameters: Dict,
         payload_operation_class: Type[PayloadOperation],
         payload_operation_config: Dict,
-        payload_sink_class: Type[PayloadSink],
-        payload_sink_parameters: Dict,
+        payload_sink_class: Optional[Type[PayloadSink]] = None,
+        payload_sink_parameters: Optional[Dict] = None,
     ):
         """
         Initialize the PayloadOperationTask with the required components and configurations.
@@ -111,10 +111,12 @@ class PayloadOperationTask(ComputingTask):
 
         processed_data, processed_context = operation.process(data, context)
 
-        # Send the processed data and context to the data sink
-        payload_sink_instance = self.payload_sink_class()
-        payload_sink_instance.send_payload(
-            processed_data, processed_context, *self.payload_sink_parameters
-        )
+        # Send the processed data and context to the data sink if provided
+        if self.payload_sink_class:
+            sink_parameters = self.payload_sink_parameters or {}
+            payload_sink_instance = self.payload_sink_class()
+            payload_sink_instance.send_payload(
+                processed_data, processed_context, sink_parameters
+            )
 
         return processed_data, processed_context

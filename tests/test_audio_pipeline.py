@@ -50,7 +50,6 @@ def test_pipeline_execution(single_channel_audio_data):
     pipeline = Pipeline(node_configurations)
 
     # Execute the pipeline
-    context = ContextType()
     output_data, output_context = pipeline.process(single_channel_audio_data, {})
 
     # Validate the output

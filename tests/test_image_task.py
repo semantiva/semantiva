@@ -3,7 +3,6 @@ from semantic_framework.execution_tools.tasks import PayloadOperationTask
 from semantic_framework.context_operations.context_types import ContextType
 from semantic_framework.specializations.image.image_loaders_savers_generators import (
     ImageStackPayloadRandomGenerator,
-    ImagePayloadDummySink,
     ImageDataRandomGenerator,
 )
 from semantic_framework.specializations.image.image_algorithms import (
@@ -57,12 +56,7 @@ def test_pipeline_task(random_image1, random_image2):
     ]
 
     payload_task = PayloadOperationTask(
-        ImageStackPayloadRandomGenerator,
-        {},
-        Pipeline,
-        node_configurations,
-        ImagePayloadDummySink,
-        {},
+        ImageStackPayloadRandomGenerator, {}, Pipeline, node_configurations
     )
 
     updated_data, updated_context = payload_task.run()
