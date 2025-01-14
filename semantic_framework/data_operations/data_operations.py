@@ -162,3 +162,40 @@ class DataProbe(BaseDataOperation):
     """
 
     pass
+
+
+class AlgorithmTopologyFactory:
+    """
+    A factory that creates algorithm classes for specific (input, output) data-type pairs.
+    """
+
+    @classmethod
+    def create_algorithm(cls, input_type, output_type, class_name="GeneratedAlgorithm"):
+        """
+        Dynamically creates a subclass of DataAlgorithm that expects `input_type`
+        as input and produces `output_type` as output.
+
+        Args:
+            input_type (type): The expected input data type (subclass of BaseDataType).
+            output_type (type): The output data type (subclass of BaseDataType).
+            class_name (str): The name to give the generated class.
+
+        Returns:
+            type: A new subclass of DataAlgorithm with the specified I/O data types.
+        """
+
+        # Define a dictionary of class-level methods for the new type
+        methods = {}
+
+        def input_data_type_method(self_or_cls):
+            return input_type
+
+        def output_data_type_method(self_or_cls):
+            return output_type
+
+        methods["input_data_type"] = classmethod(input_data_type_method)
+        methods["output_data_type"] = classmethod(output_data_type_method)
+
+        # Create a new type that extends DataAlgorithm
+        generated_class = type(class_name, (DataAlgorithm,), methods)
+        return generated_class
