@@ -55,7 +55,7 @@ class PayloadOperationTask(ComputingTask):
     """
 
     payload_source_class: Type[PayloadSource]
-    data_source_parameters: Dict
+    payload_source_parameters: Dict
     payload_operation_class: Type[PayloadOperation]
     payload_operation_config: Dict
     payload_sink_class: Type[PayloadSink]
@@ -64,7 +64,7 @@ class PayloadOperationTask(ComputingTask):
     def __init__(
         self,
         payload_source_class: Type[PayloadSource],
-        data_source_parameters: Dict,
+        payload_source_parameters: Dict,
         payload_operation_class: Type[PayloadOperation],
         payload_operation_config: Dict,
         payload_sink_class: Type[PayloadSink],
@@ -74,15 +74,15 @@ class PayloadOperationTask(ComputingTask):
         Initialize the PayloadOperationTask with the required components and configurations.
 
         Args:
-            data_source_class (Type[DataSource]): The class for the data source.
-            data_source_parameters (Dict): Parameters for initializing the data source.
+            payload_source_class (Type[DataSource]): The class for the data source.
+            payload_source_parameters (Dict): Parameters for initializing the data source.
             payload_operation_class (Type[PayloadOperation]): The class for the payload operation.
             payload_operation_config (Dict): Configuration for the payload operation.
-            data_sink_class (Type[DataSink]): The class for the data sink.
-            data_sink_parameters (Dict): Parameters for initializing the data sink.
+            payload_sink_class (Type[DataSink]): The class for the data sink.
+            payload_sink_parameters (Dict): Parameters for initializing the data sink.
         """
         self.payload_source_class = payload_source_class
-        self.data_source_parameters = data_source_parameters
+        self.payload_source_parameters = payload_source_parameters
         self.payload_operation_class = payload_operation_class
         self.payload_operation_config = payload_operation_config
         self.payload_sink_class = payload_sink_class
@@ -103,7 +103,7 @@ class PayloadOperationTask(ComputingTask):
         # Retrieve data and context from the data source
         payload_source_instance = self.payload_source_class()
         data, context = payload_source_instance.get_payload(
-            **self.data_source_parameters
+            **self.payload_source_parameters
         )
 
         # Initialize and apply the payload operation
