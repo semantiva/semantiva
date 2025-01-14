@@ -3,7 +3,7 @@ import numpy as np
 from semantic_framework.specializations.audio.audio_data_types import (
     SingleChannelAudioDataType,
 )
-
+from semantic_framework.context_operations import ContextType
 from semantic_framework.payload_operations import Pipeline
 
 from test_audio_algorithm import (
