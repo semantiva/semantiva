@@ -31,7 +31,7 @@ class PayloadOperation(ContextObserver, ABC):
     def _process(self, data: BaseDataType, context: ContextType): ...
 
     def process(
-        self, data: BaseDataType, context: ContextType
+        self, data: BaseDataType, context: ContextType | dict[Any, Any]
     ) -> tuple[BaseDataType, ContextType]:
         """
         Public method to execute the payload processing logic.
