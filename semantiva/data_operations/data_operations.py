@@ -79,6 +79,8 @@ class BaseDataOperation(ABC):
             param.name
             for param in signature.parameters.values()
             if param.name != "data"
+            and param.kind
+            not in {inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD}
         ]
 
     def __str__(self):

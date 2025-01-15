@@ -233,8 +233,31 @@ class Pipeline(PayloadOperation):
         """
         summary = "Pipeline Structure:\n"
 
+        all_context_params = set()
+        probe_injector_params = set()
+        node_summary = ""
         for i, node in enumerate(self.nodes):
-            summary += f"{i + 1}. Node: {node}\n"
+
+            operation_params = set(node.data_operation.get_operation_parameter_names())
+            node_config_params = set(node.operation_config.keys())
+            context_params = operation_params - node_config_params
+
+            if isinstance(node, ProbeContextInjectorNode):
+                probe_injector_params.add(node.context_keyword)
+
+            all_context_params.update(context_params)
+            node_summary += f"{i + 1}. Node: {node.data_operation.__class__.__name__}({node.__class__.__name__})\n"
+            node_summary += "\tParameters:\n"
+            node_summary += (
+                f"\t\tFrom pipeline configuration: {node_config_params or None}\n"
+            )
+            node_summary += f"\t\tFrom initial context: {(context_params - probe_injector_params) or None}\n"
+            node_summary += f"\t\tFrom ProbeInjectorNode: {context_params or None}\n"
+
+        # Determine the final values needed in the context
+        needed_context_parameters = all_context_params - probe_injector_params
+        summary += f"Context parameters needed: {needed_context_parameters or None}\n"
+        summary += node_summary
         summary += f"Pipeline {self.stop_watch}"
         return summary
 
