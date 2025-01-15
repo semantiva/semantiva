@@ -70,7 +70,14 @@ class ImageClipping(ImageAlgorithm):
     """
 
     def _operation(
-        self, data: ImageDataType, x_start: int, x_end: int, y_start: int, y_end: int
+        self,
+        data: ImageDataType,
+        x_start: int,
+        x_end: int,
+        y_start: int,
+        y_end: int,
+        *args,
+        **kwargs,
     ) -> ImageDataType:
         """
         Clips a rectangular region from the input image.

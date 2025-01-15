@@ -120,7 +120,7 @@ class DataSink(ABC):
     """
 
     @abstractmethod
-    def _send_data(self, data: BaseDataType, *args, **kwargs):
+    def _send_data(self, *args, **kwargs):
         """
         Abstract method to implement data transmission logic.
 
@@ -133,7 +133,7 @@ class DataSink(ABC):
         """
         ...
 
-    def send_data(self, data: BaseDataType, *args, **kwargs):
+    def send_data(self, *args, **kwargs):
         """
         Send data by invoking the `_send_data` method.
 
@@ -144,7 +144,7 @@ class DataSink(ABC):
         Returns:
             None
         """
-        return self._send_data(data, *args, **kwargs)
+        return self._send_data(*args, **kwargs)
 
     @abstractmethod
     def input_data_type(self) -> BaseDataType:
