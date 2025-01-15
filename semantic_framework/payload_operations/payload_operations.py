@@ -89,7 +89,7 @@ class Node(PayloadOperation):
         super().__init__()
         self.data_operation = (
             data_operation(self)
-            if issubclass(data_operation, DataAlgorithm)
+            if issubclass(type(data_operation), DataAlgorithm)
             else data_operation()
         )
 
@@ -557,7 +557,7 @@ def node_factory(node_definition: Dict) -> Node:
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
 
-    if issubclass(operation, DataAlgorithm):
+    if issubclass(type(operation), DataAlgorithm):
         if context_keyword is not None:
             raise ValueError(
                 "context_keyword must not be defined for DataAlgorithm nodes."

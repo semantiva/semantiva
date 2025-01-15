@@ -1,4 +1,3 @@
-import numpy as np
 from semantic_framework.data_operations import DataAlgorithm
 from .image_data_types import ImageDataType, ImageStackDataType
 

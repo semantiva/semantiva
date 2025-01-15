@@ -107,7 +107,6 @@ class DataAlgorithm(BaseDataOperation):
         Returns:
             BaseDataType: The expected output data type.
         """
-        pass
 
     def _notify_context_update(self, key: str, value: Any):
         """
@@ -160,8 +159,6 @@ class DataProbe(BaseDataOperation):
 
     This class can be extended to implement specific probing functionalities.
     """
-
-    pass
 
 
 class AlgorithmTopologyFactory:

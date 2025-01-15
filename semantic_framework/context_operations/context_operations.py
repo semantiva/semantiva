@@ -25,7 +25,6 @@ class ContextOperation(ABC):
         Returns:
             ContextType: The modified (or unchanged) context after the operation.
         """
-        ...
 
     def operate_context(self, context: ContextType) -> ContextType:
         """
@@ -51,7 +50,6 @@ class ContextOperation(ABC):
             List[str]: A list of context keys that the operation expects to be present
                        before execution.
         """
-        pass
 
     @abstractmethod
     def get_created_keys(self) -> List[str]:
@@ -62,7 +60,6 @@ class ContextOperation(ABC):
             List[str]: A list of context keys that the operation will add or create
                        as a result of execution.
         """
-        pass
 
     @abstractmethod
     def get_suppressed_keys(self) -> List[str]:
@@ -73,7 +70,6 @@ class ContextOperation(ABC):
             List[str]: A list of context keys that the operation will remove or render
                        obsolete during its execution.
         """
-        pass
 
     def __str__(self):
         return f"{self.__class__.__name__}"
