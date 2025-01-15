@@ -59,7 +59,6 @@ class ImageStackSource(DataSource):
         Returns:
             ImageStackDataType: The retrieved image stack data.
         """
-        pass
 
     def get_data(self, *args, **kwargs) -> ImageStackDataType:
         """
@@ -95,7 +94,6 @@ class ImageDataSink(DataSink):
         Parameters:
             data (ImageDataType): The image data to be consumed or stored.
         """
-        pass
 
     def send_data(self, data: ImageDataType, *args, **kwargs):
         """
@@ -131,7 +129,6 @@ class ImageStackDataSink(DataSink):
         Parameters:
             data (ImageStackDataType): The image stack data to be consumed or stored.
         """
-        pass
 
     def send_data(self, data: ImageStackDataType, *args, **kwargs):
         """
@@ -169,7 +166,6 @@ class ImagePayloadSink(PayloadSink):
             data (ImageDataType): The image data to be consumed or stored.
             context (ContextType): The associated context or metadata for the image data.
         """
-        pass
 
     def send_payload(self, data: ImageDataType, context: ContextType, *args, **kwargs):
         """
@@ -214,7 +210,6 @@ class ImageStackPayloadSource(PayloadSource):
                 A tuple where the first element is the `ImageStackDataType` object and
                 the second element is a dictionary representing the context or metadata.
         """
-        pass
 
     def get_payload(self, *args, **kwargs) -> tuple[ImageStackDataType, dict]:
         """

@@ -76,8 +76,6 @@ class ImageClipping(ImageAlgorithm):
         x_end: int,
         y_start: int,
         y_end: int,
-        *args,
-        **kwargs,
     ) -> ImageDataType:
         """
         Clips a rectangular region from the input image.
@@ -97,11 +95,11 @@ class ImageClipping(ImageAlgorithm):
         """
 
         # Ensure the region is within bounds
-        if not (0 <= x_start < x_end <= data.data.shape[1]):
+        if not 0 <= x_start < x_end <= data.data.shape[1]:
             raise ValueError(
                 f"x-coordinates out of bounds: x_start={x_start}, x_end={x_end}, width={data.data.shape[1]}"
             )
-        if not (0 <= y_start < y_end <= data.data.shape[0]):
+        if not 0 <= y_start < y_end <= data.data.shape[0]:
             raise ValueError(
                 f"y-coordinates out of bounds: y_start={y_start}, y_end={y_end}, height={data.data.shape[0]}"
             )

@@ -23,7 +23,6 @@ class SingleChannelAudioSource(PayloadSource):
         Returns:
             SingleChannelAudioDataType: The encapsulated audio data.
         """
-        pass
 
     def get_data(self):
         """
@@ -50,7 +49,6 @@ class DualChannelAudioSource(PayloadSource):
         Returns:
             DualChannelAudioDataType: The encapsulated audio data.
         """
-        pass
 
     def get_data(self):
         """
@@ -77,7 +75,6 @@ class SingleChannelAudioSink(PayloadSink):
         Args:
             data (SingleChannelAudioDataType): The audio data to store.
         """
-        pass
 
     def send_data(self, data: SingleChannelAudioDataType):
         """
@@ -104,7 +101,6 @@ class DualChannelAudioSink(PayloadSink):
         Args:
             data (DualChannelAudioDataType): The audio data to store.
         """
-        pass
 
     def send_data(self, data: DualChannelAudioDataType):
         """
@@ -131,7 +127,6 @@ class SingleChannelPayloadSource(PayloadSource):
         Returns:
             SingleChannelAudioDataType: The encapsulated audio data payload.
         """
-        pass
 
     def get_payload(self):
         """
@@ -158,7 +153,6 @@ class DualChannelPayloadSource(PayloadSource):
         Returns:
             DualChannelAudioDataType: The encapsulated audio data payload.
         """
-        pass
 
     def get_payload(self):
         """
@@ -185,7 +179,6 @@ class SingleChannelPayloadSink(PayloadSink):
         Args:
             payload (SingleChannelAudioDataType): The audio data payload to store.
         """
-        pass
 
     def send_payload(self, payload: SingleChannelAudioDataType):
         """
@@ -212,7 +205,6 @@ class DualChannelPayloadSink(PayloadSink):
         Args:
             payload (DualChannelAudioDataType): The audio data payload to store.
         """
-        pass
 
     def send_payload(self, payload: DualChannelAudioDataType):
         """
