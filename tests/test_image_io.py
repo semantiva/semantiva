@@ -1,11 +1,11 @@
 import pytest
 import os
 import numpy as np
-from semantic_framework.specializations.image.image_data_types import (
+from semantiva.specializations.image.image_data_types import (
     ImageDataType,
     ImageStackDataType,
 )
-from semantic_framework.specializations.image.image_loaders_savers_generators import (
+from semantiva.specializations.image.image_loaders_savers_generators import (
     ImageDataRandomGenerator,
     ImageStackRandomGenerator,
     NpzImageDataTypeLoader,

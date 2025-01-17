@@ -1,5 +1,5 @@
 import numpy as np
-from semantic_framework.data_types import BaseDataType
+from semantiva.data_types import BaseDataType
 
 
 class SingleChannelAudioDataType(BaseDataType):

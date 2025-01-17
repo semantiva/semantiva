@@ -1,6 +1,6 @@
 from abc import abstractmethod
-from semantic_framework.context_operations.context_types import ContextType
-from semantic_framework.data_io import DataSource, PayloadSource, DataSink, PayloadSink
+from semantiva.context_operations.context_types import ContextType
+from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 from .image_data_types import ImageDataType, ImageStackDataType
 
 

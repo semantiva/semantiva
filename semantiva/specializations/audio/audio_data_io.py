@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from semantic_framework.data_io import (
+from semantiva.data_io import (
     PayloadSource,
     PayloadSink,
     PayloadSource,

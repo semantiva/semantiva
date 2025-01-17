@@ -1,4 +1,4 @@
-from semantic_framework.data_operations import DataAlgorithm, DataProbe
+from semantiva.data_operations import DataAlgorithm, DataProbe
 from .audio_data_types import SingleChannelAudioDataType, DualChannelAudioDataType
 
 
