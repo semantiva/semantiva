@@ -1,0 +1,32 @@
+[project]
+name = "semantiva"  
+version = "0.1.0"
+description = "The Semantiva is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations."
+license = "MIT" 
+readme = "README.md" 
+requires-python = "==3.10.12"
+dependencies = [
+    "black ==24.10.0",
+    "mypy ==1.14.1",
+    "numpy ==2.2.1",
+    "pillow ==11.1.0",
+    "pylint ==3.3.3",
+    "pytest ==8.3.4"
+]
+distribution = true
+
+[tool.black]
+# Configuration for the black code formatter
+
+
+[tool.pylint]
+# Configuration for pylint (static analysis)
+max-line-length = 100  
+fail-under = 7.5
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm.scripts]
+cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script

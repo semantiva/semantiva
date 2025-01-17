@@ -1,12 +1,12 @@
 import pytest
 import numpy as np
-from semantic_framework.specializations.image.image_algorithms import (
+from semantiva.specializations.image.image_algorithms import (
     ImageAddition,
     ImageSubtraction,
     ImageClipping,
     StackToImageMeanProjector,
 )
-from semantic_framework.specializations.image.image_loaders_savers_generators import (
+from semantiva.specializations.image.image_loaders_savers_generators import (
     ImageDataRandomGenerator,
     ImageStackRandomGenerator,
 )

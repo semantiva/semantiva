@@ -1,16 +1,16 @@
 import pytest
-from semantic_framework.context_operations.context_types import ContextType
-from semantic_framework.specializations.image.image_data_types import (
+from semantiva.context_operations.context_types import ContextType
+from semantiva.specializations.image.image_data_types import (
     ImageDataType,
 )
-from semantic_framework.payload_operations import Pipeline
-from semantic_framework.specializations.image.image_algorithms import (
+from semantiva.payload_operations import Pipeline
+from semantiva.specializations.image.image_algorithms import (
     ImageAddition,
     ImageSubtraction,
     ImageClipping,
     StackToImageMeanProjector,
 )
-from semantic_framework.specializations.image.image_loaders_savers_generators import (
+from semantiva.specializations.image.image_loaders_savers_generators import (
     ImageDataRandomGenerator,
     ImageStackRandomGenerator,
 )

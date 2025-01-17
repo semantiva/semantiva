@@ -1,7 +1,7 @@
 #########################
 # Step 1: Define StringLiteralDataType
 #########################
-from semantic_framework.data_types import BaseDataType
+from semantiva.data_types import BaseDataType
 
 
 class StringLiteralDataType(BaseDataType):
@@ -34,7 +34,7 @@ class StringLiteralDataType(BaseDataType):
 #########################
 # Step 2: Create a Specialized StringLiteralAlgorithm Using AlgorithmTopologyFactory
 #########################
-from semantic_framework.data_operations import AlgorithmTopologyFactory
+from semantiva.data_operations import AlgorithmTopologyFactory
 
 # Dynamically create a base algorithm class for (StringLiteralDataType -> StringLiteralDataType)
 StringLiteralAlgorithm = AlgorithmTopologyFactory.create_algorithm(
@@ -81,7 +81,7 @@ node_configurations = [
 #########################
 # Step 5: Instantiate and Use the Pipeline
 #########################
-from semantic_framework.payload_operations import Pipeline
+from semantiva.payload_operations import Pipeline
 
 if __name__ == "__main__":
     # 1. Initialize the minimal pipeline with our node configurations

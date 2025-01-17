@@ -1,6 +1,6 @@
 from PIL import Image
 import numpy as np
-from semantic_framework.context_operations.context_types import ContextType
+from semantiva.context_operations.context_types import ContextType
 from .image_data_io import (
     ImageDataSource,
     ImageStackSource,

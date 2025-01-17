@@ -1,17 +1,17 @@
 import pytest
 import numpy as np
-from semantic_framework.specializations.audio.audio_data_types import (
+from semantiva.specializations.audio.audio_data_types import (
     SingleChannelAudioDataType,
     DualChannelAudioDataType,
 )
-from semantic_framework.specializations.audio.audio_operations import (
+from semantiva.specializations.audio.audio_operations import (
     SingleChannelAudioAlgorithm,
     SingleChannelAudioProbe,
     DualChannelAudioAlgorithm,
 )
 
-from semantic_framework.payload_operations import node_factory
-from semantic_framework.context_operations.context_types import ContextType
+from semantiva.payload_operations import node_factory
+from semantiva.context_operations.context_types import ContextType
 
 
 class SingleChannelAudioMultiplyAlgorithm(SingleChannelAudioAlgorithm):

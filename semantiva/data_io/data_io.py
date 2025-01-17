@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
-from ..data_types import BaseDataType
-from ..context_operations import ContextType
+from semantiva.context_operations import ContextType
+from semantiva.data_types import BaseDataType
 
 
 class DataSource(ABC):

@@ -1,8 +1,8 @@
-# Semantic Framework
+# Semantiva
 
 ## Overview
 
-The **Semantic Framework** is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations. By leveraging concepts from ontology and context-aware computing, this framework provides tools for managing, processing, and interpreting data in a manner that aligns with predefined semantic rules and contexts.
+The **Semantiva** is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations. By leveraging concepts from ontology and context-aware computing, this framework provides tools for managing, processing, and interpreting data in a manner that aligns with predefined semantic rules and contexts.
 
 This framework is particularly suited for applications where:
 - **Semantic transparency** is essential for traceable and explainable operations.
@@ -43,14 +43,14 @@ This project is licensed under the MIT License.
 
 ## Appendix: Getting Started
 
-This short guide helps you **jump right in** with a minimal example showcasing the **Semantic Framework’s** modular design. We’ll create and process a simple **string literal** rather than dealing with more complex domains like audio or images.
+This short guide helps you **jump right in** with a minimal example showcasing the **Semantiva’s** modular design. We’ll create and process a simple **string literal** rather than dealing with more complex domains like audio or images.
 
 
 ```python
 #########################
 # Step 1: Define StringLiteralDataType
 #########################
-from semantic_framework.data_types import BaseDataType
+from semantiva.data_types import BaseDataType
 
 
 class StringLiteralDataType(BaseDataType):
@@ -83,7 +83,7 @@ class StringLiteralDataType(BaseDataType):
 #########################
 # Step 2: Create a Specialized StringLiteralAlgorithm Using AlgorithmTopologyFactory
 #########################
-from semantic_framework.data_operations import AlgorithmTopologyFactory
+from semantiva.data_operations import AlgorithmTopologyFactory
 
 # Dynamically create a base algorithm class for (StringLiteralDataType -> StringLiteralDataType)
 StringLiteralAlgorithm = AlgorithmTopologyFactory.create_algorithm(
@@ -130,7 +130,7 @@ node_configurations = [
 #########################
 # Step 5: Instantiate and Use the Pipeline
 #########################
-from semantic_framework.payload_operations import Pipeline
+from semantiva.payload_operations import Pipeline
 
 if __name__ == "__main__":
     # 1. Initialize the minimal pipeline with our node configurations
