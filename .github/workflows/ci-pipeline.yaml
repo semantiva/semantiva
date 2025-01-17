@@ -61,4 +61,4 @@ jobs:
 
       - name: Run pytest
         run: |
-          PYTHONPATH=. pytest --maxfail=1 --disable-warnings -q
+          PYTHONPATH=. pdm run pytest --maxfail=1 --disable-warnings -q
