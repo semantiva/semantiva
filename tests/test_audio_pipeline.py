@@ -3,8 +3,8 @@ import numpy as np
 from semantiva.specializations.audio.audio_data_types import (
     SingleChannelAudioDataType,
 )
-from semantiva.payload_operations import Pipeline
 
+from semantiva.payload_operations import Pipeline
 from semantiva.specializations.audio.audio_operations import SingleChannelAudioAlgorithm
 from .test_audio_algorithm import (
     SingleChannelAudioMultiplyAlgorithm,
