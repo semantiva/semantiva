@@ -261,12 +261,11 @@ class Pipeline(PayloadOperation):
                 else "None"
             )
             node_summary += f"{i + 1}. Node: {node.data_operation.__class__.__name__}({node.__class__.__name__})\n"
-            node_summary += "\tParameters:\n"
+            node_summary += f"\tParameters: {format_set(operation_params)}\n"
             node_summary += (
                 f"\t\tFrom pipeline configuration: {config_with_values or None}\n"
             )
-            node_summary += f"\t\tFrom initial context: {format_set(context_params - probe_injector_params) or None}\n"
-            node_summary += f"\t\tFrom ProbeInjectorNode: {format_set(probe_injector_params & context_params) or None}\n"
+            node_summary += f"\t\tFrom context: {format_set(context_params - probe_injector_params) or None}\n"
 
         # Determine the final values needed in the context
         needed_context_parameters = all_context_params - probe_injector_params
