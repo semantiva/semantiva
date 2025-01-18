@@ -231,6 +231,11 @@ class Pipeline(PayloadOperation):
             str: A summary of the pipeline including nodes and their sequence, as well as
                  the total pipeline execution time.
         """
+
+        # Format sets as comma-separated values instead of Python set syntax
+        def format_set(s):
+            return ", ".join(sorted(s)) if s else "None"
+
         summary = "Pipeline Structure:\n"
 
         all_context_params = set()
@@ -246,17 +251,26 @@ class Pipeline(PayloadOperation):
                 probe_injector_params.add(node.context_keyword)
 
             all_context_params.update(context_params)
+
+            # Extract configuration parameters with their values
+            config_with_values = (
+                ", ".join(
+                    f"{key}={value}" for key, value in node.operation_config.items()
+                )
+                if node.operation_config
+                else "None"
+            )
             node_summary += f"{i + 1}. Node: {node.data_operation.__class__.__name__}({node.__class__.__name__})\n"
             node_summary += "\tParameters:\n"
             node_summary += (
-                f"\t\tFrom pipeline configuration: {node_config_params or None}\n"
+                f"\t\tFrom pipeline configuration: {config_with_values or None}\n"
             )
-            node_summary += f"\t\tFrom initial context: {(context_params - probe_injector_params) or None}\n"
-            node_summary += f"\t\tFrom ProbeInjectorNode: {context_params or None}\n"
+            node_summary += f"\t\tFrom initial context: {format_set(context_params - probe_injector_params) or None}\n"
+            node_summary += f"\t\tFrom ProbeInjectorNode: {format_set(probe_injector_params & context_params) or None}\n"
 
         # Determine the final values needed in the context
         needed_context_parameters = all_context_params - probe_injector_params
-        summary += f"Context parameters needed: {needed_context_parameters or None}\n"
+        summary += f"Context parameters needed: {format_set(needed_context_parameters) or None}\n"
         summary += node_summary
         summary += f"Pipeline {self.stop_watch}"
         return summary

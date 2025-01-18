@@ -3,14 +3,32 @@ import numpy as np
 from semantiva.specializations.audio.audio_data_types import (
     SingleChannelAudioDataType,
 )
-from semantiva.context_operations import ContextType
 from semantiva.payload_operations import Pipeline
 
+from semantiva.specializations.audio.audio_operations import SingleChannelAudioAlgorithm
 from .test_audio_algorithm import (
     SingleChannelAudioMultiplyAlgorithm,
     DualChannelAudioMultiplyAlgorithm,
     SingleChannelMockDataProbe,
 )
+
+
+class SingleChannelAudioDummyAlgorithm(SingleChannelAudioAlgorithm):
+    """
+    A dummy algorithm to test pipeline inspection.
+    """
+
+    def _operation(self, data, mock_keyword: str):
+        return data
+
+
+class SingleChannelAudioDummyContextAlgorithm(SingleChannelAudioAlgorithm):
+    """
+    A dummy algorithm to test pipeline inspection.
+    """
+
+    def _operation(self, data, dummy_context: str):
+        return data
 
 
 @pytest.fixture
@@ -44,13 +62,21 @@ def test_pipeline_execution(single_channel_audio_data):
             "operation": SingleChannelMockDataProbe,
             "context_keyword": "mock_keyword",
         },
+        {
+            "operation": SingleChannelAudioDummyAlgorithm,
+        },
+        {
+            "operation": SingleChannelAudioDummyContextAlgorithm,
+        },
     ]
 
     # Initialize the pipeline
     pipeline = Pipeline(node_configurations)
 
     # Execute the pipeline
-    output_data, output_context = pipeline.process(single_channel_audio_data, {})
+    output_data, output_context = pipeline.process(
+        single_channel_audio_data, {"dummy_context": "dummy_context"}
+    )
 
     # Validate the output
     assert isinstance(output_data, SingleChannelAudioDataType)
