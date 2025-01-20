@@ -36,6 +36,10 @@ jobs:
         run: |
           pdm run pylint ${{ env.project_name }} --fail-under=7.5
 
+      - name: Run mypy
+        run: |
+          pdm run mypy .
+
       - name: Run black
         run: |
           pdm run black --check ${{ env.project_name }}
@@ -60,6 +64,10 @@ jobs:
         run: |
           pdm install
 
-      - name: Run pytest
+      - name: Run pytest with coverage report
         run: |
-          PYTHONPATH=. pdm run pytest --maxfail=1 --disable-warnings -q
+          pdm run coverage run -m pytest --maxfail=1 -q -s
+        
+      - name: Display coverage report
+        run: |
+          pdm run coverage report

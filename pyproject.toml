@@ -11,7 +11,8 @@ dependencies = [
     "numpy ==2.2.1",
     "pillow ==11.1.0",
     "pylint ==3.3.3",
-    "pytest ==8.3.4"
+    "pytest ==8.3.4",
+    "coverage",
 ]
 distribution = true
 
@@ -23,6 +24,14 @@ distribution = true
 # Configuration for pylint (static analysis)
 max-line-length = 100  
 fail-under = 7.5
+
+[tool.mypy]
+exclude = [
+    "^tests/test_string_specialization\\.py$",  
+]
+
+[tool.coverage.run]
+source = ["semantiva"]
 
 [build-system]
 requires = ["pdm-backend"]

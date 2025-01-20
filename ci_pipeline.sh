@@ -19,9 +19,14 @@ pdm run pylint semantiva --fail-under=7.5
 echo "Running black..."
 pdm run black --check semantiva
 
-# Step 4: Run tests using pytest
+# Step 4: Run mypy
+echo "Running mypy"
+pdm run mypy .
+
+# Step 5: Run tests using pytest
 echo "Running pytest..."
-pdm run pytest --maxfail=1 --disable-warnings -q
+pdm run coverage run -m pytest --maxfail=1 -q -s
+pdm run coverage report
 
 # You can add more steps here as needed (e.g., build, deploy, etc.)
 echo "Pipeline finished successfully."

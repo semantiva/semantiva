@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Tuple, Type, TypeVar, Generic
 from semantiva.context_operations import ContextType
 from semantiva.data_types import BaseDataType
+
+T = TypeVar("T", bound=BaseDataType)
 
 
 class DataSource(ABC):
@@ -106,7 +108,7 @@ class PayloadSource(ABC):
         ...
 
 
-class DataSink(ABC):
+class DataSink(ABC, Generic[T]):
     """
     Abstract base class for data sinks within the framework.
 
@@ -120,7 +122,7 @@ class DataSink(ABC):
     """
 
     @abstractmethod
-    def _send_data(self, *args, **kwargs):
+    def _send_data(self, data: T, *args, **kwargs):
         """
         Abstract method to implement data transmission logic.
 
@@ -133,7 +135,7 @@ class DataSink(ABC):
         """
         ...
 
-    def send_data(self, *args, **kwargs):
+    def send_data(self, data: T, *args, **kwargs):
         """
         Send data by invoking the `_send_data` method.
 
@@ -147,17 +149,16 @@ class DataSink(ABC):
         return self._send_data(*args, **kwargs)
 
     @abstractmethod
-    def input_data_type(self) -> BaseDataType:
+    def input_data_type(self) -> BaseDataType[T]:
         """
         Define the type of data consumed by this sink.
 
         Returns:
             BaseDataType: The data type consumed by the sink.
         """
-        ...
 
 
-class PayloadSink(ABC):
+class PayloadSink(ABC, Generic[T]):
     """
     Abstract base class for payload sinks within the framework.
 
@@ -170,7 +171,7 @@ class PayloadSink(ABC):
     """
 
     @abstractmethod
-    def _send_payload(self, data: BaseDataType, context: ContextType, *args, **kwargs):
+    def _send_payload(self, data: T, context: ContextType, *args, **kwargs):
         """
         Abstract method to implement payload consumption logic.
 
@@ -185,7 +186,7 @@ class PayloadSink(ABC):
         """
         pass
 
-    def send_payload(self, data: BaseDataType, context: ContextType, *args, **kwargs):
+    def send_payload(self, data: T, context: ContextType, *args, **kwargs):
         """
         Consume the provided data and context by invoking the `_send_payload` method.
 
@@ -201,11 +202,10 @@ class PayloadSink(ABC):
         self._send_payload(data, context, *args, **kwargs)
 
     @abstractmethod
-    def input_data_type(self) -> BaseDataType:
+    def input_data_type(self) -> BaseDataType[T]:
         """
         Define the type of data consumed by this sink.
 
         Returns:
             BaseDataType: The data type consumed by the sink.
         """
-        ...

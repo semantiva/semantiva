@@ -2,7 +2,7 @@ import numpy as np
 from semantiva.data_types import BaseDataType
 
 
-class SingleChannelAudioDataType(BaseDataType):
+class SingleChannelAudioDataType(BaseDataType[np.ndarray]):
     """
     Represents single-channel audio data.
 
@@ -13,7 +13,7 @@ class SingleChannelAudioDataType(BaseDataType):
         _data (np.ndarray): The encapsulated single-channel audio data.
     """
 
-    def __init__(self, data: np.ndarray):
+    def __init__(self, data: np.ndarray, *args, **kwargs):
         """
         Initialize the SingleChannelAudioDataType with the provided data.
 
@@ -30,7 +30,7 @@ class SingleChannelAudioDataType(BaseDataType):
         assert data.ndim == 1, "Data must be single channel ndarray."
 
 
-class DualChannelAudioDataType(BaseDataType):
+class DualChannelAudioDataType(BaseDataType[np.ndarray]):
     """
     Represents dual-channel (stereo) audio data.
 
@@ -41,7 +41,7 @@ class DualChannelAudioDataType(BaseDataType):
         _data (np.ndarray): The encapsulated dual-channel audio data.
     """
 
-    def __init__(self, data: np.ndarray):
+    def __init__(self, data: np.ndarray, *args, **kwargs):
         """
         Initialize the DualChannelAudioDataType with the provided data.
 

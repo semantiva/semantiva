@@ -1,21 +1,24 @@
-from typing import Any
+from typing import Any, TypeVar, Generic
 from abc import ABC, abstractmethod
 
 
-class BaseDataType(ABC):
+T = TypeVar("T")
+
+
+class BaseDataType(ABC, Generic[T]):
     """
-    Abstract base class for all data types in the semantic framework.
+    Abstract generic base class for all data types in the semantic framework.
 
     This class provides a foundation for creating and managing various data types,
     ensuring consistency and extensibility across the framework.
 
     Attributes:
-        _data (Any): The underlying data encapsulated by the data type.
+        _data (T): The underlying data encapsulated by the data type.
     """
 
-    _data: Any
+    _data: T
 
-    def __init__(self, data: Any):
+    def __init__(self, data: T):
         """
         Initialize the BaseDataType with the provided data.
 
@@ -34,7 +37,7 @@ class BaseDataType(ABC):
         self._data = data
 
     @abstractmethod
-    def validate(self, data: Any) -> bool:
+    def validate(self, data: T) -> bool:
         """
         Abstract method to validate the encapsulated data.
 
@@ -44,7 +47,6 @@ class BaseDataType(ABC):
         Returns:
             bool: True if the data is valid, False otherwise.
         """
-        pass
 
 
 class DataSequence(BaseDataType):
@@ -66,4 +68,3 @@ class DataSequence(BaseDataType):
         Returns:
             type: The expected type of elements in the sequence.
         """
-        pass

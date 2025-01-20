@@ -62,7 +62,7 @@ class SingleChannelMockDataProbe(SingleChannelAudioProbe):
     A probe to retrieve the duration (length) of single-channel audio data.
     """
 
-    def _operation(self, data: SingleChannelAudioDataType, *args, **kwargs) -> int:
+    def _operation(self, data, *args, **kwargs) -> int:
         return len(data.data)
 
 

@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing_extensions import override
 from semantiva.context_operations.context_types import ContextType
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 from .image_data_types import ImageDataType, ImageStackDataType
@@ -155,7 +156,8 @@ class ImagePayloadSink(PayloadSink):
     """
 
     @abstractmethod
-    def _send_payload(self, data: ImageDataType, context: dict, *args, **kwargs):
+    @override
+    def _send_payload(self, data: ImageDataType, context: ContextType, *args, **kwargs):
         """
         Abstract method to consume and store `ImageDataType` data along with context.
 
@@ -167,7 +169,7 @@ class ImagePayloadSink(PayloadSink):
             context (ContextType): The associated context or metadata for the image data.
         """
 
-    def send_payload(self, data: ImageDataType, context: ContextType, *args, **kwargs):
+    def send_payload(self, data, context, *args, **kwargs):
         """
         Consume and store `ImageDataType` data along with context.
 
@@ -199,7 +201,7 @@ class ImageStackPayloadSource(PayloadSource):
     """
 
     @abstractmethod
-    def _get_payload(self, *args, **kwargs) -> tuple[ImageStackDataType, dict]:
+    def _get_payload(self, *args, **kwargs) -> tuple[ImageStackDataType, ContextType]:
         """
         Abstract method to retrieve an `ImageStackDataType` object and its associated context.
 
@@ -211,7 +213,7 @@ class ImageStackPayloadSource(PayloadSource):
                 the second element is a dictionary representing the context or metadata.
         """
 
-    def get_payload(self, *args, **kwargs) -> tuple[ImageStackDataType, dict]:
+    def get_payload(self, *args, **kwargs) -> tuple[ImageStackDataType, ContextType]:
         """
         Fetch and return an `ImageStackDataType` object and its associated context.
 
