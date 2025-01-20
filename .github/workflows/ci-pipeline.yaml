@@ -101,4 +101,4 @@ jobs:
 
       - name: Publish to PyPI
         run: |
-          pdm publish git
+          pdm publish
