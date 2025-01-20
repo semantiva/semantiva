@@ -2,9 +2,9 @@ from abc import abstractmethod
 from semantiva.data_io import (
     PayloadSource,
     PayloadSink,
-    PayloadSource,
-    PayloadSink,
 )
+from semantiva.data_types import BaseDataType
+from semantiva.context_operations.context_types import ContextType
 from .audio_data_types import SingleChannelAudioDataType, DualChannelAudioDataType
 
 
@@ -164,7 +164,7 @@ class DualChannelPayloadSource(PayloadSource):
         return self._get_payload()
 
 
-class SingleChannelPayloadSink(PayloadSink):
+class SingleChannelPayloadSink(PayloadSink[SingleChannelAudioDataType]):
     """
     Abstract base class for single-channel audio payload sinks.
 
@@ -172,7 +172,9 @@ class SingleChannelPayloadSink(PayloadSink):
     """
 
     @abstractmethod
-    def _send_payload(self, payload: SingleChannelAudioDataType):
+    def _send_payload(
+        self, data: SingleChannelAudioDataType, context: ContextType, *args, **kwargs
+    ):
         """
         Consume a payload of single-channel audio data.
 
@@ -180,14 +182,16 @@ class SingleChannelPayloadSink(PayloadSink):
             payload (SingleChannelAudioDataType): The audio data payload to store.
         """
 
-    def send_payload(self, payload: SingleChannelAudioDataType):
+    def send_payload(
+        self, data: SingleChannelAudioDataType, context: ContextType, *args, **kwargs
+    ):
         """
         Consume and store a payload of single-channel audio data.
 
         Args:
             payload (SingleChannelAudioDataType): The audio data payload to store.
         """
-        self._send_payload(payload)
+        self._send_payload(data, context, *args, **kwargs)
 
 
 class DualChannelPayloadSink(PayloadSink):
@@ -198,7 +202,9 @@ class DualChannelPayloadSink(PayloadSink):
     """
 
     @abstractmethod
-    def _send_payload(self, payload: DualChannelAudioDataType):
+    def _send_payload(
+        self, data: DualChannelAudioDataType, context: ContextType, *args, **kwargs
+    ):
         """
         Consume a payload of dual-channel audio data.
 
@@ -206,11 +212,13 @@ class DualChannelPayloadSink(PayloadSink):
             payload (DualChannelAudioDataType): The audio data payload to store.
         """
 
-    def send_payload(self, payload: DualChannelAudioDataType):
+    def send_payload(
+        self, data: DualChannelAudioDataType, context: ContextType, *args, **kwargs
+    ):
         """
         Consume and store a payload of dual-channel audio data.
 
         Args:
             payload (DualChannelAudioDataType): The audio data payload to store.
         """
-        self._send_payload(payload)
+        self._send_payload(data, context, *args, **kwargs)

@@ -1,11 +1,14 @@
 import inspect
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Type, TypeVar, Generic
 from abc import ABC, abstractmethod
 from ..context_operations.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType
 
 
-class BaseDataOperation(ABC):
+T = TypeVar("T", bound=BaseDataType)
+
+
+class BaseDataOperation(ABC, Generic[T]):
     """
     Abstract base class for all data operations in the semantic framework.
 
@@ -15,17 +18,27 @@ class BaseDataOperation(ABC):
 
     @classmethod
     @abstractmethod
-    def input_data_type(cls) -> BaseDataType:
+    def input_data_type(cls) -> Type[BaseDataType]:
         """
         Define the type of input data required for the operation.
 
         Returns:
             type: The expected input data type.
         """
-        pass
+        return BaseDataType
+
+    @classmethod
+    def output_data_type(cls) -> Type[BaseDataType]:
+        """
+        Define the type of input data required for the operation.
+
+        Returns:
+            type: The expected input data type.
+        """
+        return cls.input_data_type()
 
     @abstractmethod
-    def _operation(self, data: BaseDataType, *args, **kwargs) -> Any:
+    def _operation(self, data: T, *args, **kwargs) -> Any:
         """
         Core logic for the operation. Must be implemented by subclasses.
 
@@ -39,7 +52,7 @@ class BaseDataOperation(ABC):
         """
         raise NotImplementedError("Subclasses must implement this method.")
 
-    def process(self, data: BaseDataType, *args, **kwargs) -> Any:
+    def process(self, data: T, *args, **kwargs) -> Any:
         """
         Execute the operation with the given data.
 
@@ -98,17 +111,7 @@ class DataAlgorithm(BaseDataOperation):
         context_observer (ContextObserver): An observer for managing context updates.
     """
 
-    context_observer: ContextObserver
-
-    @classmethod
-    @abstractmethod
-    def output_data_type(cls) -> BaseDataType:
-        """
-        Define the type of data output by the algorithm.
-
-        Returns:
-            BaseDataType: The expected output data type.
-        """
+    context_observer: Optional[ContextObserver]
 
     def _notify_context_update(self, key: str, value: Any):
         """

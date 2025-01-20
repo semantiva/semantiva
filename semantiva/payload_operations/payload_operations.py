@@ -1,4 +1,4 @@
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict, Optional, Type
 from abc import ABC, abstractmethod
 from .stop_watch import StopWatch
 from ..context_operations.context_operations import (
@@ -74,7 +74,7 @@ class Node(PayloadOperation):
 
     def __init__(
         self,
-        data_operation: BaseDataOperation,
+        data_operation: Type[BaseDataOperation],
         context_operation: ContextOperation,
         operation_config: Optional[Dict] = None,
     ):
@@ -346,7 +346,7 @@ class AlgorithmNode(Node):
 
     def __init__(
         self,
-        data_operation: DataAlgorithm,
+        data_operation: Type[DataAlgorithm],
         context_operation: ContextOperation,
         operation_parameters: Optional[Dict] = None,
     ):
@@ -418,7 +418,7 @@ class ProbeContextInjectorNode(ProbeNode):
 
     def __init__(
         self,
-        data_operation: BaseDataOperation,
+        data_operation: Type[BaseDataOperation],
         context_operation: ContextOperation,
         context_keyword: str,
         operation_parameters: Optional[Dict] = None,
@@ -495,7 +495,7 @@ class ProbeResultCollectorNode(ProbeNode):
 
     def __init__(
         self,
-        data_operation: DataProbe,
+        data_operation: Type[DataProbe],
         context_operation: ContextOperation,
         operation_parameters: Optional[Dict] = None,
     ):
@@ -592,6 +592,10 @@ def node_factory(node_definition: Dict) -> Node:
     context_operation = node_definition.get("context_operation", ContextPassthrough())
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
+
+    # Check if operation is valid (not None and a class type)
+    if operation is None or not isinstance(operation, type):
+        raise ValueError("operation must be a class type, not None.")
 
     if issubclass(operation, DataAlgorithm):
         if context_keyword is not None:

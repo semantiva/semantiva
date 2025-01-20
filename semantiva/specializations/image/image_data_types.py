@@ -2,7 +2,7 @@ import numpy as np
 from semantiva.data_types import BaseDataType, DataSequence
 
 
-class ImageDataType(BaseDataType):
+class ImageDataType(BaseDataType[np.ndarray]):
     """
     A class representing a 2D image data type, derived from BaseDataType.
 
@@ -17,7 +17,7 @@ class ImageDataType(BaseDataType):
             Validates that the input data is a 2D NumPy array.
     """
 
-    def __init__(self, data: np.ndarray):
+    def __init__(self, data: np.ndarray, *args, **kwargs):
         """
         Initializes the ImageDataType instance.
 
@@ -27,7 +27,7 @@ class ImageDataType(BaseDataType):
         Raises:
             AssertionError: If the input data is not a 2D NumPy array.
         """
-        super().__init__(data)
+        super().__init__(data, *args, **kwargs)
 
     def validate(self, data: np.ndarray):
         """
@@ -59,7 +59,7 @@ class ImageStackDataType(DataSequence):
             Validates that the input data is an N-dimensional NumPy array.
     """
 
-    def __init__(self, data: np.ndarray):
+    def __init__(self, data: np.ndarray, *args, **kwargs):
         """
         Initializes the ImageStackDataType instance with the provided data.
 
