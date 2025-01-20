@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'  # Trigger the build job only on version tags (e.g., v1.0.0, v2.0.0)
   pull_request:
     branches:
       - main
@@ -71,3 +73,32 @@ jobs:
       - name: Display coverage report
         run: |
           pdm run coverage report
+
+  build:
+    runs-on: ubuntu-latest
+    needs: ci-pipeline  # Ensure the build job runs after the ci-pipeline job completes successfully
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')  # Run only for tag pushes
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python_version }}
+
+      - name: Install PDM
+        run: |
+          pip install pdm
+
+      - name: Install dependencies using PDM
+        run: |
+          pdm install
+
+      - name: Build the package
+        run: |
+          pdm build  # Build the package (sdist and wheel)
+
+      - name: Publish to PyPI
+        run: |
+          pdm publish 
