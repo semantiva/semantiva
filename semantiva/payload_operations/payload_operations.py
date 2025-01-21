@@ -75,7 +75,7 @@ class Node(PayloadOperation):
     def __init__(
         self,
         data_operation: Type[BaseDataOperation],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         operation_config: Optional[Dict] = None,
     ):
         """
@@ -83,7 +83,7 @@ class Node(PayloadOperation):
 
         Args:
             data_operation (BaseDataOperation): The data operation associated with this node.
-            context_operation (ContextOperation): The context operation for managing context (default: ContextOperation).
+            context_operation (ContextOperation): The context operation for managing context.
             operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
         """
         super().__init__()
@@ -93,7 +93,7 @@ class Node(PayloadOperation):
             else data_operation()
         )
 
-        self.context_operation = context_operation
+        self.context_operation = context_operation()
         self.stop_watch = StopWatch()
         if operation_config is None:
             self.operation_config = {}
@@ -347,7 +347,7 @@ class AlgorithmNode(Node):
     def __init__(
         self,
         data_operation: Type[DataAlgorithm],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         operation_parameters: Optional[Dict] = None,
     ):
         """
@@ -419,7 +419,7 @@ class ProbeContextInjectorNode(ProbeNode):
     def __init__(
         self,
         data_operation: Type[BaseDataOperation],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         context_keyword: str,
         operation_parameters: Optional[Dict] = None,
     ):
@@ -496,7 +496,7 @@ class ProbeResultCollectorNode(ProbeNode):
     def __init__(
         self,
         data_operation: Type[DataProbe],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         operation_parameters: Optional[Dict] = None,
     ):
         """
@@ -589,7 +589,7 @@ def node_factory(node_definition: Dict) -> Node:
         ValueError: If the node definition is invalid or incompatible.
     """
     operation = node_definition.get("operation")
-    context_operation = node_definition.get("context_operation", ContextPassthrough())
+    context_operation = node_definition.get("context_operation", ContextPassthrough)
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
 
