@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     - Introduced `mypy` and added coverage reporting with `pytest`.
     - CI pipeline use `pdm` package.
 
-## Fixed
+### Fixed
 - Consistent versioning between Github and Pypi
 
 [v0.1.1]: https://github.com/semantiva/semantiva/releases/tag/v0.1.1
