@@ -75,7 +75,7 @@ class Node(PayloadOperation):
     def __init__(
         self,
         data_operation: Type[BaseDataOperation],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         operation_config: Optional[Dict] = None,
     ):
         """
@@ -347,7 +347,7 @@ class AlgorithmNode(Node):
     def __init__(
         self,
         data_operation: Type[DataAlgorithm],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         operation_parameters: Optional[Dict] = None,
     ):
         """
@@ -419,7 +419,7 @@ class ProbeContextInjectorNode(ProbeNode):
     def __init__(
         self,
         data_operation: Type[BaseDataOperation],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         context_keyword: str,
         operation_parameters: Optional[Dict] = None,
     ):
@@ -496,7 +496,7 @@ class ProbeResultCollectorNode(ProbeNode):
     def __init__(
         self,
         data_operation: Type[DataProbe],
-        context_operation: ContextOperation,
+        context_operation: Type[ContextOperation],
         operation_parameters: Optional[Dict] = None,
     ):
         """
