@@ -5,6 +5,7 @@ from semantiva.specializations.audio.audio_data_types import (
 )
 
 from semantiva.payload_operations import Pipeline
+from semantiva.context_operations import ContextPassthrough
 from semantiva.specializations.audio.audio_operations import SingleChannelAudioAlgorithm
 from .test_audio_algorithm import (
     SingleChannelAudioMultiplyAlgorithm,
@@ -64,6 +65,7 @@ def test_pipeline_execution(single_channel_audio_data):
         },
         {
             "operation": SingleChannelAudioDummyAlgorithm,
+            "context_operation": ContextPassthrough,
         },
         {
             "operation": SingleChannelAudioDummyContextAlgorithm,

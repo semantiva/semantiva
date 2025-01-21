@@ -2,90 +2,77 @@
 
 ## Overview
 
-The **Semantiva** is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations. By leveraging concepts from ontology and context-aware computing, this framework provides tools for managing, processing, and interpreting data in a manner that aligns with predefined semantic rules and contexts.
+**Semantiva** is an open-source, Python-based framework that unifies **Domain-Driven Design**, **Type-Oriented Development**, and **semantic transparency** to streamline data operations. It offers a structured way to define and process domain-specific data types and algorithms, ensuring clarity, consistency, and adaptability even in complex data-driven scenarios.
 
-This framework is particularly suited for applications where:
-- **Semantic transparency** is essential for traceable and explainable operations.
-- **Ontologies** guide the interpretation of data within well-defined domains.
+By enforcing **type-safe** relationships between data and algorithms, Semantiva simplifies the creation of transparent, interpretable workflows—enabling teams to focus on solving domain problems rather than battling ambiguous data models.
 
-## Key Features
+## Key Principles
 
-- **Ontology Integration**: Ensures data processing aligns with domain-specific ontologies, enabling standardized interpretation.
-- **Semantic Transparency**: Maintains traceability and clarity for all operations, ensuring outputs are explainable.
-- **Modular Architecture**: Facilitates the addition of new data types, operations, and contexts without disrupting the existing structure.
-- **Context-Aware Operations**: Incorporates contextual knowledge into data processing workflows, adapting behavior dynamically.
-- **Extensibility**: Provides abstract base classes and interfaces for creating custom data types and operations.
+1. **Domain-Driven Design (DDD)**
+   - Aligns data types, algorithms, and operations with core domain concepts.
+   - Ensures each module speaks a consistent “domain language,” reducing misunderstandings and promoting maintainability.
 
-## Components
+2. **Type-Oriented Development**
+   - Establishes robust contracts between data and algorithms.
+   - Minimizes errors by validating data structures at definition time, preventing mismatches or incompatible operations.
 
-### 1. Data Operations
-Abstract classes and tools to define and execute operations on data, ensuring semantic consistency.
+3. **Semantic Transparency**
+   - Retains full traceability of how data is transformed and why particular operations are invoked.
+   - Facilitates clear, explainable workflows, valuable for QA, audits, or scientific reproducibility.
 
-### 2. Context Operations
-Manage contextual information that influences data processing, enabling adaptive workflows.
+4. **Modular & Extensible Architecture**
+   - Supports adding new data types, algorithm types, and domain ontologies without disrupting existing components.
+   - Adapts naturally to diverse applications—ranging from basic string manipulations to advanced imaging pipelines or HPC-scale workloads.
 
-### 3. Payload Operations
-Handle the execution and orchestration of processing nodes, encapsulating data operations and their associated contexts.
+## Why Semantiva?
 
-### 4. Data Types
-Abstract and concrete implementations for handling different types of data with validation rules.
+- **Clarity & Consistency**: Well-defined semantics for data and algorithms ensure that everyone understands precisely how information flows and transforms.
+- **Adaptive Workflows**: Easily extend pipelines with new steps or data types, minimizing rework when domain requirements evolve.
+- **Scalability & HPC Integration**: Abstract base classes and a pipeline-oriented design let users scale operations seamlessly, whether on local machines or high-performance clusters.
+- **Interdisciplinary Collaboration**: A shared language of data and algorithm types fosters better communication across physics, mathematics, engineering, and software teams.
 
-### 5. Execution Tools
-Utility tools to streamline execution, monitoring, and debugging of data pipelines.
+## Core Components
+
+1. **Data Operations**
+   - Abstract classes that enforce type-safe transformations, ensuring data flows remain coherent and domain-accurate.
+
+2. **Context Operations**
+   - Manages contextual or environmental information affecting data processing, enhancing adaptability and domain awareness.
+
+3. **Payload Operations (Pipelines)**
+   - Orchestrates the execution of multiple operations, combining data transformations and context adaptations into a coherent workflow.
+
+4. **Data Types & Algorithm Types**
+   - Defines the structure and constraints of domain-specific data, alongside compatible algorithms (e.g., `Image` ↔ `ImageAlgorithm`), guaranteeing semantic integrity.
+
+5. **Execution Tools**
+   - Utilities for executing, monitoring, and debugging pipelines, supporting straightforward deployment and scaling.
 
 ## License
 
-This project is licensed under the MIT License.
-
-
+Semantiva is released under the [MIT License](./LICENSE), promoting collaborative development and broad adoption.
 
 ---
 
-## Appendix: Getting Started
+## Getting Started: A Minimal Example
 
-This short guide helps you **jump right in** with a minimal example showcasing the **Semantiva’s** modular design. We’ll create and process a simple **string literal** rather than dealing with more complex domains like audio or images.
-
+Below is a quick demonstration showing how Semantiva can handle a simple string data type and a matching algorithm. For more advanced domains—like imaging, wafer metrology, or large-scale simulations—users can define new data and algorithm types to match their specific needs.
 
 ```python
-#########################
-# Step 1: Define StringLiteralDataType
-#########################
+# 1) Define StringLiteralDataType
 from semantiva.data_types import BaseDataType
 
-
 class StringLiteralDataType(BaseDataType):
-    """
-    Represents a simple string literal data type.
-
-    This class encapsulates a Python string, ensuring type consistency
-    and providing a base for operations on string data.
-    """
-
     def __init__(self, data: str):
-        """
-        Initialize the StringLiteralDataType with the provided string.
-
-        Args:
-            data (str): The string data to encapsulate.
-        """
         super().__init__(data)
 
     def validate(self, data):
-        """
-        Validate that the provided data is a string literal.
-
-        Args:
-            data: The value to validate.
-        """
         assert isinstance(data, str), "Data must be a string."
 
 
-#########################
-# Step 2: Create a Specialized StringLiteralAlgorithm Using AlgorithmTopologyFactory
-#########################
+# 2) Create a StringLiteralAlgorithm
 from semantiva.data_operations import AlgorithmTopologyFactory
 
-# Dynamically create a base algorithm class for (StringLiteralDataType -> StringLiteralDataType)
 StringLiteralAlgorithm = AlgorithmTopologyFactory.create_algorithm(
     input_type=StringLiteralDataType,
     output_type=StringLiteralDataType,
@@ -93,76 +80,48 @@ StringLiteralAlgorithm = AlgorithmTopologyFactory.create_algorithm(
 )
 
 
-#########################
-# Step 3: Define HelloOperation (Extending StringLiteralAlgorithm)
-#########################
+# 3) Define an Operation Extending StringLiteralAlgorithm
 class HelloOperation(StringLiteralAlgorithm):
-    """
-    A simple operation that modifies the input string to greet the inout
-    and returns the updated value as a new StringLiteralDataType.
-    """
-
     def _operation(self, data: StringLiteralDataType) -> StringLiteralDataType:
-        """
-        Prepends "Hello, " to the input string and returns it as a new StringLiteralDataType.
-
-        Args:
-            data (StringLiteralDataType): The input data containing a Python string.
-
-        Returns:
-            StringLiteralDataType: The updated data containing the greeting.
-        """
-        hello_data = f"Hello, {data.data}"
-        return StringLiteralDataType(hello_data)
+        return StringLiteralDataType(f"Hello, {data.data}")
 
 
-#########################
-# Step 4: Create a Pipeline Configuration Using HelloOperation
-#########################
+# 4) Build a Minimal Pipeline
+from semantiva.payload_operations import Pipeline
+from semantiva.context_operations import ContextPassthrough
+
 node_configurations = [
     {
         "operation": HelloOperation,
-        "parameters": {},  # No extra parameters needed
+        "parameters": {},
+        "context_operation": ContextPassthrough,
     },
 ]
 
-
-#########################
-# Step 5: Instantiate and Use the Pipeline
-#########################
-from semantiva.payload_operations import Pipeline
-
 if __name__ == "__main__":
-    # 1. Initialize the minimal pipeline with our node configurations
     pipeline = Pipeline(node_configurations)
-
-    # 2. Create a StringLiteralDataType object
     input_data = StringLiteralDataType("World!")
-
-    # 3. Run the pipeline
     output_data, _ = pipeline.process(input_data, {})
+    print("Pipeline completed. Final output:", output_data.data) # "Hello, World!"
 
-    # 4. Print final result
-    print("Pipeline completed. Final output:", output_data.data)
 ```
+
 
 ---
 
+### Key Takeaways
+
+* **Strong Type Contracts**: The `StringLiteralDataType` enforces the string constraint; incompatible data will fail early.
+* **Algorithm-Data Alignment**: `HelloOperation` inherits from `StringLiteralAlgorithm`, ensuring it can only act on `StringLiteralDataType`.
+* **Scalable Pipeline**: Extend this structure with domain-specific types (e.g., `Image`, `Spectrum`, `AudioClip`) and matching algorithms as needs grow.
+
 ## Summary
 
-In these five simple steps, you’ve:
-
-1. **Created** a custom data type for strings (`StringLiteralDataType`).
-2. **Leveraged** the built-in `AlgorithmTopologyFactory` to generate a `StringLiteralAlgorithm`.
-3. **Extended** that generic algorithm to define a specific operation (`HelloOperation`).
-4. **Built** a **node configuration** referencing `HelloOperation`.
-5. **Instantiated** a minimal pipeline and **executed** it, confirming everything works.
-
-This approach shows how easy it is to **scale** from a “Hello World” scenario to more complex data transformations—just define new data types, create operations through the **factory**, and configure the pipeline. Once comfortable, you can **explore** domain-specific modules (audio, image, text, etc.) and advanced features like context observers or parallel execution.
+**Semantiva** delivers a structured, type-safe, and domain-driven environment for designing adaptable data pipelines. By emphasizing semantic transparency and explicit domain alignment, it reduces cognitive load, fosters cross-disciplinary collaboration, and enables confident scaling to more complex or HPC-intensive problems—without sacrificing clarity or maintainability. Whether implementing straightforward text operations or tackling sophisticated scientific and industrial tasks, Semantiva equips developers and researchers with the tools to build robust, interpretable, and future-ready data solutions.
 
 
 ---
 
 ## Acknowledgments
 
-This framework was inspired by the need for transparency and traceability in data-driven systems of the ALICE O2 computing system. It incorporates principles of ontology-driven design to ensure robust and interpretable workflows.
+This framework draws inspiration from the rigorous demands of transparency and traceability in data-driven systems, particularly exemplified by the ALICE O2 project at CERN. The lessons learned from managing large-scale, high-throughput data in that environment—combined with the need for robust, domain-aligned workflows—shaped Semantiva’s emphasis on type-safe design, semantic clarity, and modular extensibility. By blending these concepts with principles of ontology-driven computing, Semantiva aims to deliver the same level of reliability and interpretability for any domain requiring advanced data processing and HPC integration.
