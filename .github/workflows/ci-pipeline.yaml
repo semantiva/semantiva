@@ -104,6 +104,7 @@ jobs:
       - name: Build the package
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
+          sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml  # Update version in pyproject.toml
           echo "Building version: $VERSION"
           pdm build  # Build the package (sdist and wheel)
 
