@@ -1,5 +1,6 @@
 [project]
 name = "semantiva"
+version = "0.1.0"
 description = "The Semantiva is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations."
 license = "MIT" 
 readme = "README.md" 
