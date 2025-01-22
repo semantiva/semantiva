@@ -89,3 +89,42 @@ def test_png_image_loader(sample_image_data, tmp_test_dir):
     image_data = loader.get_data(file_path)
     assert isinstance(image_data, ImageDataType)
     assert image_data.data.shape == sample_image_data.data.shape
+
+
+def test_image_stack_iterator():
+    """
+    Tests the iterator of ImageStackDataType to ensure it correctly yields ImageDataType instances.
+    """
+
+    # Create a 3D numpy array (e.g., 5 images of size 10x10)
+    num_images, height, width = 5, 10, 10
+    stack_data = np.random.rand(num_images, height, width)
+
+    # Create an ImageStackArrayDataType instance
+    image_stack = ImageStackDataType(stack_data)
+
+    assert image_stack.sequence_base_type() == ImageDataType
+
+    # Collect all elements from the iterator
+    images = list(iter(image_stack))  # Equivalent to: [img for img in image_stack]
+
+    # Validate the number of elements
+    assert (
+        len(images) == num_images
+    ), "Iterator did not yield the expected number of elements"
+
+    # Validate each element is an ImageDataType
+    for img in images:
+        assert isinstance(
+            img, ImageDataType
+        ), f"Iterator yielded an invalid type: {type(img)}"
+
+        # Validate the internal NumPy array is 2D
+        assert isinstance(
+            img.data, np.ndarray
+        ), "ImageDataType does not contain a NumPy array"
+        assert (
+            img.data.ndim == 2
+        ), f"ImageDataType contains incorrect shape: {img.data.shape}"
+
+    print("✅ test_image_stack_array_iterator passed!")

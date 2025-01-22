@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Iterator
 from semantiva.data_types import BaseDataType, DataSequence
 
 
@@ -44,7 +45,7 @@ class ImageDataType(BaseDataType[np.ndarray]):
         assert data.ndim == 2, "Data must be a 2D array."
 
 
-class ImageStackDataType(DataSequence):
+class ImageStackDataType(DataSequence[ImageDataType, np.ndarray]):
     """
     A class representing a stack of image data, derived from DataSequence.
 
@@ -71,9 +72,6 @@ class ImageStackDataType(DataSequence):
         """
         super().__init__(data)
 
-    def sequence_base_type(self):
-        return ImageDataType
-
     def validate(self, data: np.ndarray):
         """
         Validates that the input data is an 3-dimensional NumPy array.
@@ -86,3 +84,8 @@ class ImageStackDataType(DataSequence):
         """
         assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
         assert data.ndim == 3, "Data must be a 3D array (stack of 2D images)"
+
+    def __iter__(self) -> Iterator[ImageDataType]:
+        """Iterates through the 3D NumPy array, treating each 2D slice as an ImageDataType."""
+        for i in range(self._data.shape[0]):
+            yield ImageDataType(self._data[i])

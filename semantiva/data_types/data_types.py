@@ -1,4 +1,4 @@
-from typing import Any, TypeVar, Generic
+from typing import Type, TypeVar, Generic, Iterator, get_args
 from abc import ABC, abstractmethod
 
 
@@ -49,7 +49,11 @@ class BaseDataType(ABC, Generic[T]):
         """
 
 
-class DataSequence(BaseDataType):
+E = TypeVar("E", bound=BaseDataType)
+S = TypeVar("S")  # The preferred storage format for the sequence
+
+
+class DataSequence(BaseDataType[S], Generic[E, S]):
     """
     Abstract base class for sequence-based data types.
 
@@ -57,14 +61,39 @@ class DataSequence(BaseDataType):
     and provides a foundation for sequence-specific operations.
     """
 
-    @abstractmethod
-    def sequence_base_type(self) -> type:
-        """
-        Abstract method to define the base type of elements in the sequence.
+    def __init__(self, data: S):
+        super().__init__(data)
 
-        This method must be implemented by subclasses to specify the expected
-        data type of elements in the sequence.
+    @classmethod
+    def sequence_base_type(cls) -> Type[E]:
+        """
+        Returns the base type of elements in the sequence.
+
+        This method provides the expected data type of elements in the sequence
+        based on the class definition.
 
         Returns:
-            type: The expected type of elements in the sequence.
+            Type[E]: The expected type of elements in the sequence.
         """
+        # Attempt to use get_args for fully parameterized generics
+        args = get_args(cls)
+        if args:
+            return args[0]  # First argument should be `E`
+
+        # Fallback: Inspect __orig_bases__ for non-parameterized generics
+        for base in getattr(cls, "__orig_bases__", []):
+            base_args = get_args(base)
+            if base_args:
+                return base_args[0]  # First argument should be `E`
+
+        raise TypeError(f"{cls} is not a generic class with defined type arguments.")
+
+    @abstractmethod
+    def __iter__(self) -> Iterator[E]:
+        """
+        Returns an iterator over elements of type E.
+
+        Returns:
+            Iterator[E]: An iterator yielding elements of type E.
+        """
+        pass
