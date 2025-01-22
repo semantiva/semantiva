@@ -103,6 +103,8 @@ def test_image_stack_iterator():
     # Create an ImageStackArrayDataType instance
     image_stack = ImageStackDataType(stack_data)
 
+    assert image_stack.sequence_base_type() == ImageDataType
+
     # Collect all elements from the iterator
     images = list(iter(image_stack))  # Equivalent to: [img for img in image_stack]
 

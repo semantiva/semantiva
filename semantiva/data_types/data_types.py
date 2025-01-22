@@ -1,4 +1,4 @@
-from typing import Type, TypeVar, Generic, Iterator
+from typing import Type, TypeVar, Generic, Iterator, get_args
 from abc import ABC, abstractmethod
 
 
@@ -75,7 +75,18 @@ class DataSequence(BaseDataType[S], Generic[E, S]):
         Returns:
             Type[E]: The expected type of elements in the sequence.
         """
-        return cls.__orig_bases__[0].__args__[0]  # Extracts the bound type dynamically
+        # Attempt to use get_args for fully parameterized generics
+        args = get_args(cls)
+        if args:
+            return args[0]  # First argument should be `E`
+
+        # Fallback: Inspect __orig_bases__ for non-parameterized generics
+        for base in getattr(cls, "__orig_bases__", []):
+            base_args = get_args(base)
+            if base_args:
+                return base_args[0]  # First argument should be `E`
+
+        raise TypeError(f"{cls} is not a generic class with defined type arguments.")
 
     @abstractmethod
     def __iter__(self) -> Iterator[E]:
