@@ -134,3 +134,15 @@ class DataSequence(BaseDataType[S], Generic[E, S]):
             TypeError: If the item type does not match the expected element type.
         """
         pass
+
+    @abstractmethod
+    def __len__(self) -> int:
+        """
+        Returns the number of elements in the sequence.
+
+        Subclasses must implement this method to return the number of stored elements.
+
+        Returns:
+            int: The number of elements in the data sequence.
+        """
+        pass

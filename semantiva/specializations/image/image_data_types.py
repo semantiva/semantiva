@@ -135,3 +135,15 @@ class ImageStackDataType(DataSequence[ImageDataType, np.ndarray]):
         Returns an empty 3D NumPy array for initializing an empty ImageStackDataType.
         """
         return np.empty((0, 0, 0))  # Empty 3D array
+
+    def __len__(self) -> int:
+        """
+        Returns the number of images in the stack.
+
+        This method returns the number of 2D images stored along the first axis of
+        the 3D NumPy array.
+
+        Returns:
+            int: The number of images in the stack.
+        """
+        return self._data.shape[0]
