@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Iterator
+from typing import Iterator, Optional
 from semantiva.data_types import BaseDataType, DataSequence
 
 
@@ -41,8 +41,11 @@ class ImageDataType(BaseDataType[np.ndarray]):
             AssertionError: If the input data is not a NumPy array.
             AssertionError: If the input data is not a 2D array.
         """
-        assert isinstance(data, np.ndarray), "Data must be a numpy ndarray."
+        assert isinstance(
+            data, np.ndarray
+        ), f"Data must be a numpy ndarray, got {type(data)}."
         assert data.ndim == 2, "Data must be a 2D array."
+        return data
 
 
 class ImageStackDataType(DataSequence[ImageDataType, np.ndarray]):
@@ -60,15 +63,12 @@ class ImageStackDataType(DataSequence[ImageDataType, np.ndarray]):
             Validates that the input data is an N-dimensional NumPy array.
     """
 
-    def __init__(self, data: np.ndarray, *args, **kwargs):
+    def __init__(self, data: Optional[np.ndarray] = None):
         """
-        Initializes the ImageStackDataType instance with the provided data.
+        Initializes the ImageStackDataType instance.
 
-        Parameters:
-            data (numpy.ndarray): The image stack data to be stored and validated.
-
-        Raises:
-            AssertionError: If the input data is not a NumPy array.
+        Args:
+            data (Optional[np.ndarray]): The image stack data to be stored and validated.
         """
         super().__init__(data)
 
@@ -89,3 +89,49 @@ class ImageStackDataType(DataSequence[ImageDataType, np.ndarray]):
         """Iterates through the 3D NumPy array, treating each 2D slice as an ImageDataType."""
         for i in range(self._data.shape[0]):
             yield ImageDataType(self._data[i])
+
+    def append(self, item: ImageDataType) -> None:
+        """
+        Appends a 2D image to the image stack.
+
+        This method takes an `ImageDataType` instance and adds its underlying 2D NumPy array
+        to the existing 3D NumPy stack. If the stack is empty, it initializes it with the new image.
+
+        Args:
+            item (ImageDataType): The 2D image to append.
+
+        Raises:
+            TypeError: If the item is not an instance of `ImageDataType`.
+            ValueError: If the image dimensions do not match the existing stack.
+        """
+        if not isinstance(item, ImageDataType):
+            raise TypeError(f"Expected ImageDataType, got {type(item)}")
+
+        new_image = item.data  # Extract the 2D NumPy array
+
+        if not isinstance(new_image, np.ndarray) or new_image.ndim != 2:
+            raise ValueError(f"Expected a 2D NumPy array, got shape {new_image.shape}")
+
+        # If the stack is empty, initialize with the first image
+        if self._data.size == 0:
+            self._data = np.expand_dims(
+                new_image, axis=0
+            )  # Convert 2D to 3D with shape (1, H, W)
+        else:
+            # Ensure the new image has the same dimensions as existing ones
+            if new_image.shape != self._data.shape[1:]:
+                raise ValueError(
+                    f"Image dimensions {new_image.shape} do not match existing stack {self._data.shape[1:]}"
+                )
+
+            # Append along the first axis (stack dimension)
+            self._data = np.concatenate(
+                (self._data, np.expand_dims(new_image, axis=0)), axis=0
+            )
+
+    @classmethod
+    def _initialize_empty(cls) -> np.ndarray:
+        """
+        Returns an empty 3D NumPy array for initializing an empty ImageStackDataType.
+        """
+        return np.empty((0, 0, 0))  # Empty 3D array
