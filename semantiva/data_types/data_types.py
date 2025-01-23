@@ -1,4 +1,4 @@
-from typing import Type, TypeVar, Generic, Iterator, get_args
+from typing import Type, TypeVar, Generic, Iterator, get_args, Optional
 from abc import ABC, abstractmethod
 
 
@@ -61,8 +61,29 @@ class DataSequence(BaseDataType[S], Generic[E, S]):
     and provides a foundation for sequence-specific operations.
     """
 
-    def __init__(self, data: S):
+    def __init__(self, data: Optional[S] = None):
+        """
+        Initializes a DataSequence.
+
+        Args:
+            data (Optional[S]): The sequence data to initialize the object. Defaults to an empty sequence.
+        """
+        if data is None:
+            data = (
+                self._initialize_empty()
+            )  # Use a class-specific method to create an empty instance
         super().__init__(data)
+
+    @classmethod
+    @abstractmethod
+    def _initialize_empty(cls) -> S:
+        """
+        Defines how an empty DataSequence should be initialized.
+
+        This method must be implemented by subclasses to return an empty instance
+        of the appropriate sequence storage format.
+        """
+        pass
 
     @classmethod
     def sequence_base_type(cls) -> Type[E]:
@@ -95,5 +116,33 @@ class DataSequence(BaseDataType[S], Generic[E, S]):
 
         Returns:
             Iterator[E]: An iterator yielding elements of type E.
+        """
+        pass
+
+    @abstractmethod
+    def append(self, item: E) -> None:
+        """
+        Appends an element of type E to the data sequence.
+
+        This method should be implemented by subclasses to define how elements
+        are added to the sequence while ensuring consistency with the underlying storage format.
+
+        Args:
+            item (E): The element to append to the sequence.
+
+        Raises:
+            TypeError: If the item type does not match the expected element type.
+        """
+        pass
+
+    @abstractmethod
+    def __len__(self) -> int:
+        """
+        Returns the number of elements in the sequence.
+
+        Subclasses must implement this method to return the number of stored elements.
+
+        Returns:
+            int: The number of elements in the data sequence.
         """
         pass

@@ -1,18 +1,19 @@
-from typing import List, Any, Dict, Optional, Type
+from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import ABC, abstractmethod
 from .stop_watch import StopWatch
 from ..context_operations.context_operations import (
     ContextOperation,
-    ContextType,
     ContextPassthrough,
 )
+
+from ..context_operations.context_types import ContextType, ContextSequenceType
 from ..context_operations.context_observer import ContextObserver
 from ..data_operations.data_operations import (
     BaseDataOperation,
     DataAlgorithm,
     DataProbe,
 )
-from ..data_types.data_types import BaseDataType
+from ..data_types.data_types import BaseDataType, DataSequence
 
 
 class PayloadOperation(ContextObserver, ABC):
@@ -188,40 +189,166 @@ class Pipeline(PayloadOperation):
 
     def _add_node(self, node: Node):
         """
-        Add a node to the pipeline.
+        Adds a node to the pipeline while ensuring compatibility between consecutive operations.
+
+        This method enforces that the output type of the last `AlgorithmNode` is compatible
+        with the input type of the new node. Probe nodes do not modify data, so their output
+        type is ignored for validation purposes.
+
+        If the first node in the pipeline is a probe node, it is added without validation.
 
         Args:
-            node (Node): The node to add to the pipeline.
+            node (Node): The node to be added to the pipeline.
+
+        Raises:
+            AssertionError: If the input type of the new node is not compatible with the
+                            output type of the last `AlgorithmNode`.
         """
-        if self.nodes:
-            last_node = self.nodes[-1]
-            if isinstance(self.nodes[-1], AlgorithmNode):
-                assert (
-                    last_node.data_operation.output_data_type()
-                    == node.data_operation.input_data_type()
-                ), f"Invalid pipeline topology: Output of {last_node.data_operation.__class__.__name__} not compatible with {node.data_operation.__class__.__name__}."
+        # Find the last node that constrains the data type (i.e., last AlgorithmNode)
+        last_type_constraining_node = None
+        for previous_node in reversed(self.nodes):
+            if isinstance(previous_node, AlgorithmNode):
+                last_type_constraining_node = previous_node
+                break
+
+        # If no AlgorithmNode exists yet, allow the first node to be added unconditionally
+        if last_type_constraining_node is None:
+            self.nodes.append(node)
+            return
+
+        # Get the output type of the last type-constraining node and the input type of the new node
+        output_type = last_type_constraining_node.data_operation.output_data_type()
+        input_type = node.data_operation.input_data_type()
+
+        # If the output is a DataSequence, check its base type
+        if isinstance(output_type, type) and issubclass(output_type, DataSequence):
+            base_type = output_type.sequence_base_type()
+
+            # Allow the node if the base type matches the input type
+            if base_type == input_type:
+                self.nodes.append(node)
+                return
+
+        # Enforce strict type matching otherwise
+        assert (
+            output_type == input_type
+        ), f"Invalid pipeline topology: Output of {last_type_constraining_node.data_operation.__class__.__name__} ({output_type}) not compatible with {node.data_operation.__class__.__name__} ({input_type})."
+
+        # Add the node if it passes validation
         self.nodes.append(node)
 
     def _process(
         self, data: BaseDataType, context: ContextType
-    ) -> tuple[BaseDataType, ContextType]:
+    ) -> Tuple[BaseDataType, ContextType]:
         """
-        Execute the pipeline sequentially with the provided input data and context.
+        Executes the pipeline by processing data and context sequentially through each node.
+
+        Processing follows these rules:
+            1. If the node’s expected input type matches the current data type exactly,
+            the node processes the entire dataset in a single call.
+            2. If the current data is a `DataSequence` and the node expects its base type,
+            data is processed **element-wise** using `_slicing_strategy`.
+            3. If neither condition applies, an error is raised (invalid pipeline topology).
+
+        The pipeline supports both `ContextType` and `ContextSequenceType`:
+            - When slicing data, if the context is a `ContextSequenceType`, it is sliced in parallel.
+            - If the context is a single `ContextType`, it is **reused** for each data item.
 
         Args:
-            data (BaseDataType): The input data to be processed by the pipeline.
-            context (ContextType): The context information to be updated during processing.
+            data (BaseDataType): The initial input data for the pipeline.
+            context (ContextType): The initial context, which may be updated during processing.
 
         Returns:
-            tuple[BaseDataType, ContextType]: A tuple containing the final processed data
-                                              and the updated context after pipeline execution.
+            Tuple[BaseDataType, ContextType]: The final processed data and context.
+
+        Raises:
+            TypeError: If the node's expected input type does not match the current data type.
         """
         self.stop_watch.start()
+
         result_data, result_context = data, context
+
         for node in self.nodes:
-            result_data, result_context = node.process(result_data, result_context)
+            # Get the expected input type for the node's operation
+            input_type = node.data_operation.input_data_type()
+
+            # Case 1: Exact match → process the full data in a single step
+            if type(result_data) == input_type:
+                result_data, result_context = node.process(result_data, result_context)
+
+            # Case 2: Data is a `DataSequence` and node expects its base type → use slicing
+            elif (
+                isinstance(result_data, DataSequence)
+                and input_type == result_data.sequence_base_type()
+            ):
+                result_data, result_context = self._slicing_strategy(
+                    node, result_data, result_context
+                )
+
+            # Case 3: Incompatible data type
+            else:
+                raise TypeError(
+                    f"Incompatible data type for Node {node.data_operation.__class__.__name__} "
+                    f"expected {input_type}, but received {type(result_data)}."
+                )
+
         self.stop_watch.stop()
         return result_data, result_context
+
+    def _slicing_strategy(
+        self, node: Node, data_sequence: DataSequence, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Processes a `DataSequence` element-wise, slicing context when applicable.
+
+        This method ensures that:
+            - If `context` is a `ContextSequenceType`, its elements are used in parallel with data items.
+            - If `context` is a single `ContextType`, it is **reused** for each data item.
+
+        The resulting processed data is stored in a new sequence of the same type.
+
+        Args:
+            node (Node): The pipeline node performing the operation.
+            data_sequence (DataSequence): The sequence of data elements to be processed.
+            context (ContextType): Either a `ContextType` or `ContextSequenceType`.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]:
+                - A new `DataSequence` containing the processed elements.
+                - A `ContextSequenceType` if slicing was applied, or a single updated `ContextType` otherwise.
+
+        Raises:
+            ValueError: If `ContextSequenceType` and `DataSequence` lengths do not match.
+        """
+        # Initialize a new sequence to store processed results
+        processed_data_sequence = type(data_sequence)()
+
+        if isinstance(context, ContextSequenceType):
+            # Ensure both sequences have the same length before parallel slicing
+            if len(data_sequence) != len(context):
+                raise ValueError(
+                    "DataSequence and ContextSequenceType must have the same length for parallel slicing."
+                )
+
+            # Create a new `ContextSequenceType` to store results
+            processed_context_sequence = ContextSequenceType()
+
+            # Process (data_item, context_item) pairs in parallel
+            for d_item, c_item in zip(data_sequence, context):
+                out_data, out_context = node.process(d_item, c_item)
+                processed_data_sequence.append(out_data)
+                processed_context_sequence.append(out_context)
+
+            return processed_data_sequence, processed_context_sequence
+
+        else:
+            # Context is a single instance, reuse it for each data item
+            current_context = context
+            for d_item in data_sequence:
+                out_data, current_context = node.process(d_item, current_context)
+                processed_data_sequence.append(out_data)
+
+            return processed_data_sequence, current_context
 
     def inspect(self) -> str:
         """
