@@ -98,22 +98,22 @@ class ContextType:
         return f"{self.__class__.__name__}(context={self._context_container})"
 
 
-class ContextSequenceType(ContextType):
+class ContextCollectionType(ContextType):
     """
     A specialized context type that stores and manages multiple `ContextType` instances.
 
     This class extends `ContextType` but internally keeps a list of separate contexts.
-    Each item in the sequence is a `ContextType`, enabling parallel iteration with
-    DataSequence subclasses that contain multiple data items.
+    Each item in the collection is a `ContextType`, enabling parallel iteration with
+    DataC subclasses that contain multiple data items.
     """
 
     def __init__(self, context_list: Optional[List[ContextType]] = None):
         """
-        Initialize a `ContextSequenceType` with an optional list of `ContextType` instances.
+        Initialize a `ContextCollectonType` with an optional list of `ContextType` instances.
 
         Args:
             context_list (Optional[List[ContextType]]): A list of `ContextType` objects
-                                                       to initialize the sequence. If None,
+                                                       to initialize the collecton. If None,
                                                        an empty list is used.
         """
         # We won't use _context_container from the base for storing items; we store them in a list.
@@ -127,13 +127,13 @@ class ContextSequenceType(ContextType):
         Return an iterator over the stored `ContextType` instances.
 
         Yields:
-            ContextType: Each context in the sequence.
+            ContextType: Each context in the collecton.
         """
         return iter(self._context_list)
 
     def __len__(self) -> int:
         """
-        Return the number of context elements in this sequence.
+        Return the number of context elements in this collecton.
 
         Returns:
             int: The length of the internal list of `ContextType`s.
@@ -142,7 +142,7 @@ class ContextSequenceType(ContextType):
 
     def append(self, item: ContextType) -> None:
         """
-        Append a `ContextType` object to the end of this sequence.
+        Append a `ContextType` object to the end of this collecton.
 
         Args:
             item (ContextType): The context to be appended.
@@ -156,7 +156,7 @@ class ContextSequenceType(ContextType):
 
     def __getitem__(self, index: int) -> ContextType:
         """
-        Retrieve a specific `ContextType` from the sequence by index.
+        Retrieve a specific `ContextType` from the collecton by index.
 
         Args:
             index (int): The index of the desired context.
@@ -168,9 +168,9 @@ class ContextSequenceType(ContextType):
 
     def __str__(self) -> str:
         """
-        Return a string representation of the sequence, showing its length.
+        Return a string representation of the collecton, showing its length.
 
         Returns:
-            str: A descriptive string of this sequence object.
+            str: A descriptive string of this collecton object.
         """
         return f"{self.__class__.__name__}(length={len(self._context_list)})"

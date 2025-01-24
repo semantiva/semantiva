@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Iterator, Optional
-from semantiva.data_types import BaseDataType, DataSequence
+from semantiva.data_types import BaseDataType, DataCollectionType
 
 
 class ImageDataType(BaseDataType[np.ndarray]):
@@ -48,9 +48,9 @@ class ImageDataType(BaseDataType[np.ndarray]):
         return data
 
 
-class ImageStackDataType(DataSequence[ImageDataType, np.ndarray]):
+class ImageStackDataType(DataCollectionType[ImageDataType, np.ndarray]):
     """
-    A class representing a stack of image data, derived from DataSequence.
+    A class representing a stack of image data, derived from DataCollecton.
 
     This class is designed to handle multi-dimensional image data (e.g., a stack of 2D images)
     and provides validation to ensure that the input is a NumPy array.
