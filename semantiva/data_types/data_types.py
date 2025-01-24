@@ -1,7 +1,6 @@
 from typing import Type, TypeVar, Generic, Iterator, get_args, Optional
 from abc import ABC, abstractmethod
 
-
 T = TypeVar("T")
 
 
@@ -23,17 +22,17 @@ class BaseDataType(ABC, Generic[T]):
         Initialize the BaseDataType with the provided data.
 
         Args:
-            data (Any): The data to be encapsulated by this data type.
+            data (T): The data to be encapsulated by this data type.
         """
         self.validate(data)
         self._data = data
 
     @property
-    def data(self):
+    def data(self) -> T:
         return self._data
 
     @data.setter
-    def data(self, data):
+    def data(self, data: T):
         self._data = data
 
     @abstractmethod
@@ -50,58 +49,60 @@ class BaseDataType(ABC, Generic[T]):
 
 
 E = TypeVar("E", bound=BaseDataType)
-S = TypeVar("S")  # The preferred storage format for the sequence
+S = TypeVar("S")  # The preferred storage format for the collection
 
 
-class DataSequence(BaseDataType[S], Generic[E, S]):
+class DataCollectionType(BaseDataType[S], Generic[E, S]):
     """
-    Abstract base class for sequence-based data types.
+    Abstract base class for collection-based data types.
 
-    This class extends BaseDataType to handle data that is inherently sequential
-    and provides a foundation for sequence-specific operations.
+    This class extends BaseDataType to handle data that comprises multiple
+    elements and provides a foundation for collection-specific operations.
     """
 
     def __init__(self, data: Optional[S] = None):
         """
-        Initializes a DataSequence.
+        Initializes a DataCollectionType.
 
         Args:
-            data (Optional[S]): The sequence data to initialize the object. Defaults to an empty sequence.
+            data (Optional[S]): The initial collection data to initialize the object.
+                Defaults to an empty collection via _initialize_empty().
         """
         if data is None:
-            data = (
-                self._initialize_empty()
-            )  # Use a class-specific method to create an empty instance
+            data = self._initialize_empty()
         super().__init__(data)
 
     @classmethod
     @abstractmethod
     def _initialize_empty(cls) -> S:
         """
-        Defines how an empty DataSequence should be initialized.
+        Defines how an empty DataCollectionType should be initialized.
 
-        This method must be implemented by subclasses to return an empty instance
-        of the appropriate sequence storage format.
+        This method must be implemented by subclasses to return an empty
+        instance of the appropriate collection storage format.
         """
         pass
 
     @classmethod
-    def sequence_base_type(cls) -> Type[E]:
+    def collection_base_type(cls) -> Type[E]:
         """
-        Returns the base type of elements in the sequence.
+        Returns the base type of elements in the collection.
 
-        This method provides the expected data type of elements in the sequence
+        This method provides the expected data type for elements in the collection
         based on the class definition.
 
         Returns:
-            Type[E]: The expected type of elements in the sequence.
+            Type[E]: The expected type of elements in the collection.
         """
-        # Attempt to use get_args for fully parameterized generics
+        # Attempt get_args(...) first to retrieve type arguments for classes that are
+        # fully parameterized at runtime. This covers most modern Python generics.        args = get_args(cls)
         args = get_args(cls)
         if args:
             return args[0]  # First argument should be `E`
 
-        # Fallback: Inspect __orig_bases__ for non-parameterized generics
+        # If get_args(...) yields no results, fallback to scanning __orig_bases__.
+        # In certain mypy or older Python generics scenarios, type parameters are
+        # registered there rather than in get_args(...).
         for base in getattr(cls, "__orig_bases__", []):
             base_args = get_args(base)
             if base_args:
@@ -112,7 +113,7 @@ class DataSequence(BaseDataType[S], Generic[E, S]):
     @abstractmethod
     def __iter__(self) -> Iterator[E]:
         """
-        Returns an iterator over elements of type E.
+        Returns an iterator over elements of type E within the collection.
 
         Returns:
             Iterator[E]: An iterator yielding elements of type E.
@@ -122,13 +123,13 @@ class DataSequence(BaseDataType[S], Generic[E, S]):
     @abstractmethod
     def append(self, item: E) -> None:
         """
-        Appends an element of type E to the data sequence.
+        Appends an element of type E to the data collection.
 
-        This method should be implemented by subclasses to define how elements
-        are added to the sequence while ensuring consistency with the underlying storage format.
+        Subclasses should implement how elements are added to the underlying
+        storage format while ensuring consistency.
 
         Args:
-            item (E): The element to append to the sequence.
+            item (E): The element to append to the collection.
 
         Raises:
             TypeError: If the item type does not match the expected element type.
@@ -138,11 +139,11 @@ class DataSequence(BaseDataType[S], Generic[E, S]):
     @abstractmethod
     def __len__(self) -> int:
         """
-        Returns the number of elements in the sequence.
+        Returns the number of elements in the data collection.
 
         Subclasses must implement this method to return the number of stored elements.
 
         Returns:
-            int: The number of elements in the data sequence.
+            int: The number of elements in the collection.
         """
         pass

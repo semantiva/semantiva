@@ -6,14 +6,14 @@ from ..context_operations.context_operations import (
     ContextPassthrough,
 )
 
-from ..context_operations.context_types import ContextType, ContextSequenceType
+from ..context_operations.context_types import ContextType, ContextCollectionType
 from ..context_operations.context_observer import ContextObserver
 from ..data_operations.data_operations import (
     BaseDataOperation,
     DataAlgorithm,
     DataProbe,
 )
-from ..data_types.data_types import BaseDataType, DataSequence
+from ..data_types.data_types import BaseDataType, DataCollectionType
 
 
 class PayloadOperation(ContextObserver, ABC):
@@ -151,7 +151,7 @@ class Pipeline(PayloadOperation):
     """
     Represents a pipeline for orchestrating multiple payload operations.
 
-    A pipeline is a structured sequence of nodes or operations designed to process
+    A pipeline is a structured collecton of nodes or operations designed to process
     `BaseDataType` data and context in a systematic manner. It enables the execution
     of complex workflows by chaining multiple `Node` instances together.
 
@@ -220,9 +220,11 @@ class Pipeline(PayloadOperation):
         output_type = last_type_constraining_node.data_operation.output_data_type()
         input_type = node.data_operation.input_data_type()
 
-        # If the output is a DataSequence, check its base type
-        if isinstance(output_type, type) and issubclass(output_type, DataSequence):
-            base_type = output_type.sequence_base_type()
+        # If the output is a DataCollecton, check its base type
+        if isinstance(output_type, type) and issubclass(
+            output_type, DataCollectionType
+        ):
+            base_type = output_type.collection_base_type()
 
             # Allow the node if the base type matches the input type
             if base_type == input_type:
@@ -246,12 +248,12 @@ class Pipeline(PayloadOperation):
         Processing follows these rules:
             1. If the node’s expected input type matches the current data type exactly,
             the node processes the entire dataset in a single call.
-            2. If the current data is a `DataSequence` and the node expects its base type,
+            2. If the current data is a `DataCollecton` and the node expects its base type,
             data is processed **element-wise** using `_slicing_strategy`.
             3. If neither condition applies, an error is raised (invalid pipeline topology).
 
-        The pipeline supports both `ContextType` and `ContextSequenceType`:
-            - When slicing data, if the context is a `ContextSequenceType`, it is sliced in parallel.
+        The pipeline supports both `ContextType` and `ContextCollectonType`:
+            - When slicing data, if the context is a `ContextCollectonType`, it is sliced in parallel.
             - If the context is a single `ContextType`, it is **reused** for each data item.
 
         Args:
@@ -276,10 +278,10 @@ class Pipeline(PayloadOperation):
             if type(result_data) == input_type:
                 result_data, result_context = node.process(result_data, result_context)
 
-            # Case 2: Data is a `DataSequence` and node expects its base type → use slicing
+            # Case 2: Data is a `DataCollecton` and node expects its base type → use slicing
             elif (
-                isinstance(result_data, DataSequence)
-                and input_type == result_data.sequence_base_type()
+                isinstance(result_data, DataCollectionType)
+                and input_type == result_data.collection_base_type()
             ):
                 result_data, result_context = self._slicing_strategy(
                     node, result_data, result_context
@@ -296,66 +298,66 @@ class Pipeline(PayloadOperation):
         return result_data, result_context
 
     def _slicing_strategy(
-        self, node: Node, data_sequence: DataSequence, context: ContextType
+        self, node: Node, data_collecton: DataCollectionType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
-        Processes a `DataSequence` element-wise, slicing context when applicable.
+        Processes a `DataCollecton` element-wise, slicing context when applicable.
 
         This method ensures that:
-            - If `context` is a `ContextSequenceType`, its elements are used in parallel with data items.
+            - If `context` is a `ContextCollectonType`, its elements are used in parallel with data items.
             - If `context` is a single `ContextType`, it is **reused** for each data item.
 
-        The resulting processed data is stored in a new sequence of the same type.
+        The resulting processed data is stored in a new collecton of the same type.
 
         Args:
             node (Node): The pipeline node performing the operation.
-            data_sequence (DataSequence): The sequence of data elements to be processed.
-            context (ContextType): Either a `ContextType` or `ContextSequenceType`.
+            data_collecton (DataCollecton): The collecton of data elements to be processed.
+            context (ContextType): Either a `ContextType` or `ContextCollectonType`.
 
         Returns:
             Tuple[BaseDataType, ContextType]:
-                - A new `DataSequence` containing the processed elements.
-                - A `ContextSequenceType` if slicing was applied, or a single updated `ContextType` otherwise.
+                - A new `DataCollecton` containing the processed elements.
+                - A `ContextCollectonType` if slicing was applied, or a single updated `ContextType` otherwise.
 
         Raises:
-            ValueError: If `ContextSequenceType` and `DataSequence` lengths do not match.
+            ValueError: If `ContextCollectonType` and `DataCollecton` lengths do not match.
         """
-        # Initialize a new sequence to store processed results
-        processed_data_sequence = type(data_sequence)()
+        # Initialize a new collecton to store processed results
+        processed_data_collecton = type(data_collecton)()
 
-        if isinstance(context, ContextSequenceType):
-            # Ensure both sequences have the same length before parallel slicing
-            if len(data_sequence) != len(context):
+        if isinstance(context, ContextCollectionType):
+            # Ensure both collectons have the same length before parallel slicing
+            if len(data_collecton) != len(context):
                 raise ValueError(
-                    "DataSequence and ContextSequenceType must have the same length for parallel slicing."
+                    "DataCollecton and ContextCollectonType must have the same length for parallel slicing."
                 )
 
-            # Create a new `ContextSequenceType` to store results
-            processed_context_sequence = ContextSequenceType()
+            # Create a new `ContextCollectonType` to store results
+            processed_context_collecton = ContextCollectionType()
 
             # Process (data_item, context_item) pairs in parallel
-            for d_item, c_item in zip(data_sequence, context):
+            for d_item, c_item in zip(data_collecton, context):
                 out_data, out_context = node.process(d_item, c_item)
-                processed_data_sequence.append(out_data)
-                processed_context_sequence.append(out_context)
+                processed_data_collecton.append(out_data)
+                processed_context_collecton.append(out_context)
 
-            return processed_data_sequence, processed_context_sequence
+            return processed_data_collecton, processed_context_collecton
 
         else:
             # Context is a single instance, reuse it for each data item
             current_context = context
-            for d_item in data_sequence:
+            for d_item in data_collecton:
                 out_data, current_context = node.process(d_item, current_context)
-                processed_data_sequence.append(out_data)
+                processed_data_collecton.append(out_data)
 
-            return processed_data_sequence, current_context
+            return processed_data_collecton, current_context
 
     def inspect(self) -> str:
         """
         Inspect the current pipeline structure and return its summary, including execution time.
 
         Returns:
-            str: A summary of the pipeline including nodes and their sequence, as well as
+            str: A summary of the pipeline including nodes and their collecton, as well as
                  the total pipeline execution time.
         """
 
