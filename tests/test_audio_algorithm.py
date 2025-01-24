@@ -20,6 +20,7 @@ class SingleChannelAudioMultiplyAlgorithm(SingleChannelAudioAlgorithm):
     """
 
     def _operation(self, data, factor):
+        self.logger.info("Inside the SingleChannelAudioMultiplyAlgorithm")
         multiplied_data = data.data * factor
         return SingleChannelAudioDataType(multiplied_data)
 
@@ -31,6 +32,7 @@ class DualChannelAudioMultiplyAlgorithm(DualChannelAudioAlgorithm):
     """
 
     def _operation(self, data, factor):
+        self.logger.info("Inside the SingleChannelAudioMultiplyAlgorithm")
         left_channel = SingleChannelAudioDataType(data.data[:, 0])
         right_channel = SingleChannelAudioDataType(data.data[:, 1])
 

@@ -3,7 +3,7 @@ from typing import Any, List, Optional, Type, TypeVar, Generic
 from abc import ABC, abstractmethod
 from ..context_operations.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType
-
+from ..logger import Logger
 
 T = TypeVar("T", bound=BaseDataType)
 
@@ -15,6 +15,14 @@ class BaseDataOperation(ABC, Generic[T]):
     This class defines the foundational structure for implementing data
     processing operations, ensuring consistency and extensibility.
     """
+
+    logger: Optional[Logger]
+
+    def __init__(self, logger: Optional[Logger] = None):
+        if logger:
+            self.logger = logger
+        else:
+            self.logger = Logger()
 
     @classmethod
     @abstractmethod
@@ -126,13 +134,18 @@ class DataAlgorithm(BaseDataOperation):
         if self.context_observer:
             self.context_observer.observer_context.set_value(key, value)
 
-    def __init__(self, context_observer: Optional[ContextObserver] = None):
+    def __init__(
+        self,
+        context_observer: Optional[ContextObserver] = None,
+        logger: Optional[Logger] = None,
+    ):
         """
         Initialize the DataAlgorithm with a ContextObserver.
 
         Args:
             context_observer (ContextObserver): An observer for managing context updates.
         """
+        super().__init__(logger)
         self.context_observer = context_observer
 
     def context_keys(self) -> List[str]:
