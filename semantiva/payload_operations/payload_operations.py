@@ -34,8 +34,10 @@ class PayloadOperation(ContextObserver, ABC):
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__()
         if logger:
+            # If a logger instance is provided, use it
             self.logger = logger
         else:
+            # If no logger is provided, create a new Logger instance
             self.logger = Logger()
 
     @abstractmethod
@@ -200,7 +202,7 @@ class Pipeline(PayloadOperation):
         self.pipeline_configuration: List[str] = pipeline_configuration
         self.stop_watch = StopWatch()
         self._initialize_nodes()
-        self.logger.info(self.inspect())
+        self.logger.debug("%s", self.inspect())
 
     def _add_node(self, node: Node):
         """
@@ -283,7 +285,7 @@ class Pipeline(PayloadOperation):
         """
         self.stop_watch.start()
         result_data, result_context = data, context
-        self.logger.info("Start processing pipeline")
+        self.logger.debug("Start processing pipeline")
         for node in self.nodes:
             self.logger.debug(
                 f"Processing {type(node.data_operation).__name__} ({type(node).__name__})"
@@ -312,10 +314,10 @@ class Pipeline(PayloadOperation):
                 )
 
         self.stop_watch.stop()
-        self.logger.info("Finished pipeline")
-        self.logger.info(
+        self.logger.debug("Finished pipeline")
+        self.logger.debug(
             f"Pipeline timers \nPipeline {self.stop_watch}\n{self.get_timers()}"
-        )
+        )  # TODO: use lazy evaluation
         return result_data, result_context
 
     def _slicing_strategy(
@@ -367,6 +369,7 @@ class Pipeline(PayloadOperation):
         else:
             # Context is a single instance, reuse it for each data item
             current_context = context
+            self.logger.warning("Context operations in this slicing mode are lost.")
             for d_item in data_collecton:
                 out_data, current_context = node.process(d_item, current_context)
                 processed_data_collecton.append(out_data)
