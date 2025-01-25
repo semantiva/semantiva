@@ -1,12 +1,12 @@
 from PIL import Image
 import numpy as np
+from scipy.stats import multivariate_normal
 from semantiva.context_operations.context_types import ContextType
 from .image_data_io import (
     ImageDataSource,
     ImageStackSource,
     ImageDataSink,
     ImageStackDataSink,
-    ImagePayloadSink,
     ImageStackPayloadSource,
 )
 from .image_data_types import ImageDataType, ImageStackDataType
@@ -237,6 +237,46 @@ class PngImageSaver(ImageDataSink):
             raise IOError(f"Error saving PNG image to {path}: {e}") from e
 
 
+class PNGImageStackSaver(ImageStackDataSink):
+    """
+    Concrete implementation of ImageDataSink for saving multi-frame image data (ImageStackDataType)
+    as sequentially numbered PNG files.
+
+    Each frame in the `ImageStackDataType` is saved as a separate PNG file, with filenames
+    numbered sequentially (e.g., "frame_000.png", "frame_001.png", ...).
+    """
+
+    def _send_data(self, data: ImageStackDataType, base_path: str):
+        """
+        Saves the `ImageStackDataType` as sequentially numbered PNG files.
+
+        Parameters:
+            data (ImageStackDataType): The image stack data to be saved.
+            base_path (str): The base file path to save PNG files. A number will
+                             be appended to this path for each frame.
+
+        Raises:
+            ValueError: If the provided data is not an `ImageStackDataType`.
+            IOError: If any frame cannot be saved.
+        """
+        if not isinstance(
+            data, self.input_data_type()
+        ):  # Check if the data type is correct
+            raise ValueError("Provided data is not an instance of ImageStackDataType.")
+
+        try:
+            # Iterate through each frame in the stack
+            for i, frame in enumerate(data.data):
+                # Convert the frame to a PIL image
+                img = Image.fromarray(frame.astype(np.uint8))
+                # Generate a filename with sequential numbering
+                file_path = f"{base_path}_{i:03d}.png"
+                # Save the image as a PNG
+                img.save(file_path, format="PNG")
+        except Exception as e:
+            raise IOError(f"Error saving PNG image stack: {e}") from e
+
+
 class ImageDataRandomGenerator(ImageDataSource):
     """
     A random generator for creating `ImageDataType` objects with random data.
@@ -270,6 +310,46 @@ class ImageDataRandomGenerator(ImageDataSource):
                 f"Shape must be a tuple with two dimensions, but got {shape}."
             )
         return ImageDataType(np.random.rand(*shape))
+
+
+class TwoDGaussianImageGenerator(ImageDataSource):
+    """Generates a 2D Gaussian image."""
+
+    def _get_data(
+        self,
+        std_dev_x: float,
+        std_dev_y: float,
+        amplitude: float,
+        image_size: tuple[int, int],
+    ) -> ImageDataType:
+        """
+        Generates a 2D Gaussian image.
+
+        Parameters:
+            std_dev_x (float): The standard deviation in the x-direction.
+            std_dev_y (float): The standard deviation in the y-direction.
+            amplitude (float): The amplitude of the Gaussian.
+            image_size (tuple[int, int]): The shape (rows, columns) of the generated image data.
+
+        Returns:
+            ImageDataType: A 2D Gaussian image.
+        """
+        # Validate that the shape represents a 2D array
+        if len(image_size) != 2:
+            raise ValueError(
+                f"Shape must be a tuple with two dimensions, but got {len(image_size)}."
+            )
+
+        mean = [0, 0]
+        covariance = [[std_dev_x**2, 0], [0, std_dev_y**2]]
+        x = np.linspace(-1, 1, image_size[0])
+        y = np.linspace(-1, 1, image_size[1])
+        x, y = np.meshgrid(x, y)
+        rv = multivariate_normal(mean, covariance)
+        z = amplitude * rv.pdf(np.dstack((x, y)))
+        # Normalize to ensure the maximum value matches the desired amplitude
+        z = z / z.max() * amplitude
+        return ImageDataType(z)
 
 
 class ImageStackRandomGenerator(ImageStackSource):

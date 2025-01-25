@@ -114,7 +114,7 @@ class StackToImageMeanProjector(ImageStackToImageProjector):
     into a single image by taking the mean along the slices.
     """
 
-    def _operation(self, data: ImageStackDataType):
+    def _operation(self, data: ImageStackDataType) -> ImageDataType:
         """
         Computes the mean projection of an image stack.
 
@@ -131,3 +131,69 @@ class StackToImageMeanProjector(ImageStackToImageProjector):
         """
         # Compute the mean along the stack (first axis)
         return ImageDataType(np.mean(data.data, axis=0))
+
+
+class ImageNormalizerAlgorithm(ImageAlgorithm):
+    """
+    A class to normalize image data to a specified range.
+
+    This class inherits from the `ImageAlgorithm` base class and performs
+    normalization on image data, scaling pixel values linearly to fit
+    within a given range `[min_value, max_value]`.
+    """
+
+    def _operation(
+        self, data: ImageDataType, min_value: float, max_value: float, *args, **kwargs
+    ) -> ImageDataType:
+        """
+        Perform normalization on the image data to scale its pixel values
+        linearly to the specified range `[min_value, max_value]`.
+
+        Parameters:
+            data (ImageDataType): The image data to normalize.
+            min_value (float): The minimum value of the target range.
+            max_value (float): The maximum value of the target range.
+            *args, **kwargs: Additional parameters for compatibility.
+
+        Returns:
+            ImageDataType: The normalized image data with values in `[min_value, max_value]`.
+        """
+
+        image_array = data.data
+        arr_min = np.min(image_array)
+        arr_max = np.max(image_array)
+
+        # Avoid division by zero in case all values in the array are the same
+        if arr_max - arr_min == 0:
+            return ImageDataType(np.full_like(image_array, (min_value + max_value) / 2))
+
+        # Linear scaling
+        scaled_arr = min_value + (image_array - arr_min) * (max_value - min_value) / (
+            arr_max - arr_min
+        )
+        return ImageDataType(scaled_arr)
+
+
+class ImageStackToSideBySideProjector(ImageStackToImageProjector):
+    """
+    A concrete implementation of ImageStackToImageProjector that projects a stack of images
+    into a single image by concatenating the images side by side.
+    """
+
+    def _operation(self, data: ImageStackDataType) -> ImageDataType:
+        """
+        Concatenates the images in the stack side by side.
+
+        Parameters:
+            data (ImageStackDataType): The input image stack, represented as a 3D NumPy array
+                                        (stack of 2D images).
+
+        Returns:
+            ImageDataType: A single 2D image resulting from the concatenation of images in the stack.
+
+        Raises:
+            ValueError: If the input data is not a 3D NumPy array.
+
+        """
+        # Concatenate the images along the horizontal axis (axis=1)
+        return ImageDataType((np.hstack(tuple(data.data))))

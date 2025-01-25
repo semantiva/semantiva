@@ -12,6 +12,7 @@ dependencies = [
     "pillow ==11.1.0",
     "pylint ==3.3.3",
     "pytest ==8.3.4",
+    "scipy",
     "coverage",
 ]
 distribution = true
@@ -29,6 +30,7 @@ fail-under = 7.5
 exclude = [
     "^tests/test_string_specialization\\.py$",  
 ]
+ignore_missing_imports = true
 
 [tool.coverage.run]
 source = ["semantiva"]
