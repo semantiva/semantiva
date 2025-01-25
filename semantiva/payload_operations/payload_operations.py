@@ -371,6 +371,7 @@ class Pipeline(PayloadOperation):
         else:
             # Context is a single instance, reuse it for each data item
             current_context = context
+            self.logger.warning("Context operations in this slicing mode are lost.")
             for d_item in data_collecton:
                 out_data, current_context = node.process(d_item, current_context)
                 processed_data_collecton.append(out_data)
