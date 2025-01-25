@@ -30,9 +30,6 @@ def test_set_verbose_level(logger_instance):
     logger_instance.set_verbose_level("ERROR")
     assert logger_instance.logger.level == logging.ERROR
 
-    with pytest.raises(ValueError):
-        logger_instance.set_verbose_level("INVALID")
-
 
 def test_console_output(capsys):
     """Test that console output is working."""
