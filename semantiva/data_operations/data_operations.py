@@ -22,7 +22,7 @@ class BaseDataOperation(ABC, Generic[T]):
         if logger:
             self.logger = logger
         else:
-            self.logger = Logger(name=f"{__name__}.{self.__class__.__name__}")
+            self.logger = Logger()
 
     @classmethod
     @abstractmethod

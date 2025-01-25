@@ -1,12 +1,6 @@
 import sys
 import logging
-
-
-class ClassNameFilter(logging.Filter):
-    def filter(self, record):
-        # Extract the class name from the logger name
-        record.classname = record.name.split(".")[-1]
-        return True
+from typing import Optional
 
 
 class Logger:
@@ -28,33 +22,23 @@ class Logger:
     """
 
     logger: logging.Logger
+    verbosity_map = {
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARNING,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL,
+    }
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)-8s - %(message)s (%(module)s)"
+    )
 
-    def __init__(
-        self,
-        name: str = "SemantivaLogger",
-        verbosity_level: str = "INFO",
-        console_output: bool = True,
-        file_output: bool = False,
-        file_path: str = "output_log.log",
-    ):
-        self.logger = logging.getLogger(name)
-        self.logger.addFilter(ClassNameFilter())
-        self.formatter = logging.Formatter(
-            "%(asctime)s - %(levelname)-8s - %(message)s (%(classname)s)"
-        )
-        self.verbosity_map = {
-            "DEBUG": logging.DEBUG,
-            "INFO": logging.INFO,
-            "WARNING": logging.WARNING,
-            "ERROR": logging.ERROR,
-            "CRITICAL": logging.CRITICAL,
-        }
-        self.set_verbose_level(verbosity_level)
-        if console_output:
-            self.set_console_output()
+    def __init__(self, logger: Optional[logging.Logger] = None):
+        if logger is None:
+            self.logger = logging.getLogger()
 
-        if file_output:
-            self.set_file_output(file_path)
+        else:
+            self.logger = logger
 
     def set_verbose_level(self, verbosity_level: str):
         """
