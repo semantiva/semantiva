@@ -1,4 +1,4 @@
-from semantiva.data_operations import DataAlgorithm
+from semantiva.data_operations import DataAlgorithm, DataProbe
 from .image_data_types import ImageDataType, ImageStackDataType
 
 
@@ -99,3 +99,47 @@ class ImageStackToImageProjector(DataAlgorithm):
             type: `ImageStackDataType`, representing a stack of images.
         """
         return ImageDataType
+
+
+class ImageProbe(DataProbe):
+    """
+    A probe for inspecting or monitoring ImageDataType data.
+
+    This class implements the `DataProbe` abstract base class to define
+    operations that accept and produce `ImageDataType`.
+
+    Methods:
+        input_data_type: Returns the expected input data type.
+    """
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Specify the input data type for the algorithm.
+
+        Returns:
+            type: `ImageDataType`, representing Image.
+        """
+        return ImageDataType
+
+
+class ImageStackProbe(DataProbe):
+    """
+    A probe for inspecting or monitoring ImageStackDataType data.
+
+    This class implements the `DataProbe` abstract base class to define
+    operations that accept and produce `ImageStackDataType`.
+
+    Methods:
+        input_data_type: Returns the expected input data type.
+    """
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Specify the input data type for the algorithm.
+
+        Returns:
+            type: `ImageStackDataType`, representing a stack of images.
+        """
+        return ImageStackDataType
