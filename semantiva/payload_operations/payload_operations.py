@@ -102,13 +102,16 @@ class Node(PayloadOperation):
             operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
         """
         super().__init__(logger)
+        self.logger.info(
+            f"Initializing {self.__class__.__name__} ({data_operation.__name__})"
+        )
         self.data_operation = (
             data_operation(self, logger)
             if issubclass(data_operation, DataAlgorithm)
             else data_operation(logger=logger)
         )
 
-        self.context_operation = context_operation()
+        self.context_operation = context_operation(logger)
         self.stop_watch = StopWatch()
         if operation_config is None:
             self.operation_config = {}
@@ -198,6 +201,7 @@ class Pipeline(PayloadOperation):
             ]
         """
         super().__init__(logger)
+        self.logger.info(f"Initializing {self.__class__.__name__}")
         self.nodes: List[Node] = []
         self.pipeline_configuration: List[str] = pipeline_configuration
         self.stop_watch = StopWatch()

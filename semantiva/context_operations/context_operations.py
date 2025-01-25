@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Optional
 from abc import ABC, abstractmethod
 from .context_types import ContextType
+from semantiva.logger import Logger
 
 
 class ContextOperation(ABC):
@@ -10,6 +11,17 @@ class ContextOperation(ABC):
     This class serves as a foundation for implementing specific operations
     that manipulate or utilize the context in various ways.
     """
+
+    logger: Logger
+
+    def __init__(self, logger: Optional[Logger] = None):
+        if logger:
+            # If a logger instance is provided, use it
+            self.logger = logger
+        else:
+            # If no logger is provided, create a new Logger instance
+            self.logger = Logger()
+        self.logger.info(f"Initializing {self.__class__.__name__}")
 
     @abstractmethod
     def _operate_context(self, context: ContextType) -> ContextType:
@@ -39,6 +51,7 @@ class ContextOperation(ABC):
         Returns:
             ContextType: The result of the context operation.
         """
+        self.logger.debug(f"Executing {self.__class__.__name__}")
         return self._operate_context(context)
 
     @abstractmethod

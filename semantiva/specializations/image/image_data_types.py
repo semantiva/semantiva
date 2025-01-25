@@ -47,6 +47,9 @@ class ImageDataType(BaseDataType[np.ndarray]):
         assert data.ndim == 2, "Data must be a 2D array."
         return data
 
+    def __str__(self):
+        return f"ImageDataType: {self.data.shape}"
+
 
 class ImageStackDataType(DataCollectionType[ImageDataType, np.ndarray]):
     """
@@ -147,3 +150,6 @@ class ImageStackDataType(DataCollectionType[ImageDataType, np.ndarray]):
             int: The number of images in the stack.
         """
         return self._data.shape[0]
+
+    def __str__(self):
+        return f"ImageStackDataType: {self._data.shape}"

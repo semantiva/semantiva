@@ -51,13 +51,17 @@ class Logger:
         """
         if verbosity_level not in self.verbosity_map:
             self.logger.error(
-                f"The verbosity level '{verbosity_level}' is incorrect. Valid levels are: {list(self.verbosity_map.keys())}."
+                "The verbosity level '%s' is incorrect. Valid levels are: %s.",
+                verbosity_level,
+                list(self.verbosity_map.keys()),
             )
             return
         previous_level = self.logger.level
         self.logger.setLevel(self.verbosity_map[verbosity_level])
         self.logger.info(
-            f"Logger verbosity level changed from {logging.getLevelName(previous_level)} to {verbosity_level}."
+            "Logger verbosity level changed from %s to %s.",
+            logging.getLevelName(previous_level),
+            verbosity_level,
         )
 
     def set_console_output(self):
@@ -81,7 +85,7 @@ class Logger:
             file_handler.setFormatter(self.formatter)
             self.logger.addHandler(file_handler)
         except Exception as e:
-            self.logger.error(f"Failed to set file output: {e}")
+            self.logger.error("Failed to set file output: %s", e)
 
     def __getattr__(self, name):
         """
