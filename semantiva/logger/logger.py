@@ -2,6 +2,13 @@ import sys
 import logging
 
 
+class ClassNameFilter(logging.Filter):
+    def filter(self, record):
+        # Extract the class name from the logger name
+        record.classname = record.name.split(".")[-1]
+        return True
+
+
 class Logger:
     """
     A flexible Logger class for configuring logging outputs and verbosity levels.
@@ -31,8 +38,9 @@ class Logger:
         file_path: str = "output_log.log",
     ):
         self.logger = logging.getLogger(name)
+        self.logger.addFilter(ClassNameFilter())
         self.formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "%(asctime)s - %(levelname)-8s - %(message)s (%(classname)s)"
         )
         self.verbosity_map = {
             "DEBUG": logging.DEBUG,

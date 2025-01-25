@@ -34,9 +34,13 @@ class PayloadOperation(ContextObserver, ABC):
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__()
         if logger:
+            # If a logger instance is provided, use it
             self.logger = logger
         else:
-            self.logger = Logger()
+            # If no logger is provided, create a new Logger instance
+            # The logger name is formatted to include the module name and class name
+            # This helps in identifying the source of the log messages
+            self.logger = Logger(name=f"{__name__}.{self.__class__.__name__}")
 
     @abstractmethod
     def _process(self, data: BaseDataType, context: ContextType): ...
