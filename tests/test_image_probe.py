@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import multivariate_normal
 from semantiva.specializations.image.image_data_types import ImageDataType
 from semantiva.specializations.image.image_probes import (
-    BasicImageProbre,
+    BasicImageProbe,
     TwoDGaussianFitterProbe,
 )
 from semantiva.specializations.image.image_loaders_savers_generators import (
@@ -13,7 +13,7 @@ from semantiva.specializations.image.image_loaders_savers_generators import (
 
 @pytest.fixture
 def basic_probe():
-    return BasicImageProbre()
+    return BasicImageProbe()
 
 
 @pytest.fixture

@@ -5,7 +5,7 @@ from semantiva.specializations.image.image_operations import ImageProbe
 from semantiva.specializations.image.image_data_types import ImageDataType
 
 
-class BasicImageProbre(ImageProbe):
+class BasicImageProbe(ImageProbe):
     """
     A basic image probe that computes essential image statistics.
 
