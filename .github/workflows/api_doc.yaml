@@ -26,7 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx-rtd-theme  # Add your Sphinx theme or plugins here
+          pip install sphinx sphinx-autodoc-typehints sphinx-rtd-theme  # Add your Sphinx theme or plugins here
 
       - name: Generate API Documentation
         run: |
