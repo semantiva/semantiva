@@ -1,4 +1,5 @@
 import pytest
+from semantiva.logger import Logger
 from semantiva.context_operations.context_types import ContextType
 from semantiva.specializations.image.image_data_types import (
     ImageDataType,
@@ -73,8 +74,12 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
         },
     ]
 
+    # Initialize logger
+    logger = Logger()
+    logger.set_verbose_level("DEBUG")
+    logger.set_console_output()
     # Initialize the pipeline
-    pipeline = Pipeline(node_configurations)
+    pipeline = Pipeline(node_configurations, logger)
 
     # Initialize the context and process the data
     context = ContextType()
@@ -82,7 +87,7 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
 
     # Validate the output
     assert isinstance(output_data, ImageDataType)
-
+    assert isinstance(output_context, ContextType)
     # Expected result validation skipped due to dynamic random inputs
 
     # Inspect the pipeline

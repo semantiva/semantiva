@@ -3,7 +3,7 @@ import numpy as np
 from semantiva.specializations.audio.audio_data_types import (
     SingleChannelAudioDataType,
 )
-
+from semantiva.logger import Logger
 from semantiva.payload_operations import Pipeline
 from semantiva.context_operations import ContextPassthrough
 from semantiva.specializations.audio.audio_operations import SingleChannelAudioAlgorithm
@@ -72,8 +72,13 @@ def test_pipeline_execution(single_channel_audio_data):
         },
     ]
 
+    # Create a logger instance
+    logger = Logger()
+    logger.set_verbose_level("DEBUG")
+    logger.set_console_output()
+
     # Initialize the pipeline
-    pipeline = Pipeline(node_configurations)
+    pipeline = Pipeline(node_configurations, logger)
 
     # Execute the pipeline
     output_data, output_context = pipeline.process(
