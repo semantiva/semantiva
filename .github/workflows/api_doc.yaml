@@ -16,34 +16,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.python_version }}
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           pip install sphinx sphinx-rtd-theme  # Add your Sphinx theme or plugins here
 
-      # Step 4: Generate API Documentation with sphinx-apidoc
       - name: Generate API Documentation
         run: |
           sphinx-apidoc -o docs/source/ -f semantiva/
 
-      # Step 5: Build Sphinx documentation
       - name: Build Sphinx Documentation
         run: |
           cd docs  # Navigate to your Sphinx documentation folder
           make html
 
       - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/build/html"
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html"
