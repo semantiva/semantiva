@@ -1,7 +1,0 @@
-semantiva
-=========
-
-.. toctree::
-   :maxdepth: 4
-
-   semantiva
