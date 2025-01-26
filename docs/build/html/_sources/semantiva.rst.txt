@@ -1,0 +1,25 @@
+semantiva package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   semantiva.context_operations
+   semantiva.data_io
+   semantiva.data_operations
+   semantiva.data_types
+   semantiva.execution_tools
+   semantiva.logger
+   semantiva.payload_operations
+   semantiva.specializations
+
+Module contents
+---------------
+
+.. automodule:: semantiva
+   :members:
+   :undoc-members:
+   :show-inheritance:

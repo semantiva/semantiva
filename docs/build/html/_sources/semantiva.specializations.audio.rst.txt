@@ -1,0 +1,37 @@
+semantiva.specializations.audio package
+=======================================
+
+Submodules
+----------
+
+semantiva.specializations.audio.audio\_data\_io module
+------------------------------------------------------
+
+.. automodule:: semantiva.specializations.audio.audio_data_io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+semantiva.specializations.audio.audio\_data\_types module
+---------------------------------------------------------
+
+.. automodule:: semantiva.specializations.audio.audio_data_types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+semantiva.specializations.audio.audio\_operations module
+--------------------------------------------------------
+
+.. automodule:: semantiva.specializations.audio.audio_operations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.specializations.audio
+   :members:
+   :undoc-members:
+   :show-inheritance:

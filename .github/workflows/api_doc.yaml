@@ -1,0 +1,49 @@
+name: Deploy Sphinx Docs
+
+# Trigger the workflow on push to the main branch or on tag creation
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
+env:
+  project_name: semantiva # Define a global variable for the project name
+  python_version: '3.10.12'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.python_version }}
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install sphinx sphinx-rtd-theme  # Add your Sphinx theme or plugins here
+
+      # Step 4: Generate API Documentation with sphinx-apidoc
+      - name: Generate API Documentation
+        run: |
+          sphinx-apidoc -o docs/source/ -f semantiva/
+
+      # Step 5: Build Sphinx documentation
+      - name: Build Sphinx Documentation
+        run: |
+          cd docs  # Navigate to your Sphinx documentation folder
+          make html
+
+      - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/html"

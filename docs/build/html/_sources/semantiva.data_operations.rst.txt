@@ -1,0 +1,21 @@
+semantiva.data\_operations package
+==================================
+
+Submodules
+----------
+
+semantiva.data\_operations.data\_operations module
+--------------------------------------------------
+
+.. automodule:: semantiva.data_operations.data_operations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.data_operations
+   :members:
+   :undoc-members:
+   :show-inheritance:

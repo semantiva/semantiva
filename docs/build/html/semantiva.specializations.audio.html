@@ -1,0 +1,700 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>semantiva.specializations.audio package &mdash; Semantiva 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="semantiva.specializations.image package" href="semantiva.specializations.image.html" />
+    <link rel="prev" title="semantiva.specializations package" href="semantiva.specializations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Semantiva
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="semantiva.specializations.html">semantiva.specializations package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.html#module-semantiva">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Semantiva</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">semantiva</a></li>
+          <li class="breadcrumb-item"><a href="semantiva.html">semantiva package</a></li>
+          <li class="breadcrumb-item"><a href="semantiva.specializations.html">semantiva.specializations package</a></li>
+      <li class="breadcrumb-item active">semantiva.specializations.audio package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/semantiva.specializations.audio.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="semantiva-specializations-audio-package">
+<h1>semantiva.specializations.audio package<a class="headerlink" href="#semantiva-specializations-audio-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-semantiva.specializations.audio.audio_data_io">
+<span id="semantiva-specializations-audio-audio-data-io-module"></span><h2>semantiva.specializations.audio.audio_data_io module<a class="headerlink" href="#module-semantiva.specializations.audio.audio_data_io" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelAudioSink">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">DualChannelAudioSink</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelAudioSink" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSink</span></code></a></p>
+<p>Abstract base class for dual-channel audio data sinks.</p>
+<p>This class defines methods to consume and store dual-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelAudioSink.send_data">
+<span class="sig-name descname"><span class="pre">send_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelAudioSink.send_data" title="Link to this definition"></a></dt>
+<dd><p>Consume and store dual-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType"><em>DualChannelAudioDataType</em></a>) – The audio data to store.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelAudioSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">DualChannelAudioSource</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelAudioSource" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSource</span></code></a></p>
+<p>Abstract base class for dual-channel audio data sources.</p>
+<p>This class defines methods to provide dual-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelAudioSource.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelAudioSource.get_data" title="Link to this definition"></a></dt>
+<dd><p>Fetch and return dual-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The encapsulated audio data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType">DualChannelAudioDataType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelPayloadSink">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">DualChannelPayloadSink</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelPayloadSink" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSink</span></code></a></p>
+<p>Abstract base class for dual-channel audio payload sinks.</p>
+<p>This class defines methods to consume and store payloads containing dual-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelPayloadSink.send_payload">
+<span class="sig-name descname"><span class="pre">send_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelPayloadSink.send_payload" title="Link to this definition"></a></dt>
+<dd><p>Consume and store a payload of dual-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>payload</strong> (<a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType"><em>DualChannelAudioDataType</em></a>) – The audio data payload to store.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType"><em>DualChannelAudioDataType</em></a>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelPayloadSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">DualChannelPayloadSource</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelPayloadSource" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSource</span></code></a></p>
+<p>Abstract base class for dual-channel audio payload sources.</p>
+<p>This class defines methods to provide payloads containing dual-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.DualChannelPayloadSource.get_payload">
+<span class="sig-name descname"><span class="pre">get_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.DualChannelPayloadSource.get_payload" title="Link to this definition"></a></dt>
+<dd><p>Fetch and return a payload of dual-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The encapsulated audio data payload.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType">DualChannelAudioDataType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelAudioSink">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">SingleChannelAudioSink</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelAudioSink" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSink</span></code></a></p>
+<p>Abstract base class for single-channel audio data sinks.</p>
+<p>This class defines methods to consume and store single-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelAudioSink.send_data">
+<span class="sig-name descname"><span class="pre">send_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelAudioSink.send_data" title="Link to this definition"></a></dt>
+<dd><p>Consume and store single-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType"><em>SingleChannelAudioDataType</em></a>) – The audio data to store.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelAudioSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">SingleChannelAudioSource</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelAudioSource" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSource</span></code></a></p>
+<p>Abstract base class for single-channel audio data sources.</p>
+<p>This class defines methods to provide single-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelAudioSource.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelAudioSource.get_data" title="Link to this definition"></a></dt>
+<dd><p>Fetch and return single-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The encapsulated audio data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType">SingleChannelAudioDataType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSink">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">SingleChannelPayloadSink</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSink" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSink</span></code></a>[<a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleChannelAudioDataType</span></code></a>]</p>
+<p>Abstract base class for single-channel audio payload sinks.</p>
+<p>This class defines methods to consume and store payloads containing single-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSink.send_payload">
+<span class="sig-name descname"><span class="pre">send_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSink.send_payload" title="Link to this definition"></a></dt>
+<dd><p>Consume and store a payload of single-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>payload</strong> (<a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType"><em>SingleChannelAudioDataType</em></a>) – The audio data payload to store.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType"><em>SingleChannelAudioDataType</em></a>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_io.</span></span><span class="sig-name descname"><span class="pre">SingleChannelPayloadSource</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSource" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSource</span></code></a></p>
+<p>Abstract base class for single-channel audio payload sources.</p>
+<p>This class defines methods to provide payloads containing single-channel audio data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSource.get_payload">
+<span class="sig-name descname"><span class="pre">get_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_io.SingleChannelPayloadSource.get_payload" title="Link to this definition"></a></dt>
+<dd><p>Fetch and return a payload of single-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The encapsulated audio data payload.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType" title="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType">SingleChannelAudioDataType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-semantiva.specializations.audio.audio_data_types">
+<span id="semantiva-specializations-audio-audio-data-types-module"></span><h2>semantiva.specializations.audio.audio_data_types module<a class="headerlink" href="#module-semantiva.specializations.audio.audio_data_types" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_types.</span></span><span class="sig-name descname"><span class="pre">DualChannelAudioDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+<p>Represents dual-channel (stereo) audio data.</p>
+<p>This class encapsulates audio data in a dual-channel format, ensuring
+type consistency and providing a base for operations on such data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>ndarray</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType._data">
+<span class="sig-name descname"><span class="pre">_data</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType._data" title="Link to this definition"></a></dt>
+<dd><p>The encapsulated dual-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_types.DualChannelAudioDataType.validate" title="Link to this definition"></a></dt>
+<dd><p>Abstract method to validate the encapsulated data.</p>
+<p>This method must be implemented by subclasses to define specific
+validation rules for the data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the data is valid, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_data_types.</span></span><span class="sig-name descname"><span class="pre">SingleChannelAudioDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+<p>Represents single-channel audio data.</p>
+<p>This class encapsulates audio data in a single channel (mono) format, ensuring
+type consistency and providing a base for operations on such data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>ndarray</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType._data">
+<span class="sig-name descname"><span class="pre">_data</span></span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType._data" title="Link to this definition"></a></dt>
+<dd><p>The encapsulated single-channel audio data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_data_types.SingleChannelAudioDataType.validate" title="Link to this definition"></a></dt>
+<dd><p>Abstract method to validate the encapsulated data.</p>
+<p>This method must be implemented by subclasses to define specific
+validation rules for the data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the data is valid, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-semantiva.specializations.audio.audio_operations">
+<span id="semantiva-specializations-audio-audio-operations-module"></span><h2>semantiva.specializations.audio.audio_operations module<a class="headerlink" href="#module-semantiva.specializations.audio.audio_operations" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelAudioAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_operations.</span></span><span class="sig-name descname"><span class="pre">DualChannelAudioAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelAudioAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm" title="semantiva.data_operations.data_operations.DataAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataAlgorithm</span></code></a></p>
+<p>An algorithm specialized for processing dual-channel (stereo) audio data.</p>
+<p>This class implements the <cite>DataAlgorithm</cite> abstract base class to define
+operations that accept and produce <cite>DualChannelAudioDataType</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context_observer</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver"><em>ContextObserver</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelAudioAlgorithm.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelAudioAlgorithm.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the expected input data type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelAudioAlgorithm.output_data_type">
+<span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelAudioAlgorithm.output_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the type of data output by the algorithm.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Specify the input data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>DualChannelAudioDataType</cite>, representing dual-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Specify the output data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>DualChannelAudioDataType</cite>, representing dual-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelAudioProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_operations.</span></span><span class="sig-name descname"><span class="pre">DualChannelAudioProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelAudioProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataProbe" title="semantiva.data_operations.data_operations.DataProbe"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProbe</span></code></a></p>
+<p>A probe for inspecting or monitoring dual-channel (stereo) audio data.</p>
+<p>This class implements the <cite>DataProbe</cite> abstract base class to define
+operations that accept <cite>DualChannelAudioDataType</cite> as input. It is
+typically used for debugging, logging, or analyzing dual-channel
+audio data within the framework.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelAudioProbe.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelAudioProbe.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the expected input data type for the probe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Specify the input data type for the probe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>DualChannelAudioDataType</cite>, representing dual-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelMergerAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_operations.</span></span><span class="sig-name descname"><span class="pre">DualChannelMergerAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelMergerAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm" title="semantiva.data_operations.data_operations.DataAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataAlgorithm</span></code></a></p>
+<p>An algorithm to merge dual-channel audio data into a single-channel format.</p>
+<p>This class defines operations that accept <cite>DualChannelAudioDataType</cite> as input
+and produce <cite>SingleChannelAudioDataType</cite> as output, suitable for scenarios
+where stereo audio needs to be downmixed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context_observer</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver"><em>ContextObserver</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelMergerAlgorithm.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelMergerAlgorithm.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the expected input data type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.DualChannelMergerAlgorithm.output_data_type">
+<span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.DualChannelMergerAlgorithm.output_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the type of data output by the algorithm.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>Specify the input data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>DualChannelAudioDataType</cite>, representing dual-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd><p>Specify the output data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>SingleChannelAudioDataType</cite>, representing single-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelAudioAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_operations.</span></span><span class="sig-name descname"><span class="pre">SingleChannelAudioAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelAudioAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm" title="semantiva.data_operations.data_operations.DataAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataAlgorithm</span></code></a></p>
+<p>An algorithm specialized for processing single-channel audio data.</p>
+<p>This class implements the <cite>DataAlgorithm</cite> abstract base class to define
+operations that accept and produce <cite>SingleChannelAudioDataType</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context_observer</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver"><em>ContextObserver</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelAudioAlgorithm.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelAudioAlgorithm.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the expected input data type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelAudioAlgorithm.output_data_type">
+<span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelAudioAlgorithm.output_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the type of data output by the algorithm.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd><p>Specify the input data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>SingleChannelAudioDataType</cite>, representing single-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id6">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd><p>Specify the output data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>SingleChannelAudioDataType</cite>, representing single-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelAudioProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_operations.</span></span><span class="sig-name descname"><span class="pre">SingleChannelAudioProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelAudioProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataProbe" title="semantiva.data_operations.data_operations.DataProbe"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProbe</span></code></a></p>
+<p>A probe for inspecting or monitoring single-channel audio data.</p>
+<p>This class implements the <cite>DataProbe</cite> abstract base class to define
+operations that accept <cite>SingleChannelAudioDataType</cite> as input. It is
+typically used for debugging, logging, or analyzing single-channel
+audio data within the framework.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelAudioProbe.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelAudioProbe.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the expected input data type for the probe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id7">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd><p>Specify the input data type for the probe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>SingleChannelAudioDataType</cite>, representing single-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelExpanderAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.specializations.audio.audio_operations.</span></span><span class="sig-name descname"><span class="pre">SingleChannelExpanderAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelExpanderAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm" title="semantiva.data_operations.data_operations.DataAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataAlgorithm</span></code></a></p>
+<p>An algorithm to expand single-channel audio data into dual-channel format.</p>
+<p>This class defines operations that accept <cite>SingleChannelAudioDataType</cite> as input
+and produce <cite>DualChannelAudioDataType</cite> as output, suitable for scenarios
+where mono audio needs to be converted to stereo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context_observer</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver"><em>ContextObserver</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelExpanderAlgorithm.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelExpanderAlgorithm.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the expected input data type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.specializations.audio.audio_operations.SingleChannelExpanderAlgorithm.output_data_type">
+<span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.specializations.audio.audio_operations.SingleChannelExpanderAlgorithm.output_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the type of data output by the algorithm.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id8">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd><p>Specify the input data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>SingleChannelAudioDataType</cite>, representing single-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id9">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd><p>Specify the output data type for the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>DualChannelAudioDataType</cite>, representing dual-channel audio.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-semantiva.specializations.audio">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.specializations.audio" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="semantiva.specializations.html" class="btn btn-neutral float-left" title="semantiva.specializations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.specializations.image.html" class="btn btn-neutral float-right" title="semantiva.specializations.image package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Rafael Pezzi, Marcos Deros.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

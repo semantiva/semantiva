@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>semantiva.context_operations package &mdash; Semantiva 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="semantiva.data_io package" href="semantiva.data_io.html" />
+    <link rel="prev" title="semantiva package" href="semantiva.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Semantiva
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.html">semantiva.specializations package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.html#module-semantiva">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Semantiva</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">semantiva</a></li>
+          <li class="breadcrumb-item"><a href="semantiva.html">semantiva package</a></li>
+      <li class="breadcrumb-item active">semantiva.context_operations package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/semantiva.context_operations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="semantiva-context-operations-package">
+<h1>semantiva.context_operations package<a class="headerlink" href="#semantiva-context-operations-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-semantiva.context_operations.context_observer">
+<span id="semantiva-context-operations-context-observer-module"></span><h2>semantiva.context_operations.context_observer module<a class="headerlink" href="#module-semantiva.context_operations.context_observer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_observer.ContextObserver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_operations.context_observer.</span></span><span class="sig-name descname"><span class="pre">ContextObserver</span></span><a class="headerlink" href="#semantiva.context_operations.context_observer.ContextObserver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for managing and observing context updates within the semantic framework.</p>
+<p>This class facilitates the tracking and updating of contextual information
+that may influence the behavior of data operations and algorithms.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_observer.ContextObserver.update_context">
+<span class="sig-name descname"><span class="pre">update_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_observer.ContextObserver.update_context" title="Link to this definition"></a></dt>
+<dd><p>Update the context with a new key-value pair or modify an existing one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – The key associated with the context value.</p></li>
+<li><p><strong>value</strong> (<em>any</em>) – The value to be stored in the context.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-semantiva.context_operations.context_operations">
+<span id="semantiva-context-operations-context-operations-module"></span><h2>semantiva.context_operations.context_operations module<a class="headerlink" href="#module-semantiva.context_operations.context_operations" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextOperation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_operations.context_operations.</span></span><span class="sig-name descname"><span class="pre">ContextOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextOperation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for defining operations on a context.</p>
+<p>This class serves as a foundation for implementing specific operations
+that manipulate or utilize the context in various ways.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextOperation.get_created_keys">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextOperation.get_created_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of context keys that will be created by this operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A list of context keys that the operation will add or create</dt><dd><p>as a result of execution.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextOperation.get_required_keys">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_required_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextOperation.get_required_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of context keys required by this operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A list of context keys that the operation expects to be present</dt><dd><p>before execution.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextOperation.get_suppressed_keys">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_suppressed_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextOperation.get_suppressed_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of context keys that will be suppressed or removed by this operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A list of context keys that the operation will remove or render</dt><dd><p>obsolete during its execution.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextOperation.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></em><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextOperation.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextOperation.operate_context">
+<span class="sig-name descname"><span class="pre">operate_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextOperation.operate_context" title="Link to this definition"></a></dt>
+<dd><p>Execute the context operation.</p>
+<p>Calls the subclass-implemented <cite>_operate_context</cite> method to perform the
+operation on the provided context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a>) – The context to operate on.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the context operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType">ContextType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextPassthrough">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_operations.context_operations.</span></span><span class="sig-name descname"><span class="pre">ContextPassthrough</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextPassthrough" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextOperation</span></code></a></p>
+<p>A context operation that passes the context unchanged.</p>
+<p>This class is used as a default context operation for nodes when
+no specific context operation is provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextPassthrough.get_created_keys">
+<span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextPassthrough.get_created_keys" title="Link to this definition"></a></dt>
+<dd><p>Since this operation does not create any new keys,
+it returns an empty list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextPassthrough.get_required_keys">
+<span class="sig-name descname"><span class="pre">get_required_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextPassthrough.get_required_keys" title="Link to this definition"></a></dt>
+<dd><p>Since this operation does not require any specific keys,
+it returns an empty list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_operations.ContextPassthrough.get_suppressed_keys">
+<span class="sig-name descname"><span class="pre">get_suppressed_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_operations.ContextPassthrough.get_suppressed_keys" title="Link to this definition"></a></dt>
+<dd><p>Since this operation does not suppress any keys,
+it returns an empty list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-semantiva.context_operations.context_types">
+<span id="semantiva-context-operations-context-types-module"></span><h2>semantiva.context_operations.context_types module<a class="headerlink" href="#module-semantiva.context_operations.context_types" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextCollectionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_operations.context_types.</span></span><span class="sig-name descname"><span class="pre">ContextCollectionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextCollectionType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextType</span></code></a></p>
+<p>A specialized context type that stores and manages multiple <cite>ContextType</cite> instances.</p>
+<p>This class extends <cite>ContextType</cite> but internally keeps a list of separate contexts.
+Each item in the collection is a <cite>ContextType</cite>, enabling parallel iteration with
+DataC subclasses that contain multiple data items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context_list</strong> (<em>List</em><em>[</em><a class="reference internal" href="#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a><em>] </em><em>| </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextCollectionType.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextCollectionType.append" title="Link to this definition"></a></dt>
+<dd><p>Append a <cite>ContextType</cite> object to the end of this collecton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> (<a class="reference internal" href="#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a>) – The context to be appended.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the provided item is not a <cite>ContextType</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_operations.context_types.</span></span><span class="sig-name descname"><span class="pre">ContextType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents a generic context within the framework.</p>
+<p>This class serves as a container for storing and managing context-specific
+information, facilitating access and updates to context data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context_dict</strong> (<em>Dict</em><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType._context_container">
+<span class="sig-name descname"><span class="pre">_context_container</span></span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType._context_container" title="Link to this definition"></a></dt>
+<dd><p>A dictionary that stores key-value pairs representing
+the context data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType.clear" title="Link to this definition"></a></dt>
+<dd><p>Clear all key-value pairs in the context.</p>
+<p>This method resets the context to an empty state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType.delete_value">
+<span class="sig-name descname"><span class="pre">delete_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType.delete_value" title="Link to this definition"></a></dt>
+<dd><p>Remove a key-value pair from the context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The key to be removed from the context.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If the key does not exist in the context.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType.get_value" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a value from the context using the specified key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The key associated with the desired value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value corresponding to the key, or None if the key does not exist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType.items" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all key-value pairs in the context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of (key, value) tuples for the stored context data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType.keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all keys in the context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all keys currently stored in the context.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType.set_value">
+<span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType.set_value" title="Link to this definition"></a></dt>
+<dd><p>Set or update a value in the context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – The key associated with the value to be stored.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – The value to store in the context.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.context_operations.context_types.ContextType.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.context_operations.context_types.ContextType.values" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all values in the context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all values currently stored in the context.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-semantiva.context_operations">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.context_operations" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="semantiva.html" class="btn btn-neutral float-left" title="semantiva package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.data_io.html" class="btn btn-neutral float-right" title="semantiva.data_io package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Rafael Pezzi, Marcos Deros.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

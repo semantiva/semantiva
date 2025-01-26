@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Semantiva &mdash; Semantiva 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chapter 1: Introduction to Semantiva" href="1.introduction.html" />
+    <link rel="prev" title="Semantiva documentation" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Semantiva
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Welcome to Semantiva</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-with-semantiva">Getting Started with Semantiva</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="1.introduction.html">Chapter 1: Introduction to Semantiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2.architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">semantiva</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Semantiva</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to Semantiva</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/chapters/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-semantiva">
+<h1>Welcome to Semantiva<a class="headerlink" href="#welcome-to-semantiva" title="Link to this heading"></a></h1>
+<p><strong>Semantiva</strong> is an open-source framework that brings <strong>Domain-Driven Design</strong>, <strong>Type-Oriented Development</strong>, and <strong>semantic transparency</strong> together under one roof. By pairing each data type with matching algorithm definitions—and embedding domain concepts at every stage—Semantiva streamlines complex data pipelines into clear, scalable, and easily maintainable workflows.</p>
+<p><strong>Why Semantiva?</strong></p>
+<ul class="simple">
+<li><p><strong>Aligned with Real-World Needs</strong>: Design your data structures and operations around actual domain entities, eliminating confusion and wasted effort.</p></li>
+<li><p><strong>Type-Safe Workflows</strong>: Prevent costly errors and ambiguities by ensuring each algorithm processes exactly the data it was built for.</p></li>
+<li><p><strong>Semantic Transparency</strong>: Make every transformation explainable, so that team members and stakeholders can trust your results, from quick prototypes to HPC-scale deployments.</p></li>
+<li><p><strong>Future-Proof</strong>: Scale seamlessly by adding new data types, integrating cloud or cluster resources, and leveraging modular pipelines that adapt to evolving requirements.</p></li>
+</ul>
+<p>Explore our <a class="reference internal" href="1.introduction.html"><span class="doc std std-doc">Documentation</span></a> to see how Semantiva redefines data processing—connecting scientists, engineers, and software developers through a shared, semantically rich approach. Wherever clarity and reliability matter, Semantiva is here to help you build solutions that stand the test of time.</p>
+<section id="getting-started-with-semantiva">
+<h2>Getting Started with Semantiva<a class="headerlink" href="#getting-started-with-semantiva" title="Link to this heading"></a></h2>
+<p>This short guide helps you <strong>jump right in</strong> with a minimal example showcasing <strong>Semantiva’s</strong> modular design. We’ll create and process a simple <strong>string literal</strong> rather than dealing with more complex domains like audio or images.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#########################</span>
+<span class="c1"># Step 1: Define StringLiteralDataType</span>
+<span class="c1">#########################</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StringLiteralDataType</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a simple string literal data type.</span>
+
+<span class="sd">    This class encapsulates a Python string, ensuring type consistency</span>
+<span class="sd">    and providing a base for operations on string data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the StringLiteralDataType with the provided string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (str): The string data to encapsulate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate that the provided data is a string literal.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The value to validate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;Data must be a string.&quot;</span>
+
+
+<span class="c1">#########################</span>
+<span class="c1"># Step 2: Create a Specialized StringLiteralAlgorithm Using AlgorithmTopologyFactory</span>
+<span class="c1">#########################</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlgorithmTopologyFactory</span>
+
+<span class="c1"># Dynamically create a base algorithm class for (StringLiteralDataType -&gt; StringLiteralDataType)</span>
+<span class="n">StringLiteralAlgorithm</span> <span class="o">=</span> <span class="n">AlgorithmTopologyFactory</span><span class="o">.</span><span class="n">create_algorithm</span><span class="p">(</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="n">StringLiteralDataType</span><span class="p">,</span>
+    <span class="n">output_type</span><span class="o">=</span><span class="n">StringLiteralDataType</span><span class="p">,</span>
+    <span class="n">class_name</span><span class="o">=</span><span class="s2">&quot;StringLiteralAlgorithm&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1">#########################</span>
+<span class="c1"># Step 3: Define HelloOperation (Extending StringLiteralAlgorithm)</span>
+<span class="c1">#########################</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HelloOperation</span><span class="p">(</span><span class="n">StringLiteralAlgorithm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A simple operation that modifies the input string to greet the inout</span>
+<span class="sd">    and returns the updated value as a new StringLiteralDataType.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">StringLiteralDataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StringLiteralDataType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepends &quot;Hello, &quot; to the input string and returns it as a new StringLiteralDataType.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (StringLiteralDataType): The input data containing a Python string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            StringLiteralDataType: The updated data containing the greeting.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hello_data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">StringLiteralDataType</span><span class="p">(</span><span class="n">hello_data</span><span class="p">)</span>
+
+
+<span class="c1">#########################</span>
+<span class="c1"># Step 4: Create a Pipeline Configuration Using HelloOperation</span>
+<span class="c1">#########################</span>
+<span class="n">node_configurations</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="n">HelloOperation</span><span class="p">,</span>
+        <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># No extra parameters needed</span>
+        <span class="s2">&quot;context_operation&quot;</span><span class="p">:</span> <span class="n">ContextPassthrough</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+
+<span class="c1">#########################</span>
+<span class="c1"># Step 5: Instantiate and Use the Pipeline</span>
+<span class="c1">#########################</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.payload_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># 1. Initialize the minimal pipeline with our node configurations</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">node_configurations</span><span class="p">)</span>
+
+    <span class="c1"># 2. Create a StringLiteralDataType object</span>
+    <span class="n">input_data</span> <span class="o">=</span> <span class="n">StringLiteralDataType</span><span class="p">(</span><span class="s2">&quot;World!&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 3. Run the pipeline</span>
+    <span class="n">output_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="c1"># 4. Print final result</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pipeline completed. Final output:&quot;</span><span class="p">,</span> <span class="n">output_data</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Semantiva documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="1.introduction.html" class="btn btn-neutral float-right" title="Chapter 1: Introduction to Semantiva" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Rafael Pezzi, Marcos Deros.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
