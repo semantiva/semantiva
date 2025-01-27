@@ -9,7 +9,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../.."))
 
 project = "Semantiva"
 copyright = "2025, Rafael Pezzi, Marcos Deros"
@@ -30,7 +30,13 @@ autodoc_typehints = "description"
 templates_path = ["_templates"]
 exclude_patterns = []
 
+# Add the _static directory to the static path
+html_static_path = ["_static"]
 
+# Include the custom CSS file
+html_css_files = [
+    "custom.css",
+]
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 

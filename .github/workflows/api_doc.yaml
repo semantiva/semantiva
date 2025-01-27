@@ -2,10 +2,9 @@ name: Deploy Sphinx Docs
 
 # Trigger the workflow on push to the main branch or on tag creation
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:  # Allows manual triggering of the workflow
+    tags:
+      - 'v*'  # Trigger the build job only on version tags (e.g., v1.0.0, v2.0.0)
+    workflow_dispatch:  # Allows manual triggering of the workflow
 
 env:
   project_name: semantiva # Define a global variable for the project name
@@ -26,9 +25,19 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
 
+      - name: Install dependencies from pyproject.toml
+        run: |
+          pip install .
+          pip install -e '.[dev]'  # Install dev dependencies if needed
+
       - name: Install dependencies
         run: |
           pip install sphinx sphinx-autodoc-typehints sphinx-rtd-theme  # Add your Sphinx theme or plugins here
+
+      - name: Create missing directories
+        run: |
+          mkdir -p docs/_static
+          mkdir -p docs/_templates
 
       - name: Generate API Documentation
         run: |
@@ -36,11 +45,13 @@ jobs:
 
       - name: Build Sphinx Documentation
         run: |
-          cd docs  # Navigate to your Sphinx documentation folder
-          make html
+          sphinx-build -b html docs/source docs/build
 
+      - name: Verify build directory
+        run: ls -l docs/build || echo "Build directory not found!"
+      
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/html"
+          publish_dir: docs/build/
