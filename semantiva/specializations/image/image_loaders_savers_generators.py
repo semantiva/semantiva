@@ -313,42 +313,55 @@ class ImageDataRandomGenerator(ImageDataSource):
 
 
 class TwoDGaussianImageGenerator(ImageDataSource):
-    """Generates a 2D Gaussian image."""
+    """Generates an image with a 2D Gaussian signal."""
 
     def _get_data(
         self,
-        std_dev_x: float,
-        std_dev_y: float,
+        center: tuple[int, int],  # (x, y) position
+        std_dev: float | tuple[float, float],  # Allow single float or tuple
         amplitude: float,
-        image_size: tuple[int, int],
+        image_size: tuple[int, int] = (1024, 1024),  # Default image size
     ) -> ImageDataType:
         """
-        Generates a 2D Gaussian image.
+        Generates a 2D Gaussian image centered at a given position.
 
         Parameters:
-            std_dev_x (float): The standard deviation in the x-direction.
-            std_dev_y (float): The standard deviation in the y-direction.
-            amplitude (float): The amplitude of the Gaussian.
-            image_size (tuple[int, int]): The shape (rows, columns) of the generated image data.
+            center (tuple[int, int]): (x, y) coordinates of the Gaussian center.
+            std_dev (float | tuple[float, float]): Standard deviation (sigma_x, sigma_y).
+                - If a single float is provided, both directions use the same value.
+            amplitude (float): Amplitude (peak intensity) of the Gaussian.
+            image_size (tuple[int, int]): The shape (height, width) of the generated image (default: (1024, 1024)).
 
         Returns:
             ImageDataType: A 2D Gaussian image.
         """
-        # Validate that the shape represents a 2D array
+        # Unpack center
+        x_center, y_center = center
+
+        # Handle std_dev input
+        if isinstance(std_dev, (int, float)):
+            std_dev_x, std_dev_y = std_dev, std_dev
+        else:
+            std_dev_x, std_dev_y = std_dev
+
+        # Validate image_size
         if len(image_size) != 2:
             raise ValueError(
-                f"Shape must be a tuple with two dimensions, but got {len(image_size)}."
+                f"image_size must be a tuple of two dimensions, but got {image_size}."
             )
 
-        mean = [0, 0]
-        covariance = [[std_dev_x**2, 0], [0, std_dev_y**2]]
-        x = np.linspace(-1, 1, image_size[0])
-        y = np.linspace(-1, 1, image_size[1])
-        x, y = np.meshgrid(x, y)
-        rv = multivariate_normal(mean, covariance)
-        z = amplitude * rv.pdf(np.dstack((x, y)))
-        # Normalize to ensure the maximum value matches the desired amplitude
-        z = z / z.max() * amplitude
+        # Generate the Gaussian grid
+        x = np.arange(image_size[1])  # width (columns)
+        y = np.arange(image_size[0])  # height (rows)
+        x_grid, y_grid = np.meshgrid(x, y)
+
+        # Compute the Gaussian function
+        x_shifted = x_grid - x_center
+        y_shifted = y_grid - y_center
+        z = amplitude * np.exp(
+            -((x_shifted**2) / (2 * std_dev_x**2) + (y_shifted**2) / (2 * std_dev_y**2))
+        )
+
         return ImageDataType(z)
 
 
