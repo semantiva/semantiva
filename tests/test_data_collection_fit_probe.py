@@ -1,5 +1,5 @@
 import pytest
-from typing import List, Dict, Iterator
+from typing import List, Dict, Iterator, Type
 from semantiva.data_types.data_types import BaseDataType, DataCollectionType
 from semantiva.data_operations.data_operations import DataProbe, DataCollectionProbe
 from semantiva.data_operations.data_collection_fit_probe import (
@@ -25,11 +25,11 @@ class MockBaseData(BaseDataType[float]):
 
 
 class MockCollection(DataCollectionType[MockBaseData, List[float]]):
-    def _initialize_empty(self) -> List[float]:
+    @classmethod
+    def _initialize_empty(cls) -> List[float]:
         return list()
 
     def validate(self, data: List[float]) -> bool:
-        # Simple pass-through or logic check to ensure `data` is a list of MockBaseData
         return all(isinstance(item, float) for item in data)
 
     def __iter__(self) -> Iterator[MockBaseData]:
@@ -106,22 +106,26 @@ def mock_fitting_model() -> MockFittingModel:
 
 @pytest.fixture
 def generated_probe_class(
-    mock_feature_extractor, mock_fitting_model
-) -> DataCollectionProbe[MockCollection]:
+    mock_feature_extractor: MockFeatureExtractor, mock_fitting_model: MockFittingModel
+) -> Type[DataCollectionProbe[MockCollection]]:  # FIX: Correct return type
     """
     Uses the factory to create a dynamically generated probe class
     that extracts features and fits them.
     """
-    GeneratedProbe = create_collection_feature_extraction_and_fit_probe(
-        feature_extractor=mock_feature_extractor,
-        fitting_model=mock_fitting_model,
-        independent_variable_parameter_name="domain",
+    GeneratedProbe: Type[DataCollectionProbe[MockCollection]] = (
+        create_collection_feature_extraction_and_fit_probe(
+            feature_extractor=mock_feature_extractor,
+            fitting_model=mock_fitting_model,
+            independent_variable_parameter_name="domain",
+        )
     )
     return GeneratedProbe
 
 
 @pytest.fixture
-def generated_probe(generated_probe_class) -> DataCollectionProbe[MockCollection]:
+def generated_probe(
+    generated_probe_class: Type[DataCollectionProbe[MockCollection]],
+) -> DataCollectionProbe[MockCollection]:
     """
     Instantiates the dynamically generated probe class.
     """
@@ -138,7 +142,7 @@ def test_probe_creation(generated_probe_class):
     Tests that we can successfully create the probe class
     without abstract method errors.
     """
-    # Instantiate
+
     probe_instance = generated_probe_class()
     assert isinstance(probe_instance, DataCollectionProbe)
     assert hasattr(probe_instance, "fitting_model")
