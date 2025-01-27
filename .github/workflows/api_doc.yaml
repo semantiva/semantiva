@@ -2,9 +2,10 @@ name: Deploy Sphinx Docs
 
 # Trigger the workflow on push to the main branch or on tag creation
 on:
+  push:
     tags:
-      - 'v*'  # Trigger the build job only on version tags (e.g., v1.0.0, v2.0.0)
-    workflow_dispatch:  # Allows manual triggering of the workflow
+      - "*"  # Trigger on any tag
+  workflow_dispatch:  # Allow manual trigger
 
 env:
   project_name: semantiva # Define a global variable for the project name
