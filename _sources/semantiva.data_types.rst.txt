@@ -1,0 +1,21 @@
+semantiva.data\_types package
+=============================
+
+Submodules
+----------
+
+semantiva.data\_types.data\_types module
+----------------------------------------
+
+.. automodule:: semantiva.data_types.data_types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.data_types
+   :members:
+   :undoc-members:
+   :show-inheritance:

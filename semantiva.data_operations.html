@@ -1,0 +1,432 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>semantiva.data_operations package &mdash; Semantiva 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=7205999f" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="semantiva.data_types package" href="semantiva.data_types.html" />
+    <link rel="prev" title="semantiva.data_io package" href="semantiva.data_io.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Semantiva
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.html">semantiva.specializations package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.html#module-semantiva">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Semantiva</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">semantiva</a></li>
+          <li class="breadcrumb-item"><a href="semantiva.html">semantiva package</a></li>
+      <li class="breadcrumb-item active">semantiva.data_operations package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/semantiva.data_operations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="semantiva-data-operations-package">
+<h1>semantiva.data_operations package<a class="headerlink" href="#semantiva-data-operations-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-semantiva.data_operations.data_collection_fit_probe">
+<span id="semantiva-data-operations-data-collection-fit-probe-module"></span><h2>semantiva.data_operations.data_collection_fit_probe module<a class="headerlink" href="#module-semantiva.data_operations.data_collection_fit_probe" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_collection_fit_probe.create_collection_feature_extraction_and_fit_probe">
+<span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_collection_fit_probe.</span></span><span class="sig-name descname"><span class="pre">create_collection_feature_extraction_and_fit_probe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitting_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">independent_variable_parameter_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_collection_fit_probe.create_collection_feature_extraction_and_fit_probe" title="Link to this definition"></a></dt>
+<dd><p>Factory function to create a <cite>CollectionFeatureExtractionAndFitProbe</cite> class.</p>
+<p>This probe integrates:
+- <strong>Feature extraction</strong> from a <cite>DataCollectionType</cite>.
+- <strong>Function fitting</strong> using a <cite>FittingModel</cite>.
+- <strong>Dynamic injection of independent variables</strong> (annotations) at runtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_extractor</strong> (<a class="reference internal" href="#semantiva.data_operations.data_operations.DataProbe" title="semantiva.data_operations.data_operations.DataProbe"><em>DataProbe</em></a>) – The probe for extracting features.</p></li>
+<li><p><strong>fitting_model</strong> (<em>FittingModel</em>) – The model used for function fitting.</p></li>
+<li><p><strong>independent_variable_parameter_name</strong> (<em>str</em>) – Runtime argument key for passing independent variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dynamically generated class that can process data collections.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Type[<a class="reference internal" href="#semantiva.data_operations.data_operations.DataCollectionProbe" title="semantiva.data_operations.data_operations.DataCollectionProbe">DataCollectionProbe</a>[CollectionBaseType, ExtractedFeatureType]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-semantiva.data_operations.data_operations">
+<span id="semantiva-data-operations-data-operations-module"></span><h2>semantiva.data_operations.data_operations module<a class="headerlink" href="#module-semantiva.data_operations.data_operations" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.AlgorithmTopologyFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_operations.</span></span><span class="sig-name descname"><span class="pre">AlgorithmTopologyFactory</span></span><a class="headerlink" href="#semantiva.data_operations.data_operations.AlgorithmTopologyFactory" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A factory that creates algorithm classes for specific (input, output) data-type pairs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.AlgorithmTopologyFactory.create_algorithm">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_algorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GeneratedAlgorithm'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.AlgorithmTopologyFactory.create_algorithm" title="Link to this definition"></a></dt>
+<dd><p>Dynamically creates a subclass of DataAlgorithm that expects <cite>input_type</cite>
+as input and produces <cite>output_type</cite> as output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_type</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a><em>]</em>) – The expected input data type (subclass of BaseDataType).</p></li>
+<li><p><strong>output_type</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a><em>]</em>) – The output data type (subclass of BaseDataType).</p></li>
+<li><p><strong>class_name</strong> (<em>str</em>) – The name to give the generated class.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new subclass of DataAlgorithm with the specified I/O data types.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Type[<a class="reference internal" href="#semantiva.data_operations.data_operations.DataAlgorithm" title="semantiva.data_operations.data_operations.DataAlgorithm">DataAlgorithm</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.BaseDataOperation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_operations.</span></span><span class="sig-name descname"><span class="pre">BaseDataOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.BaseDataOperation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Abstract base class for all data operations in the semantic framework.</p>
+<p>This class defines the foundational structure for implementing data
+processing operations, ensuring consistency and extensibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.BaseDataOperation.get_operation_parameter_names">
+<span class="sig-name descname"><span class="pre">get_operation_parameter_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.BaseDataOperation.get_operation_parameter_names" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the names of parameters required by the <cite>_operation</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of parameter names (excluding <cite>data</cite>).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.BaseDataOperation.input_data_type">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.BaseDataOperation.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Define the type of input data required for the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The expected input data type.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType">BaseDataType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.BaseDataOperation.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.data_operations.data_operations.BaseDataOperation.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.BaseDataOperation.output_data_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.BaseDataOperation.output_data_type" title="Link to this definition"></a></dt>
+<dd><p>Define the type of output data produced by the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The expected output data type.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType">BaseDataType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.BaseDataOperation.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.BaseDataOperation.process" title="Link to this definition"></a></dt>
+<dd><p>Execute the operation with the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>T</em>) – The input data for the operation.</p></li>
+<li><p><strong>*args</strong> – Additional positional arguments for the operation.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments for the operation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataAlgorithm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_operations.</span></span><span class="sig-name descname"><span class="pre">DataAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataOperation</span></code></a></p>
+<p>Represents a concrete data algorithm within the semantic framework.</p>
+<p>This class extends BaseDataOperation to incorporate contextual updates
+using a ContextObserver.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context_observer</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver"><em>ContextObserver</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataAlgorithm.context_observer">
+<span class="sig-name descname"><span class="pre">context_observer</span></span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataAlgorithm.context_observer" title="Link to this definition"></a></dt>
+<dd><p>An observer for managing context updates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver">ContextObserver</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataAlgorithm.context_keys">
+<span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataAlgorithm.context_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the list of valid context keys for the algorithm.</p>
+<p>This method defines the context keys that the algorithm can update
+during its execution. Subclasses need to implement this method to provide
+a list of keys that are relevant to their specific functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of strings representing valid context keys.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">context_observer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextObserver</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_operations.</span></span><span class="sig-name descname"><span class="pre">DataCollectionFeatureExtractionProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_operations.data_operations.DataCollectionProbe" title="semantiva.data_operations.data_operations.DataCollectionProbe"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataCollectionProbe</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseType</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseType</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">FeatureType</span></code>]</p>
+<p>A probe that extracts features from a data collection.</p>
+<p>This probe processes a <cite>DataCollectionType</cite>, applying a feature extraction operation
+(provided by an individual <cite>DataProbe</cite>) to each element in the collection. The result
+is a list of extracted feature values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_extractor</strong> (<a class="reference internal" href="#semantiva.data_operations.data_operations.DataProbe" title="semantiva.data_operations.data_operations.DataProbe"><em>DataProbe</em></a>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe.feature_extractor">
+<span class="sig-name descname"><span class="pre">feature_extractor</span></span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe.feature_extractor" title="Link to this definition"></a></dt>
+<dd><p>A probe responsible for extracting a single feature
+from individual elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#semantiva.data_operations.data_operations.DataProbe" title="semantiva.data_operations.data_operations.DataProbe">DataProbe</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataCollectionProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_operations.</span></span><span class="sig-name descname"><span class="pre">DataCollectionProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataCollectionProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataOperation</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseType</span></code>]</p>
+<p>A probe for inspecting or monitoring data collections.</p>
+<p>This class extends <cite>BaseDataOperation</cite> to define operations that accept
+<cite>DataCollectionType</cite>, allowing the extraction of observables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataCollectionProbe.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataCollectionProbe.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the expected input data type (<cite>DataCollectionType</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Type</em>[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><em>DataCollectionType</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Specifies the input data type for the probe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The expected input data type.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType">DataCollectionType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.DataProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_operations.</span></span><span class="sig-name descname"><span class="pre">DataProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.DataProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataOperation</span></code></a></p>
+<p>Represents a probe operation for monitoring or inspecting data.</p>
+<p>This class can be extended to implement specific probing functionalities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="semantiva.data_operations.data_operations.create_data_collection_feature_extraction_probe">
+<span class="sig-prename descclassname"><span class="pre">semantiva.data_operations.data_operations.</span></span><span class="sig-name descname"><span class="pre">create_data_collection_feature_extraction_probe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GeneratedDataCollectionFeatureExtractionProbe'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_operations.data_operations.create_data_collection_feature_extraction_probe" title="Link to this definition"></a></dt>
+<dd><p>Factory function to create a <cite>DataCollectionFeatureExtractionProbe</cite> class using
+dynamic type creation.</p>
+<p>This ensures that an individual feature extraction probe can be applied
+to a full data collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_extractor</strong> (<a class="reference internal" href="#semantiva.data_operations.data_operations.DataProbe" title="semantiva.data_operations.data_operations.DataProbe"><em>DataProbe</em></a>) – The feature extraction probe for individual elements.</p></li>
+<li><p><strong>class_name</strong> (<em>str</em>) – The name to give the dynamically generated class.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dynamically generated subclass of DataCollectionFeatureExtractionProbe.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Type[<a class="reference internal" href="#semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe" title="semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe">DataCollectionFeatureExtractionProbe</a>[CollectionBaseT, ExtractedFeatureType]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-semantiva.data_operations">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.data_operations" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="semantiva.data_io.html" class="btn btn-neutral float-left" title="semantiva.data_io package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.data_types.html" class="btn btn-neutral float-right" title="semantiva.data_types package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Rafael Pezzi, Marcos Deros.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

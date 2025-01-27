@@ -1,0 +1,37 @@
+semantiva.context\_operations package
+=====================================
+
+Submodules
+----------
+
+semantiva.context\_operations.context\_observer module
+------------------------------------------------------
+
+.. automodule:: semantiva.context_operations.context_observer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+semantiva.context\_operations.context\_operations module
+--------------------------------------------------------
+
+.. automodule:: semantiva.context_operations.context_operations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+semantiva.context\_operations.context\_types module
+---------------------------------------------------
+
+.. automodule:: semantiva.context_operations.context_types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.context_operations
+   :members:
+   :undoc-members:
+   :show-inheritance:

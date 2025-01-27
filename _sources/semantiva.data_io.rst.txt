@@ -1,0 +1,21 @@
+semantiva.data\_io package
+==========================
+
+Submodules
+----------
+
+semantiva.data\_io.data\_io module
+----------------------------------
+
+.. automodule:: semantiva.data_io.data_io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.data_io
+   :members:
+   :undoc-members:
+   :show-inheritance:

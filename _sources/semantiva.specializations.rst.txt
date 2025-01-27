@@ -1,0 +1,19 @@
+semantiva.specializations package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   semantiva.specializations.audio
+   semantiva.specializations.image
+
+Module contents
+---------------
+
+.. automodule:: semantiva.specializations
+   :members:
+   :undoc-members:
+   :show-inheritance:
