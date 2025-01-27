@@ -30,17 +30,21 @@ jobs:
         run: |
           pip install sphinx sphinx-autodoc-typehints sphinx-rtd-theme  # Add your Sphinx theme or plugins here
 
+      - name: Create missing directories
+        run: |
+          mkdir -p docs/_static
+          mkdir -p docs/_templates
+
       - name: Generate API Documentation
         run: |
           sphinx-apidoc -o docs/source/ -f semantiva/
 
       - name: Build Sphinx Documentation
         run: |
-          cd docs  # Navigate to your Sphinx documentation folder
-          make html
-
+          sphinx-build -b html docs/source docs/build
+      
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/html"
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                publish_dir: docs/build/"
