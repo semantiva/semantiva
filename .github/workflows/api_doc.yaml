@@ -24,6 +24,11 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
 
+      - name: Install dependencies from pyproject.toml
+        run: |
+          pip install .
+          pip install -e '.[dev]'  # Install dev dependencies if needed
+
       - name: Install dependencies
         run: |
           pip install sphinx sphinx-autodoc-typehints sphinx-rtd-theme  # Add your Sphinx theme or plugins here
