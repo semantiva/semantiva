@@ -2,6 +2,7 @@ name: Deploy Sphinx Docs
 
 # Trigger the workflow on push to the main branch or on tag creation
 on: push
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 env:
   project_name: semantiva # Define a global variable for the project name
