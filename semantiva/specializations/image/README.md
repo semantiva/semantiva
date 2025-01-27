@@ -39,9 +39,8 @@ for idx, image in enumerate([image1, image2, image3], start=1):
     plt.show()
 
 # Step 3: Construct an Image Stack
-image_stack = ImageStackDataType()
-for image in [image1, image2, image3]:
-    image_stack.append(image)
+image_stack = ImageStackDataType.from_list([image1, image2, image3])
+
 
 # Step 4: Apply Image Processing Algorithms
 
