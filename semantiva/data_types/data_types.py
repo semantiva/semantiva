@@ -147,3 +147,19 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
             int: The number of elements in the collection.
         """
         pass
+
+    @classmethod
+    def from_list(cls, items: list[E]) -> "DataCollectionType[E, S]":
+        """
+        Creates a DataCollectionType object from a list of BaseDataType objects.
+
+        Args:
+            items (list[E]): A list of BaseDataType objects to initialize the collection.
+
+        Returns:
+            DataCollectionType[E, S]: A new instance of DataCollectionType with the items.
+        """
+        instance = cls(cls._initialize_empty())
+        for item in items:
+            instance.append(item)
+        return instance

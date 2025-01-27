@@ -27,11 +27,16 @@ def gaussian_image_generator():
 
 
 def test_basic_image_probe(basic_probe, gaussian_image_generator):
-    # Create a test image
-    std_dev_x, std_dev_y, amplitude, image_size = 1.0, 2.0, 5.0, (50, 50)
+    # Create a test Gaussian image
+    center = (25, 25)  # Updated: Using a tuple for center
+    std_dev = (1.0, 2.0)  # Updated: std_dev is also a tuple
+    amplitude = 5.0
+    image_size = (50, 50)
+
     test_image = gaussian_image_generator.get_data(
-        std_dev_x, std_dev_y, amplitude, image_size
+        center=center, std_dev=std_dev, amplitude=amplitude, image_size=image_size
     )
+
     # Compute statistics using the probe
     stats = basic_probe.process(test_image)
 
@@ -44,14 +49,17 @@ def test_basic_image_probe(basic_probe, gaussian_image_generator):
 
 
 def test_two_d_gaussian_fitter_probe(gaussian_fitter_probe, gaussian_image_generator):
-    # Generate a test image
-    std_dev_x, std_dev_y, amplitude, image_size = 1.0, 2.0, 5.0, (50, 50)
+    # Generate a test Gaussian image
+    center = (25, 25)  # Updated: Tuple for center
+    std_dev = (1.0, 2.0)  # Updated: Tuple for std_dev
+    amplitude = 5.0
+    image_size = (50, 50)
+
     test_image = gaussian_image_generator.get_data(
-        std_dev_x, std_dev_y, amplitude, image_size
+        center=center, std_dev=std_dev, amplitude=amplitude, image_size=image_size
     )
 
     # Fit the Gaussian
-    initial_guess = [amplitude, 0, 0, std_dev_x, std_dev_y]
     result = gaussian_fitter_probe.process(test_image)
 
     # Assert the fit parameters and R-squared value
@@ -62,14 +70,21 @@ def test_two_d_gaussian_fitter_probe(gaussian_fitter_probe, gaussian_image_gener
     assert "r_squared" in result
     assert result["r_squared"] > 0.9  # Ensure a good fit
 
+    # Additional check: The detected center should be close to the actual center
+    assert np.isclose(result["peak_center"][0], center[0], atol=1)
+    assert np.isclose(result["peak_center"][1], center[1], atol=1)
+
 
 def test_two_d_gaussian_image_generator(gaussian_image_generator):
     # Define parameters for the test Gaussian image
-    std_dev_x, std_dev_y, amplitude, image_size = 1.0, 2.0, 5.0, (50, 50)
+    center = (25, 25)  # Updated
+    std_dev = (1.0, 2.0)  # Updated
+    amplitude = 5.0
+    image_size = (50, 50)
 
     # Generate the image
     generated_image = gaussian_image_generator.get_data(
-        std_dev_x, std_dev_y, amplitude, image_size
+        center=center, std_dev=std_dev, amplitude=amplitude, image_size=image_size
     )
 
     # Assert that the generated image has the correct dimensions
@@ -79,5 +94,4 @@ def test_two_d_gaussian_image_generator(gaussian_image_generator):
     assert np.all(generated_image.data >= 0)
 
     # Assert that the maximum value matches the amplitude (approximately)
-    print(generated_image.data.max())
     assert np.isclose(generated_image.data.max(), amplitude, atol=0.1)
