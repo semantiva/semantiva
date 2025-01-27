@@ -1,8 +1,8 @@
 /* Adjust the max width of the page */
 .wy-nav-content {
-    max-width: 100%;
+    max-width: 50%;
     /* Set to 100% of the screen width */
-    width: 90%;
+    width: 50%;
     /* Adjust as needed for spacing */
 }
 
