@@ -40,6 +40,9 @@ jobs:
       - name: Build Sphinx Documentation
         run: |
           sphinx-build -b html docs/source docs/build
+
+      - name: Verify build directory
+        run: ls -l docs/build || echo "Build directory not found!"
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
