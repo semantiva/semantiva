@@ -53,7 +53,7 @@ class ImageDataType(BaseDataType[np.ndarray]):
 
 class ImageStackDataType(DataCollectionType[ImageDataType, np.ndarray]):
     """
-    A class representing a stack of image data, derived from DataCollecton.
+    A class representing a stack of image data, derived from DataCollection.
 
     This class is designed to handle multi-dimensional image data (e.g., a stack of 2D images)
     and provides validation to ensure that the input is a NumPy array.

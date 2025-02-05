@@ -56,9 +56,9 @@ def random_context():
 
 
 @pytest.fixture
-def random_context_collecton():
+def random_context_collection():
     """
-    Pytest fixture providing a ContextCollectonType with 5 distinct context items.
+    Pytest fixture providing a ContextCollectionType with 5 distinct context items.
     """
     return ContextCollectionType([ContextType({"param": i}) for i in range(5)])
 
@@ -98,11 +98,11 @@ def test_pipeline_slicing_with_single_context(
     ), "Context should remain a ContextType"
 
 
-def test_pipeline_slicing_with_context_collecton(
-    random_image_stack, random_image, another_random_image, random_context_collecton
+def test_pipeline_slicing_with_context_collection(
+    random_image_stack, random_image, another_random_image, random_context_collection
 ):
     """
-    Tests slicing when using a ContextCollectonType.
+    Tests slicing when using a ContextCollectionType.
 
     - The `ImageStackDataType` is sliced into `ImageDataType` items.
     - A **corresponding** `ContextType` is used for each sliced item.
@@ -123,7 +123,7 @@ def test_pipeline_slicing_with_context_collecton(
     pipeline = Pipeline(node_configurations)
 
     output_data, output_context = pipeline.process(
-        random_image_stack, random_context_collecton
+        random_image_stack, random_context_collection
     )
 
     assert isinstance(
@@ -132,8 +132,8 @@ def test_pipeline_slicing_with_context_collecton(
     assert len(output_data) == 5, "ImageStackDataType should retain 5 images"
     assert isinstance(
         output_context, ContextCollectionType
-    ), "Context should remain a ContextCollectonType"
-    assert len(output_context) == 5, "ContextCollectonType should retain 5 items"
+    ), "Context should remain a ContextCollectionType"
+    assert len(output_context) == 5, "ContextCollectionType should retain 5 items"
 
 
 def test_pipeline_without_slicing(random_image, another_random_image, random_context):
