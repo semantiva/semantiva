@@ -9,7 +9,7 @@ from .nodes import (
 )
 from ..logger import Logger
 from ..data_types.data_types import BaseDataType, DataCollectionType
-from ..context_operations.context_types import ContextType, ContextCollectionType
+from ..context_operations.context_types import ContextType
 from .nodes import node_factory
 
 
@@ -50,12 +50,13 @@ class Pipeline(PayloadOperation):
             ]
         """
         super().__init__(logger)
-        self.logger.info(f"Initializing {self.__class__.__name__}")
         self.nodes: List[Node] = []
         self.pipeline_configuration: List[Dict] = pipeline_configuration
         self.stop_watch = StopWatch()
         self._initialize_nodes()
-        self.logger.debug("%s", self.inspect())
+        if self.logger:
+            self.logger.info(f"Initialized {self.__class__.__name__}")
+            self.logger.debug("%s", self.inspect())
 
     def _add_node(self, node: Node):
         """
@@ -102,9 +103,12 @@ class Pipeline(PayloadOperation):
                 return
 
         # Enforce strict type matching otherwise
-        assert (
-            output_type == input_type
-        ), f"Invalid pipeline topology: Output of {last_type_constraining_node.data_operation.__class__.__name__} ({output_type}) not compatible with {node.data_operation.__class__.__name__} ({input_type})."
+        assert output_type == input_type, (
+            f"Invalid pipeline topology: Output of "
+            f"{last_type_constraining_node.data_operation.__class__.__name__} "
+            f"({output_type}) not compatible with "
+            f"{node.data_operation.__class__.__name__} ({input_type})."
+        )
 
         # Add the node if it passes validation
         self.nodes.append(node)
@@ -146,26 +150,18 @@ class Pipeline(PayloadOperation):
             # Get the expected input type for the node's operation
             input_type = node.data_operation.input_data_type()
 
-            # Case 1: Exact match → process the full data in a single step
-            if type(result_data) == input_type:
-                result_data, result_context = node.process(result_data, result_context)
-
-            # Case 2: Data is a `DataCollection` and node expects its base type → use slicing
-            elif (
+            if (type(result_data) == input_type) or (
                 isinstance(result_data, DataCollectionType)
                 and input_type == result_data.collection_base_type()
             ):
-                result_data, result_context = self._slicing_strategy(
-                    node, result_data, result_context
-                )
+                result_data, result_context = node.process(result_data, result_context)
 
-            # Case 3: Incompatible data type
+            # Case 2: Incompatible data type
             else:
                 raise TypeError(
                     f"Incompatible data type for Node {node.data_operation.__class__.__name__} "
                     f"expected {input_type}, but received {type(result_data)}."
                 )
-
         self.stop_watch.stop()
         self.logger.debug("Finished pipeline")
         self.logger.debug(
@@ -174,65 +170,6 @@ class Pipeline(PayloadOperation):
             lambda: self.get_timers(),
         )
         return result_data, result_context
-
-    def _slicing_strategy(
-        self, node: Node, data_collection: DataCollectionType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Processes a `DataCollectionType` element-wise, slicing context when applicable.
-
-        This method ensures that:
-            - If `context` is a `ContextCollectionType`, its elements are used in parallel with data items.
-            - If `context` is a single `ContextType`, it is **reused** for each data item.
-
-        The resulting processed data is stored in a new collection of the same type.
-
-        Args:
-            node (Node): The pipeline node performing the operation.
-            data_collection (DataCollectionType): The collection of data elements to be processed.
-            context (ContextType): Either a `ContextType` or `ContextCollectionType`.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]:
-                - A new `DataCollectionType` containing the processed elements.
-                - A `ContextCollectionType` if slicing was applied, or a single updated `ContextType` otherwise.
-
-        Raises:
-            ValueError: If `ContextCollectionType` and `DataCollection` lengths do not match.
-        """
-        # Initialize a new collection to store processed results
-        processed_data_collection = type(data_collection)()
-
-        if isinstance(context, ContextCollectionType):
-            # Ensure both collections have the same length before parallel slicing
-            if len(data_collection) != len(context):
-                raise ValueError(
-                    "DataCollectionType and ContextCollectionType must have the same length for parallel slicing."
-                )
-
-            # Create a new `ContextCollectionType` to store results
-            processed_context_collection = ContextCollectionType()
-
-            # Process (data_item, context_item) pairs in parallel
-            for d_item, c_item in zip(data_collection, context):
-                out_data, out_context = node.process(d_item, c_item)
-                processed_data_collection.append(out_data)
-                processed_context_collection.append(out_context)
-
-            return processed_data_collection, processed_context_collection
-
-        else:
-            # Context is a single instance, reuse it for each data item
-            current_context = context
-            self.logger.warning(
-                "Context operations in this slicing mode are lost because the context is reused "
-                "for each data item instead of being processed in parallel with the data collection."
-            )
-            for d_item in data_collection:
-                out_data, current_context = node.process(d_item, current_context)
-                processed_data_collection.append(out_data)
-
-            return processed_data_collection, current_context
 
     def inspect(self) -> str:
         """

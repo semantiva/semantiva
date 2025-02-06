@@ -18,6 +18,9 @@ from semantiva.specializations.image.image_data_types import (
     ImageDataType,
     ImageStackDataType,
 )
+from semantiva.specializations.image.image_probes import (
+    BasicImageProbe,
+)
 
 
 @pytest.fixture
@@ -83,11 +86,19 @@ def test_pipeline_slicing_with_single_context(
             "operation": ImageSubtraction,
             "parameters": {"image_to_subtract": another_random_image},
         },
+        {
+            "operation": BasicImageProbe,
+            "context_keyword": "mock_keyword",
+        },
     ]
 
     pipeline = Pipeline(node_configurations)
 
     output_data, output_context = pipeline.process(random_image_stack, random_context)
+
+    assert len(output_data) == len(
+        output_context.get_value("mock_keyword")
+    ), "Context for `mock_keyword` must contain one element per slice"
 
     assert isinstance(
         output_data, ImageStackDataType

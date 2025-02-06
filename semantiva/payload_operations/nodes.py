@@ -1,19 +1,16 @@
-from typing import List, Any, Dict, Optional, Type
+from typing import List, Any, Dict, Optional, Type, Tuple
 from .stop_watch import StopWatch
 from ..context_operations.context_operations import (
     ContextOperation,
     ContextPassthrough,
 )
-
 from ..data_operations.data_operations import (
     BaseDataOperation,
     DataAlgorithm,
     DataProbe,
 )
-
-from ..context_operations.context_types import ContextType
-
-from ..data_types.data_types import BaseDataType
+from ..context_operations.context_types import ContextType, ContextCollectionType
+from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
 from .payload_operations import PayloadOperation
 
@@ -27,9 +24,10 @@ class Node(PayloadOperation):
 
     Attributes:
         data_operation (BaseDataOperation): The data operation associated with the node.
-        context_operation (ContextOperation): Handles the contextual aspects of the node.
+        context_operation (ContextOperation): The context operation managing context updates.
         operation_config (Dict): Configuration parameters for the data operation.
         stop_watch (StopWatch): Tracks the execution time of the node's operation.
+        logger (Logger): Logger instance for diagnostic messages.
     """
 
     data_operation: BaseDataOperation
@@ -49,9 +47,10 @@ class Node(PayloadOperation):
         Initialize a Node with the specified data operation, context operation, and parameters.
 
         Args:
-            data_operation (BaseDataOperation): The data operation associated with this node.
-            context_operation (ContextOperation): The context operation for managing context.
-            operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
+            data_operation (Type[BaseDataOperation]): The class of the data operation associated with this node.
+            context_operation (Type[ContextOperation]): The class for managing the node's context.
+            operation_config (Optional[Dict]): Operation parameters (overrides values extracted from context). Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         super().__init__(logger)
         self.logger.info(
@@ -62,13 +61,9 @@ class Node(PayloadOperation):
             if issubclass(data_operation, DataAlgorithm)
             else data_operation(logger=logger)
         )
-
         self.context_operation = context_operation(logger)
         self.stop_watch = StopWatch()
-        if operation_config is None:
-            self.operation_config = {}
-        else:
-            self.operation_config = operation_config
+        self.operation_config = {} if operation_config is None else operation_config
 
     def _get_operation_parameters(self, context: ContextType) -> dict:
         """
@@ -78,40 +73,43 @@ class Node(PayloadOperation):
             context (ContextType): Contextual information used to resolve parameter values.
 
         Returns:
-            dict: A dictionary of parameter names and their corresponding values.
+            dict: A dictionary mapping parameter names to their values.
         """
         parameter_names = self.data_operation.get_operation_parameter_names()
         parameters = {}
-
         for name in parameter_names:
             parameters[name] = self._fetch_parameter_value(name, context)
-
         return parameters
 
     def _fetch_parameter_value(self, name: str, context: ContextType) -> Any:
         """
-        Fetch parameter values based on the operation configuration or context.
+        Fetch a parameter value based on the operation configuration or the context.
 
         Args:
             name (str): The name of the parameter to fetch.
             context (ContextType): Contextual information for resolving parameter values.
 
         Returns:
-            Any: The value of the parameter, prioritizing `operation_config` over `context`.
+            Any: The value of the parameter, with `operation_config` taking precedence over the context.
         """
-        if name in self.operation_config.keys():
+        if name in self.operation_config:
             return self.operation_config[name]
-        else:
-            return context.get_value(name)
+        return context.get_value(name)
 
     def __str__(self) -> str:
+        """
+        Return a string representation of the node.
+
+        Returns:
+            str: A string summarizing the node's attributes and execution summary.
+        """
         class_name = self.__class__.__name__
         return (
             f"{class_name}(\n"
             f"     data_operation={self.data_operation},\n"
             f"     context_operation={self.context_operation},\n"
             f"     operation_config={self.operation_config},\n"
-            f"     Node execution summary: {self.stop_watch}"
+            f"     Node execution summary: {self.stop_watch}\n"
             f")"
         )
 
@@ -135,9 +133,10 @@ class AlgorithmNode(Node):
         Initialize an AlgorithmNode with the specified data algorithm.
 
         Args:
-            data_operation (DataAlgorithm): The data algorithm for this node.
-            context_operation (ContextOperation): The context operation for this node.
-            operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
+            data_operation (Type[DataAlgorithm]): The data algorithm for this node.
+            context_operation (Type[ContextOperation]): The context operation for this node.
+            operation_parameters (Optional[Dict]): Initial configuration for operation parameters. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         operation_parameters = (
             {} if operation_parameters is None else operation_parameters
@@ -152,51 +151,133 @@ class AlgorithmNode(Node):
         """
         Execute the data operation for an algorithm node.
 
-        This method handles the processing of data using the associated data operation
-        and updates the context using the provided context operation.
+        The method processes the input data using the associated data operation and
+        updates the context accordingly. It supports both single-instance and collection-based
+        processing.
 
         Args:
-            data (BaseDataType): Input data for the operation.
-            context (ContextType): Contextual information required for execution.
+            data (BaseDataType): The input data for the operation.
+            context (ContextType): The context required for execution.
 
         Returns:
-            tuple[BaseDataType, ContextType]: A tuple containing:
-                - The processed output data (BaseDataType).
-                - The updated context after execution (ContextType).
+            tuple[BaseDataType, ContextType]: A tuple with:
+                - The processed output data.
+                - The updated context.
         """
-        # Start the stopwatch to measure execution time
+        result_data, result_context = data, context
+        input_type = self.data_operation.input_data_type()
+
+        if type(result_data) == input_type:
+            result_data, result_context = self._process_node_call(
+                result_data, result_context
+            )
+        elif (
+            isinstance(result_data, DataCollectionType)
+            and input_type == result_data.collection_base_type()
+        ):
+            result_data, result_context = self._slicing_strategy(
+                result_data, result_context
+            )
+        else:
+            raise TypeError(
+                f"Incompatible data type for Node {self.data_operation.__class__.__name__} "
+                f"expected {input_type}, but received {type(result_data)}."
+            )
+        return result_data, result_context
+
+    def _process_node_call(
+        self, data: BaseDataType, context: ContextType
+    ) -> tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item using the associated data operation.
+
+        This method updates the context using the context operation and retrieves the operation
+        parameters before invoking the data operation.
+
+        Args:
+            data (BaseDataType): A single data item.
+            context (ContextType): The context associated with the data item.
+
+        Returns:
+            tuple[BaseDataType, ContextType]: A tuple containing the output data and the updated context.
+        """
         self.stop_watch.start()
-
-        # Update the context using the context operation
         self.observer_context = self.context_operation.operate_context(context)
-
-        # Retrieve operation parameters from the context
         parameters = self._get_operation_parameters(self.observer_context)
-
-        # Perform the data operation
         output_data = self.data_operation.process(data, **parameters)
-
-        # Stop the stopwatch after execution
         self.stop_watch.stop()
-
         return output_data, self.observer_context
+
+    def _slicing_strategy(
+        self, data_collection: DataCollectionType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a collection of data items element-wise, applying slicing if necessary.
+
+        If the context is a ContextCollectionType, data items and their corresponding context
+        elements are processed in parallel. If the context is a single ContextType, it is reused
+        for each data item.
+
+        Args:
+            data_collection (DataCollectionType): The collection of data items to process.
+            context (ContextType): The context or collection of contexts for processing.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]:
+                - A new DataCollectionType with the processed data items.
+                - Either a new ContextCollectionType (if parallel slicing was applied) or the updated ContextType.
+
+        Raises:
+            ValueError: If the data collection and context collection lengths do not match.
+        """
+        processed_data_collection = type(data_collection)()
+        if isinstance(context, ContextCollectionType):
+            if len(data_collection) != len(context):
+                raise ValueError(
+                    "DataCollectionType and ContextCollectionType must have the same length for parallel slicing."
+                )
+            processed_context_collection = ContextCollectionType()
+            for d_item, c_item in zip(data_collection, context):
+                out_data, out_context = self._process_node_call(d_item, c_item)
+                processed_data_collection.append(out_data)
+                processed_context_collection.append(out_context)
+            return processed_data_collection, processed_context_collection
+        else:
+            current_context = context
+            self.logger.warning(
+                "Context operations in this slicing mode are lost because the context is reused "
+                "for each data item instead of being processed in parallel with the data collection."
+            )
+            for d_item in data_collection:
+                out_data, current_context = self._process_node_call(
+                    d_item, current_context
+                )
+                processed_data_collection.append(out_data)
+            return processed_data_collection, current_context
 
 
 class ProbeNode(Node):
     """
     A specialized node for probing data within the framework.
+
+    This class can be extended to add common functionalities for probe nodes.
     """
+
+    pass
 
 
 class ProbeContextInjectorNode(ProbeNode):
     """
-    A node for injecting context-related information into the semantic framework.
+    A node for injecting probe results into data context.
+
+    This node uses a data probe to extract information from the input data and injects
+    the probe result into the context under a specified keyword.
 
     Attributes:
-        data_operation (DataProbe): The data probe for this node.
-        context_operation (ContextOperation): The context operation for this node.
-        context_keyword (str): The keyword used for injecting context information.
-        operation_parameters (Optional[Dict]): Configuration for operation parameters (default: None).
+        data_operation (DataProbe): The data probe associated with this node.
+        context_operation (ContextOperation): The context operation managing context updates.
+        context_keyword (str): The key under which the probe result is injected into the context.
+        operation_config (Optional[Dict]): Configuration parameters for the operation.
     """
 
     def __init__(
@@ -208,11 +289,17 @@ class ProbeContextInjectorNode(ProbeNode):
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a ProbeContextInjectornode with a data operation and context keyword.
+        Initialize a ProbeContextInjectorNode with the specified data operation and context keyword.
 
         Args:
-            data_operation (BaseDataOperation): The data operation for this node.
-            context_keyword (str): The keyword for context injection.
+            data_operation (Type[BaseDataOperation]): The data probe class for this node.
+            context_operation (Type[ContextOperation]): The context operation class for this node.
+            context_keyword (str): The keyword used to inject the probe result into the context.
+            operation_parameters (Optional[Dict]): Operation configuration parameters. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+
+        Raises:
+            ValueError: If `context_keyword` is not provided or is not a non-empty string.
         """
         super().__init__(
             data_operation, context_operation, operation_parameters, logger
@@ -223,42 +310,82 @@ class ProbeContextInjectorNode(ProbeNode):
 
     def _process(
         self, data: BaseDataType, context: ContextType
-    ) -> tuple[BaseDataType, ContextType]:
+    ) -> Tuple[BaseDataType, ContextType]:
         """
-        Execute the data probe operation with context injection.
+        Process the input data by performing the probe operation and injecting its result into the context.
 
-        This method inspects the data using the associated data probe, injects the
-        result into the context using a specified context keyword, and updates the
-        context using the provided context operation.
+        This method handles both single data items and collections. When the input data is a collection,
+        the method applies slicing:
+          - If the context is a ContextCollectionType, each data item is processed with its corresponding context.
+          - If the context is a single ContextType, the probe results for all data items are accumulated
+            into a list and injected under the specified context keyword.
 
         Args:
-            data (BaseDataType): Input data to be probed.
-            context (ContextType): Contextual information required for execution.
+            data (BaseDataType): The input data or collection of data items.
+            context (ContextType): The context or context collection for processing.
 
         Returns:
-            tuple[BaseDataType, ContextType]: A tuple containing:
-                - The original input data (unchanged).
-                - The updated context after execution (ContextType).
+            Tuple[BaseDataType, ContextType]: A tuple containing the (possibly unchanged) input data
+            and the updated context with the probe results injected.
+
+        Raises:
+            TypeError: If the input data type is incompatible with the node's expected type.
         """
-        # Start the stopwatch to measure execution time
-        self.stop_watch.start()
+        expected_input_type = self.data_operation.input_data_type()
 
-        # Update the context using the context operation
-        updated_context = self.context_operation.operate_context(context)
+        # Case A: Single data item processing
+        if type(data) == expected_input_type:
+            self.stop_watch.start()
+            updated_context = self.context_operation.operate_context(context)
+            parameters = self._get_operation_parameters(updated_context)
+            probe_result = self.data_operation.process(data, **parameters)
+            updated_context.set_value(self.context_keyword, probe_result)
+            self.stop_watch.stop()
+            return data, updated_context
 
-        # Retrieve operation parameters from the context
-        parameters = self._get_operation_parameters(updated_context)
+        # Case B: Collection processing
+        elif (
+            isinstance(data, DataCollectionType)
+            and expected_input_type == data.collection_base_type()
+        ):
+            processed_data_collection = type(data)()
+            if isinstance(context, ContextCollectionType):
+                if len(data) != len(context):
+                    raise ValueError(
+                        "DataCollectionType and ContextCollectionType must have the same length for parallel slicing."
+                    )
+                processed_context_collection = ContextCollectionType()
+                for d_item, c_item in zip(data, context):
+                    out_data, out_context = self._process(d_item, c_item)
+                    processed_data_collection.append(out_data)
+                    processed_context_collection.append(out_context)
+                return processed_data_collection, processed_context_collection
+            else:
+                # Single context: Accumulate probe results in a list
+                probed_results: List[Any] = []
+                for d_item in data:
+                    out_data, updated_context = self._process(d_item, context)
+                    processed_data_collection.append(out_data)
+                    # Extract the probe result injected into the updated context.
+                    probe_result = updated_context.get_value(self.context_keyword)
+                    probed_results.append(probe_result)
+                # Inject the full list of probe results into the context.
+                context.set_value(self.context_keyword, probed_results)
+                return processed_data_collection, updated_context
 
-        # Perform the probing operation and inject the result into the context
-        probe_result = self.data_operation.process(data, **parameters)
-        updated_context.set_value(self.context_keyword, probe_result)
-
-        # Stop the stopwatch after execution
-        self.stop_watch.stop()
-
-        return data, updated_context
+        else:
+            raise TypeError(
+                f"Incompatible data type for {self.__class__.__name__}: expected {expected_input_type} "
+                f"or a collection of its base type, but received {type(data)}."
+            )
 
     def __str__(self) -> str:
+        """
+        Return a string representation of the ProbeContextInjectorNode.
+
+        Returns:
+            str: A string summarizing the node's attributes and execution summary.
+        """
         class_name = self.__class__.__name__
         return (
             f"{class_name}(\n"
@@ -266,7 +393,7 @@ class ProbeContextInjectorNode(ProbeNode):
             f"     context_keyword={self.context_keyword},\n"
             f"     context_operation={self.context_operation},\n"
             f"     operation_config={self.operation_config},\n"
-            f"     Node execution summary: {self.stop_watch}"
+            f"     Node execution summary: {self.stop_watch}\n"
             f")"
         )
 
@@ -290,9 +417,10 @@ class ProbeResultCollectorNode(ProbeNode):
         Initialize a ProbeResultCollectorNode with the specified data probe.
 
         Args:
-            data_operation (DataProbe): The data probe for this node.
-            context_operation (ContextOperation): The context operation for this node.
-            operation_parameters (Optional[Dict]): Initial configuration for operation parameters (default: None).
+            data_operation (Type[DataProbe]): The data probe class for this node.
+            context_operation (Type[ContextOperation]): The context operation class for this node.
+            operation_parameters (Optional[Dict]): Configuration parameters for the operation. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         super().__init__(
             data_operation, context_operation, operation_parameters, logger
@@ -301,41 +429,116 @@ class ProbeResultCollectorNode(ProbeNode):
 
     def _process(
         self, data: BaseDataType, context: ContextType
-    ) -> tuple[BaseDataType, ContextType]:
+    ) -> Tuple[BaseDataType, ContextType]:
         """
-        Execute the data probe operation and collect the result.
+        Execute the data probe operation and collect its result.
 
-        This method inspects the data using the associated data probe, collects the
-        result, and updates the context using the provided context operation.
+        This method processes a single data item, updates the context using the context operation,
+        and collects the probe result for later retrieval. If the input is a collection,
+        it delegates to _slicing_strategy.
 
         Args:
-            data (BaseDataType): Input data to be probed.
+            data (BaseDataType): The input data to be probed.
             context (ContextType): Contextual information required for execution.
 
         Returns:
-            tuple[BaseDataType, ContextType]: A tuple containing:
-                - The original input data (unchanged).
-                - The updated context after execution (ContextType).
+            Tuple[BaseDataType, ContextType]: A tuple containing the (unchanged) input data and the updated context.
         """
-        # Start the stopwatch to measure execution time
         self.stop_watch.start()
+        expected_input_type = self.data_operation.input_data_type()
 
-        # Update the context using the context operation
-        updated_context = self.context_operation.operate_context(context)
-
-        # Retrieve operation parameters from the context
-        parameters = self._get_operation_parameters(updated_context)
-
-        # Perform the probing operation and collect the result
-        probe_result = self.data_operation.process(data, **parameters)
-        self.collect(probe_result)
-
-        # Stop the stopwatch after execution
+        if type(data) == expected_input_type:
+            _, updated_context = self._process_node_call(data, context)
+        elif (
+            isinstance(data, DataCollectionType)
+            and expected_input_type == data.collection_base_type()
+        ):
+            _, updated_context = self._slicing_strategy(data, context)
+        else:
+            raise TypeError(
+                f"Incompatible data type for {self.__class__.__name__}: expected {expected_input_type} "
+                f"or a collection of its base type, but received {type(data)}."
+            )
         self.stop_watch.stop()
-
         return data, updated_context
 
-    def collect(self, data: Any):
+    def _process_node_call(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item using the associated data probe.
+
+        This method updates the context using the context operation, retrieves the operation
+        parameters, and performs the probe operation. The probe result is collected via the
+        collect() method.
+
+        Args:
+            data (BaseDataType): A single data item.
+            context (ContextType): The context associated with the data item.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: A tuple containing the (unchanged) data and the updated context.
+        """
+        updated_context = self.context_operation.operate_context(context)
+        parameters = self._get_operation_parameters(updated_context)
+        probe_result = self.data_operation.process(data, **parameters)
+        self.collect(probe_result)
+        return data, updated_context
+
+    def _slicing_strategy(
+        self, data_collection: DataCollectionType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a collection of data items element-wise, applying slicing if necessary.
+
+        For parallel processing (when context is a ContextCollectionType), each (data, context)
+        pair is processed independently. For single-context processing, the probe results for all
+        items are collected into a list and stored in the context under the probe's class name.
+
+        Args:
+            data_collection (DataCollectionType): The collection of data items to process.
+            context (ContextType): The context or collection of contexts for processing.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]:
+                - The (unchanged) data collection.
+                - The updated context, which in the single-context case contains a list of all probe results.
+
+        Raises:
+            ValueError: If the data collection and context collection lengths do not match.
+        """
+        probed_results: List[Any] = []
+        processed_data_collection = type(data_collection)()
+        # Parallel slicing
+        if isinstance(context, ContextCollectionType):
+            if len(data_collection) != len(context):
+                raise ValueError(
+                    "DataCollectionType and ContextCollectionType must have the same length for parallel slicing."
+                )
+            processed_context_collection = ContextCollectionType()
+            for d_item, c_item in zip(data_collection, context):
+                updated_context = self.context_operation.operate_context(c_item)
+                parameters = self._get_operation_parameters(updated_context)
+                probe_result = self.data_operation.process(d_item, **parameters)
+                probed_results.append(probe_result)
+                processed_data_collection.append(d_item)
+                processed_context_collection.append(updated_context)
+            # Optionally, one might inject the list of all probe results into each context item;
+            # here we simply return the collection of updated contexts.
+            return data_collection, processed_context_collection
+        else:
+            # Single context: process each item once and accumulate the probe results.
+            updated_context = self.context_operation.operate_context(context)
+            parameters = self._get_operation_parameters(updated_context)
+            for d_item in data_collection:
+                probe_result = self.data_operation.process(d_item, **parameters)
+                probed_results.append(probe_result)
+                processed_data_collection.append(d_item)
+            # Store the aggregated probe results in the single context.
+            context.set_value(self.data_operation.__class__.__name__, probed_results)
+            return data_collection, context
+
+    def collect(self, data: Any) -> None:
         """
         Collect data from the probe operation.
 
@@ -346,44 +549,45 @@ class ProbeResultCollectorNode(ProbeNode):
 
     def get_collected_data(self) -> List[Any]:
         """
-        Retrieve all collected data.
+        Retrieve all collected probe data.
 
         Returns:
             List[Any]: The list of collected data.
         """
         return self._probed_data
 
-    def clear_collected_data(self):
+    def clear_collected_data(self) -> None:
         """
-        Clear all collected data for reuse in iterative processes.
+        Clear all collected data, useful for reuse in iterative processes.
         """
         self._probed_data.clear()
 
 
 def node_factory(node_definition: Dict, logger: Optional[Logger] = None) -> Node:
     """
-    Factory function to create a Node instance based on the given definition.
+    Factory function to create a Node instance based on the provided definition.
+
+    The node definition dictionary is expected to contain:
+      - "operation": A class for a DataOperation (required).
+      - "context_operation": A class for a ContextOperation (optional, defaults to ContextPassthrough).
+      - "parameters": A dictionary of operation parameters (optional).
+      - "context_keyword": A string for context injection (optional).
 
     Args:
-        node_definition (Dict): A dictionary defining the node structure. Expected keys:
-            - "operation": An instance of DataOperation (required).
-            - "context_operation": An instance of ContextOperation (optional).
-            - "parameters": A dictionary of operation parameters (optional).
-            - "context_keyword": A string defining a context keyword (optional).
-        logger (Optional[Logger]): A logging instance for debugging or operational logging. Can be `None`.
+        node_definition (Dict): A dictionary defining the node structure.
+        logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
 
     Returns:
         Node: An instance of the appropriate Node subclass.
 
     Raises:
-        ValueError: If the node definition is invalid or incompatible.
+        ValueError: If the node definition is invalid or the operation type is unsupported.
     """
     operation = node_definition.get("operation")
     context_operation = node_definition.get("context_operation", ContextPassthrough)
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
 
-    # Check if operation is valid (not None and a class type)
     if operation is None or not isinstance(operation, type):
         raise ValueError("operation must be a class type, not None.")
 
@@ -398,7 +602,6 @@ def node_factory(node_definition: Dict, logger: Optional[Logger] = None) -> Node
             operation_parameters=parameters,
             logger=logger,
         )
-
     elif issubclass(operation, DataProbe):
         if context_keyword is not None:
             return ProbeContextInjectorNode(
@@ -415,7 +618,6 @@ def node_factory(node_definition: Dict, logger: Optional[Logger] = None) -> Node
                 operation_parameters=parameters,
                 logger=logger,
             )
-
     else:
         raise ValueError(
             "Unsupported operation type. Operation must be of type DataAlgorithm or DataProbe."
