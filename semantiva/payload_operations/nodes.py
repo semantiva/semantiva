@@ -525,6 +525,7 @@ class ProbeResultCollectorNode(ProbeNode):
                 processed_context_collection.append(updated_context)
             # Optionally, one might inject the list of all probe results into each context item;
             # here we simply return the collection of updated contexts.
+            self.collect(probed_results)
             return data_collection, processed_context_collection
         else:
             # Single context: process each item once and accumulate the probe results.
@@ -535,7 +536,7 @@ class ProbeResultCollectorNode(ProbeNode):
                 probed_results.append(probe_result)
                 processed_data_collection.append(d_item)
             # Store the aggregated probe results in the single context.
-            context.set_value(self.data_operation.__class__.__name__, probed_results)
+            self.collect(probed_results)
             return data_collection, context
 
     def collect(self, data: Any) -> None:

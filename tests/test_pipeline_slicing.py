@@ -90,11 +90,17 @@ def test_pipeline_slicing_with_single_context(
             "operation": BasicImageProbe,
             "context_keyword": "mock_keyword",
         },
+        {
+            "operation": BasicImageProbe,
+        },
     ]
 
     pipeline = Pipeline(node_configurations)
 
     output_data, output_context = pipeline.process(random_image_stack, random_context)
+    assert len(pipeline.get_probe_results()["Node 4/BasicImageProbe"][0]) == len(
+        output_data
+    )
 
     assert len(output_data) == len(
         output_context.get_value("mock_keyword")
