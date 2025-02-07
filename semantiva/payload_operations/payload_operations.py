@@ -1,4 +1,5 @@
-from typing import List, Any, Dict, Optional, Type, Tuple
+from pathlib import Path
+from typing import List, Any, Dict, Optional, Type, Tuple, Set
 from abc import ABC, abstractmethod
 from .stop_watch import StopWatch
 from ..context_operations.context_operations import (
@@ -15,6 +16,7 @@ from ..data_operations.data_operations import (
 )
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
+from ..component_loader import ComponentLoader
 
 
 class PayloadOperation(ContextObserver, ABC):
@@ -182,6 +184,7 @@ class Pipeline(PayloadOperation):
     pipeline_configuration: List[Dict]
     nodes: List[Node]
     stop_watch: StopWatch
+    _component_loader: ComponentLoader
 
     def __init__(
         self, pipeline_configuration: List[Dict], logger: Optional[Logger] = None
@@ -201,6 +204,7 @@ class Pipeline(PayloadOperation):
             ]
         """
         super().__init__(logger)
+        self._component_loader = ComponentLoader()
         self.logger.info(f"Initializing {self.__class__.__name__}")
         self.nodes: List[Node] = []
         self.pipeline_configuration: List[str] = pipeline_configuration
@@ -489,8 +493,16 @@ class Pipeline(PayloadOperation):
         pipeline configuration. Each node is then added to the pipeline.
         """
         for node_config in self.pipeline_configuration:
-            node = node_factory(node_config, self.logger)
+            node = node_factory(node_config, self._component_loader, self.logger)
             self._add_node(node)
+
+    def register_paths(self, paths: str | List[str]):
+        """Register a path or a list of paths in the component loader."""
+        self._component_loader.register_paths(paths)
+
+    def get_registered_paths(self) -> Set[Path]:
+        """Get list of registered paths from the component loader."""
+        return self._component_loader.get_registered_paths()
 
 
 class AlgorithmNode(Node):
@@ -737,7 +749,11 @@ class ProbeResultCollectorNode(ProbeNode):
         self._probed_data.clear()
 
 
-def node_factory(node_definition: Dict, logger: Optional[Logger] = None) -> Node:
+def node_factory(
+    node_definition: Dict,
+    component_loader: ComponentLoader,
+    logger: Optional[Logger] = None,
+) -> Node:
     """
     Factory function to create a Node instance based on the given definition.
 
@@ -755,14 +771,25 @@ def node_factory(node_definition: Dict, logger: Optional[Logger] = None) -> Node
     Raises:
         ValueError: If the node definition is invalid or incompatible.
     """
+
+    def get_class_if_needed(class_name, component_loader):
+        """Helper function to retrieve the class from the loader if the input is a string."""
+        if isinstance(class_name, str):
+            return component_loader.get_class(class_name)
+        return class_name
+
     operation = node_definition.get("operation")
     context_operation = node_definition.get("context_operation", ContextPassthrough)
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
 
+    # Use the helper function to get the correct class for both operation and context_operation
+    operation = get_class_if_needed(operation, component_loader)
+    context_operation = get_class_if_needed(context_operation, component_loader)
+
     # Check if operation is valid (not None and a class type)
     if operation is None or not isinstance(operation, type):
-        raise ValueError("operation must be a class type, not None.")
+        raise ValueError("operation must be a class type or a string, not None.")
 
     if issubclass(operation, DataAlgorithm):
         if context_keyword is not None:

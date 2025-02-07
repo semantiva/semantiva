@@ -7,8 +7,6 @@ from semantiva.specializations.image.image_data_types import (
 from semantiva.payload_operations import Pipeline
 from semantiva.specializations.image.image_algorithms import (
     ImageAddition,
-    ImageSubtraction,
-    ImageClipping,
     StackToImageMeanProjector,
 )
 from semantiva.specializations.image.image_loaders_savers_generators import (
@@ -57,19 +55,19 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     # Define node configurations
     node_configurations = [
         {
-            "operation": StackToImageMeanProjector,
+            "operation": "StackToImageMeanProjector",
             "parameters": {},
         },
         {
-            "operation": ImageAddition,
+            "operation": "ImageAddition",
             "parameters": {"image_to_add": random_image1},
         },
         {
-            "operation": ImageSubtraction,
+            "operation": "ImageSubtraction",
             "parameters": {"image_to_subtract": random_image2},
         },
         {
-            "operation": ImageClipping,
+            "operation": "ImageClipping",
             "parameters": {"x_start": 50, "x_end": 200, "y_start": 50, "y_end": 200},
         },
     ]
