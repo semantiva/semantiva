@@ -7,16 +7,11 @@ class ComponentLoader:
     """ComponentLoader is a class that loads components
     from a given set of paths"""
 
-    _registered_paths: Set[Path]
+    _registered_paths: Set[Path] = set()
 
-    def __init__(self):
-        self._registered_paths = set()
-        self._register_default_paths()
-
-    def _register_default_paths(self) -> None:
-        """Register internal framework paths as
-        default"""
-
+    @classmethod
+    def initialize_default_paths(cls) -> None:
+        """Initialize default paths at the class level"""
         # Get the current file's directory and resolve project root
         current_dir = Path(__file__).resolve().parent.parent
         base_path = current_dir.parent / "semantiva"
@@ -30,25 +25,28 @@ class ComponentLoader:
         # Use the base_path in the loop
         for relative_path in default_paths_list:
             path = base_path / relative_path
-            self._registered_paths.add(path)
+            cls._registered_paths.add(path)
 
-    def register_paths(self, paths: str | List[str]):
+    @classmethod
+    def register_paths(cls, paths: str | List[str]):
         """Register a path or a list of paths"""
         if isinstance(paths, str):
             paths = [paths]
 
         for path in paths:
-            self._registered_paths.add(Path(path))
+            cls._registered_paths.add(Path(path))
 
-    def get_registered_paths(self) -> Set[Path]:
+    @classmethod
+    def get_registered_paths(cls) -> Set[Path]:
         """Get list of registered paths"""
-        return self._registered_paths
+        return cls._registered_paths
 
-    def get_class(self, class_name: str):
+    @classmethod
+    def get_class(cls, class_name: str):
         """Lookup in registered paths for the class and
         return its type."""
 
-        for path in self._registered_paths:
+        for path in cls._registered_paths:
             if not path.is_file():  # If path does not exist, skip it
                 continue
 
@@ -66,9 +64,13 @@ class ComponentLoader:
                 continue
 
             # Check and return the class type
-            cls = getattr(module, class_name, None)
-            if cls is not None:
-                return cls
+            class_type = getattr(module, class_name, None)
+            if class_type is not None:
+                return class_type
         raise ValueError(
             f"Class '{class_name}' not found in any of the registered paths."
         )
+
+
+# Initialize default paths when the class is loaded
+ComponentLoader.initialize_default_paths()

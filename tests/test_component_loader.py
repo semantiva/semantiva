@@ -7,7 +7,7 @@ from semantiva.component_loader import ComponentLoader
 @pytest.fixture
 def loader():
     """Fixture to provide a fresh instance of ComponentLoader."""
-    return ComponentLoader()
+    return ComponentLoader
 
 
 @pytest.fixture
@@ -24,6 +24,7 @@ def test_register_paths(mock_is_file, loader):
 
     expected_paths = {Path("new_path/image_algo.py"), Path("new_path/image_probes.py")}
     assert registered_paths == expected_paths
+    loader.initialize_default_paths()  # Reset default paths
 
 
 @patch("pathlib.Path.is_file", return_value=True)
@@ -75,7 +76,5 @@ def test_get_class_no_spec(mock_spec_from_file, mock_is_file, loader):
 
 def test_get_default_class(default_context_operation):
     """Test if get_default_class correctly loads the default class."""
-    component_loader = ComponentLoader()
-    default_class = component_loader.get_class(default_context_operation)
-
+    default_class = ComponentLoader.get_class(default_context_operation)
     assert default_class.__name__ == default_context_operation

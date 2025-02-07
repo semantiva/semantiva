@@ -145,7 +145,7 @@ def test_single_channel_context_notification_algorithm(single_channel_audio_data
     }
 
     # Create the algorithm node using the node factory
-    algorithm_node = node_factory(node_configuration, ComponentLoader)
+    algorithm_node = node_factory(node_configuration)
 
     # Initialize the context and process the data
     context = ContextType()

@@ -32,7 +32,6 @@ class Pipeline(PayloadOperation):
     pipeline_configuration: List[Dict]
     nodes: List[Node]
     stop_watch: StopWatch
-    _component_loader: ComponentLoader
 
     def __init__(
         self, pipeline_configuration: List[Dict], logger: Optional[Logger] = None
@@ -55,7 +54,6 @@ class Pipeline(PayloadOperation):
         self.nodes: List[Node] = []
         self.pipeline_configuration: List[Dict] = pipeline_configuration
         self.stop_watch = StopWatch()
-        self._component_loader = ComponentLoader()
         self._initialize_nodes()
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
@@ -283,5 +281,5 @@ class Pipeline(PayloadOperation):
         pipeline configuration. Each node is then added to the pipeline.
         """
         for node_config in self.pipeline_configuration:
-            node = node_factory(node_config, self._component_loader, self.logger)
+            node = node_factory(node_config, self.logger)
             self._add_node(node)

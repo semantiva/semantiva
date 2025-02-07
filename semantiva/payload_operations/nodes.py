@@ -567,7 +567,6 @@ class ProbeResultCollectorNode(ProbeNode):
 
 def node_factory(
     node_definition: Dict,
-    component_loader: ComponentLoader,
     logger: Optional[Logger] = None,
 ) -> Node:
     """
@@ -590,10 +589,10 @@ def node_factory(
         ValueError: If the node definition is invalid or the operation type is unsupported.
     """
 
-    def get_class_if_needed(class_name, component_loader):
+    def get_class_if_needed(class_name):
         """Helper function to retrieve the class from the loader if the input is a string."""
         if isinstance(class_name, str):
-            return component_loader.get_class(class_name)
+            return ComponentLoader.get_class(class_name)
         return class_name
 
     operation = node_definition.get("operation")
@@ -602,8 +601,8 @@ def node_factory(
     context_keyword = node_definition.get("context_keyword")
 
     # Use the helper function to get the correct class for both operation and context_operation
-    operation = get_class_if_needed(operation, component_loader)
-    context_operation = get_class_if_needed(context_operation, component_loader)
+    operation = get_class_if_needed(operation)
+    context_operation = get_class_if_needed(context_operation)
 
     if operation is None or not isinstance(operation, type):
         raise ValueError("operation must be a class type or a string, not None.")
