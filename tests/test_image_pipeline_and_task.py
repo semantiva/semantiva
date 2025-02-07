@@ -93,9 +93,9 @@ def test_pipeline_task(random_image, another_random_image):
 
 def test_pipeline_slicing(random_image_stack, random_image, another_random_image):
     """
-    Tests the pipeline's ability to correctly slice a DataCollecton when required.
+    Tests the pipeline's ability to correctly slice a DataCollection when required.
 
-    - The input (`ImageStackDataType`) contains a collecton of `ImageDataType` elements.
+    - The input (`ImageStackDataType`) contains a collection of `ImageDataType` elements.
     - The pipeline processes each `ImageDataType` individually via slicing.
     - The final output should remain an `ImageStackDataType` with the same number of images.
     """
