@@ -1,8 +1,6 @@
 import importlib.util
 from typing import List, Set
 from pathlib import Path
-import sys
-import inspect
 
 
 class ComponentLoader:
