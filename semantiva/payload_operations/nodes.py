@@ -565,7 +565,6 @@ class ProbeResultCollectorNode(ProbeNode):
         self._probed_data.clear()
 
 
-
 def node_factory(
     node_definition: Dict,
     component_loader: ComponentLoader,

@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 from ..context_operations.context_types import ContextType
