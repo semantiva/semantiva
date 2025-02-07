@@ -12,6 +12,7 @@ from ..data_operations.data_operations import (
 from ..context_operations.context_types import ContextType, ContextCollectionType
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
+from ..component_loader import ComponentLoader
 from .payload_operations import PayloadOperation
 
 
@@ -564,7 +565,10 @@ class ProbeResultCollectorNode(ProbeNode):
         self._probed_data.clear()
 
 
-def node_factory(node_definition: Dict, logger: Optional[Logger] = None) -> Node:
+def node_factory(
+    node_definition: Dict,
+    logger: Optional[Logger] = None,
+) -> Node:
     """
     Factory function to create a Node instance based on the provided definition.
 
@@ -584,13 +588,24 @@ def node_factory(node_definition: Dict, logger: Optional[Logger] = None) -> Node
     Raises:
         ValueError: If the node definition is invalid or the operation type is unsupported.
     """
+
+    def get_class_if_needed(class_name):
+        """Helper function to retrieve the class from the loader if the input is a string."""
+        if isinstance(class_name, str):
+            return ComponentLoader.get_class(class_name)
+        return class_name
+
     operation = node_definition.get("operation")
     context_operation = node_definition.get("context_operation", ContextPassthrough)
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
 
+    # Use the helper function to get the correct class for both operation and context_operation
+    operation = get_class_if_needed(operation)
+    context_operation = get_class_if_needed(context_operation)
+
     if operation is None or not isinstance(operation, type):
-        raise ValueError("operation must be a class type, not None.")
+        raise ValueError("operation must be a class type or a string, not None.")
 
     if issubclass(operation, DataAlgorithm):
         if context_keyword is not None:

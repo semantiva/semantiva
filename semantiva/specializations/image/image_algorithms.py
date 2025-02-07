@@ -1,6 +1,12 @@
 import numpy as np
-from .image_data_types import ImageDataType, ImageStackDataType
-from .image_operations import ImageAlgorithm, ImageStackToImageProjector
+from semantiva.specializations.image.image_data_types import (
+    ImageDataType,
+    ImageStackDataType,
+)
+from semantiva.specializations.image.image_operations import (
+    ImageAlgorithm,
+    ImageStackToImageProjector,
+)
 
 
 class ImageSubtraction(ImageAlgorithm):

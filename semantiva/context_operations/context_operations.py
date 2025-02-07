@@ -1,6 +1,6 @@
 from typing import List, Optional
 from abc import ABC, abstractmethod
-from .context_types import ContextType
+from semantiva.context_operations.context_types import ContextType
 from semantiva.logger import Logger
 
 
