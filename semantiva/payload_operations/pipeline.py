@@ -21,11 +21,78 @@ class Pipeline(PayloadOperation):
     `BaseDataType` data and context in a systematic manner. It enables the execution
     of complex workflows by chaining multiple `Node` instances together.
 
+    Node Configuration:
+    Each node in the pipeline is defined using a dictionary with the following keys:
+
+    - `operation` (required): The operation to perform, either a `DataAlgorithm` or `DataProbe`.
+    - `context_operation` (optional, default=`ContextPassthrough`): Specifies how context is handled.
+    - `parameters` (optional, default=`{}`): A dictionary of parameters for the data operation.
+      If an operation parameter is **not explicitly defined** in the pipeline configuration,
+      it is extracted from the **context**, using the parameter name as the context keyword.
+      Parameters explicitly defined in the pipeline configuration take precedence over those
+      obtained from the context.
+
+    ### Node Types:
+
+    1. **AlgorithmNode**:
+       - Configured when a `DataAlgorithm` is given as the `operation`.
+       - Example:
+         ```python
+         {
+             "operation": SomeDataAlgorithm,
+             "parameters": {"param1": value1, "param2": value2}
+         }
+         ```
+       - Defaults:
+         - `context_operation` defaults to `ContextPassthrough`.
+         - `parameters` defaults to an empty dictionary `{}`.
+
+    2. **ProbeContextInjectorNode**:
+       - Configured when a `DataProbe` is used as the `operation`, and `context_keyword` is **not** provided.
+       - This node collects probe results. No changes in data or context information.
+       - Example:
+         ```python
+         {
+             "operation": SomeDataProbe
+         }
+         ```
+       - Defaults:
+         - `context_operation` defaults to `ContextPassthrough`.
+         - `parameters` defaults to `{}`.
+
+    3. **ProbeResultCollectorNode**:
+       - Configured when a `DataProbe` is used as the `operation`, and `context_keyword` **is** provided.
+       - Stores collected probe results in the context container under the specified keyword.
+       - Example:
+         ```python
+         {
+             "operation": SomeDataProbe,
+             "context_keyword": "some_probe_keyword"
+         }
+         ```
+       - Defaults:
+         - `context_operation` defaults to `ContextPassthrough`.
+         - `parameters` defaults to `{}`.
+
+    ### Data Processing and Slicing:
+
+    The pipeline processes data and context sequentially through its nodes. Processing follows these rules:
+        1. If the node's expected input type matches the current data type exactly,
+           the node processes the entire data object in a single call. This is the nominal operation.
+        2. If the current data is a `DataCollectionType` and the node process its base type,
+           data is processed **element-wise** using a slicing stratgy.
+        3. If neither condition applies, an error is raised (invalid pipeline topology).
+
+    The pipeline supports both `ContextType` and `ContextCollectionType`:
+        - When slicing data, if the context is a `ContextCollectionType`, it is sliced in parallel.
+        - If the context is a single `ContextType`, it is **reused** for each data item and the result
+          of the context operation is not passed to the next node.
+
     Attributes:
         pipeline_configuration (List[Dict]): A list of dictionaries defining the configuration
                                              for each node in the pipeline.
         nodes (List[Node]): The list of nodes that make up the pipeline.
-        stop_watch (StopWatch): Tracks the execution time of the pipeline.
+        stop_watch (StopWatch): Tracks the execution time of nodes in the pipeline.
     """
 
     pipeline_configuration: List[Dict]
@@ -45,8 +112,8 @@ class Pipeline(PayloadOperation):
 
         Example:
             pipeline_configuration = [
-                {"operation": DataAlgorithm, "context_operation": ContextOperation, "parameters": {}},
-                {"operation": DataProbe, "context_operation": ContextOperation, "parameters": {}}
+                {"operation": SomeDataAlgorithm, "parameters": {"param1": value1}},
+                {"operation": SomeDataProbe, "context_keyword": "collected_data"}
             ]
         """
         super().__init__(logger)
@@ -120,7 +187,7 @@ class Pipeline(PayloadOperation):
         Executes the pipeline by processing data and context sequentially through each node.
 
         Processing follows these rules:
-            1. If the node’s expected input type matches the current data type exactly,
+            1. If the node's expected input type matches the current data type exactly,
             the node processes the entire dataset in a single call.
             2. If the current data is a `DataCollectionType` and the node expects its base type,
             data is processed **element-wise** using `_slicing_strategy`.
@@ -240,7 +307,7 @@ class Pipeline(PayloadOperation):
 
     def get_probe_results(self) -> Dict[str, List[Any]]:
         """
-        Retrieve the collected data from all probe nodes in the pipeline.
+        Retrieve the collected data from all probe collector nodes in the pipeline.
 
         This method iterates through the pipeline's nodes and checks for instances of
         `ProbeResultCollectorNode`. For each such node, it retrieves the collected data and
