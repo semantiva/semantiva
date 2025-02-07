@@ -10,6 +10,7 @@ from .nodes import (
 from ..logger import Logger
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..context_operations.context_types import ContextType
+from ..component_loader import ComponentLoader
 from .nodes import node_factory
 
 

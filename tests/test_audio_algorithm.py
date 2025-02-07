@@ -12,6 +12,7 @@ from semantiva.specializations.audio.audio_operations import (
 
 from semantiva.payload_operations import node_factory
 from semantiva.context_operations.context_types import ContextType
+from semantiva.component_loader import ComponentLoader
 
 
 class SingleChannelAudioMultiplyAlgorithm(SingleChannelAudioAlgorithm):
