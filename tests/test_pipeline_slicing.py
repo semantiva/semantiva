@@ -21,6 +21,7 @@ from semantiva.specializations.image.image_data_types import (
 from semantiva.specializations.image.image_probes import (
     BasicImageProbe,
 )
+from semantiva.context_operations import ContextPassthrough
 
 
 @pytest.fixture
@@ -79,19 +80,29 @@ def test_pipeline_slicing_with_single_context(
 
     node_configurations = [
         {
-            "operation": ImageAddition,
-            "parameters": {"image_to_add": random_image},
+            "context_operation": ContextPassthrough,  # Explicitly passing context unchanged (default behavior if omitted)
+            "operation": ImageAddition,  # Adds a specified image to each slice of the input data
+            "parameters": {
+                "image_to_add": random_image
+            },  # Image to be added to each slice
         },
         {
-            "operation": ImageSubtraction,
-            "parameters": {"image_to_subtract": another_random_image},
+            "operation": ImageSubtraction,  # Subtracts a specified image from each slice of the input data
+            "parameters": {
+                "image_to_subtract": another_random_image
+            },  # Image to subtract
         },
         {
-            "operation": BasicImageProbe,
-            "context_keyword": "mock_keyword",
+            "context_operation": ContextPassthrough,  # Context remains unchanged (default behavior)
+            "operation": BasicImageProbe,  # Probe operation to extract and store data
+            "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
+            "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "operation": BasicImageProbe,
+            "context_operation": ContextPassthrough,  # Context remains unchanged (default behavior)
+            "operation": BasicImageProbe,  # Probe operation to collect results
+            "parameters": {},  # No extra parameters required (can be omitted)
+            # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
         },
     ]
 
