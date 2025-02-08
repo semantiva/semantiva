@@ -317,7 +317,7 @@ class TwoDGaussianImageGenerator(ImageDataSource):
 
     def _get_data(
         self,
-        center: tuple[int, int],  # (x, y) position
+        center: tuple[float | int, float | int],  # (x, y) position
         std_dev: float | tuple[float, float],  # Allow single float or tuple
         amplitude: float,
         image_size: tuple[int, int] = (1024, 1024),  # Default image size

@@ -91,8 +91,8 @@ class TwoDGaussianFitterProbe(ImageProbe):
         """
 
         # Prepare the x and y coordinate grids
-        x = np.linspace(0, data.data.shape[1], data.data.shape[1])
-        y = np.linspace(0, data.data.shape[0], data.data.shape[0])
+        x = np.linspace(0, data.data.shape[1] - 1, data.data.shape[1])
+        y = np.linspace(0, data.data.shape[0] - 1, data.data.shape[0])
         x, y = np.meshgrid(x, y)
 
         # Perform the curve fitting
