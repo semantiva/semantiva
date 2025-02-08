@@ -415,9 +415,6 @@ class ParametricImageStackGenerator(ImageStackSource):
         Returns:
             ImageStackDataType: The generated image stack data.
         """
-        t_values = np.linspace(
-            self.param_ranges["t"][0], self.param_ranges["t"][1], self.num_frames
-        )
         images = [
             self.image_generator.get_data(
                 **{
@@ -426,9 +423,17 @@ class ParametricImageStackGenerator(ImageStackSource):
                 },
                 **self.image_generator_params,
             )
-            for t in t_values
+            for t in self.t_values
         ]
         return ImageStackDataType.from_list(images)
+
+    @property
+    def t_values(self):
+        t_values = np.linspace(
+            self.param_ranges["t"][0], self.param_ranges["t"][1], self.num_frames
+        )
+
+        return t_values
 
 
 class ImageStackRandomGenerator(ImageStackSource):

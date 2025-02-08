@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, List, Optional, Type, TypeVar, Generic, Dict
+from typing import Any, List, Optional, Type, TypeVar, Generic, Union, Tuple
 
 from abc import ABC, abstractmethod
 
@@ -9,7 +9,6 @@ from ..logger import Logger
 
 # -- Type Variables --
 T = TypeVar("T", bound=BaseDataType)
-import types
 
 
 class BaseDataOperation(ABC, Generic[T]):
@@ -219,6 +218,40 @@ class DataProbe(BaseDataOperation):
 
     def __init__(self, logger=None):
         super().__init__(logger)
+
+
+class FeatureExtractorProbe(DataProbe):
+    """
+    A class used to selective retrieve probed results from a probe that generates a dictionary.
+
+    Methods
+    -------
+    _operation(data)
+        feature_probe.
+    """
+
+    def __init__(self, feature_probe, param_key: Union[str, Tuple[str, ...]]):
+        """
+        Initializes the FeatureExtractorProbe with a specified parameter key or keys.
+
+        Parameters
+        ----------
+        param_key : str or tuple of str
+            The key(s) of the parameter(s) to extract from the probe.
+        """
+        self.param_key = param_key
+        self.feature_probe = feature_probe()
+
+    def input_data_type(self):
+        return self.feature_probe.input_data_type()
+
+    def _operation(self, data) -> Union[Any, Tuple[Any, ...]]:
+        fitted_params = self.feature_probe.process(data)
+
+        if isinstance(self.param_key, tuple):
+            return tuple((fitted_params[key] for key in self.param_key))
+
+        return fitted_params[self.param_key]
 
 
 BaseType = TypeVar("BaseType", bound=BaseDataType)
