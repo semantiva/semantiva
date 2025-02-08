@@ -1,119 +1,109 @@
 import pytest
-import numpy as np
-from semantiva.specializations.image.image_data_types import ImageStackDataType
-from semantiva.specializations.image.image_probes import ImageProbe
+from semantiva.data_operations.data_operations import FeatureExtractorProbe
+from semantiva.specializations.image.image_probes import TwoDGaussianFitterProbe
 from semantiva.data_operations.data_operations import (
-    DataCollectionFeatureExtractionProbe,
     create_data_collection_feature_extraction_probe,
 )
+from semantiva.specializations.image.image_loaders_savers_generators import (
+    TwoDGaussianImageGenerator,
+    ParametricImageStackGenerator,
+)
+from semantiva.workflows.fitting_model import PolynomialFittingModel
 
-
-class TotalImageIntensityProbe(ImageProbe):
-    """
-    A basic image probe that computes the total intensity of an image.
-
-    This class provides a simple probe to calculate the sum of pixel values.
-    """
-
-    def _operation(self, data):
-        """
-
-
-        Args:
-            data (ImageDataType): The input image data.
-
-        Returns:
-            float: sum of pixel values.
-        """
-        return float(data.data.sum())
+# === Pytest Fixtures ===
 
 
 @pytest.fixture
-def sample_image_stack():
+def image_stack_generator():
     """
-    Pytest fixture to create a sample ImageStackDataType with 5 random images.
-    Each image has dimensions 256x256.
+    Creates an image stack generator that simulates Gaussian blobs evolving over time.
     """
-    random_images = np.random.rand(5, 256, 256)  # Stack of 5 random images
-    return ImageStackDataType(random_images)
+    return ParametricImageStackGenerator(
+        num_frames=3,
+        parametric_expressions={
+            "center": "(350 + 200 * t, 625 - 100 * t + 100 * t ** 2)",  # Quadratic motion in y-direction
+            "std_dev": "30 + 20 * t",  # Standard deviation increases linearly over frames
+            "amplitude": "100",  # Fixed amplitude for all frames
+        },
+        param_ranges={"t": (-1, 2)},  # Time range
+        image_generator=TwoDGaussianImageGenerator(),
+        image_generator_params={"image_size": (1024, 1024)},  # Image resolution
+    )
 
 
 @pytest.fixture
-def total_intensity_probe():
-    """
-    Pytest fixture to create a TotalImageIntensityProbe instance.
-    """
-    return TotalImageIntensityProbe()
+def image_stack(image_stack_generator):
+    """Generates an image stack using the fixture-based generator."""
+    return image_stack_generator.get_data()
 
 
 @pytest.fixture
-def collection_probe(total_intensity_probe):
+def time_values(image_stack_generator):
+    """Provides the computed time values associated with each frame."""
+    return image_stack_generator.t_values
+
+
+@pytest.fixture
+def extracted_features(image_stack):
     """
-    Pytest fixture to create a DataCollectionFeatureExtractionProbe
-    using the TotalImageIntensityProbe.
+    Extracts all relevant features (peak center and std deviation) in a single call to improve performance.
     """
-    return create_data_collection_feature_extraction_probe(total_intensity_probe)()
+    multi_feature_probe = create_data_collection_feature_extraction_probe(
+        FeatureExtractorProbe(
+            TwoDGaussianFitterProbe, param_key=("peak_center", "std_dev_x", "std_dev_y")
+        )
+    )()
+
+    return multi_feature_probe.process(image_stack)
 
 
-def test_data_collection_feature_extraction_probe_creation(total_intensity_probe):
+# === Combined Polynomial Fitting Tests ===
+
+
+def assert_close(expected, actual, tol=1e-1):
+    """Helper function to compare expected and actual coefficients with a tolerance."""
+    assert abs(expected - actual) < tol, f"Expected {expected}, but got {actual}"
+
+
+def test_polynomial_fitting_all(time_values, extracted_features):
     """
-    Test the creation of a DataCollectionFeatureExtractionProbe using the factory function.
-    Ensures that the generated probe correctly wraps the provided feature extractor.
+    Tests polynomial fitting for both standard deviation and peak center (x, y).
+    Uses a single extracted feature set to improve test efficiency.
     """
-    probe = create_data_collection_feature_extraction_probe(total_intensity_probe)()
+    extracted_std_devs = [f[1] for f in extracted_features]
+    extracted_center_positions = [f[0] for f in extracted_features]
 
-    assert isinstance(probe, DataCollectionFeatureExtractionProbe)
-    assert probe.feature_extractor is total_intensity_probe
+    # === Fit Standard Deviation to Linear Model ===
+    std_dev_model = PolynomialFittingModel(degree=1)
+    std_dev_fit_params = std_dev_model.fit(time_values, extracted_std_devs)
 
-
-def test_data_collection_feature_extraction_probe_execution(
-    collection_probe, sample_image_stack
-):
-    """
-    Test the execution of DataCollectionFeatureExtractionProbe.
-    Ensures that features are correctly extracted from the image stack.
-    """
-    extracted_features = collection_probe.process(sample_image_stack)
-
-    assert isinstance(
-        extracted_features, list
-    ), "Output should be a list of extracted features."
-    assert len(extracted_features) == len(
-        sample_image_stack
-    ), "Feature count should match the number of images."
-    assert all(
-        isinstance(val, float) for val in extracted_features
-    ), "Each extracted feature should be a float."
-
-    # Verify the extracted values are reasonable (sum of pixel intensities should be positive)
-    assert all(
-        val > 0 for val in extracted_features
-    ), "Total intensity should be a positive value."
-
-
-def test_empty_data_collection_feature_extraction(collection_probe):
-    """
-    Test the case where an empty ImageStackDataType is passed to the feature extraction probe.
-    Ensures that an empty list is returned.
-    """
-    empty_stack = ImageStackDataType(np.empty((0, 256, 256)))  # Empty image stack
-    extracted_features = collection_probe.process(empty_stack)
-
+    expected_std_dev_params = {"coeff_0": 30, "coeff_1": 20}
     assert (
-        extracted_features == []
-    ), "Processing an empty collection should return an empty list."
+        std_dev_fit_params.keys() == expected_std_dev_params.keys()
+    ), "Mismatch in std_dev coefficients"
+    for key in expected_std_dev_params:
+        assert_close(expected_std_dev_params[key], std_dev_fit_params[key])
 
+    # === Fit X-Center to Linear Model ===
+    x_positions = [center[0] for center in extracted_center_positions]
+    x_center_model = PolynomialFittingModel(degree=1)
+    x_center_fit_params = x_center_model.fit(time_values, x_positions)
 
-def test_consistency_of_extracted_features(collection_probe, sample_image_stack):
-    """
-    Test that feature extraction is deterministic and consistent.
-    Running the probe twice on the same data should yield the same results.
-    """
-    first_run = collection_probe.process(sample_image_stack)
-    second_run = collection_probe.process(sample_image_stack)
+    expected_x_params = {"coeff_0": 350, "coeff_1": 200}
+    assert (
+        x_center_fit_params.keys() == expected_x_params.keys()
+    ), "Mismatch in x_center coefficients"
+    for key in expected_x_params:
+        assert_close(expected_x_params[key], x_center_fit_params[key])
 
-    assert first_run == second_run, "Feature extraction should be deterministic."
+    # === Fit Y-Center to Quadratic Model ===
+    y_positions = [center[1] for center in extracted_center_positions]
+    y_center_model = PolynomialFittingModel(degree=2)
+    y_center_fit_params = y_center_model.fit(time_values, y_positions)
 
-
-if __name__ == "__main__":
-    pytest.main()
+    expected_y_params = {"coeff_0": 625, "coeff_1": -100, "coeff_2": 100}
+    assert (
+        y_center_fit_params.keys() == expected_y_params.keys()
+    ), "Mismatch in y_center coefficients"
+    for key in expected_y_params:
+        assert_close(expected_y_params[key], y_center_fit_params[key])

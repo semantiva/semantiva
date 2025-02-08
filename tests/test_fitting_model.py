@@ -3,7 +3,7 @@ import numpy as np
 from typing import Dict
 from semantiva.workflows.fitting_model import (
     PolynomialFittingModel,
-)  # Adjust import based on your module structure
+)
 
 
 @pytest.fixture

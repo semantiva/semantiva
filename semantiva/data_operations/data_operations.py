@@ -222,7 +222,7 @@ class DataProbe(BaseDataOperation):
 
 class FeatureExtractorProbe(DataProbe):
     """
-    A class used to selective retrieve probed results from a probe that generates a dictionary.
+    A class used to selective retrieve probed results from a probe that returns a dictionary.
 
     Methods
     -------
@@ -333,7 +333,7 @@ ExtractedFeatureType = TypeVar("ExtractedFeatureType")
 def create_data_collection_feature_extraction_probe(
     feature_extractor: DataProbe,
     class_name: str = "GeneratedDataCollectionFeatureExtractionProbe",
-) -> Type[DataCollectionFeatureExtractionProbe[CollectionBaseT, ExtractedFeatureType]]:
+):
     """
     Factory function to create a `DataCollectionFeatureExtractionProbe` class using
     dynamic type creation.
