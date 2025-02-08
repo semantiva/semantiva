@@ -96,10 +96,15 @@ class TwoDGaussianFitterProbe(ImageProbe):
         x, y = np.meshgrid(x, y)
 
         # Perform the curve fitting
+        # Compute the center of mass as a better initial guess
+        total_intensity = np.sum(data.data)
+        center_x = np.sum(x * data.data) / total_intensity
+        center_y = np.sum(y * data.data) / total_intensity
+
         initial_guess = [
             data.data.max(),
-            data.data.shape[1] / 2,
-            data.data.shape[0] / 2,
+            center_x,  # Use the center of mass
+            center_y,  # Use the center of mass
             1,
             1,
         ]

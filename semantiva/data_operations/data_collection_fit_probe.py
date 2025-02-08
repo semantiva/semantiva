@@ -19,7 +19,7 @@ def create_collection_feature_extraction_and_fit_probe(
     feature_extractor: DataProbe,
     fitting_model: FittingModel,
     independent_variable_parameter_name: str,
-) -> Type[DataCollectionProbe[CollectionBaseType]]:
+) -> Type[DataProbe]:
     """
     Factory function to create a `CollectionFeatureExtractionAndFitProbe` class.
 
@@ -38,13 +38,8 @@ def create_collection_feature_extraction_and_fit_probe(
             A dynamically generated class that can process data collections.
     """
 
-    # Explicit type annotation for mypy
-    FeatureExtractionProbeClass: Type[DataCollectionProbe[CollectionBaseType]] = (
-        create_data_collection_feature_extraction_probe(feature_extractor)
-    )
-
     class GeneratedCollectionFeatureExtractionAndFitProbe(
-        DataCollectionProbe,
+        DataProbe,
         Generic[IndependentVarType, ExtractedFeatureType],
     ):
         """
