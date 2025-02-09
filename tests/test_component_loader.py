@@ -18,13 +18,12 @@ def default_context_operation():
 @patch("pathlib.Path.is_file", return_value=True)
 def test_register_paths(mock_is_file, loader):
     """Test if register_paths correctly adds paths."""
-    loader._registered_paths = set()  # Clear out default paths
+
     loader.register_paths(["new_path/image_algo.py", "new_path/image_probes.py"])
     registered_paths = loader.get_registered_paths()
 
     expected_paths = {Path("new_path/image_algo.py"), Path("new_path/image_probes.py")}
     assert registered_paths == expected_paths
-    loader.initialize_default_paths()  # Reset default paths
 
 
 @patch("pathlib.Path.is_file", return_value=True)
