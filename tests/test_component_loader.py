@@ -26,6 +26,25 @@ def test_register_paths(mock_is_file, loader):
     assert registered_paths == expected_paths
 
 
+def test_register_modules(loader):
+    """Test if register_modules correctly adds modules."""
+
+    loader._registered_modules = set()  # Reset registered modules
+
+    loader.register_modules(
+        [
+            "new_module.image_algo",
+            "new_module.image_probes",
+        ]
+    )
+    registered_modules = loader.get_registered_modules()
+
+    expected_modules = {"new_module.image_algo", "new_module.image_probes"}
+    assert registered_modules == expected_modules
+
+    loader.initialize_default_modules()  # Reset registered modules
+
+
 @patch("pathlib.Path.is_file", return_value=True)
 def test_get_class(mock_is_file, loader):
     """Test if get_class correctly loads a class from registered paths."""

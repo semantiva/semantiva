@@ -28,9 +28,23 @@ class ComponentLoader:
             cls._registered_paths.add(Path(path))
 
     @classmethod
+    def register_modules(cls, modules: str | List[str]):
+        """Register a module or a list of modules"""
+        if isinstance(modules, str):
+            modules = [modules]
+
+        for module in modules:
+            cls._registered_modules.add(module)
+
+    @classmethod
     def get_registered_paths(cls) -> Set[Path]:
         """Get list of registered paths"""
         return cls._registered_paths
+
+    @classmethod
+    def get_registered_modules(cls) -> Set[str]:
+        """Get list of registered modules"""
+        return cls._registered_modules
 
     @classmethod
     def get_class(cls, class_name: str):
@@ -54,11 +68,14 @@ class ComponentLoader:
     @classmethod
     def _get_class_from_module(cls, module_name: str, class_name: str):
         """Lookup in registered modules for the class and
-        return its type."""
+        return its type. If module is not found, return None."""
 
-        module = import_module(module_name)
-        class_type = getattr(module, class_name, None)
-        return class_type
+        try:
+            module = import_module(module_name)
+            class_type = getattr(module, class_name, None)
+            return class_type
+        except ModuleNotFoundError:
+            return None
 
     @classmethod
     def _get_class_from_file(cls, file_path: Path, class_name: str):
