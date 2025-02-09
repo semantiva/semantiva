@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "The Semantiva is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations."
 license = "MIT" 
 readme = "README.md" 
-requires-python = "==3.10.12"
+requires-python = ">=3.10.12"
 dependencies = [
     "black ==24.10.0",
     "mypy ==1.14.1",
