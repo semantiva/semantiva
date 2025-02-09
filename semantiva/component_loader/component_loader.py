@@ -99,7 +99,3 @@ class ComponentLoader:
 
         # Check and return the class type
         return getattr(module, class_name, None)
-
-
-# Initialize default modules when the class is loaded
-ComponentLoader.initialize_default_modules()
