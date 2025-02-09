@@ -1,5 +1,5 @@
 import pytest
-from semantiva.data_operations.data_operations import FeatureExtractorProbe
+from semantiva.data_operations.data_operations import FeatureExtractorProbeWrapper
 from semantiva.specializations.image.image_probes import TwoDGaussianFitterProbe
 from semantiva.data_operations.data_operations import (
     create_data_collection_feature_extraction_probe,
@@ -49,7 +49,7 @@ def extracted_features(image_stack):
     Extracts all relevant features (peak center and std deviation) in a single call to improve performance.
     """
     multi_feature_probe = create_data_collection_feature_extraction_probe(
-        FeatureExtractorProbe(
+        FeatureExtractorProbeWrapper(
             TwoDGaussianFitterProbe, param_key=("peak_center", "std_dev_x", "std_dev_y")
         )
     )()

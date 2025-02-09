@@ -215,6 +215,7 @@ class Pipeline(PayloadOperation):
             self.logger.debug(
                 f"Processing {type(node.data_operation).__name__} ({type(node).__name__})"
             )
+            self.logger.debug(f"    Data: {result_data}, Context: {result_context}")
             # Get the expected input type for the node's operation
             input_type = node.data_operation.input_data_type()
 

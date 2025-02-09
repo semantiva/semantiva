@@ -220,40 +220,6 @@ class DataProbe(BaseDataOperation):
         super().__init__(logger)
 
 
-class FeatureExtractorProbe(DataProbe):
-    """
-    A class used to selective retrieve probed results from a probe that returns a dictionary.
-
-    Methods
-    -------
-    _operation(data)
-        feature_probe.
-    """
-
-    def __init__(self, feature_probe, param_key: Union[str, Tuple[str, ...]]):
-        """
-        Initializes the FeatureExtractorProbe with a specified parameter key or keys.
-
-        Parameters
-        ----------
-        param_key : str or tuple of str
-            The key(s) of the parameter(s) to extract from the probe.
-        """
-        self.param_key = param_key
-        self.feature_probe = feature_probe()
-
-    def input_data_type(self):
-        return self.feature_probe.input_data_type()
-
-    def _operation(self, data) -> Union[Any, Tuple[Any, ...]]:
-        fitted_params = self.feature_probe.process(data)
-
-        if isinstance(self.param_key, tuple):
-            return tuple((fitted_params[key] for key in self.param_key))
-
-        return fitted_params[self.param_key]
-
-
 BaseType = TypeVar("BaseType", bound=BaseDataType)
 
 
@@ -368,3 +334,49 @@ def create_data_collection_feature_extraction_probe(
     DynamicFeatureExtractionProbe.__qualname__ = class_name
 
     return DynamicFeatureExtractionProbe
+
+
+class FeatureExtractorProbeWrapper(DataProbe):
+    """
+    A wrapper probe that extracts only the required parameter(s) from a dictionary-based probe.
+
+    This allows using a probe that returns a full dictionary but only passing the required values
+    to the next stage of processing (e.g., fitting a model).
+    """
+
+    def __init__(
+        self, feature_probe: Type[DataProbe], param_key: Union[str, Tuple[str, ...]]
+    ):
+        """
+        Initializes the FeatureExtractorWrapperProbe with a specified parameter key or keys.
+
+        Parameters:
+        ----------
+        feature_probe : Type[DataProbe]
+            The original probe that returns a dictionary of results.
+        param_key : str or tuple of str
+            The key(s) of the parameter(s) to extract from the probe output.
+        """
+        self.param_key = param_key
+        self.feature_probe = feature_probe()
+
+    def input_data_type(self):
+        """Returns the input data type required by the wrapped probe."""
+        return self.feature_probe.input_data_type()
+
+    def _operation(self, data) -> Union[Any, Tuple[Any, ...]]:
+        """
+        Processes the input data through the original probe and extracts the required parameter(s).
+
+        Args:
+            data (Any): The input data to be processed by the probe.
+
+        Returns:
+            Union[Any, Tuple[Any, ...]]: Extracted value(s) from the probe output.
+        """
+        fitted_params = self.feature_probe.process(data)
+
+        if isinstance(self.param_key, tuple):
+            return tuple(fitted_params[key] for key in self.param_key)
+
+        return fitted_params[self.param_key]
