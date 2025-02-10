@@ -9,6 +9,12 @@ from semantiva.specializations.image.image_data_types import (
     ImageDataType,
     ImageStackDataType,
 )
+from typing import TypedDict
+
+
+class FigureOption(TypedDict):
+    figsize: tuple[float, float]
+    labelsize: int
 
 
 class ImageViewer:
@@ -24,12 +30,20 @@ class ImageViewer:
         colorbar: bool = False,
         cmap: str = "viridis",
         log_scale: bool = False,
+        xlabel: str = "",
+        ylabel: str = "",
     ):
         """Display an image with optional title, colorbar, colormap, and log scale."""
         figure = cls._generate_image(
-            data, title=title, colorbar=colorbar, cmap=cmap, log_scale=log_scale
+            data,
+            title=title,
+            colorbar=colorbar,
+            cmap=cmap,
+            log_scale=log_scale,
+            xlabel=xlabel,
+            ylabel=ylabel,
         )
-        figure.show()
+        plt.show()
 
     @classmethod
     def _generate_image(
@@ -39,11 +53,15 @@ class ImageViewer:
         colorbar: bool = False,
         cmap: str = "viridis",
         log_scale: bool = False,
+        xlabel: str = "",
+        ylabel: str = "",
     ) -> Figure:
         """Generate figure with the image"""
         norm = None
         fig = plt.figure()
         plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         if log_scale:
             norm = LogNorm(vmin=1e-2, vmax=data.data.max())
         plt.imshow(data.data, cmap=cmap, norm=norm)
@@ -56,6 +74,12 @@ class ImageInteractiveViewer(ImageViewer):
     """
     An extension of ImageViewer that supports interactivity in Jupyter Notebook.
     """
+
+    FIGURE_OPTIONS: dict[str, FigureOption] = {
+        "Small": {"figsize": (5, 4), "labelsize": 10},
+        "Medium": {"figsize": (7, 5), "labelsize": 12},
+        "Large": {"figsize": (10, 8), "labelsize": 14},
+    }
 
     @classmethod
     def interactive_generate_image(
@@ -87,6 +111,15 @@ class ImageInteractiveViewer(ImageViewer):
             step=0.1,
             description="vmax",
         )
+        title_widget = widgets.Text(value=title, description="Title:")
+        xlabel_widget = widgets.Text(value="", description="X Label:")
+        ylabel_widget = widgets.Text(value="", description="Y Label:")
+
+        figure_size_widget = widgets.Dropdown(
+            options=list(cls.FIGURE_OPTIONS.keys()),
+            value="Medium",
+            description="Figure Size:",
+        )
 
         # Ensure vmax is always greater than vmin
         def update_vmax_range(change):
@@ -103,28 +136,54 @@ class ImageInteractiveViewer(ImageViewer):
         vmin_widget.observe(update_vmax_range, names="value")
         # Create figure and axes
 
-        def update_plot(colorbar, log_scale, cmap, vmin, vmax):
-            """Update plot based on widget values."""
-            plt.figure(figsize=(6, 4))
-            norm = LogNorm(vmin=vmin, vmax=vmax) if log_scale else None
-            plt.imshow(data.data, cmap=cmap, norm=norm)
-            plt.title(title)
-            if colorbar:
-                plt.colorbar()
-            plt.show()
-
         # Bind widgets to the plotting function
         interactive_plot = widgets.interactive(
-            update_plot,
+            cls.update_plot,
+            data=widgets.fixed(data),
             colorbar=colorbar_widget,
             log_scale=log_scale_widget,
             cmap=cmap_widget,
             vmin=vmin_widget,
             vmax=vmax_widget,
+            title=title_widget,
+            xlabel=xlabel_widget,
+            ylabel=ylabel_widget,
+            figure_size=figure_size_widget,
         )
 
         # Display the interactive plot
         display(interactive_plot)
+
+    @classmethod
+    def update_plot(
+        cls,
+        data: ImageDataType,
+        colorbar: bool,
+        log_scale: bool,
+        cmap: str,
+        vmin: float,
+        vmax: float,
+        title: str,
+        xlabel: str,
+        ylabel: str,
+        figure_size: str,
+    ):
+        """Update plot based on widget values."""
+        fig_options = cls.FIGURE_OPTIONS[figure_size]
+        figsize = fig_options["figsize"]
+        labelsize = fig_options["labelsize"]
+
+        plt.figure(figsize=figsize)
+        norm = LogNorm(vmin=vmin, vmax=vmax) if log_scale else None
+        plt.imshow(data.data, cmap=cmap, norm=norm)
+        plt.title(title, fontsize=labelsize + 2)
+        plt.xlabel(xlabel, fontsize=labelsize)
+        plt.ylabel(ylabel, fontsize=labelsize)
+        plt.xticks(fontsize=labelsize - 2)
+        plt.yticks(fontsize=labelsize - 2)
+        if colorbar:
+            plt.colorbar()
+        plt.show()
 
 
 class ImageStackAnimator:
