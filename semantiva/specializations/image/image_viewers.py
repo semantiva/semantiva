@@ -76,9 +76,9 @@ class ImageInteractiveViewer(ImageViewer):
     """
 
     FIGURE_OPTIONS: dict[str, FigureOption] = {
-        "Small": {"figsize": (5, 4), "labelsize": 10},
-        "Medium": {"figsize": (7, 5), "labelsize": 12},
-        "Large": {"figsize": (10, 8), "labelsize": 14},
+        "Small (500x400)": {"figsize": (5, 4), "labelsize": 10},
+        "Medium (700x500)": {"figsize": (7, 5), "labelsize": 12},
+        "Large (1000x800)": {"figsize": (10, 8), "labelsize": 14},
     }
 
     @classmethod
