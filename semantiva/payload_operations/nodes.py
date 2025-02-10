@@ -14,6 +14,9 @@ from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
 from ..component_loader import ComponentLoader
 from .payload_operations import PayloadOperation
+from semantiva.data_operations.data_collection_fit_probe import (
+    create_collection_feature_extraction_and_fit_probe,
+)
 
 
 class Node(PayloadOperation):
@@ -599,6 +602,10 @@ def node_factory(
     context_operation = node_definition.get("context_operation", ContextPassthrough)
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
+    fitting_model = node_definition.get("fitting_model")
+    independent_variable_parameter_name = node_definition.get(
+        "independent_variable_parameter_name"
+    )
 
     # Use the helper function to get the correct class for both operation and context_operation
     operation = get_class_if_needed(operation)
@@ -624,6 +631,23 @@ def node_factory(
                 data_operation=operation,
                 context_operation=context_operation,
                 context_keyword=context_keyword,
+                operation_parameters=parameters,
+                logger=logger,
+            )
+        elif fitting_model is not None:
+            assert independent_variable_parameter_name is not None, (
+                "independent_variable_parameter_name must be provided for "
+                "feature extraction and fit probes."
+            )
+            extract_and_fit_probe = create_collection_feature_extraction_and_fit_probe(
+                feature_extractor=operation,
+                fitting_model=fitting_model,
+                independent_variable_parameter_name=independent_variable_parameter_name,
+            )
+
+            return ProbeResultCollectorNode(
+                data_operation=extract_and_fit_probe,
+                context_operation=context_operation,
                 operation_parameters=parameters,
                 logger=logger,
             )

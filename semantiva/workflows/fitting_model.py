@@ -81,9 +81,11 @@ class PolynomialFittingModel(FittingModel[float, float]):
 
 
 # Example Usage:
-x_data = [1.0, 2.0, 3.0, 4.0, 5.0]
-y_data = [2.2, 2.8, 3.6, 4.5, 5.1]
+if __name__ == "__main__":
+    # Generate sample data
+    x_data = [1.0, 2.0, 3.0, 4.0, 5.0]
+    y_data = [2.2, 2.8, 3.6, 4.5, 5.1]
 
-model = PolynomialFittingModel(degree=2)
-parameters = model.fit(x_data, y_data)
-print(parameters)
+    model = PolynomialFittingModel(degree=2)
+    parameters = model.fit(x_data, y_data)
+    print(parameters)

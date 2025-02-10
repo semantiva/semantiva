@@ -1,6 +1,6 @@
 from PIL import Image
 import numpy as np
-from scipy.stats import multivariate_normal
+from typing import Any, Dict, Tuple
 from semantiva.context_operations.context_types import ContextType
 from .image_data_io import (
     ImageDataSource,
@@ -317,7 +317,7 @@ class TwoDGaussianImageGenerator(ImageDataSource):
 
     def _get_data(
         self,
-        center: tuple[int, int],  # (x, y) position
+        center: tuple[float | int, float | int],  # (x, y) position
         std_dev: float | tuple[float, float],  # Allow single float or tuple
         amplitude: float,
         image_size: tuple[int, int] = (1024, 1024),  # Default image size
@@ -363,6 +363,77 @@ class TwoDGaussianImageGenerator(ImageDataSource):
         )
 
         return ImageDataType(z)
+
+
+class ParametricImageStackGenerator(ImageStackSource):
+    def __init__(
+        self,
+        num_frames: int,
+        parametric_expressions: Dict[str, str],
+        param_ranges: Dict[str, Tuple[float, float]],
+        image_generator: Any,
+        image_generator_params: Dict[str, Any],
+    ):
+        """
+        Creates an image stack of signals where parameters evolve according to parametric expressions.
+
+        Parameters:
+            num_frames (int): Number of images in the stack.
+            parametric_expressions (Dict[str, str]): Dictionary specifying how each parameter evolves.
+                Keys correspond to parameter names used in the image generator.
+                Values are string expressions that evaluate t -> value.
+            param_ranges (Dict[str, Tuple[float, float]]): Dictionary specifying parameter ranges for time t.
+            image_generator (Any): An image generator.
+            image_generator_params (Dict[str, Any]): Dictionary of additional static parameters for the image generator.
+        """
+        self.num_frames = num_frames
+        self.parametric_expressions = {
+            key: eval(f"lambda t: {expr}") if isinstance(expr, str) else expr
+            for key, expr in parametric_expressions.items()
+        }
+        self.param_ranges = param_ranges
+        self.image_generator = image_generator
+        self.image_generator_params = image_generator_params
+
+    def _evaluate_param(self, param_name: str, t: float) -> float:
+        """
+        Evaluates the given parameter function.
+
+        Parameters:
+            param_name (str): The name of the parameter to evaluate.
+            t (float): The time value at which to evaluate the parameter.
+
+        Returns:
+            float: The evaluated parameter value.
+        """
+        return self.parametric_expressions[param_name](t)
+
+    def _get_data(self):
+        """
+        Generates a stack of images with evolving parameters.
+
+        Returns:
+            ImageStackDataType: The generated image stack data.
+        """
+        images = [
+            self.image_generator.get_data(
+                **{
+                    key: self._evaluate_param(key, t)
+                    for key in self.parametric_expressions
+                },
+                **self.image_generator_params,
+            )
+            for t in self.t_values
+        ]
+        return ImageStackDataType.from_list(images)
+
+    @property
+    def t_values(self):
+        t_values = np.linspace(
+            self.param_ranges["t"][0], self.param_ranges["t"][1], self.num_frames
+        )
+
+        return t_values
 
 
 class ImageStackRandomGenerator(ImageStackSource):
