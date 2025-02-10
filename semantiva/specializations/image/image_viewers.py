@@ -117,7 +117,7 @@ class ImageInteractiveViewer(ImageViewer):
 
         figure_size_widget = widgets.Dropdown(
             options=list(cls.FIGURE_OPTIONS.keys()),
-            value="Medium",
+            value="Medium (700x500)",
             description="Figure Size:",
         )
 
