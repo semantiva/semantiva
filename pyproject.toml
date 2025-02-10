@@ -15,6 +15,7 @@ dependencies = [
     "scipy",
     "coverage",
     "matplotlib",
+    "ipywidgets",
 ]
 distribution = true
 
