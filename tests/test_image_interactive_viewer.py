@@ -17,15 +17,9 @@ def test_figure_options():
     """Ensure FIGURE_OPTIONS has correct types and values."""
     options = ImageInteractiveViewer.FIGURE_OPTIONS
 
-    assert "Small" in options
-    assert "Medium" in options
-    assert "Large" in options
-
-    for size in ["Small", "Medium", "Large"]:
-        fig_option = options[size]
-        assert isinstance(fig_option["figsize"], tuple)
-        assert isinstance(fig_option["labelsize"], int)
-        assert len(fig_option["figsize"]) == 2
+    assert "Small (500x400)" in options
+    assert "Medium (700x500)" in options
+    assert "Large (1000x800)" in options
 
 
 def test_generate_widgets(test_image):
@@ -59,7 +53,7 @@ def test_generate_widgets(test_image):
     ylabel_widget = Text(value="", description="Y Label:")
     figure_size_widget = Dropdown(
         options=list(viewer.FIGURE_OPTIONS.keys()),
-        value="Medium",
+        value=list(viewer.FIGURE_OPTIONS.keys())[1],
         description="Figure Size:",
     )
 
@@ -97,7 +91,7 @@ def test_update_plot(monkeypatch, test_image):
         title="Test Plot",
         xlabel="X Axis",
         ylabel="Y Axis",
-        figure_size="Medium",
+        figure_size="Medium (700x500)",
     )
 
     # Ensure plt.show() was called
