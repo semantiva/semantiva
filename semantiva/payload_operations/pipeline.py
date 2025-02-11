@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from .stop_watch import StopWatch
 from .payload_operations import PayloadOperation
 from .nodes import (
-    Node,
+    DataNode,
     AlgorithmNode,
     ProbeResultCollectorNode,
     ProbeContextInjectorNode,
@@ -97,7 +97,7 @@ class Pipeline(PayloadOperation):
     """
 
     pipeline_configuration: List[Dict]
-    nodes: List[Node]
+    nodes: List[DataNode]
     stop_watch: StopWatch
 
     def __init__(
@@ -118,7 +118,7 @@ class Pipeline(PayloadOperation):
             ]
         """
         super().__init__(logger)
-        self.nodes: List[Node] = []
+        self.nodes: List[DataNode] = []
         self.pipeline_configuration: List[Dict] = pipeline_configuration
         self.stop_watch = StopWatch()
         self._initialize_nodes()
@@ -126,7 +126,7 @@ class Pipeline(PayloadOperation):
             self.logger.info(f"Initialized {self.__class__.__name__}")
             self.logger.debug("%s", self.inspect())
 
-    def _add_node(self, node: Node):
+    def _add_node(self, node: DataNode):
         """
         Adds a node to the pipeline while ensuring compatibility between consecutive operations.
 
@@ -171,7 +171,9 @@ class Pipeline(PayloadOperation):
                 return
 
         # Enforce strict type matching otherwise
-        assert output_type == input_type, (
+        assert issubclass(output_type, input_type) or issubclass(
+            input_type, output_type
+        ), (
             f"Invalid pipeline topology: Output of "
             f"{last_type_constraining_node.data_operation.__class__.__name__} "
             f"({output_type}) not compatible with "
@@ -219,9 +221,13 @@ class Pipeline(PayloadOperation):
             # Get the expected input type for the node's operation
             input_type = node.data_operation.input_data_type()
 
-            if (type(result_data) == input_type) or (
-                isinstance(result_data, DataCollectionType)
-                and input_type == result_data.collection_base_type()
+            if (
+                (type(result_data) == input_type)
+                or (
+                    isinstance(result_data, DataCollectionType)
+                    and input_type == result_data.collection_base_type()
+                )
+                or (issubclass(type(result_data), input_type))
             ):
                 result_data, result_context = node.process(result_data, result_context)
 

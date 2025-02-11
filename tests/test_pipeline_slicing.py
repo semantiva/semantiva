@@ -21,7 +21,7 @@ from semantiva.specializations.image.image_data_types import (
 from semantiva.specializations.image.image_probes import (
     BasicImageProbe,
 )
-from semantiva.context_operations import ContextPassthrough
+from semantiva.data_operations.data_operations import DataPassthrough
 
 
 @pytest.fixture
@@ -80,7 +80,10 @@ def test_pipeline_slicing_with_single_context(
 
     node_configurations = [
         {
-            "context_operation": ContextPassthrough,  # Explicitly passing context unchanged (default behavior if omitted)
+            "operation": DataPassthrough,  # Adds a specified image to each slice of the input data
+            "parameters": {},  # Image to be added to each slice
+        },
+        {
             "operation": ImageAddition,  # Adds a specified image to each slice of the input data
             "parameters": {
                 "image_to_add": random_image
@@ -93,13 +96,11 @@ def test_pipeline_slicing_with_single_context(
             },  # Image to subtract
         },
         {
-            "context_operation": ContextPassthrough,  # Context remains unchanged (default behavior)
             "operation": BasicImageProbe,  # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "context_operation": ContextPassthrough,  # Context remains unchanged (default behavior)
             "operation": BasicImageProbe,  # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
@@ -109,7 +110,7 @@ def test_pipeline_slicing_with_single_context(
     pipeline = Pipeline(node_configurations)
 
     output_data, output_context = pipeline.process(random_image_stack, random_context)
-    assert len(pipeline.get_probe_results()["Node 4/BasicImageProbe"][0]) == len(
+    assert len(pipeline.get_probe_results()["Node 5/BasicImageProbe"][0]) == len(
         output_data
     )
 

@@ -168,6 +168,40 @@ class DataAlgorithm(BaseDataOperation):
         return f"{self.__class__.__name__}"
 
 
+class DataPassthrough(DataAlgorithm):
+    """
+    A Data Operation that passes the data through without any modification.
+
+    Both the input and output types are set to BaseDataType.
+    """
+
+    @classmethod
+    def input_data_type(cls):
+        return BaseDataType
+
+    @classmethod
+    def output_data_type(cls):
+        return BaseDataType
+
+    def _operation(self, data: BaseDataType) -> BaseDataType:
+        """
+        Process the data by returning it unchanged.
+        """
+        return data
+
+    def validate(self) -> bool:
+        """
+        Validate the algorithm configuration. As a passthrough, no configuration errors are expected.
+        """
+        return True
+
+    def describe(self) -> str:
+        """
+        Provide a human-readable description of the algorithm.
+        """
+        return "DataPassthrough: passes data through without modification."
+
+
 class AlgorithmTopologyFactory:
     """
     A factory that creates algorithm classes for specific (input, output) data-type pairs.

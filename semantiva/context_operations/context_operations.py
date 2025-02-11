@@ -247,3 +247,73 @@ def delete_context_key(key: str):
             return [key]
 
     return DeleteOperation  # Returns the class itself, not an instance
+class FeatureFitWorkflow(ContextOperation):
+    """ContextOperation that fits extracted features using a specified model."""
+
+    def __init__(
+        self,
+        logger,
+        fitting_model,
+        independent_variable_parameter_name,
+        dependent_variable_parameter_name,
+        context_keyword,
+    ):
+        if logger:
+            # If a logger instance is provided, use it
+            self.logger = logger
+        else:
+            # If no logger is provided, create a new Logger instance
+            self.logger = Logger()
+        self.logger.info(f"Initializing {self.__class__.__name__}")
+        self.fitting_model = fitting_model
+        self.independent_variable_parameter_name = independent_variable_parameter_name
+        self.dependent_variable_parameter_name = dependent_variable_parameter_name
+        self.context_keyword = context_keyword
+
+    def _operate_context(self, context):
+        """Fit extracted features to the model using context data."""
+
+        # Retrieve independent and dependent variables from context
+        independent_variable = context.get(self.independent_variable_parameter_name)
+        dependent_variable = context.get(self.dependent_variable_parameter_name)
+
+        # Ensure required parameters exist
+        if independent_variable is None or dependent_variable is None:
+            missing_params = [
+                p for p in self.get_required_keys() if context.get(p) is None
+            ]
+            raise ValueError(
+                f"Missing required context parameters: {', '.join(missing_params)}"
+            )
+
+        # Fit the model using extracted features
+        fit_results = self.fitting_model.fit(independent_variable, dependent_variable)
+
+        # Store the results back in context under the dependent variable name
+        context[self.context_keyword] = fit_results
+
+        return context
+
+    def get_required_keys(self) -> List[str]:
+        """
+        Since this operation does not require any specific keys,
+        it returns an empty list.
+        """
+        return [
+            self.independent_variable_parameter_name,
+            self.dependent_variable_parameter_name,
+        ]
+
+    def get_created_keys(self) -> List[str]:
+        """
+        Since this operation does not create any new keys,
+        it returns an empty list.
+        """
+        return [self.context_keyword]
+
+    def get_suppressed_keys(self) -> List[str]:
+        """
+        Since this operation does not suppress any keys,
+        it returns an empty list.
+        """
+        return []
