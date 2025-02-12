@@ -1,0 +1,24 @@
+pipeline:
+  nodes:
+    - name: "image_addition"
+      operation: "ImageAddition"
+      context_operation: "ContextPassthrough"
+
+    - name: "image_probe"
+      operation: "BasicImageProbe"
+      context_keyword: "debug_info"
+
+    - name: "image_addition2"
+      operation: "ImageAddition"
+      context_operation: "rename:debug_info:final_info"
+
+    
+    - name: "image_clipping"
+      operation: "ImageClipping"
+      parameters:
+        x_start: 10
+        x_end: 20
+        y_start: 10
+        y_end: 20
+      context_operation: "delete:image_to_add"
+

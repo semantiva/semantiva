@@ -12,7 +12,7 @@ from ..data_operations.data_operations import (
 from ..context_operations.context_types import ContextType, ContextCollectionType
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
-from ..component_loader import ComponentLoader
+from ..component_loader import ComponentLoader, CustomContextOperationLoader
 from .payload_operations import PayloadOperation
 from semantiva.data_operations.data_collection_fit_probe import (
     create_collection_feature_extraction_and_fit_probe,
@@ -592,10 +592,16 @@ def node_factory(
         ValueError: If the node definition is invalid or the operation type is unsupported.
     """
 
-    def get_class_if_needed(class_name):
+    def get_data_operation_if_needed(class_name):
         """Helper function to retrieve the class from the loader if the input is a string."""
         if isinstance(class_name, str):
             return ComponentLoader.get_class(class_name)
+        return class_name
+
+    def get_context_operation_if_needed(class_name):
+        """Helper function to retrieve the class from the loader if the input is a string."""
+        if isinstance(class_name, str):
+            return CustomContextOperationLoader.get_context_operation(class_name)
         return class_name
 
     operation = node_definition.get("operation")
@@ -608,8 +614,8 @@ def node_factory(
     )
 
     # Use the helper function to get the correct class for both operation and context_operation
-    operation = get_class_if_needed(operation)
-    context_operation = get_class_if_needed(context_operation)
+    operation = get_data_operation_if_needed(operation)
+    context_operation = get_context_operation_if_needed(context_operation)
 
     if operation is None or not isinstance(operation, type):
         raise ValueError("operation must be a class type or a string, not None.")

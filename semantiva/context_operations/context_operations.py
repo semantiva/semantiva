@@ -128,3 +128,122 @@ class ContextPassthrough(ContextOperation):
         it returns an empty list.
         """
         return []
+
+
+def rename_context_key(original_key: str, destination_key: str):
+    """
+    Factory function that creates a ContextOperation subclass to rename context keys.
+
+    Args:
+        original_key (str): The key to rename.
+        destination_key (str): The new key name.
+
+    Returns:
+        Type[ContextOperation]: A dynamically generated class that renames context keys.
+    """
+
+    class RenameOperation(ContextOperation):
+        """
+        Dynamically generated context operation that renames a key in the context.
+        """
+
+        def _operate_context(self, context: ContextType) -> ContextType:
+            """
+            Rename a context key.
+
+            Args:
+                context (ContextType): The context to modify.
+
+            Returns:
+                ContextType: The updated context with the key renamed.
+            """
+            if original_key in context.keys():
+                value = context.get_value(original_key)
+                context.set_value(destination_key, value)
+                context.delete_value(original_key)
+                self.logger.info(
+                    f"Renamed context key '{original_key}' -> '{destination_key}'"
+                )
+            else:
+                self.logger.warning(f"Key '{original_key}' not found in context.")
+
+            return context
+
+        def get_required_keys(self) -> List[str]:
+            """
+            Since this operation requires the original key to be present,
+            it returns a list containing the original key.
+            """
+            return [original_key]
+
+        def get_created_keys(self) -> List[str]:
+            """
+            Since this operation creates a new key, it returns a list containing the new key.
+            """
+            return [destination_key]
+
+        def get_suppressed_keys(self) -> List[str]:
+            """
+            Since this operation suppresses the original key, it returns a list containing the original key.
+            """
+            return [original_key]
+
+    return RenameOperation  # Returns the class itself, not an instance
+
+
+def delete_context_key(key: str):
+    """
+    Factory function that creates a ContextOperation subclass to delete a context key.
+
+    Args:
+        key (str): The key to delete.
+
+    Returns:
+        Type[ContextOperation]: A dynamically generated class that removes a key.
+    """
+
+    class DeleteOperation(ContextOperation):
+        """
+        A dynamically generated context operation that deletes a key from the context.
+        """
+
+        def _operate_context(self, context: ContextType) -> ContextType:
+            """
+            Remove a context key.
+
+            Args:
+                context (ContextType): The context to modify.
+
+            Returns:
+                ContextType: The updated context with the key removed.
+            """
+            if key in context.keys():
+                context.delete_value(key)
+                self.logger.info(f"Deleted context key '{key}'")
+            else:
+                self.logger.warning(f"Key '{key}' not found in context.")
+
+            return context
+
+        def get_required_keys(self) -> List[str]:
+            """
+            Since this operation does not require any specific keys,
+            it returns an empty list.
+            """
+            return [key]
+
+        def get_created_keys(self) -> List[str]:
+            """
+            Since this operation does not create any new keys,
+            it returns an empty list.
+            """
+            return []
+
+        def get_suppressed_keys(self) -> List[str]:
+            """
+            Since this operation suppresses the deleted key,
+            it returns a list containing the key to be deleted.
+            """
+            return [key]
+
+    return DeleteOperation  # Returns the class itself, not an instance
