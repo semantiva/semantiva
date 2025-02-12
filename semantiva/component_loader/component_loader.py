@@ -1,7 +1,12 @@
+import re
 import importlib.util
 from importlib import import_module
 from typing import List, Set
 from pathlib import Path
+from semantiva.context_operations.context_operations import (
+    rename_context_key,
+    delete_context_key,
+)
 
 
 class ComponentLoader:
@@ -99,3 +104,45 @@ class ComponentLoader:
 
         # Check and return the class type
         return getattr(module, class_name, None)
+
+
+class CustomContextOperationLoader:
+    """
+    Extends ComponentLoader to handle dynamically created context operations
+    based on string-based pipeline configurations.
+    """
+
+    @staticmethod
+    def get_context_operation(class_name: str) -> type:
+        """
+        Resolves a context operation by name.
+
+        - Standard classes are retrieved from ComponentLoader.
+        - Special operations like rename and delete are generated dynamically.
+
+        Args:
+            class_name (str): The name of the context operation or special operation descriptor.
+
+        Returns:
+            type: A ContextOperation subclass.
+        """
+        # Handle standard class names
+        try:
+            return ComponentLoader.get_class(class_name)
+        except ValueError:
+            pass  # Proceed to custom cases
+
+        # Handle special string-based operations
+        if class_name.startswith("rename:"):
+            match = re.match(r"rename:(.*?):(.*?)$", class_name)
+            if match:
+                old_key, new_key = match.groups()
+                return rename_context_key(old_key, new_key)
+
+        elif class_name.startswith("delete:"):
+            match = re.match(r"delete:(.*?)$", class_name)
+            if match:
+                key = match.group(1)
+                return delete_context_key(key)
+
+        raise ValueError(f"Unknown context operation: {class_name}")

@@ -168,6 +168,33 @@ class DataAlgorithm(BaseDataOperation):
         return f"{self.__class__.__name__}"
 
 
+class DataPassThrough(DataAlgorithm):
+    """
+    A simple pass-through algorithm that returns the input data as output.
+
+    """
+
+    def _operation(self, data: BaseDataType) -> BaseDataType:
+        """
+        Passes the input data through the algorithm.
+
+        Args:
+            data (BaseDataType): The input data to be passed through.
+
+        Returns:
+            BaseDataType: The input data, unchanged.
+        """
+        return data
+
+    @classmethod
+    def input_data_type(cls) -> Type[BaseDataType]:
+        return BaseDataType
+
+    @classmethod
+    def output_data_type(cls) -> Type[BaseDataType]:
+        return BaseDataType
+
+
 class AlgorithmTopologyFactory:
     """
     A factory that creates algorithm classes for specific (input, output) data-type pairs.
