@@ -1,6 +1,6 @@
 from .payload_operations import PayloadOperation
 from .nodes import (
-    Node,
+    DataNode,
     AlgorithmNode,
     ProbeNode,
     ProbeContextInjectorNode,

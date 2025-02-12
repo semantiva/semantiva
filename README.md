@@ -88,13 +88,11 @@ class HelloOperation(StringLiteralAlgorithm):
 
 # 4) Build a Minimal Pipeline
 from semantiva.payload_operations import Pipeline
-from semantiva.context_operations import ContextPassthrough
 
 node_configurations = [
     {
         "operation": HelloOperation,
         "parameters": {},
-        "context_operation": ContextPassthrough,
     },
 ]
 

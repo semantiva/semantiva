@@ -25,6 +25,15 @@ class FittingModel(ABC, Generic[X, Y]):
             Fits a function to data and returns estimated parameters.
     """
 
+    def __str__(self) -> str:
+        """
+        Returns the class name of the fitting model.
+
+        Returns:
+            str: The class name.
+        """
+        return self.__class__.__name__
+
     @abstractmethod
     def fit(self, x_values: List[X], y_values: List[Y]) -> Dict[str, float]:
         """
@@ -78,6 +87,15 @@ class PolynomialFittingModel(FittingModel[float, float]):
         return {
             f"coeff_{i}": float(coeff) for i, coeff in enumerate(reversed(coefficients))
         }  # Explicit cast
+
+    def __str__(self) -> str:
+        """
+        Returns the class name of the fitting model along with the polynomial degree.
+
+        Returns:
+            str: The class name and polynomial degree.
+        """
+        return f"{self.__class__.__name__}(degree={self.degree})"
 
 
 # Example Usage:

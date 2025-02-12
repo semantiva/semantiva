@@ -1,9 +1,7 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
+from abc import abstractmethod
 from .stop_watch import StopWatch
-from ..context_operations.context_operations import (
-    ContextOperation,
-    ContextPassthrough,
-)
+from ..context_operations.context_operations import ContextOperation
 from ..data_operations.data_operations import (
     BaseDataOperation,
     DataAlgorithm,
@@ -12,14 +10,11 @@ from ..data_operations.data_operations import (
 from ..context_operations.context_types import ContextType, ContextCollectionType
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
-from ..component_loader import ComponentLoader, CustomContextOperationLoader
+from ..component_loader import ComponentLoader
 from .payload_operations import PayloadOperation
-from semantiva.data_operations.data_collection_fit_probe import (
-    create_collection_feature_extraction_and_fit_probe,
-)
 
 
-class Node(PayloadOperation):
+class DataNode(PayloadOperation):
     """
     Represents a node in the semantic framework.
 
@@ -28,14 +23,12 @@ class Node(PayloadOperation):
 
     Attributes:
         data_operation (BaseDataOperation): The data operation associated with the node.
-        context_operation (ContextOperation): The context operation managing context updates.
         operation_config (Dict): Configuration parameters for the data operation.
         stop_watch (StopWatch): Tracks the execution time of the node's operation.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
-    data_operation: BaseDataOperation
-    context_operation: ContextOperation
+    operation: BaseDataOperation
     operation_config: Dict
     stop_watch: StopWatch
     logger: Logger
@@ -43,7 +36,6 @@ class Node(PayloadOperation):
     def __init__(
         self,
         data_operation: Type[BaseDataOperation],
-        context_operation: Type[ContextOperation],
         operation_config: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
@@ -52,7 +44,6 @@ class Node(PayloadOperation):
 
         Args:
             data_operation (Type[BaseDataOperation]): The class of the data operation associated with this node.
-            context_operation (Type[ContextOperation]): The class for managing the node's context.
             operation_config (Optional[Dict]): Operation parameters (overrides values extracted from context). Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
@@ -60,12 +51,11 @@ class Node(PayloadOperation):
         self.logger.info(
             f"Initializing {self.__class__.__name__} ({data_operation.__name__})"
         )
-        self.data_operation = (
+        self.operation = (
             data_operation(self, logger)
             if issubclass(data_operation, DataAlgorithm)
             else data_operation(logger=logger)
         )
-        self.context_operation = context_operation(logger)
         self.stop_watch = StopWatch()
         self.operation_config = {} if operation_config is None else operation_config
 
@@ -79,7 +69,7 @@ class Node(PayloadOperation):
         Returns:
             dict: A dictionary mapping parameter names to their values.
         """
-        parameter_names = self.data_operation.get_operation_parameter_names()
+        parameter_names = self.operation.get_operation_parameter_names()
         parameters = {}
         for name in parameter_names:
             parameters[name] = self._fetch_parameter_value(name, context)
@@ -110,15 +100,112 @@ class Node(PayloadOperation):
         class_name = self.__class__.__name__
         return (
             f"{class_name}(\n"
-            f"     data_operation={self.data_operation},\n"
-            f"     context_operation={self.context_operation},\n"
+            f"     operation={self.operation},\n"
             f"     operation_config={self.operation_config},\n"
             f"     Node execution summary: {self.stop_watch}\n"
             f")"
         )
 
+    @abstractmethod
+    def get_created_keys(self) -> List[str]:
+        """
+        Retrieve a list of context keys that will be created by this operation.
 
-class AlgorithmNode(Node):
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+                       as a result of execution.
+        """
+
+
+class ContextNode(PayloadOperation):
+    """
+    Represents a node in the semantic framework.
+
+    A ContextNode is associated with a context operation and acts as a fundamental unit
+    in processing pipelines or networks.
+
+    Attributes:
+        context_operation (ContextOperation): The context operation associated with the node.
+        operation_config (Dict): Configuration parameters for the context operation.
+        stop_watch (StopWatch): Tracks the execution time of the node's operation.
+        logger (Logger): Logger instance for diagnostic messages.
+    """
+
+    operation: ContextOperation
+    operation_config: Dict
+    stop_watch: StopWatch
+    logger: Logger
+
+    def __init__(
+        self,
+        context_operation: Type[ContextOperation],
+        operation_config: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a Node with the specified context operation, and parameters.
+
+        Args:
+            context_operation (Type[ContextOperation]): The class of the context operation associated with this node.
+            operation_config (Optional[Dict]): Operation parameters. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        super().__init__(logger)
+        self.logger.info(
+            f"Initializing {self.__class__.__name__} ({context_operation.__name__})"
+        )
+        operation_config = operation_config or {}
+        self.operation = (
+            context_operation(logger, **operation_config)
+            if issubclass(context_operation, (DataAlgorithm, ContextOperation))
+            else context_operation(logger=logger)
+        )
+        self.operation_config = operation_config
+        self.stop_watch = StopWatch()
+
+    def __str__(self) -> str:
+        """
+        Return a string representation of the node.
+
+        Returns:
+            str: A string summarizing the node's attributes and execution summary.
+        """
+        class_name = self.__class__.__name__
+        return (
+            f"{class_name}(\n"
+            f"     operation={self.operation},\n"
+            f"     operation_config={self.operation_config},\n"
+            f"     Node execution summary: {self.stop_watch}\n"
+            f")"
+        )
+
+    def get_created_keys(self) -> List[str]:
+        """
+        Retrieve a list of context keys that will be created by this operation.
+
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+                       as a result of execution.
+        """
+        return self.operation.get_created_keys()
+
+    def _process(
+        self, data: BaseDataType, context: ContextType
+    ) -> tuple[BaseDataType, ContextType]:
+        """
+        Processes the given data and context.
+
+        Args:
+            data (BaseDataType): The data to be processed.
+            context (ContextType): The context in which the data is processed.
+
+        Returns:
+            tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
+        """
+        return data, self.operation.operate_context(context)
+
+
+class AlgorithmNode(DataNode):
     """
     A specialized node for executing algorithmic operations.
 
@@ -129,7 +216,6 @@ class AlgorithmNode(Node):
     def __init__(
         self,
         data_operation: Type[DataAlgorithm],
-        context_operation: Type[ContextOperation],
         operation_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
@@ -138,16 +224,13 @@ class AlgorithmNode(Node):
 
         Args:
             data_operation (Type[DataAlgorithm]): The data algorithm for this node.
-            context_operation (Type[ContextOperation]): The context operation for this node.
             operation_parameters (Optional[Dict]): Initial configuration for operation parameters. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         operation_parameters = (
             {} if operation_parameters is None else operation_parameters
         )
-        super().__init__(
-            data_operation, context_operation, operation_parameters, logger
-        )
+        super().__init__(data_operation, operation_parameters, logger)
 
     def _process(
         self, data: BaseDataType, context: ContextType
@@ -169,9 +252,9 @@ class AlgorithmNode(Node):
                 - The updated context.
         """
         result_data, result_context = data, context
-        input_type = self.data_operation.input_data_type()
+        input_type = self.operation.input_data_type()
 
-        if type(result_data) == input_type:
+        if issubclass(type(result_data), input_type):
             result_data, result_context = self._process_node_call(
                 result_data, result_context
             )
@@ -184,7 +267,7 @@ class AlgorithmNode(Node):
             )
         else:
             raise TypeError(
-                f"Incompatible data type for Node {self.data_operation.__class__.__name__} "
+                f"Incompatible data type for Node {self.operation.__class__.__name__} "
                 f"expected {input_type}, but received {type(result_data)}."
             )
         return result_data, result_context
@@ -206,9 +289,9 @@ class AlgorithmNode(Node):
             tuple[BaseDataType, ContextType]: A tuple containing the output data and the updated context.
         """
         self.stop_watch.start()
-        self.observer_context = self.context_operation.operate_context(context)
+        self.observer_context = context
         parameters = self._get_operation_parameters(self.observer_context)
-        output_data = self.data_operation.process(data, **parameters)
+        output_data = self.operation.process(data, **parameters)
         self.stop_watch.stop()
         return output_data, self.observer_context
 
@@ -259,8 +342,18 @@ class AlgorithmNode(Node):
                 processed_data_collection.append(out_data)
             return processed_data_collection, current_context
 
+    def get_created_keys(self):
+        """
+        Retrieve a list of context keys that will be created by this operation.
 
-class ProbeNode(Node):
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+                       as a result of execution.
+        """
+        return self.operation.get_created_keys()
+
+
+class ProbeNode(DataNode):
     """
     A specialized node for probing data within the framework.
 
@@ -279,7 +372,6 @@ class ProbeContextInjectorNode(ProbeNode):
 
     Attributes:
         data_operation (DataProbe): The data probe associated with this node.
-        context_operation (ContextOperation): The context operation managing context updates.
         context_keyword (str): The key under which the probe result is injected into the context.
         operation_config (Optional[Dict]): Configuration parameters for the operation.
     """
@@ -287,7 +379,6 @@ class ProbeContextInjectorNode(ProbeNode):
     def __init__(
         self,
         data_operation: Type[BaseDataOperation],
-        context_operation: Type[ContextOperation],
         context_keyword: str,
         operation_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
@@ -297,7 +388,6 @@ class ProbeContextInjectorNode(ProbeNode):
 
         Args:
             data_operation (Type[BaseDataOperation]): The data probe class for this node.
-            context_operation (Type[ContextOperation]): The context operation class for this node.
             context_keyword (str): The keyword used to inject the probe result into the context.
             operation_parameters (Optional[Dict]): Operation configuration parameters. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
@@ -305,12 +395,20 @@ class ProbeContextInjectorNode(ProbeNode):
         Raises:
             ValueError: If `context_keyword` is not provided or is not a non-empty string.
         """
-        super().__init__(
-            data_operation, context_operation, operation_parameters, logger
-        )
+        super().__init__(data_operation, operation_parameters, logger)
         if not context_keyword or not isinstance(context_keyword, str):
             raise ValueError("context_keyword must be a non-empty string.")
         self.context_keyword = context_keyword
+
+    def get_created_keys(self):
+        """
+        Retrieve a list of context keys that will be created by this operation.
+
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+            as a result of execution.
+        """
+        return [self.context_keyword]
 
     def _process(
         self, data: BaseDataType, context: ContextType
@@ -335,17 +433,16 @@ class ProbeContextInjectorNode(ProbeNode):
         Raises:
             TypeError: If the input data type is incompatible with the node's expected type.
         """
-        expected_input_type = self.data_operation.input_data_type()
+        expected_input_type = self.operation.input_data_type()
 
         # Case A: Single data item processing
         if type(data) == expected_input_type:
             self.stop_watch.start()
-            updated_context = self.context_operation.operate_context(context)
-            parameters = self._get_operation_parameters(updated_context)
-            probe_result = self.data_operation.process(data, **parameters)
-            updated_context.set_value(self.context_keyword, probe_result)
+            parameters = self._get_operation_parameters(context)
+            probe_result = self.operation.process(data, **parameters)
+            context.set_value(self.context_keyword, probe_result)
             self.stop_watch.stop()
-            return data, updated_context
+            return data, context
 
         # Case B: Collection processing
         elif (
@@ -368,14 +465,14 @@ class ProbeContextInjectorNode(ProbeNode):
                 # Single context: Accumulate probe results in a list
                 probed_results: List[Any] = []
                 for d_item in data:
-                    out_data, updated_context = self._process(d_item, context)
+                    out_data, context = self._process(d_item, context)
                     processed_data_collection.append(out_data)
                     # Extract the probe result injected into the updated context.
-                    probe_result = updated_context.get_value(self.context_keyword)
+                    probe_result = context.get_value(self.context_keyword)
                     probed_results.append(probe_result)
                 # Inject the full list of probe results into the context.
                 context.set_value(self.context_keyword, probed_results)
-                return processed_data_collection, updated_context
+                return processed_data_collection, context
 
         else:
             raise TypeError(
@@ -393,9 +490,8 @@ class ProbeContextInjectorNode(ProbeNode):
         class_name = self.__class__.__name__
         return (
             f"{class_name}(\n"
-            f"     data_operation={self.data_operation},\n"
+            f"     data_operation={self.operation},\n"
             f"     context_keyword={self.context_keyword},\n"
-            f"     context_operation={self.context_operation},\n"
             f"     operation_config={self.operation_config},\n"
             f"     Node execution summary: {self.stop_watch}\n"
             f")"
@@ -413,7 +509,6 @@ class ProbeResultCollectorNode(ProbeNode):
     def __init__(
         self,
         data_operation: Type[DataProbe],
-        context_operation: Type[ContextOperation],
         operation_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
@@ -422,13 +517,10 @@ class ProbeResultCollectorNode(ProbeNode):
 
         Args:
             data_operation (Type[DataProbe]): The data probe class for this node.
-            context_operation (Type[ContextOperation]): The context operation class for this node.
             operation_parameters (Optional[Dict]): Configuration parameters for the operation. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
-        super().__init__(
-            data_operation, context_operation, operation_parameters, logger
-        )
+        super().__init__(data_operation, operation_parameters, logger)
         self._probed_data: List[Any] = []
 
     def _process(
@@ -449,7 +541,7 @@ class ProbeResultCollectorNode(ProbeNode):
             Tuple[BaseDataType, ContextType]: A tuple containing the (unchanged) input data and the updated context.
         """
         self.stop_watch.start()
-        expected_input_type = self.data_operation.input_data_type()
+        expected_input_type = self.operation.input_data_type()
 
         if type(data) == expected_input_type:
             _, updated_context = self._process_node_call(data, context)
@@ -483,11 +575,10 @@ class ProbeResultCollectorNode(ProbeNode):
         Returns:
             Tuple[BaseDataType, ContextType]: A tuple containing the (unchanged) data and the updated context.
         """
-        updated_context = self.context_operation.operate_context(context)
-        parameters = self._get_operation_parameters(updated_context)
-        probe_result = self.data_operation.process(data, **parameters)
+        parameters = self._get_operation_parameters(context)
+        probe_result = self.operation.process(data, **parameters)
         self.collect(probe_result)
-        return data, updated_context
+        return data, context
 
     def _slicing_strategy(
         self, data_collection: DataCollectionType, context: ContextType
@@ -521,22 +612,20 @@ class ProbeResultCollectorNode(ProbeNode):
                 )
             processed_context_collection = ContextCollectionType()
             for d_item, c_item in zip(data_collection, context):
-                updated_context = self.context_operation.operate_context(c_item)
-                parameters = self._get_operation_parameters(updated_context)
-                probe_result = self.data_operation.process(d_item, **parameters)
+                parameters = self._get_operation_parameters(context)
+                probe_result = self.operation.process(d_item, **parameters)
                 probed_results.append(probe_result)
                 processed_data_collection.append(d_item)
-                processed_context_collection.append(updated_context)
+                processed_context_collection.append(context)
             # Optionally, one might inject the list of all probe results into each context item;
             # here we simply return the collection of updated contexts.
             self.collect(probed_results)
             return data_collection, processed_context_collection
         else:
             # Single context: process each item once and accumulate the probe results.
-            updated_context = self.context_operation.operate_context(context)
-            parameters = self._get_operation_parameters(updated_context)
+            parameters = self._get_operation_parameters(context)
             for d_item in data_collection:
-                probe_result = self.data_operation.process(d_item, **parameters)
+                probe_result = self.operation.process(d_item, **parameters)
                 probed_results.append(probe_result)
                 processed_data_collection.append(d_item)
             # Store the aggregated probe results in the single context.
@@ -567,17 +656,25 @@ class ProbeResultCollectorNode(ProbeNode):
         """
         self._probed_data.clear()
 
+    def get_created_keys(self):
+        """
+        Retrieve the list of created keys.
+        Returns:
+            list: An empty list indicating no keys have been created.
+        """
+
+        return []
+
 
 def node_factory(
     node_definition: Dict,
     logger: Optional[Logger] = None,
-) -> Node:
+) -> DataNode | ContextNode:
     """
     Factory function to create a Node instance based on the provided definition.
 
     The node definition dictionary is expected to contain:
       - "operation": A class for a DataOperation (required).
-      - "context_operation": A class for a ContextOperation (optional, defaults to ContextPassthrough).
       - "parameters": A dictionary of operation parameters (optional).
       - "context_keyword": A string for context injection (optional).
 
@@ -592,42 +689,32 @@ def node_factory(
         ValueError: If the node definition is invalid or the operation type is unsupported.
     """
 
-    def get_data_operation_if_needed(class_name):
+    def get_class(class_name):
         """Helper function to retrieve the class from the loader if the input is a string."""
         if isinstance(class_name, str):
             return ComponentLoader.get_class(class_name)
         return class_name
 
-    def get_context_operation_if_needed(class_name):
-        """Helper function to retrieve the class from the loader if the input is a string."""
-        if isinstance(class_name, str):
-            return CustomContextOperationLoader.get_context_operation(class_name)
-        return class_name
-
     operation = node_definition.get("operation")
-    context_operation = node_definition.get("context_operation", ContextPassthrough)
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
-    fitting_model = node_definition.get("fitting_model")
-    independent_variable_parameter_name = node_definition.get(
-        "independent_variable_parameter_name"
-    )
 
     # Use the helper function to get the correct class for both operation and context_operation
-    operation = get_data_operation_if_needed(operation)
-    context_operation = get_context_operation_if_needed(context_operation)
+    operation = get_class(operation)
 
     if operation is None or not isinstance(operation, type):
         raise ValueError("operation must be a class type or a string, not None.")
 
-    if issubclass(operation, DataAlgorithm):
+    if issubclass(operation, ContextOperation):
+        return ContextNode(operation, operation_config=parameters)
+
+    elif issubclass(operation, DataAlgorithm):
         if context_keyword is not None:
             raise ValueError(
                 "context_keyword must not be defined for DataAlgorithm nodes."
             )
         return AlgorithmNode(
             data_operation=operation,
-            context_operation=context_operation,
             operation_parameters=parameters,
             logger=logger,
         )
@@ -635,32 +722,13 @@ def node_factory(
         if context_keyword is not None:
             return ProbeContextInjectorNode(
                 data_operation=operation,
-                context_operation=context_operation,
                 context_keyword=context_keyword,
-                operation_parameters=parameters,
-                logger=logger,
-            )
-        elif fitting_model is not None:
-            assert independent_variable_parameter_name is not None, (
-                "independent_variable_parameter_name must be provided for "
-                "feature extraction and fit probes."
-            )
-            extract_and_fit_probe = create_collection_feature_extraction_and_fit_probe(
-                feature_extractor=operation,
-                fitting_model=fitting_model,
-                independent_variable_parameter_name=independent_variable_parameter_name,
-            )
-
-            return ProbeResultCollectorNode(
-                data_operation=extract_and_fit_probe,
-                context_operation=context_operation,
                 operation_parameters=parameters,
                 logger=logger,
             )
         else:
             return ProbeResultCollectorNode(
                 data_operation=operation,
-                context_operation=context_operation,
                 operation_parameters=parameters,
                 logger=logger,
             )

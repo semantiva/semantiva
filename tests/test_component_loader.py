@@ -10,11 +10,6 @@ def loader():
     return ComponentLoader
 
 
-@pytest.fixture
-def default_context_operation():
-    return "ContextPassthrough"
-
-
 @patch("pathlib.Path.is_file", return_value=True)
 def test_register_paths(mock_is_file, loader):
     """Test if register_paths correctly adds paths."""
@@ -90,9 +85,3 @@ def test_get_class_no_spec(mock_spec_from_file, mock_is_file, loader):
 
     with pytest.raises(ValueError):
         loader.get_class("SomeClass")
-
-
-def test_get_default_class(default_context_operation):
-    """Test if get_default_class correctly loads the default class."""
-    default_class = ComponentLoader.get_class(default_context_operation)
-    assert default_class.__name__ == default_context_operation

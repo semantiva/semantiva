@@ -36,7 +36,6 @@ class BaseDataOperation(ABC, Generic[T]):
         Returns:
             Type[BaseDataType]: The expected input data type.
         """
-        raise NotImplementedError("Subclasses must implement this method.")
 
     @classmethod
     def output_data_type(cls) -> Type[BaseDataType]:
@@ -47,6 +46,18 @@ class BaseDataOperation(ABC, Generic[T]):
             Type[BaseDataType]: The expected output data type.
         """
         return cls.input_data_type()
+
+    @abstractmethod
+    def get_created_keys(self) -> List[str]:
+        """
+        Retrieves a list of context keys that have been created by the data operation.
+
+        This method should be implemented by subclasses to return a list of context keys
+        that are generated or modified during the execution of the operation.
+
+        Returns:
+            List[str]: A list of strings representing the created keys.
+        """
 
     @abstractmethod
     def _operation(self, data: T, *args, **kwargs) -> Any:
@@ -165,7 +176,22 @@ class DataAlgorithm(BaseDataOperation):
         return []
 
     def __str__(self) -> str:
+        """
+        Return a string representation of the instance.
+
+        Returns:
+            str: The name of the class.
+        """
         return f"{self.__class__.__name__}"
+
+    def get_created_keys(self) -> List[str]:
+        """
+        Retrieves a list of keys that have been created in the current context.
+
+        Returns:
+            List[str]: A list of strings representing the created keys.
+        """
+        return self.context_keys()
 
 
 class AlgorithmTopologyFactory:
@@ -219,6 +245,10 @@ class DataProbe(BaseDataOperation):
     def __init__(self, logger=None):
         super().__init__(logger)
 
+    def get_created_keys(self) -> List[str]:
+        """ """
+        return []
+
 
 BaseType = TypeVar("BaseType", bound=BaseDataType)
 
@@ -251,89 +281,8 @@ class DataCollectionProbe(BaseDataOperation, Generic[BaseType]):
 FeatureType = TypeVar("FeatureType")  # The extracted feature type (e.g., float)
 
 
-class DataCollectionFeatureExtractionProbe(
-    DataCollectionProbe[BaseType], Generic[BaseType, FeatureType]
-):
-    """
-    A probe that extracts features from a data collection.
-
-    This probe processes a `DataCollectionType`, applying a feature extraction operation
-    (provided by an individual `DataProbe`) to each element in the collection. The result
-    is a list of extracted feature values.
-
-    Attributes:
-        feature_extractor (DataProbe): A probe responsible for extracting a single feature
-                                       from individual elements.
-    """
-
-    def __init__(self, feature_extractor: DataProbe, logger: Optional[Logger] = None):
-        """
-        Initializes the `DataCollectionFeatureExtractionProbe` with a feature extractor.
-
-        Args:
-            feature_extractor (DataProbe): A probe that extracts a feature from individual elements.
-        """
-        super().__init__(logger=logger)
-        self.feature_extractor = feature_extractor
-
-    def _operation(self, data: DataCollectionType) -> List[FeatureType]:
-        """
-        Extracts features from each element in the input data collection.
-
-        Args:
-            data (DataCollectionType): The input data collection.
-
-        Returns:
-            List[FeatureType]: A list of extracted feature values.
-        """
-        return [self.feature_extractor.process(item) for item in data]
-
-
 # For convenience, define a TypeVar for the data collection base
 CollectionBaseT = TypeVar("CollectionBaseT", bound=BaseDataType)
-
-# ExtractedFeatureType -> Extracted feature type (dependent variable)
-ExtractedFeatureType = TypeVar("ExtractedFeatureType")
-
-
-def create_data_collection_feature_extraction_probe(
-    feature_extractor: DataProbe,
-    class_name: str = "GeneratedDataCollectionFeatureExtractionProbe",
-):
-    """
-    Factory function to create a `DataCollectionFeatureExtractionProbe` class using
-    dynamic type creation.
-
-    This ensures that an individual feature extraction probe can be applied
-    to a full data collection.
-
-    Args:
-        feature_extractor (DataProbe): The feature extraction probe for individual elements.
-        class_name (str): The name to give the dynamically generated class.
-
-    Returns:
-        Type[DataCollectionFeatureExtractionProbe[CollectionBaseT, ExtractedFeatureType]]:
-            A dynamically generated subclass of DataCollectionFeatureExtractionProbe.
-    """
-
-    # Define a new class dynamically
-    class DynamicFeatureExtractionProbe(
-        DataCollectionFeatureExtractionProbe[CollectionBaseT, ExtractedFeatureType]
-    ):
-        def __init__(self, logger: Optional[Logger] = None) -> None:
-            """
-            Initializes the dynamically created DataCollectionFeatureExtractionProbe.
-
-            Args:
-                logger (Optional[Logger]): Logger instance (optional).
-            """
-            super().__init__(feature_extractor=feature_extractor, logger=logger)
-
-    # Assign the provided class name dynamically
-    DynamicFeatureExtractionProbe.__name__ = class_name
-    DynamicFeatureExtractionProbe.__qualname__ = class_name
-
-    return DynamicFeatureExtractionProbe
 
 
 class FeatureExtractorProbeWrapper(DataProbe):
