@@ -7,7 +7,6 @@ from ..context_operations.context_operations import (
 from ..data_operations.data_operations import (
     BaseDataOperation,
     DataAlgorithm,
-    DataPassThrough,
     DataProbe,
 )
 from ..context_operations.context_types import ContextType, ContextCollectionType

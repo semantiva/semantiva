@@ -16,6 +16,7 @@ dependencies = [
     "coverage",
     "matplotlib",
     "ipywidgets",
+    "types-PyYAML",
 ]
 distribution = true
 
