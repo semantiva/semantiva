@@ -605,7 +605,7 @@ def node_factory(
             return CustomContextOperationLoader.get_context_operation(class_name)
         return class_name
 
-    operation = node_definition.get("operation", DataPassThrough)
+    operation = node_definition.get("operation")
     context_operation = node_definition.get("context_operation", ContextPassthrough)
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
@@ -614,15 +614,12 @@ def node_factory(
         "independent_variable_parameter_name"
     )
 
-    # Ensure context_operations is always a list
-    if not isinstance(context_operation, list):
-        context_operations = [context_operation]
-
     # Use the helper function to get the correct class for both operation and context_operation
     operation = get_data_operation_if_needed(operation)
-    context_operation = [
-        get_context_operation_if_needed(op) for op in context_operations
-    ]
+    context_operation = get_context_operation_if_needed(context_operation)
+
+    if operation is None or not isinstance(operation, type):
+        raise ValueError("operation must be a class type or a string, not None.")
 
     if issubclass(operation, DataAlgorithm):
         if context_keyword is not None:

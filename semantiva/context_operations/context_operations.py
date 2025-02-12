@@ -169,6 +169,25 @@ def rename_context_key(original_key: str, destination_key: str):
 
             return context
 
+        def get_required_keys(self) -> List[str]:
+            """
+            Since this operation requires the original key to be present,
+            it returns a list containing the original key.
+            """
+            return [original_key]
+
+        def get_created_keys(self) -> List[str]:
+            """
+            Since this operation creates a new key, it returns a list containing the new key.
+            """
+            return [destination_key]
+
+        def get_suppressed_keys(self) -> List[str]:
+            """
+            Since this operation suppresses the original key, it returns a list containing the original key.
+            """
+            return [original_key]
+
     return RenameOperation  # Returns the class itself, not an instance
 
 
@@ -205,5 +224,26 @@ def delete_context_key(key: str):
                 self.logger.warning(f"Key '{key}' not found in context.")
 
             return context
+
+        def get_required_keys(self) -> List[str]:
+            """
+            Since this operation does not require any specific keys,
+            it returns an empty list.
+            """
+            return [key]
+
+        def get_created_keys(self) -> List[str]:
+            """
+            Since this operation does not create any new keys,
+            it returns an empty list.
+            """
+            return []
+
+        def get_suppressed_keys(self) -> List[str]:
+            """
+            Since this operation suppresses the deleted key,
+            it returns a list containing the key to be deleted.
+            """
+            return [key]
 
     return DeleteOperation  # Returns the class itself, not an instance
