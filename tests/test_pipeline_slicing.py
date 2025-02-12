@@ -21,7 +21,6 @@ from semantiva.specializations.image.image_data_types import (
 from semantiva.specializations.image.image_probes import (
     BasicImageProbe,
 )
-from semantiva.data_operations.data_operations import DataPassthrough
 
 
 @pytest.fixture
@@ -80,10 +79,6 @@ def test_pipeline_slicing_with_single_context(
 
     node_configurations = [
         {
-            "operation": DataPassthrough,  # Adds a specified image to each slice of the input data
-            "parameters": {},  # Image to be added to each slice
-        },
-        {
             "operation": ImageAddition,  # Adds a specified image to each slice of the input data
             "parameters": {
                 "image_to_add": random_image
@@ -110,7 +105,7 @@ def test_pipeline_slicing_with_single_context(
     pipeline = Pipeline(node_configurations)
 
     output_data, output_context = pipeline.process(random_image_stack, random_context)
-    assert len(pipeline.get_probe_results()["Node 5/BasicImageProbe"][0]) == len(
+    assert len(pipeline.get_probe_results()["Node 4/BasicImageProbe"][0]) == len(
         output_data
     )
 

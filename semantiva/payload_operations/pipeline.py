@@ -4,13 +4,13 @@ from .payload_operations import PayloadOperation
 from .nodes import (
     DataNode,
     AlgorithmNode,
+    ContextNode,
     ProbeResultCollectorNode,
     ProbeContextInjectorNode,
 )
 from ..logger import Logger
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..context_operations.context_types import ContextType
-from ..component_loader import ComponentLoader
 from .nodes import node_factory
 
 
@@ -25,9 +25,8 @@ class Pipeline(PayloadOperation):
     Node Configuration:
     Each node in the pipeline is defined using a dictionary with the following keys:
 
-    - `operation` (required): The operation to perform, either a `DataAlgorithm` or `DataProbe`.
-    - `context_operation` (optional, default=`ContextPassthrough`): Specifies how context is handled.
-    - `parameters` (optional, default=`{}`): A dictionary of parameters for the data operation.
+    - `operation` (required): The operation to perform, either a `DataOperation (DataAlgorithm` or `DataProbe`) or a `ContextOperation`.
+    - `parameters` (optional, default=`{}`): A dictionary of parameters for the operation.
       If an operation parameter is **not explicitly defined** in the pipeline configuration,
       it is extracted from the **context**, using the parameter name as the context keyword.
       Parameters explicitly defined in the pipeline configuration take precedence over those
@@ -45,7 +44,6 @@ class Pipeline(PayloadOperation):
          }
          ```
        - Defaults:
-         - `context_operation` defaults to `ContextPassthrough`.
          - `parameters` defaults to an empty dictionary `{}`.
 
     2. **ProbeContextInjectorNode**:
@@ -58,7 +56,6 @@ class Pipeline(PayloadOperation):
          }
          ```
        - Defaults:
-         - `context_operation` defaults to `ContextPassthrough`.
          - `parameters` defaults to `{}`.
 
     3. **ProbeResultCollectorNode**:
@@ -72,7 +69,6 @@ class Pipeline(PayloadOperation):
          }
          ```
        - Defaults:
-         - `context_operation` defaults to `ContextPassthrough`.
          - `parameters` defaults to `{}`.
 
     ### Data Processing and Slicing:
@@ -110,6 +106,7 @@ class Pipeline(PayloadOperation):
             pipeline_configuration (List[Dict]): A list of dictionaries where each dictionary
                                                  specifies the configuration for a node in the
                                                  pipeline.
+            logger (Optional[Logger]): An optional logger instance for logging pipeline activities.
 
         Example:
             pipeline_configuration = [
@@ -151,13 +148,13 @@ class Pipeline(PayloadOperation):
                 break
 
         # If no AlgorithmNode exists yet, allow the first node to be added unconditionally
-        if last_type_constraining_node is None:
+        if last_type_constraining_node is None or issubclass(type(node), ContextNode):
             self.nodes.append(node)
             return
 
         # Get the output type of the last type-constraining node and the input type of the new node
-        output_type = last_type_constraining_node.data_operation.output_data_type()
-        input_type = node.data_operation.input_data_type()
+        output_type = last_type_constraining_node.operation.output_data_type()
+        input_type = node.operation.input_data_type()
 
         # If the output is a DataCollectionType, check its base type
         if isinstance(output_type, type) and issubclass(
@@ -175,9 +172,9 @@ class Pipeline(PayloadOperation):
             input_type, output_type
         ), (
             f"Invalid pipeline topology: Output of "
-            f"{last_type_constraining_node.data_operation.__class__.__name__} "
+            f"{last_type_constraining_node.operation.__class__.__name__} "
             f"({output_type}) not compatible with "
-            f"{node.data_operation.__class__.__name__} ({input_type})."
+            f"{node.operation.__class__.__name__} ({input_type})."
         )
 
         # Add the node if it passes validation
@@ -215,11 +212,11 @@ class Pipeline(PayloadOperation):
         self.logger.debug("Start processing pipeline")
         for node in self.nodes:
             self.logger.debug(
-                f"Processing {type(node.data_operation).__name__} ({type(node).__name__})"
+                f"Processing {type(node.operation).__name__} ({type(node).__name__})"
             )
             self.logger.debug(f"    Data: {result_data}, Context: {result_context}")
             # Get the expected input type for the node's operation
-            input_type = node.data_operation.input_data_type()
+            input_type = node.operation.input_data_type()
 
             if (
                 (type(result_data) == input_type)
@@ -234,15 +231,15 @@ class Pipeline(PayloadOperation):
             # Case 2: Incompatible data type
             else:
                 raise TypeError(
-                    f"Incompatible data type for Node {node.data_operation.__class__.__name__} "
+                    f"Incompatible data type for Node {node.operation.__class__.__name__} "
                     f"expected {input_type}, but received {type(result_data)}."
                 )
         self.stop_watch.stop()
         self.logger.debug("Finished pipeline")
         self.logger.debug(
-            "Pipeline timers \nPipeline %s\n%s",
-            lambda: str(self.stop_watch),
-            lambda: self.get_timers(),
+            "Pipeline timers \n\tPipeline %s\n%s",
+            str(self.stop_watch),
+            self.get_timers(),
         )
         return result_data, result_context
 
@@ -251,8 +248,13 @@ class Pipeline(PayloadOperation):
         Inspect the current pipeline structure and return its summary, including execution time.
 
         Returns:
-            str: A summary of the pipeline including nodes and their collection, as well as
-                 the total pipeline execution time.
+            str: A summary of the pipeline including nodes and their configuration, as well as
+                the total pipeline execution time. The summary includes:
+                - Node details: The class names of the nodes and their operations.
+                - Parameters: The parameters used by each node, categorized by their source
+                (pipeline configuration or context).
+                - Context updates: The keywords that each node will create or modify in the context dictionary.
+                - Context parameters needed: The final set of context parameters required by the pipeline.
         """
 
         # Format sets as comma-separated values instead of Python set syntax
@@ -266,7 +268,7 @@ class Pipeline(PayloadOperation):
         node_summary = ""
         for i, node in enumerate(self.nodes):
 
-            operation_params = set(node.data_operation.get_operation_parameter_names())
+            operation_params = set(node.operation.get_operation_parameter_names())
             node_config_params = set(node.operation_config.keys())
             context_params = operation_params - node_config_params
 
@@ -283,12 +285,15 @@ class Pipeline(PayloadOperation):
                 if node.operation_config
                 else "None"
             )
-            node_summary += f"{i + 1}. Node: {node.data_operation.__class__.__name__}({node.__class__.__name__})\n"
+            node_summary += f"{i + 1}. Node: {node.operation.__class__.__name__}({node.__class__.__name__})\n"
             node_summary += f"\tParameters: {format_set(operation_params)}\n"
             node_summary += (
                 f"\t\tFrom pipeline configuration: {config_with_values or None}\n"
             )
             node_summary += f"\t\tFrom context: {format_set(context_params - probe_injector_params) or None}\n"
+            node_summary += (
+                f"\tContext additions: {format_set(node.get_created_keys())}\n"
+            )
 
         # Determine the final values needed in the context
         needed_context_parameters = all_context_params - probe_injector_params
@@ -306,9 +311,9 @@ class Pipeline(PayloadOperation):
                 elapsed CPU time, and elapsed wall time for each node.
         """
         timer_info = [
-            f"Node {i + 1}: {type(node.data_operation).__name__}; "
-            f"Elapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
-            f"Elapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s"
+            f"\tNode {i + 1}: {type(node.operation).__name__}; "
+            f"\tElapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
+            f"\tElapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s"
             for i, node in enumerate(self.nodes)
         ]
         return "\n".join(timer_info)
@@ -340,7 +345,7 @@ class Pipeline(PayloadOperation):
             # Check if the node is a ProbeResultCollectorNode
             if isinstance(node, ProbeResultCollectorNode):
                 # Add the collected data from the node to the results dictionary
-                probe_results[f"Node {i + 1}/{type(node.data_operation).__name__}"] = (
+                probe_results[f"Node {i + 1}/{type(node.operation).__name__}"] = (
                     node.get_collected_data()
                 )
 

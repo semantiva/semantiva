@@ -313,38 +313,37 @@ class ImageDataRandomGenerator(ImageDataSource):
 
 
 class TwoDGaussianImageGenerator(ImageDataSource):
-    """Generates an image with a 2D Gaussian signal."""
+    """Generates an image with a 2D Gaussian signal with optional rotation."""
 
     def _get_data(
         self,
         center: tuple[float | int, float | int],  # (x, y) position
         std_dev: float | tuple[float, float],  # Allow single float or tuple
         amplitude: float,
+        angle: float = 0.0,  # Rotation angle in degrees
         image_size: tuple[int, int] = (1024, 1024),  # Default image size
     ) -> ImageDataType:
         """
-        Generates a 2D Gaussian image centered at a given position.
+        Generates a 2D Gaussian image centered at a given position with an optional rotation.
 
         Parameters:
             center (tuple[int, int]): (x, y) coordinates of the Gaussian center.
             std_dev (float | tuple[float, float]): Standard deviation (sigma_x, sigma_y).
                 - If a single float is provided, both directions use the same value.
             amplitude (float): Amplitude (peak intensity) of the Gaussian.
+            angle (float): Rotation angle in degrees.
             image_size (tuple[int, int]): The shape (height, width) of the generated image (default: (1024, 1024)).
 
         Returns:
-            ImageDataType: A 2D Gaussian image.
+            ImageDataType: A n image with a 2D Gaussian shape.
         """
-        # Unpack center
         x_center, y_center = center
 
-        # Handle std_dev input
         if isinstance(std_dev, (int, float)):
             std_dev_x, std_dev_y = std_dev, std_dev
         else:
             std_dev_x, std_dev_y = std_dev
 
-        # Validate image_size
         if len(image_size) != 2:
             raise ValueError(
                 f"image_size must be a tuple of two dimensions, but got {image_size}."
@@ -358,8 +357,14 @@ class TwoDGaussianImageGenerator(ImageDataSource):
         # Compute the Gaussian function
         x_shifted = x_grid - x_center
         y_shifted = y_grid - y_center
+
+        theta = np.radians(angle)
+        cos_theta, sin_theta = np.cos(theta), np.sin(theta)
+        x_rotated = cos_theta * x_shifted - sin_theta * y_shifted
+        y_rotated = sin_theta * x_shifted + cos_theta * y_shifted
+
         z = amplitude * np.exp(
-            -((x_shifted**2) / (2 * std_dev_x**2) + (y_shifted**2) / (2 * std_dev_y**2))
+            -((x_rotated**2) / (2 * std_dev_x**2) + (y_rotated**2) / (2 * std_dev_y**2))
         )
 
         return ImageDataType(z)

@@ -1,23 +1,17 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
+from abc import abstractmethod
 from .stop_watch import StopWatch
-from ..context_operations.context_operations import (
-    ContextOperation,
-    ContextPassthrough,
-)
+from ..context_operations.context_operations import ContextOperation
 from ..data_operations.data_operations import (
     BaseDataOperation,
-    DataPassthrough,
     DataAlgorithm,
     DataProbe,
 )
 from ..context_operations.context_types import ContextType, ContextCollectionType
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
-from ..component_loader import ComponentLoader, CustomContextOperationLoader
+from ..component_loader import ComponentLoader
 from .payload_operations import PayloadOperation
-from semantiva.data_operations.data_collection_fit_probe import (
-    create_collection_feature_extraction_and_fit_probe,
-)
 
 
 class DataNode(PayloadOperation):
@@ -34,7 +28,7 @@ class DataNode(PayloadOperation):
         logger (Logger): Logger instance for diagnostic messages.
     """
 
-    data_operation: BaseDataOperation
+    operation: BaseDataOperation
     operation_config: Dict
     stop_watch: StopWatch
     logger: Logger
@@ -57,7 +51,7 @@ class DataNode(PayloadOperation):
         self.logger.info(
             f"Initializing {self.__class__.__name__} ({data_operation.__name__})"
         )
-        self.data_operation = (
+        self.operation = (
             data_operation(self, logger)
             if issubclass(data_operation, DataAlgorithm)
             else data_operation(logger=logger)
@@ -75,7 +69,7 @@ class DataNode(PayloadOperation):
         Returns:
             dict: A dictionary mapping parameter names to their values.
         """
-        parameter_names = self.data_operation.get_operation_parameter_names()
+        parameter_names = self.operation.get_operation_parameter_names()
         parameters = {}
         for name in parameter_names:
             parameters[name] = self._fetch_parameter_value(name, context)
@@ -106,11 +100,21 @@ class DataNode(PayloadOperation):
         class_name = self.__class__.__name__
         return (
             f"{class_name}(\n"
-            f"     operation={self.data_operation},\n"
+            f"     operation={self.operation},\n"
             f"     operation_config={self.operation_config},\n"
             f"     Node execution summary: {self.stop_watch}\n"
             f")"
         )
+
+    @abstractmethod
+    def get_created_keys(self) -> List[str]:
+        """
+        Retrieve a list of context keys that will be created by this operation.
+
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+                       as a result of execution.
+        """
 
 
 class ContextNode(PayloadOperation):
@@ -127,7 +131,7 @@ class ContextNode(PayloadOperation):
         logger (Logger): Logger instance for diagnostic messages.
     """
 
-    context_operation: ContextOperation
+    operation: ContextOperation
     operation_config: Dict
     stop_watch: StopWatch
     logger: Logger
@@ -150,13 +154,14 @@ class ContextNode(PayloadOperation):
         self.logger.info(
             f"Initializing {self.__class__.__name__} ({context_operation.__name__})"
         )
-        self.context_operation = (
-            context_operation(logger)
+        operation_config = operation_config or {}
+        self.operation = (
+            context_operation(logger, **operation_config)
             if issubclass(context_operation, (DataAlgorithm, ContextOperation))
             else context_operation(logger=logger)
         )
+        self.operation_config = operation_config
         self.stop_watch = StopWatch()
-        self.operation_config = {} if operation_config is None else operation_config
 
     def __str__(self) -> str:
         """
@@ -168,17 +173,36 @@ class ContextNode(PayloadOperation):
         class_name = self.__class__.__name__
         return (
             f"{class_name}(\n"
-            f"     operation={self.context_operation},\n"
+            f"     operation={self.operation},\n"
             f"     operation_config={self.operation_config},\n"
             f"     Node execution summary: {self.stop_watch}\n"
             f")"
         )
 
+    def get_created_keys(self) -> List[str]:
+        """
+        Retrieve a list of context keys that will be created by this operation.
+
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+                       as a result of execution.
+        """
+        return self.operation.get_created_keys()
+
     def _process(
         self, data: BaseDataType, context: ContextType
     ) -> tuple[BaseDataType, ContextType]:
-        """ """
-        return data, self.context_operation.operate_context(context)
+        """
+        Processes the given data and context.
+
+        Args:
+            data (BaseDataType): The data to be processed.
+            context (ContextType): The context in which the data is processed.
+
+        Returns:
+            tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
+        """
+        return data, self.operation.operate_context(context)
 
 
 class AlgorithmNode(DataNode):
@@ -228,7 +252,7 @@ class AlgorithmNode(DataNode):
                 - The updated context.
         """
         result_data, result_context = data, context
-        input_type = self.data_operation.input_data_type()
+        input_type = self.operation.input_data_type()
 
         if issubclass(type(result_data), input_type):
             result_data, result_context = self._process_node_call(
@@ -243,7 +267,7 @@ class AlgorithmNode(DataNode):
             )
         else:
             raise TypeError(
-                f"Incompatible data type for Node {self.data_operation.__class__.__name__} "
+                f"Incompatible data type for Node {self.operation.__class__.__name__} "
                 f"expected {input_type}, but received {type(result_data)}."
             )
         return result_data, result_context
@@ -267,7 +291,7 @@ class AlgorithmNode(DataNode):
         self.stop_watch.start()
         self.observer_context = context
         parameters = self._get_operation_parameters(self.observer_context)
-        output_data = self.data_operation.process(data, **parameters)
+        output_data = self.operation.process(data, **parameters)
         self.stop_watch.stop()
         return output_data, self.observer_context
 
@@ -318,6 +342,16 @@ class AlgorithmNode(DataNode):
                 processed_data_collection.append(out_data)
             return processed_data_collection, current_context
 
+    def get_created_keys(self):
+        """
+        Retrieve a list of context keys that will be created by this operation.
+
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+                       as a result of execution.
+        """
+        return self.operation.get_created_keys()
+
 
 class ProbeNode(DataNode):
     """
@@ -366,6 +400,16 @@ class ProbeContextInjectorNode(ProbeNode):
             raise ValueError("context_keyword must be a non-empty string.")
         self.context_keyword = context_keyword
 
+    def get_created_keys(self):
+        """
+        Retrieve a list of context keys that will be created by this operation.
+
+        Returns:
+            List[str]: A list of context keys that the operation will add or create
+            as a result of execution.
+        """
+        return [self.context_keyword]
+
     def _process(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
@@ -389,13 +433,13 @@ class ProbeContextInjectorNode(ProbeNode):
         Raises:
             TypeError: If the input data type is incompatible with the node's expected type.
         """
-        expected_input_type = self.data_operation.input_data_type()
+        expected_input_type = self.operation.input_data_type()
 
         # Case A: Single data item processing
         if type(data) == expected_input_type:
             self.stop_watch.start()
             parameters = self._get_operation_parameters(context)
-            probe_result = self.data_operation.process(data, **parameters)
+            probe_result = self.operation.process(data, **parameters)
             context.set_value(self.context_keyword, probe_result)
             self.stop_watch.stop()
             return data, context
@@ -446,7 +490,7 @@ class ProbeContextInjectorNode(ProbeNode):
         class_name = self.__class__.__name__
         return (
             f"{class_name}(\n"
-            f"     data_operation={self.data_operation},\n"
+            f"     data_operation={self.operation},\n"
             f"     context_keyword={self.context_keyword},\n"
             f"     operation_config={self.operation_config},\n"
             f"     Node execution summary: {self.stop_watch}\n"
@@ -497,7 +541,7 @@ class ProbeResultCollectorNode(ProbeNode):
             Tuple[BaseDataType, ContextType]: A tuple containing the (unchanged) input data and the updated context.
         """
         self.stop_watch.start()
-        expected_input_type = self.data_operation.input_data_type()
+        expected_input_type = self.operation.input_data_type()
 
         if type(data) == expected_input_type:
             _, updated_context = self._process_node_call(data, context)
@@ -532,7 +576,7 @@ class ProbeResultCollectorNode(ProbeNode):
             Tuple[BaseDataType, ContextType]: A tuple containing the (unchanged) data and the updated context.
         """
         parameters = self._get_operation_parameters(context)
-        probe_result = self.data_operation.process(data, **parameters)
+        probe_result = self.operation.process(data, **parameters)
         self.collect(probe_result)
         return data, context
 
@@ -569,7 +613,7 @@ class ProbeResultCollectorNode(ProbeNode):
             processed_context_collection = ContextCollectionType()
             for d_item, c_item in zip(data_collection, context):
                 parameters = self._get_operation_parameters(context)
-                probe_result = self.data_operation.process(d_item, **parameters)
+                probe_result = self.operation.process(d_item, **parameters)
                 probed_results.append(probe_result)
                 processed_data_collection.append(d_item)
                 processed_context_collection.append(context)
@@ -581,7 +625,7 @@ class ProbeResultCollectorNode(ProbeNode):
             # Single context: process each item once and accumulate the probe results.
             parameters = self._get_operation_parameters(context)
             for d_item in data_collection:
-                probe_result = self.data_operation.process(d_item, **parameters)
+                probe_result = self.operation.process(d_item, **parameters)
                 probed_results.append(probe_result)
                 processed_data_collection.append(d_item)
             # Store the aggregated probe results in the single context.
@@ -612,6 +656,15 @@ class ProbeResultCollectorNode(ProbeNode):
         """
         self._probed_data.clear()
 
+    def get_created_keys(self):
+        """
+        Retrieve the list of created keys.
+        Returns:
+            list: An empty list indicating no keys have been created.
+        """
+
+        return []
+
 
 def node_factory(
     node_definition: Dict,
@@ -636,29 +689,18 @@ def node_factory(
         ValueError: If the node definition is invalid or the operation type is unsupported.
     """
 
-    def get_data_operation_if_needed(class_name):
+    def get_class(class_name):
         """Helper function to retrieve the class from the loader if the input is a string."""
         if isinstance(class_name, str):
             return ComponentLoader.get_class(class_name)
         return class_name
 
-    def get_context_operation_if_needed(class_name):
-        """Helper function to retrieve the class from the loader if the input is a string."""
-        if isinstance(class_name, str):
-            return CustomContextOperationLoader.get_context_operation(class_name)
-        return class_name
-
     operation = node_definition.get("operation")
     parameters = node_definition.get("parameters", {})
     context_keyword = node_definition.get("context_keyword")
-    fitting_model = node_definition.get("fitting_model")
-    independent_variable_parameter_name = node_definition.get(
-        "independent_variable_parameter_name"
-    )
 
     # Use the helper function to get the correct class for both operation and context_operation
-    operation = get_data_operation_if_needed(operation)
-    context_operation = get_context_operation_if_needed(context_operation)
+    operation = get_class(operation)
 
     if operation is None or not isinstance(operation, type):
         raise ValueError("operation must be a class type or a string, not None.")
@@ -681,22 +723,6 @@ def node_factory(
             return ProbeContextInjectorNode(
                 data_operation=operation,
                 context_keyword=context_keyword,
-                operation_parameters=parameters,
-                logger=logger,
-            )
-        elif fitting_model is not None:
-            assert independent_variable_parameter_name is not None, (
-                "independent_variable_parameter_name must be provided for "
-                "feature extraction and fit probes."
-            )
-            extract_and_fit_probe = create_collection_feature_extraction_and_fit_probe(
-                feature_extractor=operation,
-                fitting_model=fitting_model,
-                independent_variable_parameter_name=independent_variable_parameter_name,
-            )
-
-            return ProbeResultCollectorNode(
-                data_operation=extract_and_fit_probe,
                 operation_parameters=parameters,
                 logger=logger,
             )

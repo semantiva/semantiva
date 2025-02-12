@@ -70,13 +70,11 @@ class HelloOperation(StringLiteralAlgorithm):
 #########################
 # Step 4: Create a Pipeline Configuration Using HelloOperation
 #########################
-from semantiva.context_operations import ContextPassthrough
 
 node_configurations = [
     {
         "operation": HelloOperation,
         "parameters": {},  # No extra parameters needed
-        "context_operation": ContextPassthrough,
     },
 ]
 
