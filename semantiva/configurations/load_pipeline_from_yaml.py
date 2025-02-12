@@ -19,4 +19,4 @@ def load_pipeline_from_yaml(yaml_file: str) -> dict:
             "Invalid pipeline configuration: Missing 'pipeline' or 'nodes' key."
         )
 
-    return pipeline_config["pipeline"]
+    return pipeline_config["pipeline"]["nodes"]

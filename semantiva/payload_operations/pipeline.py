@@ -348,6 +348,7 @@ class Pipeline(PayloadOperation):
         This method uses the `node_factory` function to create nodes from the provided
         pipeline configuration. Each node is then added to the pipeline.
         """
-        for node_config in self.pipeline_configuration["nodes"]:
+
+        for node_config in self.pipeline_configuration:
             node = node_factory(node_config, self.logger)
             self._add_node(node)
