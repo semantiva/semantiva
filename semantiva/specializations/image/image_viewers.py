@@ -1,15 +1,18 @@
 import numpy as np
 import ipywidgets as widgets
+from typing import TypedDict
 from IPython.display import display, HTML
 from matplotlib.colors import LogNorm
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.colors import LogNorm
 from semantiva.specializations.image.image_data_types import (
     ImageDataType,
     ImageStackDataType,
 )
-from typing import TypedDict
 
 
 class FigureOption(TypedDict):
@@ -222,3 +225,170 @@ class ImageStackAnimator:
         # Display the animation
         display(HTML(ani.to_jshtml()))
         plt.close()
+
+
+class ImageCrossSectionInteractiveViewer:
+    def __init__(self, image_data):
+        self.image_data = image_data.data
+        self.ny, self.nx = self.image_data.shape
+        self.cur_x = self.nx // 2
+        self.cur_y = self.ny // 2
+        self.z_max = self.image_data.max()
+        self.z_min = self.image_data.min()
+        self.cmap = "hot"
+        self.log_scale = False
+        self.auto_scale = False
+
+        self.fig, self.main_ax = plt.subplots(figsize=(7, 7))
+        self.fig.subplots_adjust(top=0.85, bottom=0.2)
+
+        divider = make_axes_locatable(self.main_ax)
+        self.top_ax = divider.append_axes("top", 1.05, pad=0.1, sharex=self.main_ax)
+        self.right_ax = divider.append_axes("right", 1.05, pad=0.1, sharey=self.main_ax)
+
+        self.top_ax.xaxis.set_tick_params(labelbottom=False)
+        self.right_ax.yaxis.set_tick_params(labelleft=False)
+
+        self.update_norm()
+
+        self.img = self.main_ax.imshow(
+            self.image_data, origin="lower", cmap=self.cmap, norm=self.norm
+        )
+        self.colorbar = self.fig.colorbar(
+            self.img, ax=self.main_ax, orientation="vertical", shrink=0.8
+        )
+
+        self.main_ax.autoscale(enable=False)
+        self.right_ax.autoscale(enable=False)
+        self.top_ax.autoscale(enable=False)
+
+        (self.v_line,) = self.main_ax.plot([self.cur_x, self.cur_x], [0, self.ny], "r-")
+        (self.h_line,) = self.main_ax.plot([0, self.nx], [self.cur_y, self.cur_y], "g-")
+
+        (self.v_prof,) = self.right_ax.plot(
+            self.image_data[:, self.cur_x], np.arange(self.ny), "r-"
+        )
+        (self.h_prof,) = self.top_ax.plot(
+            np.arange(self.nx), self.image_data[self.cur_y, :], "g-"
+        )
+
+        self.fig.canvas.mpl_connect("button_press_event", self.on_click)
+        self.create_widgets()
+        self.update_profiles()
+
+    def update_norm(self):
+        if self.log_scale:
+            positive_values = self.image_data[self.image_data > 0]
+            vmin = (
+                max(positive_values.min(), 1e-3) if positive_values.size > 0 else 1e-3
+            )
+            self.norm = LogNorm(vmin=vmin, vmax=self.z_max)
+        else:
+            self.norm = None
+
+    def update_cross_section(self, val=None):
+        self.cur_x = int(self.x_slider.val)
+        self.cur_y = int(self.y_slider.val)
+        self.cur_x = np.clip(self.cur_x, 0, self.nx - 1)
+        self.cur_y = np.clip(self.cur_y, 0, self.ny - 1)
+
+        self.v_line.set_data([self.cur_x, self.cur_x], [0, self.ny])
+        self.h_line.set_data([0, self.nx], [self.cur_y, self.cur_y])
+
+        self.update_profiles()
+        self.img.set_data(self.image_data)
+        self.fig.canvas.draw_idle()
+
+    def update_profiles(self):
+        v_prof_data = self.image_data[:, self.cur_x]
+        h_prof_data = self.image_data[self.cur_y, :]
+
+        margin = 0.05  # 5% margin for better visualization
+
+        if self.auto_scale:
+            v_min, v_max = v_prof_data.min(), v_prof_data.max()
+            h_min, h_max = h_prof_data.min(), h_prof_data.max()
+
+            v_range = v_max - v_min
+            h_range = h_max - h_min
+
+            v_min -= v_range * margin
+            v_max += v_range * margin
+            h_min -= h_range * margin
+            h_max += h_range * margin
+        else:
+            v_min, v_max = self.z_min, self.z_max
+            h_min, h_max = self.z_min, self.z_max
+
+        # Ensure positive limits for log scale
+        if self.log_scale:
+            v_min = max(v_min, 1e-3)  # Avoid non-positive values
+            h_min = max(h_min, 1e-3)
+
+        # Update axes limits
+        self.right_ax.set_xlim(v_min, v_max)
+        self.v_prof.set_data(np.arange(self.ny), v_prof_data)
+        self.top_ax.set_ylim(h_min, h_max)
+        self.h_prof.set_data(np.arange(self.nx), h_prof_data)
+
+        self.v_prof.set_data(v_prof_data, np.arange(self.ny))
+        self.h_prof.set_data(np.arange(self.nx), h_prof_data)
+
+        self.fig.canvas.draw_idle()
+
+    def toggle_logscale(self, label):
+        if label == "Log Scale":
+            self.log_scale = not self.log_scale
+            self.update_norm()
+            self.img.set_norm(self.norm)
+            self.colorbar.update_normal(self.img)
+            self.update_profiles()
+            self.fig.canvas.draw_idle()
+
+    def toggle_autoscale(self, label):
+        if label == "Auto Scale":
+            self.auto_scale = not self.auto_scale
+            self.update_profiles()
+            self.fig.canvas.draw_idle()
+
+    def update_cmap(self, label):
+        self.cmap = label
+        self.img.set_cmap(self.cmap)
+        self.fig.canvas.draw_idle()
+
+    def create_widgets(self):
+        ax_x_slider = plt.axes([0.2, 0.05, 0.65, 0.03])
+        self.x_slider = Slider(
+            ax_x_slider, "X Slice", 0, self.nx - 1, valinit=self.cur_x, valstep=1
+        )
+        self.x_slider.on_changed(self.update_cross_section)
+
+        ax_y_slider = plt.axes([0.2, 0.01, 0.65, 0.03])
+        self.y_slider = Slider(
+            ax_y_slider, "Y Slice", 0, self.ny - 1, valinit=self.cur_y, valstep=1
+        )
+        self.y_slider.on_changed(self.update_cross_section)
+
+        ax_check_buttons = plt.axes([0.3, 0.85, 0.2, 0.1])
+        self.check_buttons = CheckButtons(
+            ax_check_buttons,
+            ["Log Scale", "Auto Scale"],
+            [self.log_scale, self.auto_scale],
+        )
+        self.check_buttons.on_clicked(self.toggle_logscale)
+        self.check_buttons.on_clicked(self.toggle_autoscale)
+
+        ax_cmap_radio = plt.axes([0.75, 0.85, 0.15, 0.15])
+        self.cmap_radio = RadioButtons(
+            ax_cmap_radio, ["viridis", "plasma", "gray", "magma", "hot"], active=4
+        )
+        self.cmap_radio.on_clicked(self.update_cmap)
+
+    def on_click(self, event):
+        if (
+            event.inaxes == self.main_ax
+            and event.xdata is not None
+            and event.ydata is not None
+        ):
+            self.x_slider.set_val(int(event.xdata))
+            self.y_slider.set_val(int(event.ydata))

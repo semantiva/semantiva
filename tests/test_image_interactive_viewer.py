@@ -2,7 +2,11 @@ import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 from ipywidgets import Checkbox, Dropdown, FloatSlider, Text
-from semantiva.specializations.image.image_viewers import ImageInteractiveViewer
+from semantiva.specializations.image.image_viewers import (
+    ImageInteractiveViewer,
+    ImageCrossSectionInteractiveViewer,
+    ImageXYProjectionViewer,
+)
 from semantiva.specializations.image.image_data_types import ImageDataType
 
 
@@ -96,3 +100,19 @@ def test_update_plot(monkeypatch, test_image):
 
     # Ensure plt.show() was called
     assert show_called, "plt.show() was not called"
+
+
+def test_cross_sec_interactive_viewer(test_image):
+    """Test that CrossSecInteractiveViewer can be instantiated.
+    with no errors."""
+    viewer = ImageCrossSectionInteractiveViewer(test_image)
+
+    assert isinstance(viewer, ImageCrossSectionInteractiveViewer)
+
+
+def test_xy_projection_viewer(test_image):
+    """Test that XYProjectionViewer can be instantiated.
+    with no errors."""
+    viewer = ImageXYProjectionViewer(test_image)
+
+    assert isinstance(viewer, ImageXYProjectionViewer)
