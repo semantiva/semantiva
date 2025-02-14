@@ -392,3 +392,97 @@ class ImageCrossSectionInteractiveViewer:
         ):
             self.x_slider.set_val(int(event.xdata))
             self.y_slider.set_val(int(event.ydata))
+
+
+class ImageXYProjectionViewer:
+    def __init__(self, image_data):
+        self.image_data = image_data
+        self.ny, self.nx = image_data.shape
+        self.z_max = image_data.max()
+        self.cmap = "hot"
+        self.log_scale = False
+
+        # Compute projections
+        self.x_projection = np.sum(image_data, axis=0)  # Sum along Y
+        self.y_projection = np.sum(image_data, axis=1)  # Sum along X
+
+        # Create figure
+        self.fig, self.main_ax = plt.subplots(figsize=(7, 7))
+        self.fig.subplots_adjust(top=0.85, bottom=0.2)
+
+        divider = make_axes_locatable(self.main_ax)
+        self.top_ax = divider.append_axes("top", 1.05, pad=0.1, sharex=self.main_ax)
+        self.right_ax = divider.append_axes("right", 1.05, pad=0.1, sharey=self.main_ax)
+
+        self.top_ax.xaxis.set_tick_params(labelbottom=False)
+        self.right_ax.yaxis.set_tick_params(labelleft=False)
+
+        self.update_norm()
+
+        self.img = self.main_ax.imshow(
+            self.image_data, origin="lower", cmap=self.cmap, norm=self.norm
+        )
+
+        # Add colorbar
+        self.colorbar = self.fig.colorbar(
+            self.img, ax=self.main_ax, orientation="vertical", shrink=0.8
+        )
+
+        self.main_ax.autoscale(enable=True)
+        self.right_ax.autoscale(enable=True)
+        self.top_ax.autoscale(enable=True)
+
+        # Projection plots
+        (self.v_proj,) = self.right_ax.plot(
+            self.y_projection, np.arange(self.ny), "b-", label="Y Projection"
+        )
+        (self.h_proj,) = self.top_ax.plot(
+            np.arange(self.nx), self.x_projection, "b-", label="X Projection"
+        )
+
+        self.create_widgets()
+
+    def update_norm(self):
+        """Update normalization mode based on log scale checkbox"""
+        if self.log_scale:
+            positive_values = self.image_data[self.image_data > 0]
+            vmin = (
+                max(positive_values.min(), 1e-3) if positive_values.size > 0 else 1e-3
+            )
+            self.norm = LogNorm(vmin=vmin, vmax=self.z_max)
+        else:
+            self.norm = None
+
+    def update_colormap(self, label):
+        """Update colormap dynamically from dropdown menu"""
+        self.cmap = label
+        self.img.set_cmap(self.cmap)
+        self.colorbar.update_normal(self.img)
+        self.fig.canvas.draw_idle()
+
+    def toggle_logscale(self, label):
+        """Toggle log scale for the image and redraw"""
+        if label == "Log Scale":
+            self.log_scale = not self.log_scale
+            self.update_norm()
+            self.img.set_norm(self.norm)
+            self.colorbar.update_normal(self.img)
+            self.log_button.label.set_text(
+                "Log Scale: ON" if self.log_scale else "Log Scale: OFF"
+            )
+            self.fig.canvas.draw_idle()
+
+    def create_widgets(self):
+        """Create widgets"""
+
+        ax_check_buttons = plt.axes([0.3, 0.85, 0.2, 0.1])
+        self.check_buttons = CheckButtons(
+            ax_check_buttons, ["Log Scale"], [self.log_scale]
+        )
+        self.check_buttons.on_clicked(self.toggle_logscale)
+
+        ax_cmap_dropdown = plt.axes([0.7, 0.82, 0.2, 0.1])
+        self.cmap_dropdown = RadioButtons(
+            ax_cmap_dropdown, ["viridis", "plasma", "gray", "magma", "hot"], active=4
+        )
+        self.cmap_dropdown.on_clicked(self.update_colormap)
