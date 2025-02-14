@@ -396,15 +396,15 @@ class ImageCrossSectionInteractiveViewer:
 
 class ImageXYProjectionViewer:
     def __init__(self, image_data):
-        self.image_data = image_data
-        self.ny, self.nx = image_data.shape
-        self.z_max = image_data.max()
+        self.image_data = image_data.data
+        self.ny, self.nx = image_data.data.shape
+        self.z_max = image_data.data.max()
         self.cmap = "hot"
         self.log_scale = False
 
         # Compute projections
-        self.x_projection = np.sum(image_data, axis=0)  # Sum along Y
-        self.y_projection = np.sum(image_data, axis=1)  # Sum along X
+        self.x_projection = np.sum(self.image_data, axis=0)  # Sum along Y
+        self.y_projection = np.sum(self.image_data, axis=1)  # Sum along X
 
         # Create figure
         self.fig, self.main_ax = plt.subplots(figsize=(7, 7))
@@ -467,9 +467,6 @@ class ImageXYProjectionViewer:
             self.update_norm()
             self.img.set_norm(self.norm)
             self.colorbar.update_normal(self.img)
-            self.log_button.label.set_text(
-                "Log Scale: ON" if self.log_scale else "Log Scale: OFF"
-            )
             self.fig.canvas.draw_idle()
 
     def create_widgets(self):
