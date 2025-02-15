@@ -1,13 +1,13 @@
 pipeline:
   nodes:
     - operation: "ImageAddition"
-      context_operation: "ContextPassthrough"
 
     - operation: "BasicImageProbe"
       context_keyword: "debug_info"
 
     - operation: "ImageAddition"
-      context_operation: "rename:debug_info:final_info"
+
+    - operation: "rename:debug_info:final_info"
 
     - operation: "ImageClipping"
       parameters:
@@ -15,5 +15,6 @@ pipeline:
         x_end: 20
         y_start: 10
         y_end: 20
-      context_operation: "delete:image_to_add"
+
+    - operation: "delete:image_to_add"
 

@@ -1,7 +1,9 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from abc import ABC, abstractmethod
 from semantiva.context_operations.context_types import ContextType
+from semantiva.data_types.data_types import BaseDataType
 from semantiva.logger import Logger
+from semantiva.workflows.fitting_model import FittingModel
 
 
 class ContextOperation(ABC):
@@ -15,12 +17,7 @@ class ContextOperation(ABC):
     logger: Logger
 
     def __init__(self, logger: Optional[Logger] = None):
-        if logger:
-            # If a logger instance is provided, use it
-            self.logger = logger
-        else:
-            # If no logger is provided, create a new Logger instance
-            self.logger = Logger()
+        self.logger = logger if logger else Logger()
         self.logger.info(f"Initializing {self.__class__.__name__}")
 
     @abstractmethod
@@ -37,6 +34,19 @@ class ContextOperation(ABC):
         Returns:
             ContextType: The modified (or unchanged) context after the operation.
         """
+
+    @classmethod
+    def input_data_type(cls):
+        return BaseDataType
+
+    def get_operation_parameter_names(self) -> List[str]:
+        """
+        Retrieve the names of parameters required by the operation.
+
+        Returns:
+            List[str]: A list of parameter names (excluding `data`).
+        """
+        return self.get_required_keys()
 
     def operate_context(self, context: ContextType) -> ContextType:
         """
@@ -88,162 +98,104 @@ class ContextOperation(ABC):
         return f"{self.__class__.__name__}"
 
 
-class ContextPassthrough(ContextOperation):
-    """
-    A context operation that passes the context unchanged.
+class ModelFittingContextOperation(ContextOperation):
+    """ContextOperation that fits extracted features using a specified model."""
 
-    This class is used as a default context operation for nodes when
-    no specific context operation is provided.
-    """
+    def __init__(
+        self,
+        logger,
+        fitting_model,
+        independent_var_key,
+        dependent_var_key: Union[str, tuple],
+        context_keyword: str,
+    ):
+        self.logger = logger if logger else Logger()
+        self.logger.info(f"Initializing {self.__class__.__name__}")
+        self.fitting_model: FittingModel = fitting_model
+        self.independent_var_key = independent_var_key
+        self.context_keyword = context_keyword
 
-    def _operate_context(self, context: ContextType) -> ContextType:
-        """
-        Pass the context unchanged.
+        if isinstance(dependent_var_key, tuple):
+            self.dependent_var_key = dependent_var_key[0]
+            self.dependent_var_subkey = dependent_var_key[1]
+        else:
+            self.dependent_var_key = dependent_var_key
+            self.dependent_var_subkey = None
 
-        Args:
-            context (ContextType): The context to be passed through.
+        if not isinstance(independent_var_key, str):
+            raise TypeError(
+                f"independent_var_key must be a string, got {type(independent_var_key).__name__} with value {independent_var_key}"
+            )
 
-        Returns:
-            ContextType: The unchanged context.
-        """
+    def _operate_context(self, context):
+        """Fit extracted features to the model using context data."""
+
+        # Retrieve independent and dependent variables from context
+        independent_variable = context.get_value(self.independent_var_key)
+        dependent_variable = context.get_value(self.dependent_var_key)
+
+        # Ensure required parameters exist
+        if independent_variable is None or dependent_variable is None:
+            missing_params = [
+                p for p in self.get_required_keys() if context.get_value(p) is None
+            ]
+            raise ValueError(
+                f"Missing required context parameters: {', '.join(str(missing_params))}"
+            )
+        # Extract dependent_variable from dictionary if needed
+        if isinstance(self.dependent_var_subkey, tuple):
+            dependent_variable_ = tuple(
+                dependent_variable[key] for key in self.dependent_var_subkey
+            )
+        elif isinstance(self.dependent_var_subkey, str):
+            dependent_variable_ = [
+                item[self.dependent_var_subkey] for item in dependent_variable
+            ]
+        elif isinstance(dependent_variable, list):
+            dependent_variable_ = dependent_variable
+        else:
+            raise ValueError("Invalid type for dependent_variable")
+
+        # Fit the model using extracted features
+        self.logger.debug("\tRunning model %s", self.fitting_model)
+        self.logger.debug(f"\t\tindependent_variable = {independent_variable}")
+        self.logger.debug(f"\t\tdependent_variable = {dependent_variable_}")
+        fit_results = self.fitting_model.fit(independent_variable, dependent_variable_)
+
+        # Store the results back in context under the dependent variable name
+        context.set_value(self.context_keyword, fit_results)
+
         return context
 
     def get_required_keys(self) -> List[str]:
         """
-        Since this operation does not require any specific keys,
-        it returns an empty list.
+        Retrieve the list of required keys for the context operation.
+
+        Returns:
+            List[str]: A list containing the keys for the independent and dependent variables.
+
         """
-        return []
+        return [
+            self.independent_var_key,
+            self.dependent_var_key,
+        ]
 
     def get_created_keys(self) -> List[str]:
         """
-        Since this operation does not create any new keys,
-        it returns an empty list.
+        Retrieves the list of keys created in the context.
+
+        This method returns a list containing the keyword used to store the fit results in the context.
+
+        Returns:
+            List[str]: A list containing the context keyword.
         """
-        return []
+        return [self.context_keyword]
 
     def get_suppressed_keys(self) -> List[str]:
         """
-        Since this operation does not suppress any keys,
-        it returns an empty list.
+        This operation does not suppress any keys.
+
+        Returns:
+            List[str]: An empty list as no keys are suppressed or removed by this operation.
         """
         return []
-
-
-def rename_context_key(original_key: str, destination_key: str):
-    """
-    Factory function that creates a ContextOperation subclass to rename context keys.
-
-    Args:
-        original_key (str): The key to rename.
-        destination_key (str): The new key name.
-
-    Returns:
-        Type[ContextOperation]: A dynamically generated class that renames context keys.
-    """
-
-    class RenameOperation(ContextOperation):
-        """
-        Dynamically generated context operation that renames a key in the context.
-        """
-
-        def _operate_context(self, context: ContextType) -> ContextType:
-            """
-            Rename a context key.
-
-            Args:
-                context (ContextType): The context to modify.
-
-            Returns:
-                ContextType: The updated context with the key renamed.
-            """
-            if original_key in context.keys():
-                value = context.get_value(original_key)
-                context.set_value(destination_key, value)
-                context.delete_value(original_key)
-                self.logger.info(
-                    f"Renamed context key '{original_key}' -> '{destination_key}'"
-                )
-            else:
-                self.logger.warning(f"Key '{original_key}' not found in context.")
-
-            return context
-
-        def get_required_keys(self) -> List[str]:
-            """
-            Since this operation requires the original key to be present,
-            it returns a list containing the original key.
-            """
-            return [original_key]
-
-        def get_created_keys(self) -> List[str]:
-            """
-            Since this operation creates a new key, it returns a list containing the new key.
-            """
-            return [destination_key]
-
-        def get_suppressed_keys(self) -> List[str]:
-            """
-            Since this operation suppresses the original key, it returns a list containing the original key.
-            """
-            return [original_key]
-
-    return RenameOperation  # Returns the class itself, not an instance
-
-
-def delete_context_key(key: str):
-    """
-    Factory function that creates a ContextOperation subclass to delete a context key.
-
-    Args:
-        key (str): The key to delete.
-
-    Returns:
-        Type[ContextOperation]: A dynamically generated class that removes a key.
-    """
-
-    class DeleteOperation(ContextOperation):
-        """
-        A dynamically generated context operation that deletes a key from the context.
-        """
-
-        def _operate_context(self, context: ContextType) -> ContextType:
-            """
-            Remove a context key.
-
-            Args:
-                context (ContextType): The context to modify.
-
-            Returns:
-                ContextType: The updated context with the key removed.
-            """
-            if key in context.keys():
-                context.delete_value(key)
-                self.logger.info(f"Deleted context key '{key}'")
-            else:
-                self.logger.warning(f"Key '{key}' not found in context.")
-
-            return context
-
-        def get_required_keys(self) -> List[str]:
-            """
-            Since this operation does not require any specific keys,
-            it returns an empty list.
-            """
-            return [key]
-
-        def get_created_keys(self) -> List[str]:
-            """
-            Since this operation does not create any new keys,
-            it returns an empty list.
-            """
-            return []
-
-        def get_suppressed_keys(self) -> List[str]:
-            """
-            Since this operation suppresses the deleted key,
-            it returns a list containing the key to be deleted.
-            """
-            return [key]
-
-    return DeleteOperation  # Returns the class itself, not an instance

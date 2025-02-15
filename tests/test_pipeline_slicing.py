@@ -21,7 +21,6 @@ from semantiva.specializations.image.image_data_types import (
 from semantiva.specializations.image.image_probes import (
     BasicImageProbe,
 )
-from semantiva.context_operations import ContextPassthrough
 
 
 @pytest.fixture
@@ -80,7 +79,6 @@ def test_pipeline_slicing_with_single_context(
 
     node_configurations = [
         {
-            "context_operation": ContextPassthrough,  # Explicitly passing context unchanged (default behavior if omitted)
             "operation": ImageAddition,  # Adds a specified image to each slice of the input data
             "parameters": {
                 "image_to_add": random_image
@@ -93,13 +91,11 @@ def test_pipeline_slicing_with_single_context(
             },  # Image to subtract
         },
         {
-            "context_operation": ContextPassthrough,  # Context remains unchanged (default behavior)
             "operation": BasicImageProbe,  # Probe operation to extract and store data
             "context_keyword": "mock_keyword",  # Stores probe results under this keyword in the context
             "parameters": {},  # No extra parameters required (can be omitted)
         },
         {
-            "context_operation": ContextPassthrough,  # Context remains unchanged (default behavior)
             "operation": BasicImageProbe,  # Probe operation to collect results
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
