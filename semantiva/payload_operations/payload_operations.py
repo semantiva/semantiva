@@ -53,4 +53,7 @@ class PayloadOperation(ContextObserver, ABC):
             NotImplementedError: If the `_process` method is not implemented in a subclass.
         """
         context_ = ContextType(context) if isinstance(context, dict) else context
+        assert isinstance(
+            context_, ContextType
+        ), f"Context must be a dictionary of an instance of `ContextType`. Got {type(context)}"
         return self._process(data, context_)
