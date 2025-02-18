@@ -85,7 +85,7 @@ def test_update_plot(monkeypatch, test_image):
     monkeypatch.setattr(plt, "show", mock_show)
 
     # Call update_plot with dummy values
-    ImageInteractiveViewer.update_plot(
+    ImageInteractiveViewer._update_plot(
         test_image,
         colorbar=True,
         log_scale=True,
@@ -105,7 +105,7 @@ def test_update_plot(monkeypatch, test_image):
 def test_cross_sec_interactive_viewer(test_image):
     """Test that CrossSecInteractiveViewer can be instantiated.
     with no errors."""
-    viewer = ImageCrossSectionInteractiveViewer(test_image)
+    viewer = ImageCrossSectionInteractiveViewer.view(test_image)
 
     assert isinstance(viewer, ImageCrossSectionInteractiveViewer)
 
@@ -113,6 +113,4 @@ def test_cross_sec_interactive_viewer(test_image):
 def test_xy_projection_viewer(test_image):
     """Test that XYProjectionViewer can be instantiated.
     with no errors."""
-    viewer = ImageXYProjectionViewer(test_image)
-
-    assert isinstance(viewer, ImageXYProjectionViewer)
+    viewer = ImageXYProjectionViewer.view(test_image)

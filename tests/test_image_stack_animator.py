@@ -13,4 +13,4 @@ def test_image_stack():
 
 def test_display_animation(test_image_stack):
     """Test that the animation is correctly displayed."""
-    ImageStackAnimator.display_animation(test_image_stack)
+    ImageStackAnimator.view(test_image_stack)
