@@ -50,7 +50,7 @@ def test_display_image(monkeypatch, test_image):
 
     monkeypatch.setattr(plt, "show", mock_show)
 
-    ImageViewer.display_image(test_image)
+    ImageViewer.view(test_image)
 
     # Verify that plt.show() was called
     assert show_called, "plt.show() was not called"

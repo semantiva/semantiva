@@ -26,7 +26,7 @@ class ImageViewer:
     """
 
     @classmethod
-    def display_image(
+    def view(
         cls,
         data: ImageDataType,
         title: str = "",
@@ -73,7 +73,7 @@ class ImageViewer:
         return fig
 
 
-class ImageInteractiveViewer(ImageViewer):
+class ImageInteractiveViewer:
     """
     An extension of ImageViewer that supports interactivity in Jupyter Notebook.
     """
@@ -85,7 +85,7 @@ class ImageInteractiveViewer(ImageViewer):
     }
 
     @classmethod
-    def interactive_generate_image(
+    def view(
         cls,
         data: ImageDataType,
         title: str = "",
@@ -141,7 +141,7 @@ class ImageInteractiveViewer(ImageViewer):
 
         # Bind widgets to the plotting function
         interactive_plot = widgets.interactive(
-            cls.update_plot,
+            cls._update_plot,
             data=widgets.fixed(data),
             colorbar=colorbar_widget,
             log_scale=log_scale_widget,
@@ -158,7 +158,7 @@ class ImageInteractiveViewer(ImageViewer):
         display(interactive_plot)
 
     @classmethod
-    def update_plot(
+    def _update_plot(
         cls,
         data: ImageDataType,
         colorbar: bool,
@@ -198,9 +198,7 @@ class ImageStackAnimator:
     """
 
     @classmethod
-    def display_animation(
-        cls, image_stack: ImageStackDataType, frame_duration: int = 200
-    ):
+    def view(cls, image_stack: ImageStackDataType, frame_duration: int = 200):
         """
         Creates and displays an animation using matplotlib.animation.
 
@@ -228,258 +226,252 @@ class ImageStackAnimator:
 
 
 class ImageCrossSectionInteractiveViewer:
+    """
+    An interactive viewer for 2D images with cross-sections.
+    The viewer displays an image with vertical and horizontal cross-sections.
+    The user can interact with the image by moving the cross-sections, changing the colormap,
+    toggling log scale, and auto-scaling the profiles.
+
+    Note: This viewer is designed for Jupyter Notebook. In order to be correctly displayed,
+    please add on the first cell of the notebook the following line:
+    %matplotlib ipympl. This will enable the interactive mode for matplotlib.
+    Also take into account that the interactive mode may interferes with
+    other viewers in the notebook.
+
+    Example of usage:
+        viewer = ImageCrossSectionInteractiveViewer.view(image_data)
+    """
+
     def __init__(self, image_data):
-        self.image_data = image_data.data
-        self.ny, self.nx = self.image_data.shape
-        self.cur_x = self.nx // 2
-        self.cur_y = self.ny // 2
-        self.z_max = self.image_data.max()
-        self.z_min = self.image_data.min()
-        self.cmap = "hot"
-        self.log_scale = False
-        self.auto_scale = False
+        self._image_data = image_data.data
+        self._ny, self._nx = self._image_data.shape
+        self._cur_x = self._nx // 2
+        self._cur_y = self._ny // 2
+        self._z_max = self._image_data.max()
+        self._z_min = self._image_data.min()
+        self._cmap = "hot"
+        self._log_scale = False
+        self._auto_scale = False
 
-        self.fig, self.main_ax = plt.subplots(figsize=(7, 7))
-        self.fig.subplots_adjust(top=0.85, bottom=0.2)
+        self._fig, self._main_ax = plt.subplots(figsize=(7, 7))
+        self._fig.subplots_adjust(top=0.85, bottom=0.2)
 
-        divider = make_axes_locatable(self.main_ax)
-        self.top_ax = divider.append_axes("top", 1.05, pad=0.1, sharex=self.main_ax)
-        self.right_ax = divider.append_axes("right", 1.05, pad=0.1, sharey=self.main_ax)
-
-        self.top_ax.xaxis.set_tick_params(labelbottom=False)
-        self.right_ax.yaxis.set_tick_params(labelleft=False)
-
-        self.update_norm()
-
-        self.img = self.main_ax.imshow(
-            self.image_data, origin="lower", cmap=self.cmap, norm=self.norm
-        )
-        self.colorbar = self.fig.colorbar(
-            self.img, ax=self.main_ax, orientation="vertical", shrink=0.8
+        divider = make_axes_locatable(self._main_ax)
+        self._top_ax = divider.append_axes("top", 1.05, pad=0.1, sharex=self._main_ax)
+        self._right_ax = divider.append_axes(
+            "right", 1.05, pad=0.1, sharey=self._main_ax
         )
 
-        self.main_ax.autoscale(enable=False)
-        self.right_ax.autoscale(enable=False)
-        self.top_ax.autoscale(enable=False)
+        self._top_ax.xaxis.set_tick_params(labelbottom=False)
+        self._right_ax.yaxis.set_tick_params(labelleft=False)
 
-        (self.v_line,) = self.main_ax.plot([self.cur_x, self.cur_x], [0, self.ny], "r-")
-        (self.h_line,) = self.main_ax.plot([0, self.nx], [self.cur_y, self.cur_y], "g-")
+        self._update_norm()
 
-        (self.v_prof,) = self.right_ax.plot(
-            self.image_data[:, self.cur_x], np.arange(self.ny), "r-"
+        self._img = self._main_ax.imshow(
+            self._image_data, origin="lower", cmap=self._cmap, norm=self._norm
         )
-        (self.h_prof,) = self.top_ax.plot(
-            np.arange(self.nx), self.image_data[self.cur_y, :], "g-"
+        self._colorbar = self._fig.colorbar(
+            self._img, ax=self._main_ax, orientation="vertical", shrink=0.8
         )
 
-        self.fig.canvas.mpl_connect("button_press_event", self.on_click)
-        self.create_widgets()
-        self.update_profiles()
+        self._main_ax.autoscale(enable=False)
+        self._right_ax.autoscale(enable=False)
+        self._top_ax.autoscale(enable=False)
 
-    def update_norm(self):
-        if self.log_scale:
-            positive_values = self.image_data[self.image_data > 0]
+        (self._v_line,) = self._main_ax.plot(
+            [self._cur_x, self._cur_x], [0, self._ny], "r-"
+        )
+        (self._h_line,) = self._main_ax.plot(
+            [0, self._nx], [self._cur_y, self._cur_y], "g-"
+        )
+
+        (self._v_prof,) = self._right_ax.plot(
+            self._image_data[:, self._cur_x], np.arange(self._ny), "r-"
+        )
+        (self._h_prof,) = self._top_ax.plot(
+            np.arange(self._nx), self._image_data[self._cur_y, :], "g-"
+        )
+
+        self._fig.canvas.mpl_connect("button_press_event", self._on_click)
+        self._create_widgets()
+        self._update_profiles()
+
+    @classmethod
+    def view(cls, image_data: ImageDataType):
+        return cls(image_data)
+
+    def _update_norm(self):
+        """Update normalization mode based on log scale checkbox"""
+        if self._log_scale:
+            positive_values = self._image_data[self._image_data > 0]
             vmin = (
                 max(positive_values.min(), 1e-3) if positive_values.size > 0 else 1e-3
             )
-            self.norm = LogNorm(vmin=vmin, vmax=self.z_max)
+            self._norm = LogNorm(vmin=vmin, vmax=self._z_max)
         else:
-            self.norm = None
+            self._norm = None
 
-    def update_cross_section(self, val=None):
-        self.cur_x = int(self.x_slider.val)
-        self.cur_y = int(self.y_slider.val)
-        self.cur_x = np.clip(self.cur_x, 0, self.nx - 1)
-        self.cur_y = np.clip(self.cur_y, 0, self.ny - 1)
+    def _update_cross_section(self, val=None):
+        """Update cross-sections based on slider values"""
+        self._cur_x = int(self._x_slider.val)
+        self._cur_y = int(self._y_slider.val)
+        self._cur_x = np.clip(self._cur_x, 0, self._nx - 1)
+        self._cur_y = np.clip(self._cur_y, 0, self._ny - 1)
 
-        self.v_line.set_data([self.cur_x, self.cur_x], [0, self.ny])
-        self.h_line.set_data([0, self.nx], [self.cur_y, self.cur_y])
+        self._v_line.set_data([self._cur_x, self._cur_x], [0, self._ny])
+        self._h_line.set_data([0, self._nx], [self._cur_y, self._cur_y])
 
-        self.update_profiles()
-        self.img.set_data(self.image_data)
-        self.fig.canvas.draw_idle()
+        self._update_profiles()
+        self._img.set_data(self._image_data)
+        self._fig.canvas.draw_idle()
 
-    def update_profiles(self):
-        v_prof_data = self.image_data[:, self.cur_x]
-        h_prof_data = self.image_data[self.cur_y, :]
+    def _update_profiles(self):
+        """Update vertical and horizontal profiles based on current cross-sections"""
+        v_prof_data = self._image_data[:, self._cur_x]
+        h_prof_data = self._image_data[self._cur_y, :]
 
         margin = 0.05  # 5% margin for better visualization
 
-        if self.auto_scale:
+        if self._auto_scale:
             v_min, v_max = v_prof_data.min(), v_prof_data.max()
             h_min, h_max = h_prof_data.min(), h_prof_data.max()
-
-            v_range = v_max - v_min
-            h_range = h_max - h_min
-
-            v_min -= v_range * margin
-            v_max += v_range * margin
-            h_min -= h_range * margin
-            h_max += h_range * margin
         else:
-            v_min, v_max = self.z_min, self.z_max
-            h_min, h_max = self.z_min, self.z_max
+            v_min, v_max = self._z_min, self._z_max
+            h_min, h_max = self._z_min, self._z_max
+        v_range = v_max - v_min
+        h_range = h_max - h_min
+
+        v_min -= v_range * margin
+        v_max += v_range * margin
+        h_min -= h_range * margin
+        h_max += h_range * margin
 
         # Ensure positive limits for log scale
-        if self.log_scale:
+        if self._log_scale:
             v_min = max(v_min, 1e-3)  # Avoid non-positive values
             h_min = max(h_min, 1e-3)
 
         # Update axes limits
-        self.right_ax.set_xlim(v_min, v_max)
-        self.v_prof.set_data(np.arange(self.ny), v_prof_data)
-        self.top_ax.set_ylim(h_min, h_max)
-        self.h_prof.set_data(np.arange(self.nx), h_prof_data)
+        self._right_ax.set_xlim(v_min, v_max)
+        self._v_prof.set_data(np.arange(self._ny), v_prof_data)
+        self._top_ax.set_ylim(h_min, h_max)
+        self._h_prof.set_data(np.arange(self._nx), h_prof_data)
 
-        self.v_prof.set_data(v_prof_data, np.arange(self.ny))
-        self.h_prof.set_data(np.arange(self.nx), h_prof_data)
+        self._v_prof.set_data(v_prof_data, np.arange(self._ny))
+        self._h_prof.set_data(np.arange(self._nx), h_prof_data)
 
-        self.fig.canvas.draw_idle()
+        self._fig.canvas.draw_idle()
 
-    def toggle_logscale(self, label):
+    def _toggle_logscale(self, label):
+        """Toggle log scale for the image and redraw"""
         if label == "Log Scale":
-            self.log_scale = not self.log_scale
-            self.update_norm()
-            self.img.set_norm(self.norm)
-            self.colorbar.update_normal(self.img)
-            self.update_profiles()
-            self.fig.canvas.draw_idle()
+            self._log_scale = not self._log_scale
+            self._update_norm()
+            self._img.set_norm(self._norm)
+            self._colorbar.update_normal(self._img)
+            self._update_profiles()
+            self._fig.canvas.draw_idle()
 
-    def toggle_autoscale(self, label):
+    def _toggle_autoscale(self, label):
+        """Toggle auto scale for the profiles and redraw"""
         if label == "Auto Scale":
-            self.auto_scale = not self.auto_scale
-            self.update_profiles()
-            self.fig.canvas.draw_idle()
+            self._auto_scale = not self._auto_scale
+            self._update_profiles()
+            self._fig.canvas.draw_idle()
 
-    def update_cmap(self, label):
-        self.cmap = label
-        self.img.set_cmap(self.cmap)
-        self.fig.canvas.draw_idle()
+    def _update_cmap(self, label):
+        """Update colormap dynamically from dropdown menu"""
+        self._cmap = label
+        self._img.set_cmap(self._cmap)
+        self._fig.canvas.draw_idle()
 
-    def create_widgets(self):
+    def _create_widgets(self):
+        """Create widgets for the interactive viewer"""
         ax_x_slider = plt.axes([0.2, 0.05, 0.65, 0.03])
-        self.x_slider = Slider(
-            ax_x_slider, "X Slice", 0, self.nx - 1, valinit=self.cur_x, valstep=1
+        self._x_slider = Slider(
+            ax_x_slider, "X Slice", 0, self._nx - 1, valinit=self._cur_x, valstep=1
         )
-        self.x_slider.on_changed(self.update_cross_section)
+        self._x_slider.on_changed(self._update_cross_section)
 
         ax_y_slider = plt.axes([0.2, 0.01, 0.65, 0.03])
-        self.y_slider = Slider(
-            ax_y_slider, "Y Slice", 0, self.ny - 1, valinit=self.cur_y, valstep=1
+        self._y_slider = Slider(
+            ax_y_slider, "Y Slice", 0, self._ny - 1, valinit=self._cur_y, valstep=1
         )
-        self.y_slider.on_changed(self.update_cross_section)
+        self._y_slider.on_changed(self._update_cross_section)
 
         ax_check_buttons = plt.axes([0.3, 0.85, 0.2, 0.1])
-        self.check_buttons = CheckButtons(
+        self._check_buttons = CheckButtons(
             ax_check_buttons,
             ["Log Scale", "Auto Scale"],
-            [self.log_scale, self.auto_scale],
+            [self._log_scale, self._auto_scale],
         )
-        self.check_buttons.on_clicked(self.toggle_logscale)
-        self.check_buttons.on_clicked(self.toggle_autoscale)
+        self._check_buttons.on_clicked(self._toggle_logscale)
+        self._check_buttons.on_clicked(self._toggle_autoscale)
 
         ax_cmap_radio = plt.axes([0.75, 0.85, 0.15, 0.15])
-        self.cmap_radio = RadioButtons(
+        self._cmap_radio = RadioButtons(
             ax_cmap_radio, ["viridis", "plasma", "gray", "magma", "hot"], active=4
         )
-        self.cmap_radio.on_clicked(self.update_cmap)
+        self._cmap_radio.on_clicked(self._update_cmap)
 
-    def on_click(self, event):
+    def _on_click(self, event):
+        """Update cross-sections based on mouse click"""
         if (
-            event.inaxes == self.main_ax
+            event.inaxes == self._main_ax
             and event.xdata is not None
             and event.ydata is not None
         ):
-            self.x_slider.set_val(int(event.xdata))
-            self.y_slider.set_val(int(event.ydata))
+            self._x_slider.set_val(int(event.xdata))
+            self._y_slider.set_val(int(event.ydata))
 
 
 class ImageXYProjectionViewer:
-    def __init__(self, image_data):
-        self.image_data = image_data.data
-        self.ny, self.nx = image_data.data.shape
-        self.z_max = image_data.data.max()
-        self.cmap = "hot"
-        self.log_scale = False
+    """
+    An Viewer for 2D images with X and Y projections.
+    The viewer displays an image with vertical and horizontal projections.
+    The user can set the colormap and set the log scale for the image.
+
+    Note: This viewer is designed for Jupyter Notebook.
+
+    Example of usage:
+        viewer = ImageXYProjectionViewer.view(image_data)
+    """
+
+    @classmethod
+    def view(cls, image: ImageDataType, colormap="hot", log_scale=False):
+        """Display an image with X and Y projections."""
+        image_data = image.data
+        ny, nx = image_data.shape
+        z_max = image_data.max()
 
         # Compute projections
-        self.x_projection = np.sum(self.image_data, axis=0)  # Sum along Y
-        self.y_projection = np.sum(self.image_data, axis=1)  # Sum along X
+        x_projection = np.sum(image_data, axis=0)  # Sum along Y
+        y_projection = np.sum(image_data, axis=1)  # Sum along X
 
         # Create figure
-        self.fig, self.main_ax = plt.subplots(figsize=(7, 7))
-        self.fig.subplots_adjust(top=0.85, bottom=0.2)
+        fig, main_ax = plt.subplots(figsize=(7, 7))
+        fig.subplots_adjust(top=0.85, bottom=0.2)
 
-        divider = make_axes_locatable(self.main_ax)
-        self.top_ax = divider.append_axes("top", 1.05, pad=0.1, sharex=self.main_ax)
-        self.right_ax = divider.append_axes("right", 1.05, pad=0.1, sharey=self.main_ax)
+        divider = make_axes_locatable(main_ax)
+        top_ax = divider.append_axes("top", 1.05, pad=0.1, sharex=main_ax)
+        right_ax = divider.append_axes("right", 1.05, pad=0.1, sharey=main_ax)
 
-        self.top_ax.xaxis.set_tick_params(labelbottom=False)
-        self.right_ax.yaxis.set_tick_params(labelleft=False)
+        top_ax.xaxis.set_tick_params(labelbottom=False)
+        right_ax.yaxis.set_tick_params(labelleft=False)
 
-        self.update_norm()
+        norm = LogNorm(vmin=1e-2, vmax=z_max) if log_scale else None
 
-        self.img = self.main_ax.imshow(
-            self.image_data, origin="lower", cmap=self.cmap, norm=self.norm
-        )
+        img = main_ax.imshow(image_data, origin="lower", cmap=colormap, norm=norm)
 
         # Add colorbar
-        self.colorbar = self.fig.colorbar(
-            self.img, ax=self.main_ax, orientation="vertical", shrink=0.8
-        )
+        colorbar = fig.colorbar(img, ax=main_ax, orientation="vertical", shrink=0.8)
 
-        self.main_ax.autoscale(enable=True)
-        self.right_ax.autoscale(enable=True)
-        self.top_ax.autoscale(enable=True)
+        main_ax.autoscale(enable=True)
+        right_ax.autoscale(enable=True)
+        top_ax.autoscale(enable=True)
 
         # Projection plots
-        (self.v_proj,) = self.right_ax.plot(
-            self.y_projection, np.arange(self.ny), "b-", label="Y Projection"
+        (v_proj,) = right_ax.plot(
+            y_projection, np.arange(ny), "b-", label="Y Projection"
         )
-        (self.h_proj,) = self.top_ax.plot(
-            np.arange(self.nx), self.x_projection, "b-", label="X Projection"
-        )
-
-        self.create_widgets()
-
-    def update_norm(self):
-        """Update normalization mode based on log scale checkbox"""
-        if self.log_scale:
-            positive_values = self.image_data[self.image_data > 0]
-            vmin = (
-                max(positive_values.min(), 1e-3) if positive_values.size > 0 else 1e-3
-            )
-            self.norm = LogNorm(vmin=vmin, vmax=self.z_max)
-        else:
-            self.norm = None
-
-    def update_colormap(self, label):
-        """Update colormap dynamically from dropdown menu"""
-        self.cmap = label
-        self.img.set_cmap(self.cmap)
-        self.colorbar.update_normal(self.img)
-        self.fig.canvas.draw_idle()
-
-    def toggle_logscale(self, label):
-        """Toggle log scale for the image and redraw"""
-        if label == "Log Scale":
-            self.log_scale = not self.log_scale
-            self.update_norm()
-            self.img.set_norm(self.norm)
-            self.colorbar.update_normal(self.img)
-            self.fig.canvas.draw_idle()
-
-    def create_widgets(self):
-        """Create widgets"""
-
-        ax_check_buttons = plt.axes([0.3, 0.85, 0.2, 0.1])
-        self.check_buttons = CheckButtons(
-            ax_check_buttons, ["Log Scale"], [self.log_scale]
-        )
-        self.check_buttons.on_clicked(self.toggle_logscale)
-
-        ax_cmap_dropdown = plt.axes([0.7, 0.82, 0.2, 0.1])
-        self.cmap_dropdown = RadioButtons(
-            ax_cmap_dropdown, ["viridis", "plasma", "gray", "magma", "hot"], active=4
-        )
-        self.cmap_dropdown.on_clicked(self.update_colormap)
+        (h_proj,) = top_ax.plot(np.arange(nx), x_projection, "b-", label="X Projection")
