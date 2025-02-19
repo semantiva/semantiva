@@ -4,42 +4,7 @@ from typing import Tuple
 from semantiva.data_types.data_types import BaseDataType, DataCollectionType
 from semantiva.context_operations import ContextType
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
-
-# We use the same IntDataType and IntDataCollection for our tests,
-# as provided in the example:
-
-
-class IntDataType(BaseDataType[int]):
-    """Concrete implementation of BaseDataType for testing"""
-
-    def validate(self, data: int) -> bool:
-        if not isinstance(data, int):
-            raise TypeError("Data must be an integer")
-        return True
-
-
-class IntDataCollection(DataCollectionType[IntDataType, list]):
-    """Concrete implementation of DataCollectionType for testing"""
-
-    @classmethod
-    def _initialize_empty(cls) -> list:
-        return []
-
-    def __iter__(self):
-        return iter(self._data)
-
-    def append(self, item: IntDataType) -> None:
-        if not isinstance(item, IntDataType):
-            raise TypeError("Item must be of type IntDataType")
-        self._data.append(item)
-
-    def __len__(self) -> int:
-        return len(self._data)
-
-    def validate(self, data):
-        for item in data:
-            if not isinstance(item, IntDataType):
-                raise TypeError("Data must be a list of IntDataType objects")
+from .test_utils import IntDataType
 
 
 # -----------------------------------------------------------------------------------

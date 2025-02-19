@@ -1,40 +1,11 @@
 import pytest
 from semantiva.data_types.data_types import BaseDataType, DataCollectionType
-
-
-# Concrete implementation of BaseDataType for testing
-class IntDataType(BaseDataType[int]):
-    def validate(self, data: int) -> bool:
-        if not isinstance(data, int):
-            raise TypeError("Data must be an integer")
-        return True
-
-
-# Concrete implementation of DataCollectionType for testing
-class IntDataCollection(DataCollectionType[IntDataType, list]):
-    @classmethod
-    def _initialize_empty(cls) -> list:
-        return []
-
-    def __iter__(self):
-        return iter(self._data)
-
-    def append(self, item: IntDataType) -> None:
-        if not isinstance(item, IntDataType):
-            raise TypeError("Item must be of type IntDataType")
-        self._data.append(item)
-
-    def __len__(self) -> int:
-        return len(self._data)
-
-    def validate(self, data):
-        for item in data:
-            if not isinstance(item, IntDataType):
-                raise TypeError("Data must be a list of IntDataType objects")
+from .test_utils import IntDataType, IntDataCollection
 
 
 # Tests for BaseDataType
 def test_base_data_type():
+    """Test the BaseDataType class."""
     int_data = IntDataType(10)
     assert int_data.data == 10
 
@@ -47,6 +18,7 @@ def test_base_data_type():
 
 # Tests for DataCollectionType
 def test_data_collection_type():
+    """Test the DataCollectionType class."""
     collection = IntDataCollection()
     assert len(collection) == 0
 
