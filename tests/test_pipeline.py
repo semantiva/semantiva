@@ -97,9 +97,6 @@ class IntCollectValueProbe(IntProbe):
     def _operation(self, data, *args, **kwargs):
         return data.data
 
-    # Create a list of integers
-    data = IntDataType(5)
-
 
 # Start test
 @pytest.fixture
@@ -170,12 +167,20 @@ def test_pipeline_execution(int_data, empty_context):
     assert "dummy_keyword" not in context.keys()
     assert isinstance(data, IntDataType)
     assert data.data == 30
+    assert pipeline.get_probe_results()["Node 3/IntCollectValueProbe"][0] == 30
 
 
 def test_pipeline_execution_with_collection(int_data_collection, empty_context):
     """Test the execution of a pipeline with collection data."""
     # Define node configurations
     node_configurations = [
+        {
+            "operation": IntCollectValueProbe,
+            "context_keyword": "mock_keyword",
+        },
+        {
+            "operation": IntCollectValueProbe,
+        },
         {
             "operation": IntCollectionSumAlgorithm,
         },
@@ -189,14 +194,12 @@ def test_pipeline_execution_with_collection(int_data_collection, empty_context):
 
     assert isinstance(data, IntDataType)
     assert data.data == 6
-    # multiple data and 1 context, so it should be replicated
-    # to match the number of data elements
-    assert isinstance(context, ContextCollectionType)
-    assert len(context) == 3
+    assert context.get_value("mock_keyword") == [1, 2, 3]
+    assert pipeline.get_probe_results()["Node 2/IntCollectValueProbe"][0] == [1, 2, 3]
 
 
-"""
-def test_pipeline_slicing(int_data_collection, empty_context):
+def test_pipeline_slicing(int_data_collection, empty_context_collection):
+    """Test the execution of a pipeline with slicing."""
     # Define node configurations
     node_configurations = [
         {
@@ -208,10 +211,26 @@ def test_pipeline_slicing(int_data_collection, empty_context):
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": IntCollectionMergeAlgorithm,
+            "operation": IntCollectValueProbe,
         },
     ]
 
     # Create a pipeline
     pipeline = Pipeline(node_configurations)
-"""
+
+    data, context = pipeline.process(int_data_collection, empty_context_collection)
+    print(context)
+    assert isinstance(data, IntDataCollection)
+    assert len(data) == 3
+    assert data.data[0].data == 2
+    assert data.data[1].data == 4
+    assert data.data[2].data == 6
+    expected_context_values = [2, 4, 6]
+    for i, context in enumerate(context):
+        assert "mock_keyword" in context.keys()
+        assert context.get_value("mock_keyword") == expected_context_values[i]
+
+    assert (
+        pipeline.get_probe_results()["Node 3/IntCollectValueProbe"][0]
+        == expected_context_values
+    )

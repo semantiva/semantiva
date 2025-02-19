@@ -3,12 +3,15 @@ from typing import Tuple
 
 from semantiva.data_types.data_types import BaseDataType, DataCollectionType
 from semantiva.context_operations import ContextType
+from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 
 # We use the same IntDataType and IntDataCollection for our tests,
 # as provided in the example:
 
 
 class IntDataType(BaseDataType[int]):
+    """Concrete implementation of BaseDataType for testing"""
+
     def validate(self, data: int) -> bool:
         if not isinstance(data, int):
             raise TypeError("Data must be an integer")
@@ -16,6 +19,8 @@ class IntDataType(BaseDataType[int]):
 
 
 class IntDataCollection(DataCollectionType[IntDataType, list]):
+    """Concrete implementation of DataCollectionType for testing"""
+
     @classmethod
     def _initialize_empty(cls) -> list:
         return []
@@ -35,12 +40,6 @@ class IntDataCollection(DataCollectionType[IntDataType, list]):
         for item in data:
             if not isinstance(item, IntDataType):
                 raise TypeError("Data must be a list of IntDataType objects")
-
-
-# -----------------------------------------------------------------------------------
-# Now, import the abstract base classes from your data_io module:
-# -----------------------------------------------------------------------------------
-from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 
 
 # -----------------------------------------------------------------------------------
