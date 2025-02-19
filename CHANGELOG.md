@@ -4,6 +4,49 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Here is the updated changelog with the missing items included and the requested rewording.
+
+---
+
+## [UNRELEASED] -
+
+### Added
+- **Refactored Data Slicing Strategies & Improved Context Handling**:
+  - Enhanced `_slicing_strategy` for clearer data-context separation.
+  - Ensured proper aggregation of created keys in `_execute_data_collection_single_context`.
+  - Enforced one-to-one mapping in `_execute_data_collection_context_collection`.
+  
+- **Pipeline Support for Collection Feature Extraction and Fit Workflow**:
+  - Introduced a two-node pipeline workflow for feature extraction and model fitting.
+
+- **Component Loader Module**:
+  - Introduced `component_loader.py` to manage dynamic component loading.
+
+- **YAML-Based Pipeline Loading**:
+  - Implemented `load_pipeline_from_yaml.py` to facilitate pipeline configuration from YAML files.
+
+- **Added Convenience Tools for Jupyter Notebook R&D and Debugging**:
+  - Introduced `image_viewers.py`, providing tools to aid interactive visualization and debugging.
+  - Viewers included in this release:
+    - `ImageViewer`
+    - `ImageInteractiveViewer`
+    - `XYProjectionViewer`
+    - `InteractiveCrossSectionViewer`
+    - `ImageStackPlayer`
+
+- **Node and Pipeline Modularization**:
+  - Added `pipeline.py` under `payload_operations/` to separate pipeline execution logic.
+  - Introduced `nodes.py` to handle different node types in a more modular manner.
+
+- **Enhanced Gaussian Fitting**:
+  - Introduced `TwoDTiltedGaussianFitterProbe` with rotation-aware Gaussian fitting.
+  - Improved initial parameter estimation using second-moment analysis.
+  - Ensured orientation angle consistency with normalization to [0, 180] degrees.
+
+### Removed
+- **Deprecated Data Collection Fit Probe**:
+  - `data_collection_fit_probe.py` was removed, replaced by improved feature extraction workflows.
+
 ## [v0.2.0] - 2025-01-27
 
 ### Added
