@@ -34,6 +34,7 @@ def dummy_image_stack_data():
 
 @pytest.fixture
 def image_normalizer_algorithm():
+    """Fixture for the ImageNormalizerAlgorithm."""
     return ImageNormalizerAlgorithm()
 
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Type, TypeVar, Generic
+from typing import Tuple, TypeVar, Generic
 from semantiva.context_operations import ContextType
 from semantiva.data_types import BaseDataType
 
@@ -146,7 +146,7 @@ class DataSink(ABC, Generic[T]):
         Returns:
             None
         """
-        return self._send_data(*args, **kwargs)
+        return self._send_data(data, *args, **kwargs)
 
     @abstractmethod
     def input_data_type(self) -> BaseDataType[T]:
