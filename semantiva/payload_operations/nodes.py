@@ -14,7 +14,22 @@ from ..component_loader import ComponentLoader
 from .payload_operations import PayloadOperation
 
 
-class DataNode(PayloadOperation):
+class PipelineNode(PayloadOperation):
+    """
+    Represents a node in a processing pipeline that encapsulates a single payload operation.
+
+    This class is designed to be a building block in a larger processing pipeline. Each
+    instance of this node may perform a specific operation on the payload data, contributing
+    to the overall transformation or analysis process.
+    """
+
+    operation: BaseDataOperation | ContextOperation
+    operation_config: Dict
+    stop_watch: StopWatch
+    logger: Logger
+
+
+class DataNode(PipelineNode):
     """
     Represents a node responsible for executing data operations within a processing pipeline.
 
@@ -29,9 +44,6 @@ class DataNode(PayloadOperation):
     """
 
     operation: BaseDataOperation
-    operation_config: Dict
-    stop_watch: StopWatch
-    logger: Logger
 
     def __init__(
         self,
@@ -271,7 +283,7 @@ class DataNode(PayloadOperation):
         pass
 
 
-class ContextNode(PayloadOperation):
+class ContextNode(PipelineNode):
     """
     Represents a node in the semantic framework.
 
@@ -286,9 +298,6 @@ class ContextNode(PayloadOperation):
     """
 
     operation: ContextOperation
-    operation_config: Dict
-    stop_watch: StopWatch
-    logger: Logger
 
     def __init__(
         self,
