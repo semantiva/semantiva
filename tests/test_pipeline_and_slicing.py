@@ -5,11 +5,10 @@ from semantiva.context_operations.context_types import (
 )
 from semantiva.payload_operations import Pipeline
 from .test_utils import (
-    IntDataType,
-    IntDataCollection,
-    IntMultiplyAlgorithm,
-    IntCollectValueProbe,
-    IntCollectionSumAlgorithm,
+    FloatDataType,
+    FloatDataCollection,
+    FloatMultiplyAlgorithm,
+    FloatCollectValueProbe,
 )
 
 
@@ -17,13 +16,15 @@ from .test_utils import (
 @pytest.fixture
 def int_data():
     """Pytest fixture for providing an IntDataType instance with generated integer data."""
-    return IntDataType(5)
+    return FloatDataType(5.0)
 
 
 @pytest.fixture
 def int_data_collection():
     """Pytest fixture for providing an IntDataCollection instance with generated integer data."""
-    return IntDataCollection.from_list([IntDataType(1), IntDataType(2), IntDataType(3)])
+    return FloatDataCollection.from_list(
+        [FloatDataType(1.0), FloatDataType(2.0), FloatDataType(3.0)]
+    )
 
 
 @pytest.fixture
@@ -45,22 +46,22 @@ def test_pipeline_execution(int_data, empty_context):
     # Define node configurations
     node_configurations = [
         {
-            "operation": IntMultiplyAlgorithm,
+            "operation": FloatMultiplyAlgorithm,
             "parameters": {"factor": 2},
         },
         {
-            "operation": IntMultiplyAlgorithm,
+            "operation": FloatMultiplyAlgorithm,
             "parameters": {"factor": 3},
         },
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
         },
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
             "context_keyword": "dummy_keyword",
         },
         {
@@ -80,24 +81,29 @@ def test_pipeline_execution(int_data, empty_context):
     assert "final_keyword" in context.keys()
     assert context.get_value("final_keyword") == 30
     assert "dummy_keyword" not in context.keys()
-    assert isinstance(data, IntDataType)
-    assert data.data == 30
-    assert pipeline.get_probe_results()["Node 3/IntCollectValueProbe"][0] == 30
+    assert isinstance(data, FloatDataType)
+    assert data.data == 30.0
+    assert pipeline.get_probe_results()["Node 3/FloatCollectValueProbe"][0] == 30.0
 
 
-def test_pipeline_execution_with_collection(int_data_collection, empty_context):
-    """Test the execution of a pipeline with collection data."""
+def test_pipeline_execution_with_single_context(int_data_collection, empty_context):
+    """Test the execution of a pipeline with single context.
+    The FloatDataCollection is sliced into individual FloatDataType objects,
+    and the same context is passed to each sliced item.
+    The final output should be a FloatDataCollection with the same number of elements as the input collection.
+    The context should remain a single ContextType instance."""
     # Define node configurations
     node_configurations = [
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
         },
         {
-            "operation": IntCollectionSumAlgorithm,
+            "operation": FloatMultiplyAlgorithm,
+            "parameters": {"factor": 2},
         },
     ]
 
@@ -107,26 +113,39 @@ def test_pipeline_execution_with_collection(int_data_collection, empty_context):
     # Process the data
     data, context = pipeline.process(int_data_collection, empty_context)
 
-    assert isinstance(data, IntDataType)
-    assert data.data == 6
-    assert context.get_value("mock_keyword") == [1, 2, 3]
-    assert pipeline.get_probe_results()["Node 2/IntCollectValueProbe"][0] == [1, 2, 3]
+    assert isinstance(data, FloatDataCollection)
+    assert len(data) == 3
+    assert data.data[0].data == 2
+    assert data.data[1].data == 4
+    assert data.data[2].data == 6
+    assert isinstance(context, ContextType)
+    assert context.get_value("mock_keyword") == [1.0, 2.0, 3.0]
+    assert pipeline.get_probe_results()["Node 2/FloatCollectValueProbe"][0] == [
+        1.0,
+        2.0,
+        3.0,
+    ]
 
 
-def test_pipeline_slicing(int_data_collection, empty_context_collection):
-    """Test the execution of a pipeline with slicing."""
+def test_pipeline_slicing_with_context_collection(
+    int_data_collection, empty_context_collection
+):
+    """Test the execution of a pipeline with slicing and context collection.
+    The FloatDataCollection is sliced into individual FloatDataType objects, and the context collection
+    is sliced into individual ContextType objects. The final output should be a FloatDataCollection
+    with the same number of elements as the input collection."""
     # Define node configurations
     node_configurations = [
         {
-            "operation": IntMultiplyAlgorithm,
+            "operation": FloatMultiplyAlgorithm,
             "parameters": {"factor": 2},
         },
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
         },
     ]
 
@@ -135,17 +154,17 @@ def test_pipeline_slicing(int_data_collection, empty_context_collection):
 
     data, context = pipeline.process(int_data_collection, empty_context_collection)
     print(context)
-    assert isinstance(data, IntDataCollection)
+    assert isinstance(data, FloatDataCollection)
     assert len(data) == 3
-    assert data.data[0].data == 2
-    assert data.data[1].data == 4
-    assert data.data[2].data == 6
-    expected_context_values = [2, 4, 6]
+    assert data.data[0].data == 2.0
+    assert data.data[1].data == 4.0
+    assert data.data[2].data == 6.0
+    expected_context_values = [2.0, 4.0, 6.0]
     for i, context in enumerate(context):
         assert "mock_keyword" in context.keys()
         assert context.get_value("mock_keyword") == expected_context_values[i]
 
     assert (
-        pipeline.get_probe_results()["Node 3/IntCollectValueProbe"][0]
+        pipeline.get_probe_results()["Node 3/FloatCollectValueProbe"][0]
         == expected_context_values
     )

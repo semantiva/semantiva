@@ -1,63 +1,64 @@
 import pytest
-from semantiva.data_types.data_types import BaseDataType, DataCollectionType
-from .test_utils import IntDataType, IntDataCollection
+from .test_utils import FloatDataType, FloatDataCollection
 
 
 # Tests for BaseDataType
 def test_base_data_type():
     """Test the BaseDataType class."""
-    int_data = IntDataType(10)
-    assert int_data.data == 10
+    float_data = FloatDataType(10.0)
+    assert float_data.data == 10.0
 
     with pytest.raises(TypeError):
-        IntDataType("not an int")
+        FloatDataType("not an int")
 
-    int_data.data = 20
-    assert int_data.data == 20
+    float_data.data = 20.0
+    assert float_data.data == 20.0
 
 
 # Tests for DataCollectionType
 def test_data_collection_type():
     """Test the DataCollectionType class."""
-    collection = IntDataCollection()
+    collection = FloatDataCollection()
     assert len(collection) == 0
 
-    int_data1 = IntDataType(10)
-    int_data2 = IntDataType(20)
+    float_data1 = FloatDataType(10.0)
+    float_data2 = FloatDataType(20.0)
 
-    collection.append(int_data1)
-    collection.append(int_data2)
+    collection.append(float_data1)
+    collection.append(float_data2)
 
     assert len(collection) == 2
-    assert list(collection) == [int_data1, int_data2]
+    assert list(collection) == [float_data1, float_data2]
 
     with pytest.raises(TypeError):
         collection.append("not an IntDataType")
 
-    collection_from_list = IntDataCollection.from_list([int_data1, int_data2])
+    collection_from_list = FloatDataCollection.from_list([float_data1, float_data2])
     assert len(collection_from_list) == 2
-    assert list(collection_from_list) == [int_data1, int_data2]
+    assert list(collection_from_list) == [float_data1, float_data2]
 
 
 def test_data_collection_iter():
-    collection = IntDataCollection()
-    int_data1 = IntDataType(10)
-    int_data2 = IntDataType(20)
-    collection.append(int_data1)
-    collection.append(int_data2)
+    """Test the __iter__ method of DataCollection"""
+    collection = FloatDataCollection()
+    float_data1 = FloatDataType(10.0)
+    float_data2 = FloatDataType(20.0)
+    collection.append(float_data1)
+    collection.append(float_data2)
 
     items = [item for item in collection]
-    assert items == [int_data1, int_data2]
+    assert items == [float_data1, float_data2]
 
 
 def test_data_collection_len():
-    collection = IntDataCollection()
+    """Test the __len__ method of DataCollection"""
+    collection = FloatDataCollection()
     assert len(collection) == 0
 
-    int_data1 = IntDataType(10)
-    int_data2 = IntDataType(20)
-    collection.append(int_data1)
-    collection.append(int_data2)
+    float_data1 = FloatDataType(10.0)
+    float_data2 = FloatDataType(20.0)
+    collection.append(float_data1)
+    collection.append(float_data2)
 
     assert len(collection) == 2
 

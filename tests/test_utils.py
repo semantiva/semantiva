@@ -4,17 +4,17 @@ from semantiva.data_operations import DataAlgorithm, DataProbe
 
 
 # Concrete implementation of BaseDataType for testing
-class IntDataType(BaseDataType[int]):
+class FloatDataType(BaseDataType[float]):
     """A data type for integers."""
 
-    def validate(self, data: int) -> bool:
-        if not isinstance(data, int):
-            raise TypeError("Data must be an integer")
+    def validate(self, data: float) -> bool:
+        if not isinstance(data, float):
+            raise TypeError("Data must be a float")
         return True
 
 
 # Concrete implementation of DataCollectionType for testing
-class IntDataCollection(DataCollectionType[IntDataType, list]):
+class FloatDataCollection(DataCollectionType[FloatDataType, list]):
     """A collection of IntDataType objects."""
 
     @classmethod
@@ -24,9 +24,9 @@ class IntDataCollection(DataCollectionType[IntDataType, list]):
     def __iter__(self):
         return iter(self._data)
 
-    def append(self, item: IntDataType) -> None:
-        if not isinstance(item, IntDataType):
-            raise TypeError("Item must be of type IntDataType")
+    def append(self, item: FloatDataType) -> None:
+        if not isinstance(item, FloatDataType):
+            raise TypeError("Item must be of type FloatDataType")
         self._data.append(item)
 
     def __len__(self) -> int:
@@ -34,59 +34,59 @@ class IntDataCollection(DataCollectionType[IntDataType, list]):
 
     def validate(self, data):
         for item in data:
-            if not isinstance(item, IntDataType):
-                raise TypeError("Data must be a list of IntDataType objects")
+            if not isinstance(item, FloatDataType):
+                raise TypeError("Data must be a list of FloatDataType objects")
 
 
 # Concrete implementation of DataAlgorithm
-class IntAlgorithm(DataAlgorithm):
+class FloatAlgorithm(DataAlgorithm):
     """An algorithm specialized for processing IntDataType data."""
 
     @classmethod
     def input_data_type(cls):
-        return IntDataType
+        return FloatDataType
 
     @classmethod
     def output_data_type(cls):
-        return IntDataType
+        return FloatDataType
 
 
-class IntCollectionMergeAlgorithm(DataAlgorithm):
+class FloatCollectionMergeAlgorithm(DataAlgorithm):
     """An algorithm specialized for merging IntDataCollection data."""
 
     @classmethod
     def input_data_type(cls):
-        return IntDataCollection
+        return FloatDataCollection
 
     @classmethod
     def output_data_type(cls):
-        return IntDataType
+        return FloatDataType
 
 
 # Concrete implementation of DataProbe
-class IntProbe(DataProbe):
+class Float(DataProbe):
     """A probe specialized for processing IntDataType data."""
 
     @classmethod
     def input_data_type(cls):
-        return IntDataType
+        return FloatDataType
 
 
-class IntMultiplyAlgorithm(IntAlgorithm):
+class FloatMultiplyAlgorithm(FloatAlgorithm):
     """An algorithm specialized for multiplying IntDataType data."""
 
     def _operation(self, data, factor, *args, **kwargs):
-        return IntDataType(data.data * factor)
+        return FloatDataType(data.data * factor)
 
 
-class IntCollectionSumAlgorithm(IntCollectionMergeAlgorithm):
+class FloatCollectionSumAlgorithm(FloatCollectionMergeAlgorithm):
     """An algorithm specialized for summing IntDataCollection data."""
 
     def _operation(self, data, *args, **kwargs):
-        return IntDataType(sum(item.data for item in data.data))
+        return FloatDataType(sum(item.data for item in data.data))
 
 
-class IntCollectValueProbe(IntProbe):
+class FloatCollectValueProbe(Float):
     """A probe specialized for collecting the value of IntDataType data."""
 
     def _operation(self, data, *args, **kwargs):

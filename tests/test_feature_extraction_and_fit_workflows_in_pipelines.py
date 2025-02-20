@@ -1,5 +1,5 @@
 import pytest
-from .test_utils import IntDataCollection, IntDataType, IntCollectValueProbe
+from .test_utils import FloatDataCollection, FloatDataType, FloatCollectValueProbe
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_operations.context_operations import ModelFittingContextOperation
 from semantiva.payload_operations.pipeline import Pipeline
@@ -8,9 +8,9 @@ from semantiva.payload_operations.pipeline import Pipeline
 @pytest.fixture
 def linear_int_data_collection(num_items=5):
     """Create a collection of IntDataType objects with linear data."""
-    data_collection = IntDataCollection()
+    data_collection = FloatDataCollection()
     for i in range(num_items):
-        data_collection.append(IntDataType(i))
+        data_collection.append(FloatDataType(float(i)))
     return data_collection
 
 
@@ -19,7 +19,7 @@ def test_pipeline_single_string_key(linear_int_data_collection):
     t_values = [i for i in range(len(linear_int_data_collection))]
     node_configurations = [
         {
-            "operation": IntCollectValueProbe,
+            "operation": FloatCollectValueProbe,
             "context_keyword": "data_values",
         },
         {
