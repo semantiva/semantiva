@@ -10,6 +10,7 @@ from .nodes import (
 )
 from ..logger import Logger
 from ..data_types.data_types import BaseDataType, DataCollectionType
+from ..data_operations.data_operations import DataAlgorithm
 from ..context_operations.context_types import ContextType
 from .nodes import node_factory
 
@@ -141,7 +142,7 @@ class Pipeline(PayloadOperation):
                             output type of the last `AlgorithmNode`.
         """
         # Find the last node that constrains the data type (i.e., last AlgorithmNode)
-        last_type_constraining_node = None
+        last_type_constraining_node: AlgorithmNode | None = None
         for previous_node in reversed(self.nodes):
             if isinstance(previous_node, AlgorithmNode):
                 last_type_constraining_node = previous_node
@@ -153,6 +154,7 @@ class Pipeline(PayloadOperation):
             return
 
         # Get the output type of the last type-constraining node and the input type of the new node
+        assert isinstance(last_type_constraining_node.operation, DataAlgorithm)
         output_type = last_type_constraining_node.operation.output_data_type()
         input_type = node.operation.input_data_type()
 
@@ -209,10 +211,10 @@ class Pipeline(PayloadOperation):
         """
         self.stop_watch.start()
         result_data, result_context = data, context
-        self.logger.debug("Start processing pipeline")
-        for node in self.nodes:
+        self.logger.info("Start processing pipeline")
+        for index, node in enumerate(self.nodes, start=1):
             self.logger.debug(
-                f"Processing {type(node.operation).__name__} ({type(node).__name__})"
+                f"Processing node {index}: {type(node.operation).__name__} ({type(node).__name__})"
             )
             self.logger.debug(f"    Data: {result_data}, Context: {result_context}")
             # Get the expected input type for the node's operation
@@ -235,9 +237,9 @@ class Pipeline(PayloadOperation):
                     f"expected {input_type}, but received {type(result_data)}."
                 )
         self.stop_watch.stop()
-        self.logger.debug("Finished pipeline")
+        self.logger.info("Pipeline execution complete.")
         self.logger.debug(
-            "Pipeline timers \n\tPipeline %s\n%s",
+            "Pipeline execution timing report: \n\tPipeline %s\n%s",
             str(self.stop_watch),
             self.get_timers(),
         )
@@ -245,62 +247,70 @@ class Pipeline(PayloadOperation):
 
     def inspect(self) -> str:
         """
-        Inspect the current pipeline structure and return its summary, including execution time.
+        Return a comprehensive summary of the pipeline's structure, including details about
+        each node, how parameters are derived, any context modifications, and total
+        execution time.
+
+        The summary covers:
+        • Node details: The class names of the nodes and their operations.
+        • Parameters: Which parameters come from the pipeline configuration versus the
+            context.
+        • Context updates: The keywords that each node creates or modifies in the context.
+        • Required context keys: The set of context parameters necessary for the pipeline.
+        • Execution time: The pipeline's cumulative execution time, tracked by the StopWatch.
 
         Returns:
-            str: A summary of the pipeline including nodes and their configuration, as well as
-                the total pipeline execution time. The summary includes:
-                - Node details: The class names of the nodes and their operations.
-                - Parameters: The parameters used by each node, categorized by their source
-                (pipeline configuration or context).
-                - Context updates: The keywords that each node will create or modify in the context dictionary.
-                - Context parameters needed: The final set of context parameters required by the pipeline.
+            str: A formatted report describing the pipeline composition and relevant details.
         """
 
-        # Format sets as comma-separated values instead of Python set syntax
-        def format_set(s):
-            return ", ".join(sorted(s)) if s else "None"
+        def format_set(values: set[str] | List[str]) -> str:
+            """Return a comma-separated string of sorted set items or 'None' if empty."""
+            return ", ".join(sorted(values)) if values else "None"
 
-        summary = "Pipeline Structure:\n"
+        summary_lines = ["Pipeline Structure:"]
+        all_required_params = set()
+        probe_injector_keywords = set()
 
-        all_context_params = set()
-        probe_injector_params = set()
-        node_summary = ""
-        for i, node in enumerate(self.nodes):
+        for index, node in enumerate(self.nodes, start=1):
+            # Gather parameter details from node operation
+            operation_param_names = set(node.operation.get_operation_parameter_names())
+            config_param_names = set(node.operation_config.keys())
+            context_param_names = operation_param_names - config_param_names
 
-            operation_params = set(node.operation.get_operation_parameter_names())
-            node_config_params = set(node.operation_config.keys())
-            context_params = operation_params - node_config_params
-
+            # Keep track of any ProbeContextInjectorNode keyword to exclude it from "required" lists
             if isinstance(node, ProbeContextInjectorNode):
-                probe_injector_params.add(node.context_keyword)
+                probe_injector_keywords.add(node.context_keyword)
 
-            all_context_params.update(context_params)
+            # Add these context param names to the global set of required keys
+            all_required_params.update(context_param_names)
 
-            # Extract configuration parameters with their values
-            config_with_values = (
-                ", ".join(
+            # Prepare a string of explicitly configured parameters with their assigned values
+            if node.operation_config:
+                config_with_values = ", ".join(
                     f"{key}={value}" for key, value in node.operation_config.items()
                 )
-                if node.operation_config
-                else "None"
-            )
-            node_summary += f"{i + 1}. Node: {node.operation.__class__.__name__}({node.__class__.__name__})\n"
-            node_summary += f"\tParameters: {format_set(operation_params)}\n"
-            node_summary += (
-                f"\t\tFrom pipeline configuration: {config_with_values or None}\n"
-            )
-            node_summary += f"\t\tFrom context: {format_set(context_params - probe_injector_params) or None}\n"
-            node_summary += (
-                f"\tContext additions: {format_set(node.get_created_keys())}\n"
-            )
+            else:
+                config_with_values = "None"
 
-        # Determine the final values needed in the context
-        needed_context_parameters = all_context_params - probe_injector_params
-        summary += f"Context parameters needed: {format_set(needed_context_parameters) or None}\n"
-        summary += node_summary
-        # summary += f"Pipeline {self.stop_watch}"
-        return summary
+            # Build up a textual summary of this node
+            lines_for_node = [
+                f"\n\t{index}. Node: {node.operation.__class__.__name__} ({node.__class__.__name__})",
+                f"\t\tParameters: {format_set(operation_param_names)}",
+                f"\t\t\tFrom pipeline configuration: {config_with_values}",
+                f"\t\t\tFrom context: {format_set(context_param_names - probe_injector_keywords)}",
+                f"\t\tContext additions: {format_set(node.get_created_keys())}",
+            ]
+            summary_lines.extend(lines_for_node)
+
+        # Determine which context keys are still needed, excluding those created by probe injector nodes
+        needed_context_keys = all_required_params - probe_injector_keywords
+
+        summary_lines.insert(
+            1, f"\tRequired context keys: {format_set(needed_context_keys)}"
+        )
+
+        # Return the final summary as one string
+        return "\n".join(summary_lines)
 
     def get_timers(self) -> str:
         """
@@ -311,7 +321,7 @@ class Pipeline(PayloadOperation):
                 elapsed CPU time, and elapsed wall time for each node.
         """
         timer_info = [
-            f"\tNode {i + 1}: {type(node.operation).__name__}; "
+            f"\t\tNode {i + 1}: {type(node.operation).__name__}; "
             f"\tElapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
             f"\tElapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s"
             for i, node in enumerate(self.nodes)
@@ -360,6 +370,7 @@ class Pipeline(PayloadOperation):
         pipeline configuration. Each node is then added to the pipeline.
         """
 
-        for node_config in self.pipeline_configuration:
+        for index, node_config in enumerate(self.pipeline_configuration, start=1):
             node = node_factory(node_config, self.logger)
+            self.logger.info(f"Initialized Node {index}: {type(node).__name__}")
             self._add_node(node)

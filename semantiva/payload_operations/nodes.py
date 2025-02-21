@@ -60,13 +60,13 @@ class DataNode(PipelineNode):
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         super().__init__(logger)
-        self.logger.info(
+        self.logger.debug(
             f"Initializing {self.__class__.__name__} ({data_operation.__name__})"
         )
         self.operation = (
-            data_operation(self, logger)
+            data_operation(self, self.logger)
             if issubclass(data_operation, DataAlgorithm)
-            else data_operation(logger=logger)
+            else data_operation(logger=self.logger)
         )
         self.stop_watch = StopWatch()
         self.operation_config = {} if operation_config is None else operation_config
@@ -314,7 +314,7 @@ class ContextNode(PipelineNode):
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         super().__init__(logger)
-        self.logger.info(
+        self.logger.debug(
             f"Initializing {self.__class__.__name__} ({context_operation.__name__})"
         )
         operation_config = operation_config or {}
@@ -822,7 +822,7 @@ def node_factory(
         raise ValueError("operation must be a class type or a string, not None.")
 
     if issubclass(operation, ContextOperation):
-        return ContextNode(operation, operation_config=parameters)
+        return ContextNode(operation, operation_config=parameters, logger=logger)
 
     elif issubclass(operation, DataAlgorithm):
         if context_keyword is not None:
