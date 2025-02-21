@@ -72,6 +72,9 @@ class ImageViewer:
             plt.colorbar()
         return fig
 
+    def __call__(self, *args, **kwargs):
+        return self.view(*args, **kwargs)
+
 
 class ImageInteractiveViewer:
     """
@@ -346,10 +349,18 @@ class ImageCrossSectionInteractiveViewer:
         h_min -= h_range * margin
         h_max += h_range * margin
 
+        v_range = v_max - v_min
+        h_range = h_max - h_min
+
+        v_min -= v_range * margin
+        v_max += v_range * margin
+        h_min -= h_range * margin
+        h_max += h_range * margin
+
         # Ensure positive limits for log scale
         if self._log_scale:
-            v_min = max(v_min, 1e-3)  # Avoid non-positive values
-            h_min = max(h_min, 1e-3)
+            v_min = max(v_min, 1e-34)  # Avoid non-positive values
+            h_min = max(h_min, 1e-34)
 
         # Update axes limits
         self._right_ax.set_xlim(v_min, v_max)
@@ -420,9 +431,9 @@ class ImageCrossSectionInteractiveViewer:
             event.inaxes == self._main_ax
             and event.xdata is not None
             and event.ydata is not None
-        ):
-            self._x_slider.set_val(int(event.xdata))
-            self._y_slider.set_val(int(event.ydata))
+        ):  # TODO: Add protection for values outside valid range
+            self.x_slider.set_val(int(event.xdata))
+            self.y_slider.set_val(int(event.ydata))
 
 
 class ImageXYProjectionViewer:

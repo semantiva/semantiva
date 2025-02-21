@@ -26,7 +26,8 @@ class ImageDataSource(DataSource):
         """
         pass
 
-    def get_data(self, *args, **kwargs) -> ImageDataType:
+    @classmethod
+    def get_data(cls, *args, **kwargs) -> ImageDataType:
         """
         Fetch and return `ImageDataType` data.
 
@@ -35,9 +36,10 @@ class ImageDataSource(DataSource):
         Returns:
             ImageDataType: The fetched image data.
         """
-        return self._get_data(*args, **kwargs)
+        return cls()._get_data(*args, **kwargs)
 
-    def output_data_type(self):
+    @staticmethod
+    def output_data_type():
         return ImageDataType
 
 

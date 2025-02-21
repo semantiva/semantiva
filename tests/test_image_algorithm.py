@@ -3,7 +3,7 @@ import numpy as np
 from semantiva.specializations.image.image_algorithms import (
     ImageAddition,
     ImageSubtraction,
-    ImageClipping,
+    ImageCropper,
     StackToImageMeanProjector,
     ImageNormalizerAlgorithm,
     ImageStackToSideBySideProjector,
@@ -59,8 +59,8 @@ def test_image_subtraction(dummy_image_data):
 
 
 def test_image_clipping(dummy_image_data):
-    """Test the ImageClipping algorithm."""
-    clipping = ImageClipping()
+    """Test the ImageCropper algorithm."""
+    clipping = ImageCropper()
     x_start, x_end, y_start, y_end = 50, 200, 50, 200
     result = clipping.process(dummy_image_data, x_start, x_end, y_start, y_end)
 

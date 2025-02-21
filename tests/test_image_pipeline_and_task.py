@@ -9,7 +9,7 @@ from semantiva.specializations.image.image_loaders_savers_generators import (
 from semantiva.specializations.image.image_algorithms import (
     ImageAddition,
     ImageSubtraction,
-    ImageClipping,
+    ImageCropper,
     StackToImageMeanProjector,
 )
 from semantiva.payload_operations import Pipeline
@@ -51,7 +51,7 @@ def test_pipeline_task(random_image, another_random_image):
     Tests a complete pipeline execution with multiple operations.
 
     - The first node (`StackToImageMeanProjector`) reduces the stack to a single `ImageDataType`.
-    - The following nodes (`ImageAddition`, `ImageSubtraction`, `ImageClipping`) modify the image.
+    - The following nodes (`ImageAddition`, `ImageSubtraction`, `ImageCropper`) modify the image.
     - The final output should be a single `ImageDataType`.
     """
 
@@ -69,7 +69,7 @@ def test_pipeline_task(random_image, another_random_image):
             "parameters": {"image_to_subtract": another_random_image},
         },
         {
-            "operation": ImageClipping,
+            "operation": ImageCropper,
             "parameters": {"x_start": 50, "x_end": 200, "y_start": 50, "y_end": 200},
         },
     ]
