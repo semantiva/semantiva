@@ -37,16 +37,6 @@ class BaseDataOperation(ABC, Generic[T]):
             Type[BaseDataType]: The expected input data type.
         """
 
-    @classmethod
-    def output_data_type(cls) -> Type[BaseDataType]:
-        """
-        Define the type of output data produced by the operation.
-
-        Returns:
-            Type[BaseDataType]: The expected output data type.
-        """
-        return cls.input_data_type()
-
     @abstractmethod
     def get_created_keys(self) -> List[str]:
         """
@@ -87,6 +77,10 @@ class BaseDataOperation(ABC, Generic[T]):
         """
         return self._operation(data, *args, **kwargs)
 
+    @classmethod
+    def run(cls, data, *args, **kwargs):
+        return cls().process(data, *args, **kwargs)
+
     def __call__(self, data: Any, *args, **kwargs) -> Any:
         """
         Allow the operation to be called as a callable object.
@@ -101,24 +95,49 @@ class BaseDataOperation(ABC, Generic[T]):
         """
         return self.process(data, *args, **kwargs)
 
-    def get_operation_parameter_names(self) -> List[str]:
+    @classmethod
+    def get_operation_parameter_names(cls) -> List[str]:
         """
         Retrieve the names of parameters required by the `_operation` method.
 
         Returns:
             List[str]: A list of parameter names (excluding `data`).
         """
-        signature = inspect.signature(self._operation)
+        signature = inspect.signature(cls._operation)
         return [
             param.name
             for param in signature.parameters.values()
-            if param.name != "data"
+            if param.name not in {"self", "data"}
             and param.kind
             not in {inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD}
         ]
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}"
+
+    @classmethod
+    def get_operation_parameters_with_types(cls) -> List[Tuple[str, str]]:
+        """
+        Retrieve the names and type hints of parameters required by the `_operation` method.
+
+        Returns:
+            List[Tuple[str, str]]: A list of tuples (param_name, param_type).
+        """
+        signature = inspect.signature(cls._operation)
+        return [
+            (
+                param.name,
+                (
+                    param.annotation.__name__
+                    if param.annotation != param.empty
+                    else "Unknown"
+                ),
+            )
+            for param in signature.parameters.values()
+            if param.name not in {"self", "data"}  # Exclude `self` and `data`
+            and param.kind
+            not in {inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD}
+        ]
 
 
 class DataAlgorithm(BaseDataOperation):
@@ -193,6 +212,44 @@ class DataAlgorithm(BaseDataOperation):
         """
         return self.context_keys()
 
+    @classmethod
+    def signature_string(cls) -> str:
+        """
+        Returns a structured multi-line string with the algorithm signature, showing:
+        - Class Name
+        - Input Data Type
+        - Output Data Type
+        - Operation Parameter Names with Type Hints
+
+        Returns:
+            str: A formatted multi-line signature string.
+        """
+        input_type = cls.input_data_type().__name__
+        output_type = cls.output_data_type().__name__
+        param_names_with_types = cls.get_operation_parameters_with_types()
+
+        params_section = (
+            "\n\t    - "
+            + "\n\t    - ".join(
+                f"{name}: {ptype}" for name, ptype in param_names_with_types
+            )
+            if param_names_with_types
+            else " None"
+        )
+
+        return f"""{cls.__name__} (DataAlgorithm)\n\tInput Type:  {input_type}\n\tOutput Type: {output_type}\n\tParameters:{params_section}\n"""
+
+    @classmethod
+    @abstractmethod
+    def output_data_type(cls) -> Type[BaseDataType]:
+        """
+        Define the type of output data produced by the operation.
+
+        Returns:
+            Type[BaseDataType]: The expected output data type.
+        """
+        ...
+
 
 class AlgorithmTopologyFactory:
     """
@@ -248,6 +305,32 @@ class DataProbe(BaseDataOperation):
     def get_created_keys(self) -> List[str]:
         """ """
         return []
+
+    @classmethod
+    def signature_string(cls) -> str:
+        """
+        Returns a structured multi-line string with the algorithm signature, showing:
+        - Class Name
+        - Input Data Type
+        - Output Data Type
+        - Operation Parameter Names with Type Hints
+
+        Returns:
+            str: A formatted multi-line signature string.
+        """
+        input_type = cls.input_data_type().__name__
+        param_names_with_types = cls.get_operation_parameters_with_types()
+
+        params_section = (
+            "\n\t    - "
+            + "\n\t    - ".join(
+                f"{name}: {ptype}" for name, ptype in param_names_with_types
+            )
+            if param_names_with_types
+            else " None"
+        )
+
+        return f"""{cls.__name__} (DataProbe)\n\tInput Type:  {input_type}\n\tParameters:{params_section}\n"""
 
 
 BaseType = TypeVar("BaseType", bound=BaseDataType)
