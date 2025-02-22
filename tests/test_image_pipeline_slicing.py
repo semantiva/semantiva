@@ -10,7 +10,7 @@ from semantiva.specializations.image.image_loaders_savers_generators import (
 from semantiva.specializations.image.image_algorithms import (
     ImageAddition,
     ImageSubtraction,
-    ImageClipping,
+    ImageCropper,
     StackToImageMeanProjector,
 )
 from semantiva.payload_operations import Pipeline
@@ -156,6 +156,12 @@ def test_pipeline_slicing_with_context_collection(
             "parameters": {},  # No extra parameters required (can be omitted)
             # No `context_keyword`, making this node a ProbeCollectorNode (results stored internally)
         },
+        {
+            "operation": "rename:mock_keyword:renamed_keyword",  # Rename `mock_keyword` element to `renamed_keyword`
+        },
+        {
+            "operation": "delete:renamed_keyword",  # Delete `renamed_keyword` from context
+        },
     ]
     pipeline = Pipeline(node_configurations)
 
@@ -191,7 +197,7 @@ def test_pipeline_without_slicing(random_image, another_random_image, random_con
             "parameters": {"image_to_add": another_random_image},
         },
         {
-            "operation": ImageClipping,
+            "operation": ImageCropper,
             "parameters": {"x_start": 50, "x_end": 200, "y_start": 50, "y_end": 200},
         },
     ]

@@ -7,6 +7,7 @@ from semantiva.context_operations.context_operations import (
     ContextOperation,
     ContextType,
 )
+from semantiva.logger import Logger
 
 
 def context_renamer_factory(original_key: str, destination_key: str):
@@ -18,56 +19,62 @@ def context_renamer_factory(original_key: str, destination_key: str):
         destination_key (str): The new key name.
 
     Returns:
-        Type[ContextOperation]: A dynamically generated class that renames context keys.
+        Type[ContextOperation]: A dynamically generated class that renames context keys,
+                                  with a name of the form "Rename_<original_key>_to_<destination_key>_Operation".
     """
 
-    class RenameOperation(ContextOperation):
+    def _operate_context(self, context: ContextType) -> ContextType:
         """
-        Dynamically generated context operation that renames a key in the context.
+        Rename a context key.
+
+        Args:
+            context (ContextType): The context to modify.
+
+        Returns:
+            ContextType: The updated context with the key renamed.
         """
+        if original_key in context.keys():
+            value = context.get_value(original_key)
+            context.set_value(destination_key, value)
+            context.delete_value(original_key)
+            self.logger.debug(
+                f"Renamed context key '{original_key}' -> '{destination_key}'"
+            )
+        else:
+            self.logger.warning(f"Key '{original_key}' not found in context.")
+        return context
 
-        def _operate_context(self, context: ContextType) -> ContextType:
-            """
-            Rename a context key.
+    def get_required_keys(self) -> List[str]:
+        """
+        Return a list containing the original key, as it is required for renaming.
+        """
+        return [original_key]
 
-            Args:
-                context (ContextType): The context to modify.
+    def get_created_keys(self) -> List[str]:
+        """
+        Return a list containing the new key, which is created as a result of renaming.
+        """
+        return [destination_key]
 
-            Returns:
-                ContextType: The updated context with the key renamed.
-            """
-            if original_key in context.keys():
-                value = context.get_value(original_key)
-                context.set_value(destination_key, value)
-                context.delete_value(original_key)
-                self.logger.info(
-                    f"Renamed context key '{original_key}' -> '{destination_key}'"
-                )
-            else:
-                self.logger.warning(f"Key '{original_key}' not found in context.")
+    def get_suppressed_keys(self) -> List[str]:
+        """
+        Return a list containing the original key, since it is suppressed after renaming.
+        """
+        return [original_key]
 
-            return context
+    # Define the class attributes and methods in a dictionary
+    class_attrs = {
+        "_operate_context": _operate_context,
+        "get_required_keys": get_required_keys,
+        "get_created_keys": get_created_keys,
+        "get_suppressed_keys": get_suppressed_keys,
+    }
 
-        def get_required_keys(self) -> List[str]:
-            """
-            Since this operation requires the original key to be present,
-            it returns a list containing the original key.
-            """
-            return [original_key]
+    # Create a dynamic class name that clearly shows the renaming transformation
+    dynamic_class_name = f"Rename_{original_key}_to_{destination_key}"
 
-        def get_created_keys(self) -> List[str]:
-            """
-            Since this operation creates a new key, it returns a list containing the new key.
-            """
-            return [destination_key]
-
-        def get_suppressed_keys(self) -> List[str]:
-            """
-            Since this operation suppresses the original key, it returns a list containing the original key.
-            """
-            return [original_key]
-
-    return RenameOperation  # Returns the class itself, not an instance
+    # Create and return the dynamically named class that inherits from ContextOperation.
+    return type(dynamic_class_name, (ContextOperation,), class_attrs)
 
 
 def context_deleter_factory(key: str):
@@ -78,54 +85,58 @@ def context_deleter_factory(key: str):
         key (str): The key to delete.
 
     Returns:
-        Type[ContextOperation]: A dynamically generated class that removes a key.
+        Type[ContextOperation]: A dynamically generated class that removes a key, with a name
+                                 of the form "Delete_<key>_Operation".
     """
 
-    class DeleteOperation(ContextOperation):
+    def _operate_context(self, context: ContextType) -> ContextType:
         """
-        A dynamically generated context operation that deletes a key from the context.
+        Remove a key/value pair from the context.
+
+        Args:
+            context (ContextType): The input context.
+
+        Returns:
+            ContextType: The updated context with the key removed.
         """
+        if key in context.keys():
+            context.delete_value(key)
+            self.logger.debug(f"Deleted context key '{key}'")
+        else:
+            self.logger.warning(f"Unable to delete non-existing '{key}' from context.")
+        return context
 
-        def _operate_context(self, context: ContextType) -> ContextType:
-            """
-            Remove a context key.
+    def get_required_keys(self) -> List[str]:
+        """
+        Return a list with the key to delete, indicating it is required.
+        """
+        return [key]
 
-            Args:
-                context (ContextType): The context to modify.
+    def get_created_keys(self) -> List[str]:
+        """
+        This operation does not create any keys.
+        """
+        return []
 
-            Returns:
-                ContextType: The updated context with the key removed.
-            """
-            if key in context.keys():
-                context.delete_value(key)
-                self.logger.info(f"Deleted context key '{key}'")
-            else:
-                self.logger.warning(f"Key '{key}' not found in context.")
+    def get_suppressed_keys(self) -> List[str]:
+        """
+        Return a list containing the key that is deleted.
+        """
+        return [key]
 
-            return context
+    # Define the class attributes and methods in a dictionary
+    class_attrs = {
+        "_operate_context": _operate_context,
+        "get_required_keys": get_required_keys,
+        "get_created_keys": get_created_keys,
+        "get_suppressed_keys": get_suppressed_keys,
+    }
 
-        def get_required_keys(self) -> List[str]:
-            """
-            Since this operation does not require any specific keys,
-            it returns an empty list.
-            """
-            return [key]
+    # Create a dynamic class name
+    dynamic_class_name = f"Delete_{key}"
 
-        def get_created_keys(self) -> List[str]:
-            """
-            Since this operation does not create any new keys,
-            it returns an empty list.
-            """
-            return []
-
-        def get_suppressed_keys(self) -> List[str]:
-            """
-            Since this operation suppresses the deleted key,
-            it returns a list containing the key to be deleted.
-            """
-            return [key]
-
-    return DeleteOperation  # Returns the class itself, not an instance
+    # Create and return the dynamically named class that inherits from ContextOperation.
+    return type(dynamic_class_name, (ContextOperation,), class_attrs)
 
 
 class ComponentLoader:
@@ -229,7 +240,7 @@ class ComponentLoader:
         try:
             module_spec.loader.exec_module(module)
         except Exception as e:
-            print(f"Error loading module {module_name}: {e}")
+            Logger().error(f"Error loading module {module_name}: {e}")
             return None
 
         # Check and return the class type

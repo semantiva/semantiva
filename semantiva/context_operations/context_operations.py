@@ -18,7 +18,6 @@ class ContextOperation(ABC):
 
     def __init__(self, logger: Optional[Logger] = None):
         self.logger = logger if logger else Logger()
-        self.logger.info(f"Initializing {self.__class__.__name__}")
 
     @abstractmethod
     def _operate_context(self, context: ContextType) -> ContextType:

@@ -9,7 +9,7 @@ pipeline:
 
     - operation: "rename:debug_info:final_info"
 
-    - operation: "ImageClipping"
+    - operation: "ImageCropper"
       parameters:
         x_start: 10
         x_end: 20

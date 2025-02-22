@@ -17,7 +17,7 @@ class Logger:
 
     Methods:
     set_verbose_level(verbosity_level: str): Sets the verbosity level of the logger.
-    set_console_output(): Configures the logger to output to the console.
+    set_console_output(enable: bool): Configures the logger to output to the console.
     set_file_output(file_path: str): Configures the logger to output to a specified file.
     """
 
@@ -33,12 +33,44 @@ class Logger:
         "%(asctime)s - %(levelname)-8s - %(message)s (%(module)s)"
     )
 
-    def __init__(self, logger: Optional[logging.Logger] = None):
-        if logger is None:
-            self.logger = logging.getLogger()
+    _initialized = False
 
+    def __init__(
+        self,
+        level: Optional[str] = None,
+        console_output: Optional[bool] = None,
+        logger: Optional[logging.Logger] = None,
+        name: Optional[str] = "Semantiva",
+    ):
+        """
+        Initialize the logger with specified configurations.
+
+        This constructor creates or reuses a logging.Logger instance. If no logger is provided,
+        it retrieves the default logger with the specified name (defaulting to "Semantiva"). When
+        an instance of Logger is created with a specified log level (e.g., level="DEBUG"), the log
+        level of the default logger "Semantiva" is updated accordingly. This means that, regardless
+        of where in the code this instance is created, the default logger's log level is changed
+        to the new value, affecting all components that use the "Semantiva" logger.
+
+        :param level: The logging level for the logger (e.g., "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL").
+        :param console_output: Whether to enable console output for log messages.
+        :param logger: An existing logging.Logger instance to use instead of creating a new one.
+        :param name: The name for the logger instance, defaults to "Semantiva".
+        """
+        if logger is None:
+            self.logger = logging.getLogger(name)
         else:
             self.logger = logger
+        if not self._initialized:
+            if level is None:
+                level = "INFO"
+            if console_output is None:
+                console_output = True
+        if level:
+            self.set_verbose_level(level)
+        if console_output is not None:
+            self.set_console_output(console_output)
+        self._initialized = True
 
     def set_verbose_level(self, verbosity_level: str):
         """
@@ -64,11 +96,35 @@ class Logger:
             verbosity_level,
         )
 
-    def set_console_output(self):
-        """Set console output handler"""
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(self.formatter)
-        self.logger.addHandler(console_handler)
+    def set_console_output(self, enable=True):
+        """
+        Enable or disable console output.
+
+        Parameters:
+        enable (bool): If True, add a sys.stdout handler; if False, remove it.
+        """
+        # Check if a console handler is already present
+        console_handler_exists = any(
+            isinstance(handler, logging.StreamHandler) and handler.stream == sys.stdout
+            for handler in self.logger.handlers
+        )
+
+        if enable:
+            if not console_handler_exists:
+                # Add the console handler only if not already present
+                console_handler = logging.StreamHandler(sys.stdout)
+                console_handler.setFormatter(self.formatter)
+                self.logger.addHandler(console_handler)
+        else:
+            # Remove any existing console handlers associated with sys.stdout
+            self.logger.handlers = [
+                handler
+                for handler in self.logger.handlers
+                if not (
+                    isinstance(handler, logging.StreamHandler)
+                    and handler.stream == sys.stdout
+                )
+            ]
 
     def set_file_output(self, file_path: str):
         """

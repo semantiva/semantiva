@@ -67,12 +67,12 @@ class ImageAddition(ImageAlgorithm):
         return ImageDataType(np.add(data.data, image_to_add.data))
 
 
-class ImageClipping(ImageAlgorithm):
+class ImageCropper(ImageAlgorithm):
     """
-    A class for clipping a region from an image.
+    A class for cropping a region from an image.
 
     This class inherits from `ImageAlgorithm` and implements an operation
-    to clip a rectangular region from the input image.
+    to crop a rectangular region from the input image.
     """
 
     def _operation(
@@ -84,20 +84,20 @@ class ImageClipping(ImageAlgorithm):
         y_end: int,
     ) -> ImageDataType:
         """
-        Clips a rectangular region from the input image.
+        Crop a rectangular region from the input image.
 
         Parameters:
             data (ImageDataType): The original image data.
-            x_start (int): The starting x-coordinate of the clipping region.
-            x_end (int): The ending x-coordinate of the clipping region.
-            y_start (int): The starting y-coordinate of the clipping region.
-            y_end (int): The ending y-coordinate of the clipping region.
+            x_start (int): The starting x-coordinate of the cropped region.
+            x_end (int): The ending x-coordinate of the cropped region.
+            y_start (int): The starting y-coordinate of the cropped region.
+            y_end (int): The ending y-coordinate of the cropped region.
 
         Returns:
-            ImageDataType: The clipped region of the image.
+            ImageDataType: The cropped region of the image.
 
         Raises:
-            ValueError: If the specified clipping region is out of bounds.
+            ValueError: If the specified cropped region is out of bounds.
         """
 
         # Ensure the region is within bounds
@@ -110,8 +110,8 @@ class ImageClipping(ImageAlgorithm):
                 f"y-coordinates out of bounds: y_start={y_start}, y_end={y_end}, height={data.data.shape[0]}"
             )
 
-        clipped_data = data.data[y_start:y_end, x_start:x_end]
-        return ImageDataType(clipped_data)
+        cropped_array = data.data[y_start:y_end, x_start:x_end]
+        return ImageDataType(cropped_array)
 
 
 class StackToImageMeanProjector(ImageStackToImageProjector):

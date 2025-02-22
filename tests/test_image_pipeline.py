@@ -50,7 +50,7 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     1. StackToImageMeanProjector: Flattens the image stack to a 2D image.
     2. ImageAddition: Adds a random image to the flattened image.
     3. ImageSubtraction: Subtracts another random image from the result.
-    4. ImageClipping: Clips the final image to a specific region.
+    4. ImageCropper: Clips the final image to a specific region.
     """
     # Define node configurations
     node_configurations = [
@@ -67,7 +67,7 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
             "parameters": {"image_to_subtract": random_image2},
         },
         {
-            "operation": "ImageClipping",
+            "operation": "ImageCropper",
             "parameters": {"x_start": 50, "x_end": 200, "y_start": 50, "y_end": 200},
         },
     ]

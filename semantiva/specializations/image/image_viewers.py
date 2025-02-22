@@ -72,6 +72,9 @@ class ImageViewer:
             plt.colorbar()
         return fig
 
+    def __call__(self, *args, **kwargs):
+        return self.view(*args, **kwargs)
+
 
 class ImageInteractiveViewer:
     """
@@ -348,8 +351,8 @@ class ImageCrossSectionInteractiveViewer:
 
         # Ensure positive limits for log scale
         if self._log_scale:
-            v_min = max(v_min, 1e-3)  # Avoid non-positive values
-            h_min = max(h_min, 1e-3)
+            v_min = max(v_min, 1e-34)  # Avoid non-positive values
+            h_min = max(h_min, 1e-34)
 
         # Update axes limits
         self._right_ax.set_xlim(v_min, v_max)
