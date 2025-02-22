@@ -61,16 +61,23 @@ class Logger:
             self.logger = logging.getLogger(name)
         else:
             self.logger = logger
+
+        # If the Logger class has not been initialized yet, set default values.
+        # This ensures that the default log level and console output are only set once.
         if not self._initialized:
             if level is None:
-                level = "INFO"
+                level = "INFO"  # Default log level is INFO if not specified
             if console_output is None:
-                console_output = True
-        if level:
+                console_output = True  # Enable console output by default
+
+        # Apply the provided or default log level and console output configuration.
+        if level is not None:
             self.set_verbose_level(level)
         if console_output is not None:
             self.set_console_output(console_output)
-        self._initialized = True
+
+        # Mark the Logger class as initialized.
+        type(self)._initialized = True
 
     def set_verbose_level(self, verbosity_level: str):
         """

@@ -38,7 +38,9 @@ def empty_context_collection():
     """Pytest fixture for providing an empty context collection with the
     same size as the number of elements in IntDataCollection."""
 
-    return ContextCollectionType([ContextType(), ContextType(), ContextType()])
+    return ContextCollectionType(
+        context_list=[ContextType(), ContextType(), ContextType()]
+    )
 
 
 def test_pipeline_execution(int_data, empty_context):
