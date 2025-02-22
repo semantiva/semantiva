@@ -63,7 +63,9 @@ def random_context_collection():
     """
     Pytest fixture providing a ContextCollectionType with 5 distinct context items.
     """
-    return ContextCollectionType([ContextType({"param": i}) for i in range(5)])
+    return ContextCollectionType(
+        context_list=[ContextType({"param": i}) for i in range(5)]
+    )
 
 
 def test_pipeline_slicing_with_single_context(

@@ -31,7 +31,7 @@ def test_context_type():
 def test_context_collection_type():
     context1 = ContextType({"key1": "value1"})
     context2 = ContextType({"key2": "value2"})
-    collection = ContextCollectionType([context1, context2])
+    collection = ContextCollectionType(context_list=[context1, context2])
 
     assert len(collection) == 2
     assert collection[0] == context1
