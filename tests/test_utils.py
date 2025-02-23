@@ -13,16 +13,6 @@ class FloatDataType(BaseDataType[float]):
         return True
 
 
-# Concrete implementation of BaseDataType for testing in string
-class IntDataType(BaseDataType[int]):
-    """A data type for integers."""
-
-    def validate(self, data: int) -> bool:
-        if not isinstance(data, int):
-            raise TypeError("Data must be an integer")
-        return True
-
-
 # Concrete implementation of DataCollectionType for testing
 class FloatDataCollection(DataCollectionType[FloatDataType, list]):
     """A collection of IntDataType objects."""
@@ -61,19 +51,6 @@ class FloatAlgorithm(DataAlgorithm):
         return FloatDataType
 
 
-# Concrete implementation of DataAlgorithm
-class IntAlgorithm(DataAlgorithm):
-    """An algorithm specialized for processing IntDataType data."""
-
-    @classmethod
-    def input_data_type(cls):
-        return IntDataType
-
-    @classmethod
-    def output_data_type(cls):
-        return IntDataType
-
-
 class FloatCollectionMergeAlgorithm(DataAlgorithm):
     """An algorithm specialized for merging FloatDataCollection data."""
 
@@ -100,13 +77,6 @@ class FloatMultiplyAlgorithm(FloatAlgorithm):
 
     def _operation(self, data, factor, *args, **kwargs):
         return FloatDataType(data.data * factor)
-
-
-class IntMultiplyAlgorithm(IntAlgorithm):
-    """An algorithm specialized for multiplying IntDataType data."""
-
-    def _operation(self, data, factor, *args, **kwargs):
-        return IntDataType(data.data * factor)
 
 
 class FloatCollectionSumAlgorithm(FloatCollectionMergeAlgorithm):

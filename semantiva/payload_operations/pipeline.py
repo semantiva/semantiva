@@ -142,7 +142,9 @@ class Pipeline(PayloadOperation):
                             output type of the last `AlgorithmNode`.
         """
 
-        def _get_base_type(data_type):
+        def _get_base_type(
+            data_type: type[BaseDataType] | type[DataCollectionType],
+        ) -> type[BaseDataType]:
             """Returns the base type if data_type is a DataCollectionType, else returns data_type."""
             if isinstance(data_type, type) and issubclass(
                 data_type, DataCollectionType

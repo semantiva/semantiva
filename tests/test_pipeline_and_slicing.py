@@ -10,8 +10,8 @@ from .test_utils import (
     FloatMultiplyAlgorithm,
     FloatCollectValueProbe,
     FloatCollectionSumAlgorithm,
-    IntMultiplyAlgorithm,
 )
+from .test_string_specialization import HelloOperation
 
 
 # Start test
@@ -232,8 +232,7 @@ def test_image_pipeline_invalid_configuration():
             "parameters": {"factor": 2},
         },
         {
-            "operation": IntMultiplyAlgorithm,
-            "parameters": {"factor": 2},
+            "operation": HelloOperation,
         },
     ]
 
