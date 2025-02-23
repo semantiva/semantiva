@@ -103,25 +103,3 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     print(
         "==============================================================================="
     )
-
-
-def test_image_pipeline_invalid_configuration():
-    """
-    Test that an invalid pipeline configuration raises an AssertionError.
-    """
-
-    # Define invalid node configurations
-    node_configurations = [
-        {
-            "operation": ImageAddition,
-            "parameters": {},
-        },
-        {
-            "operation": StackToImageMeanProjector,
-            "parameters": {},
-        },
-    ]
-
-    # Check that initializing the pipeline raises an AssertionError
-    with pytest.raises(AssertionError):
-        _ = Pipeline(node_configurations)

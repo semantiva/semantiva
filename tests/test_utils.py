@@ -13,6 +13,16 @@ class FloatDataType(BaseDataType[float]):
         return True
 
 
+# Concrete implementation of BaseDataType for testing in string
+class IntDataType(BaseDataType[int]):
+    """A data type for integers."""
+
+    def validate(self, data: int) -> bool:
+        if not isinstance(data, int):
+            raise TypeError("Data must be an integer")
+        return True
+
+
 # Concrete implementation of DataCollectionType for testing
 class FloatDataCollection(DataCollectionType[FloatDataType, list]):
     """A collection of IntDataType objects."""
@@ -40,7 +50,7 @@ class FloatDataCollection(DataCollectionType[FloatDataType, list]):
 
 # Concrete implementation of DataAlgorithm
 class FloatAlgorithm(DataAlgorithm):
-    """An algorithm specialized for processing IntDataType data."""
+    """An algorithm specialized for processing FloatDataType data."""
 
     @classmethod
     def input_data_type(cls):
@@ -51,8 +61,21 @@ class FloatAlgorithm(DataAlgorithm):
         return FloatDataType
 
 
+# Concrete implementation of DataAlgorithm
+class IntAlgorithm(DataAlgorithm):
+    """An algorithm specialized for processing IntDataType data."""
+
+    @classmethod
+    def input_data_type(cls):
+        return IntDataType
+
+    @classmethod
+    def output_data_type(cls):
+        return IntDataType
+
+
 class FloatCollectionMergeAlgorithm(DataAlgorithm):
-    """An algorithm specialized for merging IntDataCollection data."""
+    """An algorithm specialized for merging FloatDataCollection data."""
 
     @classmethod
     def input_data_type(cls):
@@ -65,7 +88,7 @@ class FloatCollectionMergeAlgorithm(DataAlgorithm):
 
 # Concrete implementation of DataProbe
 class Float(DataProbe):
-    """A probe specialized for processing IntDataType data."""
+    """A probe specialized for processing FloatDataType data."""
 
     @classmethod
     def input_data_type(cls):
@@ -73,10 +96,17 @@ class Float(DataProbe):
 
 
 class FloatMultiplyAlgorithm(FloatAlgorithm):
-    """An algorithm specialized for multiplying IntDataType data."""
+    """An algorithm specialized for multiplying FloatDataType data."""
 
     def _operation(self, data, factor, *args, **kwargs):
         return FloatDataType(data.data * factor)
+
+
+class IntMultiplyAlgorithm(IntAlgorithm):
+    """An algorithm specialized for multiplying IntDataType data."""
+
+    def _operation(self, data, factor, *args, **kwargs):
+        return IntDataType(data.data * factor)
 
 
 class FloatCollectionSumAlgorithm(FloatCollectionMergeAlgorithm):
