@@ -9,19 +9,21 @@ from .test_utils import (
     FloatDataCollection,
     FloatMultiplyAlgorithm,
     FloatCollectValueProbe,
+    FloatCollectionSumAlgorithm,
+    IntMultiplyAlgorithm,
 )
 
 
 # Start test
 @pytest.fixture
-def int_data():
-    """Pytest fixture for providing an IntDataType instance with generated integer data."""
+def float_data():
+    """Pytest fixture for providing an FloatDataType instance with generated integer data."""
     return FloatDataType(5.0)
 
 
 @pytest.fixture
-def int_data_collection():
-    """Pytest fixture for providing an IntDataCollection instance with generated integer data."""
+def float_data_collection():
+    """Pytest fixture for providing an FloatDataCollection instance with generated integer data."""
     return FloatDataCollection.from_list(
         [FloatDataType(1.0), FloatDataType(2.0), FloatDataType(3.0)]
     )
@@ -43,7 +45,7 @@ def empty_context_collection():
     )
 
 
-def test_pipeline_execution(int_data, empty_context):
+def test_pipeline_execution(float_data, empty_context):
     """Test the execution of a pipeline with multiple nodes."""
     # Define node configurations
     node_configurations = [
@@ -78,7 +80,7 @@ def test_pipeline_execution(int_data, empty_context):
     pipeline = Pipeline(node_configurations)
 
     # Process the data
-    data, context = pipeline.process(int_data, empty_context)
+    data, context = pipeline.process(float_data, empty_context)
 
     assert "final_keyword" in context.keys()
     assert context.get_value("final_keyword") == 30
@@ -88,7 +90,7 @@ def test_pipeline_execution(int_data, empty_context):
     assert pipeline.get_probe_results()["Node 3/FloatCollectValueProbe"][0] == 30.0
 
 
-def test_pipeline_execution_with_single_context(int_data_collection, empty_context):
+def test_pipeline_execution_with_single_context(float_data_collection, empty_context):
     """Test the execution of a pipeline with single context.
     The FloatDataCollection is sliced into individual FloatDataType objects,
     and the same context is passed to each sliced item.
@@ -113,7 +115,7 @@ def test_pipeline_execution_with_single_context(int_data_collection, empty_conte
     pipeline = Pipeline(node_configurations)
 
     # Process the data
-    data, context = pipeline.process(int_data_collection, empty_context)
+    data, context = pipeline.process(float_data_collection, empty_context)
 
     assert isinstance(data, FloatDataCollection)
     assert len(data) == 3
@@ -129,8 +131,54 @@ def test_pipeline_execution_with_single_context(int_data_collection, empty_conte
     ]
 
 
+def test_pipeline_execution_inverted_order(float_data_collection, empty_context):
+    """Test the execution of a pipeline with multiple nodes in inverted order.
+    The FloatDataCollection is sliced into individual FloatDataType objects,
+    and the same context is passed to each sliced item.
+    The FloatCollectionSumAlgorithm should sum the values of the FloatDataType objects.
+    The final output should be a FloatDataType instance with the sum of the values of the FloatDataType objects.
+    The context should remain a single ContextType instance."""
+    # Define node configurations
+    node_configurations = [
+        {
+            "operation": FloatMultiplyAlgorithm,
+            "parameters": {"factor": 2},
+        },
+        {
+            "operation": FloatCollectValueProbe,
+        },
+        {
+            "operation": FloatCollectValueProbe,
+            "context_keyword": "mock_keyword",
+        },
+        {
+            "operation": "rename:mock_keyword:final_keyword",
+        },
+        {
+            "operation": FloatCollectionSumAlgorithm,
+        },
+    ]
+
+    # Create a pipeline
+    pipeline = Pipeline(node_configurations)
+
+    # Process the data
+    data, context = pipeline.process(float_data_collection, empty_context)
+
+    assert isinstance(data, FloatDataType)
+    assert data.data == 12.0
+    assert isinstance(context, ContextType)
+    assert "final_keyword" in context.keys()
+    assert context.get_value("final_keyword") == [2.0, 4.0, 6.0]
+    assert pipeline.get_probe_results()["Node 2/FloatCollectValueProbe"][0] == [
+        2.0,
+        4.0,
+        6.0,
+    ]
+
+
 def test_pipeline_slicing_with_context_collection(
-    int_data_collection, empty_context_collection
+    float_data_collection, empty_context_collection
 ):
     """Test the execution of a pipeline with slicing and context collection.
     The FloatDataCollection is sliced into individual FloatDataType objects, and the context collection
@@ -154,7 +202,7 @@ def test_pipeline_slicing_with_context_collection(
     # Create a pipeline
     pipeline = Pipeline(node_configurations)
 
-    data, context = pipeline.process(int_data_collection, empty_context_collection)
+    data, context = pipeline.process(float_data_collection, empty_context_collection)
     print(context)
     assert isinstance(data, FloatDataCollection)
     assert len(data) == 3
@@ -170,3 +218,25 @@ def test_pipeline_slicing_with_context_collection(
         pipeline.get_probe_results()["Node 3/FloatCollectValueProbe"][0]
         == expected_context_values
     )
+
+
+def test_image_pipeline_invalid_configuration():
+    """
+    Test that an invalid pipeline configuration raises an AssertionError.
+    """
+
+    # Define invalid node configurations
+    node_configurations = [
+        {
+            "operation": FloatMultiplyAlgorithm,
+            "parameters": {"factor": 2},
+        },
+        {
+            "operation": IntMultiplyAlgorithm,
+            "parameters": {"factor": 2},
+        },
+    ]
+
+    # Check that initializing the pipeline raises an AssertionError
+    with pytest.raises(AssertionError):
+        _ = Pipeline(node_configurations)

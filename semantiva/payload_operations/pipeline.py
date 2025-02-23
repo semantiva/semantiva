@@ -141,6 +141,15 @@ class Pipeline(PayloadOperation):
             AssertionError: If the input type of the new node is not compatible with the
                             output type of the last `AlgorithmNode`.
         """
+
+        def _get_base_type(data_type):
+            """Returns the base type if data_type is a DataCollectionType, else returns data_type."""
+            if isinstance(data_type, type) and issubclass(
+                data_type, DataCollectionType
+            ):
+                return data_type.collection_base_type()
+            return data_type
+
         # Find the last node that constrains the data type (i.e., last AlgorithmNode)
         last_type_constraining_node: AlgorithmNode | None = None
         for previous_node in reversed(self.nodes):
@@ -155,20 +164,11 @@ class Pipeline(PayloadOperation):
 
         # Get the output type of the last type-constraining node and the input type of the new node
         assert isinstance(last_type_constraining_node.operation, DataAlgorithm)
-        output_type = last_type_constraining_node.operation.output_data_type()
-        input_type = node.operation.input_data_type()
-
-        # If the output is a DataCollectionType, check its base type
-        if isinstance(output_type, type) and issubclass(
-            output_type, DataCollectionType
-        ):
-            base_type = output_type.collection_base_type()
-
-            # Allow the node if the base type matches the input type
-            if base_type == input_type:
-                self.nodes.append(node)
-                return
-
+        # Get the base type of the output and input data types if they are DataCollectionType
+        output_type = _get_base_type(
+            last_type_constraining_node.operation.output_data_type()
+        )
+        input_type = _get_base_type(node.operation.input_data_type())
         # Enforce strict type matching otherwise
         assert issubclass(output_type, input_type) or issubclass(
             input_type, output_type
