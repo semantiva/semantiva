@@ -4,6 +4,69 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Here is the updated changelog with the missing items included and the requested rewording.
+
+---
+
+## [UNRELEASED] -
+
+### Fixed
+- **Fixed inconsistent user of `ContextType` methods on `ContextCollectionType`**
+  - Corrected the use of `ContextType` methods on `ContextCollectionType` instances.
+  - `ContextCollectionType` key getters and setters 
+
+### Changed
+- **Enchance Logger functionality**
+ - Improve initialization and reconfiguration of Semantiva Logger
+
+### Added
+
+- **Added AI-Enhanced Development Potential to README.me**:
+  - Added a new section in README.md that highlights Semantiva's AI-compatible co-design capabilities.
+  - Describes features such as understanding workflow semantics, generating & modifying pipelines, explaining & debugging operations, and enhancing cross-domain usability.
+
+- **Node and Pipeline Modularization**:
+  - Nodes changed to wrap a single-purpose operation: `DataOperation` or `ContextOperation`.
+  -   Introduced `PipelineNode` and specializations for `ContextNode` and `DataNode`.
+  - Added `pipeline.py` and `nodes.py` under `payload_operations/` for better modularization.
+  
+- **Refactored Data Slicing Strategies & Improved Context Handling**:
+  - Enhanced `_slicing_strategy` for clearer data-context separation.
+  - Ensured proper aggregation of created keys in `_execute_data_collection_single_context`.
+  - Enforced one-to-one mapping in `_execute_data_collection_context_collection`.
+  
+- **Pipeline Support for Collection Feature Extraction and Fit Workflow**:
+  - Introduced a two-node pipeline workflow for feature extraction and model fitting.
+
+- **Component Loader Module**:
+  - Introduced `component_loader.py` to manage dynamic component loading.
+
+- **YAML-Based Pipeline Loading**:
+  - Implemented `load_pipeline_from_yaml.py` to facilitate pipeline configuration from YAML files.
+
+- **Added Convenience Tools for Jupyter Notebook R&D and Debugging**:
+  - Introduced `image_viewers.py`, providing tools to aid interactive visualization and debugging.
+  - Viewers included in this release:
+    - `ImageViewer`
+    - `ImageInteractiveViewer`
+    - `XYProjectionViewer`
+    - `InteractiveCrossSectionViewer`
+    - `ImageStackPlayer`
+
+- **Enhanced Gaussian Fitting**:
+  - Introduced `TwoDTiltedGaussianFitterProbe` with rotation-aware Gaussian fitting.
+  - Improved initial parameter estimation using second-moment analysis.
+  - Ensured orientation angle consistency with normalization to [0, 180] degrees.
+
+- **Unit tests for base framework not dependent on Image specialization**
+  - Added `tests/tests_utils.py` with `FloatDataType` and related classes for testing.
+  - Added unit test for base data types, data io, pipeline, context operations based on `FloatDataType`
+
+
+### Removed
+- **Deprecated Data Collection Fit Probe**:
+  - `data_collection_fit_probe.py` was removed, replaced by improved feature extraction workflows.
+
 ## [v0.2.0] - 2025-01-27
 
 ### Added
