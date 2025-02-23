@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Semantiva documentation
+Semantiva API documentation
 =======================
 
-Welcome to the Semantiva documentation! This guide serves as a reference for the Semantiva project, providing an automatically generated overview of its classes, modules, and structure. 
+Welcome to the Semantiva API documentation! This guide serves as a reference for the Semantiva project, providing an automatically generated overview of its classes, modules, and structure. 
 
 **Purpose**
 
