@@ -10,7 +10,26 @@ Here is the updated changelog with the missing items included and the requested 
 
 ## [UNRELEASED] -
 
+### Fixed
+- **Fixed inconsistent user of `ContextType` methods on `ContextCollectionType`**
+  - Corrected the use of `ContextType` methods on `ContextCollectionType` instances.
+  - `ContextCollectionType` key getters and setters 
+
+### Changed
+- **Enchance Logger functionality**
+ - Improve initialization and reconfiguration of Semantiva Logger
+
 ### Added
+
+- **Added AI-Enhanced Development Potential to README.me**:
+  - Added a new section in README.md that highlights Semantiva's AI-compatible co-design capabilities.
+  - Describes features such as understanding workflow semantics, generating & modifying pipelines, explaining & debugging operations, and enhancing cross-domain usability.
+
+- **Node and Pipeline Modularization**:
+  - Nodes changed to wrap a single-purpose operation: `DataOperation` or `ContextOperation`.
+  -   Introduced `PipelineNode` and specializations for `ContextNode` and `DataNode`.
+  - Added `pipeline.py` and `nodes.py` under `payload_operations/` for better modularization.
+  
 - **Refactored Data Slicing Strategies & Improved Context Handling**:
   - Enhanced `_slicing_strategy` for clearer data-context separation.
   - Ensured proper aggregation of created keys in `_execute_data_collection_single_context`.
@@ -34,14 +53,15 @@ Here is the updated changelog with the missing items included and the requested 
     - `InteractiveCrossSectionViewer`
     - `ImageStackPlayer`
 
-- **Node and Pipeline Modularization**:
-  - Added `pipeline.py` under `payload_operations/` to separate pipeline execution logic.
-  - Introduced `nodes.py` to handle different node types in a more modular manner.
-
 - **Enhanced Gaussian Fitting**:
   - Introduced `TwoDTiltedGaussianFitterProbe` with rotation-aware Gaussian fitting.
   - Improved initial parameter estimation using second-moment analysis.
   - Ensured orientation angle consistency with normalization to [0, 180] degrees.
+
+- **Unit tests for base framework not dependent on Image specialization**
+  - Added `tests/tests_utils.py` with `FloatDataType` and related classes for testing.
+  - Added unit test for base data types, data io, pipeline, context operations based on `FloatDataType`
+
 
 ### Removed
 - **Deprecated Data Collection Fit Probe**:
