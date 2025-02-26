@@ -38,7 +38,7 @@ class ContextOperation(ABC):
     def input_data_type(cls):
         return BaseDataType
 
-    def get_operation_parameter_names(self) -> List[str]:
+    def get_processing_parameter_names(self) -> List[str]:
         """
         Retrieve the names of parameters required by the operation.
 

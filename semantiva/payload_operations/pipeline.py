@@ -3,14 +3,14 @@ from .stop_watch import StopWatch
 from .payload_operations import PayloadOperation
 from .nodes import (
     DataNode,
-    AlgorithmNode,
+    OperationNode,
     ContextNode,
     ProbeResultCollectorNode,
     ProbeContextInjectorNode,
 )
 from ..logger import Logger
 from ..data_types.data_types import BaseDataType, DataCollectionType
-from ..data_operations.data_operations import DataAlgorithm
+from ..data_processors.data_processors import DataOperation
 from ..context_operations.context_types import ContextType
 from .nodes import node_factory
 
@@ -26,7 +26,7 @@ class Pipeline(PayloadOperation):
     Node Configuration:
     Each node in the pipeline is defined using a dictionary with the following keys:
 
-    - `operation` (required): The operation to perform, either a `DataOperation (DataAlgorithm` or `DataProbe`) or a `ContextOperation`.
+    - `operation` (required): The operation to perform, either a `DataOperation (DataOperation` or `DataProbe`) or a `ContextOperation`.
     - `parameters` (optional, default=`{}`): A dictionary of parameters for the operation.
       If an operation parameter is **not explicitly defined** in the pipeline configuration,
       it is extracted from the **context**, using the parameter name as the context keyword.
@@ -35,12 +35,12 @@ class Pipeline(PayloadOperation):
 
     ### Node Types:
 
-    1. **AlgorithmNode**:
-       - Configured when a `DataAlgorithm` is given as the `operation`.
+    1. **OperationNode**:
+       - Configured when a `DataOperation` is given as the `operation`.
        - Example:
          ```python
          {
-             "operation": SomeDataAlgorithm,
+             "operation": SomeDataOperation,
              "parameters": {"param1": value1, "param2": value2}
          }
          ```
@@ -111,7 +111,7 @@ class Pipeline(PayloadOperation):
 
         Example:
             pipeline_configuration = [
-                {"operation": SomeDataAlgorithm, "parameters": {"param1": value1}},
+                {"operation": SomeDataOperation, "parameters": {"param1": value1}},
                 {"operation": SomeDataProbe, "context_keyword": "collected_data"}
             ]
         """
@@ -128,7 +128,7 @@ class Pipeline(PayloadOperation):
         """
         Adds a node to the pipeline while ensuring compatibility between consecutive operations.
 
-        This method enforces that the output type of the last `AlgorithmNode` is compatible
+        This method enforces that the output type of the last `OperationNode` is compatible
         with the input type of the new node. Probe nodes do not modify data, so their output
         type is ignored for validation purposes.
 
@@ -139,7 +139,7 @@ class Pipeline(PayloadOperation):
 
         Raises:
             AssertionError: If the input type of the new node is not compatible with the
-                            output type of the last `AlgorithmNode`.
+                            output type of the last `OperationNode`.
         """
 
         def _get_base_type(
@@ -152,20 +152,20 @@ class Pipeline(PayloadOperation):
                 return data_type.collection_base_type()
             return data_type
 
-        # Find the last node that constrains the data type (i.e., last AlgorithmNode)
-        last_type_constraining_node: AlgorithmNode | None = None
+        # Find the last node that constrains the data type (i.e., last OperationNode)
+        last_type_constraining_node: OperationNode | None = None
         for previous_node in reversed(self.nodes):
-            if isinstance(previous_node, AlgorithmNode):
+            if isinstance(previous_node, OperationNode):
                 last_type_constraining_node = previous_node
                 break
 
-        # If no AlgorithmNode exists yet, allow the first node to be added unconditionally
+        # If no OperationNode exists yet, allow the first node to be added unconditionally
         if last_type_constraining_node is None or issubclass(type(node), ContextNode):
             self.nodes.append(node)
             return
 
         # Get the output type of the last type-constraining node and the input type of the new node
-        assert isinstance(last_type_constraining_node.operation, DataAlgorithm)
+        assert isinstance(last_type_constraining_node.operation, DataOperation)
         # Get the base type of the output and input data types if they are DataCollectionType
         output_type = _get_base_type(
             last_type_constraining_node.operation.output_data_type()
@@ -275,7 +275,7 @@ class Pipeline(PayloadOperation):
 
         for index, node in enumerate(self.nodes, start=1):
             # Gather parameter details from node operation
-            operation_param_names = set(node.operation.get_operation_parameter_names())
+            operation_param_names = set(node.operation.get_processing_parameter_names())
             config_param_names = set(node.operation_config.keys())
             context_param_names = operation_param_names - config_param_names
 

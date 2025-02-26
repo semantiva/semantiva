@@ -1,23 +1,23 @@
-from semantiva.data_operations import DataAlgorithm, DataProbe
+from semantiva.data_processors import DataOperation, DataProbe
 from .audio_data_types import SingleChannelAudioDataType, DualChannelAudioDataType
 
 
-class SingleChannelAudioAlgorithm(DataAlgorithm):
+class SingleChannelAudioOperation(DataOperation):
     """
-    An algorithm specialized for processing single-channel audio data.
+    An operation specialized for processing single-channel audio data.
 
-    This class implements the `DataAlgorithm` abstract base class to define
+    This class implements the `DataOperation` abstract base class to define
     operations that accept and produce `SingleChannelAudioDataType`.
 
     Methods:
         input_data_type: Returns the expected input data type.
-        output_data_type: Returns the type of data output by the algorithm.
+        output_data_type: Returns the type of data output by the operation.
     """
 
     @classmethod
     def input_data_type(cls):
         """
-        Specify the input data type for the algorithm.
+        Specify the input data type for the operation.
 
         Returns:
             type: `SingleChannelAudioDataType`, representing single-channel audio.
@@ -27,7 +27,7 @@ class SingleChannelAudioAlgorithm(DataAlgorithm):
     @classmethod
     def output_data_type(cls):
         """
-        Specify the output data type for the algorithm.
+        Specify the output data type for the operation.
 
         Returns:
             type: `SingleChannelAudioDataType`, representing single-channel audio.
@@ -35,22 +35,22 @@ class SingleChannelAudioAlgorithm(DataAlgorithm):
         return SingleChannelAudioDataType
 
 
-class DualChannelAudioAlgorithm(DataAlgorithm):
+class DualChannelAudioOperation(DataOperation):
     """
-    An algorithm specialized for processing dual-channel (stereo) audio data.
+    An operation specialized for processing dual-channel (stereo) audio data.
 
-    This class implements the `DataAlgorithm` abstract base class to define
+    This class implements the `DataOperation` abstract base class to define
     operations that accept and produce `DualChannelAudioDataType`.
 
     Methods:
         input_data_type: Returns the expected input data type.
-        output_data_type: Returns the type of data output by the algorithm.
+        output_data_type: Returns the type of data output by the operation.
     """
 
     @classmethod
     def input_data_type(cls):
         """
-        Specify the input data type for the algorithm.
+        Specify the input data type for the operation.
 
         Returns:
             type: `DualChannelAudioDataType`, representing dual-channel audio.
@@ -60,7 +60,7 @@ class DualChannelAudioAlgorithm(DataAlgorithm):
     @classmethod
     def output_data_type(cls):
         """
-        Specify the output data type for the algorithm.
+        Specify the output data type for the operation.
 
         Returns:
             type: `DualChannelAudioDataType`, representing dual-channel audio.
@@ -68,9 +68,9 @@ class DualChannelAudioAlgorithm(DataAlgorithm):
         return DualChannelAudioDataType
 
 
-class DualChannelMergerAlgorithm(DataAlgorithm):
+class DualChannelMergerOperation(DataOperation):
     """
-    An algorithm to merge dual-channel audio data into a single-channel format.
+    An operation to merge dual-channel audio data into a single-channel format.
 
     This class defines operations that accept `DualChannelAudioDataType` as input
     and produce `SingleChannelAudioDataType` as output, suitable for scenarios
@@ -78,13 +78,13 @@ class DualChannelMergerAlgorithm(DataAlgorithm):
 
     Methods:
         input_data_type: Returns the expected input data type.
-        output_data_type: Returns the type of data output by the algorithm.
+        output_data_type: Returns the type of data output by the operation.
     """
 
     @classmethod
     def input_data_type(cls):
         """
-        Specify the input data type for the algorithm.
+        Specify the input data type for the operation.
 
         Returns:
             type: `DualChannelAudioDataType`, representing dual-channel audio.
@@ -94,7 +94,7 @@ class DualChannelMergerAlgorithm(DataAlgorithm):
     @classmethod
     def output_data_type(cls):
         """
-        Specify the output data type for the algorithm.
+        Specify the output data type for the operation.
 
         Returns:
             type: `SingleChannelAudioDataType`, representing single-channel audio.
@@ -102,9 +102,9 @@ class DualChannelMergerAlgorithm(DataAlgorithm):
         return SingleChannelAudioDataType
 
 
-class SingleChannelExpanderAlgorithm(DataAlgorithm):
+class SingleChannelExpanderOperation(DataOperation):
     """
-    An algorithm to expand single-channel audio data into dual-channel format.
+    An operation to expand single-channel audio data into dual-channel format.
 
     This class defines operations that accept `SingleChannelAudioDataType` as input
     and produce `DualChannelAudioDataType` as output, suitable for scenarios
@@ -112,13 +112,13 @@ class SingleChannelExpanderAlgorithm(DataAlgorithm):
 
     Methods:
         input_data_type: Returns the expected input data type.
-        output_data_type: Returns the type of data output by the algorithm.
+        output_data_type: Returns the type of data output by the operation.
     """
 
     @classmethod
     def input_data_type(cls):
         """
-        Specify the input data type for the algorithm.
+        Specify the input data type for the operation.
 
         Returns:
             type: `SingleChannelAudioDataType`, representing single-channel audio.
@@ -128,7 +128,7 @@ class SingleChannelExpanderAlgorithm(DataAlgorithm):
     @classmethod
     def output_data_type(cls):
         """
-        Specify the output data type for the algorithm.
+        Specify the output data type for the operation.
 
         Returns:
             type: `DualChannelAudioDataType`, representing dual-channel audio.

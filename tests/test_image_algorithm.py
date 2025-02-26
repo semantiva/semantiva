@@ -1,11 +1,11 @@
 import pytest
 import numpy as np
-from semantiva.specializations.image.image_algorithms import (
+from semantiva.specializations.image.image_operations import (
     ImageAddition,
     ImageSubtraction,
     ImageCropper,
     StackToImageMeanProjector,
-    ImageNormalizerAlgorithm,
+    ImageNormalizerOperation,
     ImageStackToSideBySideProjector,
 )
 from semantiva.specializations.image.image_loaders_savers_generators import (
@@ -33,13 +33,13 @@ def dummy_image_stack_data():
 
 
 @pytest.fixture
-def image_normalizer_algorithm():
-    """Fixture for the ImageNormalizerAlgorithm."""
-    return ImageNormalizerAlgorithm()
+def image_normalizer_operation():
+    """Fixture for the ImageNormalizerOperation."""
+    return ImageNormalizerOperation()
 
 
 def test_image_addition(dummy_image_data):
-    """Test the ImageAddition algorithm."""
+    """Test the ImageAddition operation."""
     addition = ImageAddition()
     result = addition.process(dummy_image_data, dummy_image_data)
 
@@ -49,7 +49,7 @@ def test_image_addition(dummy_image_data):
 
 
 def test_image_subtraction(dummy_image_data):
-    """Test the ImageSubtraction algorithm."""
+    """Test the ImageSubtraction operation."""
     subtraction = ImageSubtraction()
     result = subtraction.process(dummy_image_data, dummy_image_data)
 
@@ -59,7 +59,7 @@ def test_image_subtraction(dummy_image_data):
 
 
 def test_image_clipping(dummy_image_data):
-    """Test the ImageCropper algorithm."""
+    """Test the ImageCropper operation."""
     clipping = ImageCropper()
     x_start, x_end, y_start, y_end = 50, 200, 50, 200
     result = clipping.process(dummy_image_data, x_start, x_end, y_start, y_end)
@@ -70,7 +70,7 @@ def test_image_clipping(dummy_image_data):
 
 
 def test_stack_to_image_mean_projector(dummy_image_stack_data):
-    """Test the StackToImageMeanProjector algorithm."""
+    """Test the StackToImageMeanProjector operation."""
     projector = StackToImageMeanProjector()
     result = projector.process(dummy_image_stack_data)
 
@@ -79,7 +79,7 @@ def test_stack_to_image_mean_projector(dummy_image_stack_data):
     np.testing.assert_array_almost_equal(result.data, expected)
 
 
-def test_image_normalizer_algorithm(image_normalizer_algorithm):
+def test_image_normalizer_operation(image_normalizer_operation):
     # Create a test image with varying pixel values
     image_data = np.array([[0, 50, 100], [150, 200, 250]], dtype=np.float32)
     image = ImageDataType(image_data)
@@ -88,7 +88,7 @@ def test_image_normalizer_algorithm(image_normalizer_algorithm):
     min_value, max_value = 0, 1
 
     # Perform normalization
-    normalized_image = image_normalizer_algorithm.process(image, min_value, max_value)
+    normalized_image = image_normalizer_operation.process(image, min_value, max_value)
 
     # Assert that the normalized values are within the expected range
     assert np.isclose(normalized_image.data.min(), min_value, atol=1e-6)
@@ -116,7 +116,7 @@ def test_image_stack_to_side_by_side_projector_valid():
     projector = ImageStackToSideBySideProjector()
 
     # Perform projection
-    result = projector._operation(image_stack_data)
+    result = projector._process_logic(image_stack_data)
 
     # Assert the resulting image shape
     assert result.data.shape == (

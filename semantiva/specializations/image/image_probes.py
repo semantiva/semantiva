@@ -1,7 +1,7 @@
 from scipy.optimize import curve_fit
 import numpy as np
 from typing import Dict
-from semantiva.specializations.image.image_operations import ImageProbe
+from semantiva.specializations.image.image_processors import ImageProbe
 from semantiva.specializations.image.image_data_types import ImageDataType
 
 
@@ -13,7 +13,7 @@ class BasicImageProbe(ImageProbe):
     such as mean, sum, minimum value, and maximum value.
     """
 
-    def _operation(self, data):
+    def _process_logic(self, data):
         """
         Compute essential image statistics.
 
@@ -77,7 +77,7 @@ class TwoDGaussianFitterProbe(ImageProbe):
         r_squared = 1 - (ss_res / ss_tot)
         return r_squared
 
-    def _operation(self, data: ImageDataType) -> Dict:
+    def _process_logic(self, data: ImageDataType) -> Dict:
         """
         Fit a 2D Gaussian function to the input image data and compute the goodness-of-fit score.
 
@@ -237,7 +237,7 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
         r_squared = 1 - (ss_res / ss_tot)
         return r_squared
 
-    def _operation(self, data: ImageDataType) -> Dict:
+    def _process_logic(self, data: ImageDataType) -> Dict:
         """
         Fit a **tilted 2D Gaussian function** to the input image data, extracting
         the Gaussian parameters including the **rotation angle**.

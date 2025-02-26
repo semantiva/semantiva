@@ -7,9 +7,9 @@ from semantiva.payload_operations import Pipeline
 from .test_utils import (
     FloatDataType,
     FloatDataCollection,
-    FloatMultiplyAlgorithm,
+    FloatMultiplyOperation,
     FloatCollectValueProbe,
-    FloatCollectionSumAlgorithm,
+    FloatCollectionSumOperation,
 )
 from .test_string_specialization import HelloOperation
 
@@ -50,11 +50,11 @@ def test_pipeline_execution(float_data, empty_context):
     # Define node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyAlgorithm,
+            "operation": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {
-            "operation": FloatMultiplyAlgorithm,
+            "operation": FloatMultiplyOperation,
             "parameters": {"factor": 3},
         },
         {
@@ -106,7 +106,7 @@ def test_pipeline_execution_with_single_context(float_data_collection, empty_con
             "operation": FloatCollectValueProbe,
         },
         {
-            "operation": FloatMultiplyAlgorithm,
+            "operation": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
     ]
@@ -135,13 +135,13 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
     """Test the execution of a pipeline with multiple nodes in inverted order.
     The FloatDataCollection is sliced into individual FloatDataType objects,
     and the same context is passed to each sliced item.
-    The FloatCollectionSumAlgorithm should sum the values of the FloatDataType objects.
+    The FloatCollectionSumOperation should sum the values of the FloatDataType objects.
     The final output should be a FloatDataType instance with the sum of the values of the FloatDataType objects.
     The context should remain a single ContextType instance."""
     # Define node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyAlgorithm,
+            "operation": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {
@@ -155,7 +155,7 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
             "operation": "rename:mock_keyword:final_keyword",
         },
         {
-            "operation": FloatCollectionSumAlgorithm,
+            "operation": FloatCollectionSumOperation,
         },
     ]
 
@@ -187,7 +187,7 @@ def test_pipeline_slicing_with_context_collection(
     # Define node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyAlgorithm,
+            "operation": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {
@@ -228,7 +228,7 @@ def test_image_pipeline_invalid_configuration():
     # Define invalid node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyAlgorithm,
+            "operation": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {

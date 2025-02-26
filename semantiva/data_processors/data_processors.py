@@ -11,12 +11,13 @@ from ..logger import Logger
 T = TypeVar("T", bound=BaseDataType)
 
 
-class BaseDataOperation(ABC, Generic[T]):
+class BaseDataProcessor(ABC, Generic[T]):
     """
-    Abstract base class for all data operations in the semantic framework.
+    Abstract base class for all data processors in Semantiva.
 
-    This class defines the foundational structure for implementing data
-    processing operations, ensuring consistency and extensibility.
+    This class defines a standardized structure for implementing data
+    processing tasks, ensuring consistency and extensibility across different
+    types of data transformations and analyses.
     """
 
     logger: Optional[Logger]
@@ -31,51 +32,51 @@ class BaseDataOperation(ABC, Generic[T]):
     @abstractmethod
     def input_data_type(cls) -> Type[BaseDataType]:
         """
-        Define the type of input data required for the operation.
+        Define the expected type of input data for processing.
 
         Returns:
-            Type[BaseDataType]: The expected input data type.
+            Type[BaseDataType]: The required input data type.
         """
 
     @abstractmethod
     def get_created_keys(self) -> List[str]:
         """
-        Retrieves a list of context keys that have been created by the data operation.
+        Retrieves a list of context keys generated during processing.
 
-        This method should be implemented by subclasses to return a list of context keys
-        that are generated or modified during the execution of the operation.
+        This method should be implemented by subclasses to return a list of
+        context keys that are produced or modified during execution.
 
         Returns:
-            List[str]: A list of strings representing the created keys.
+            List[str]: A list of generated context keys.
         """
 
     @abstractmethod
-    def _operation(self, data: T, *args, **kwargs) -> Any:
+    def _process_logic(self, data: T, *args, **kwargs) -> Any:
         """
-        Core logic for the operation. Must be implemented by subclasses.
+        Core processing logic. Must be implemented by subclasses.
 
         Args:
-            data (T): The input data for the operation.
-            *args: Additional positional arguments for the operation.
-            **kwargs: Additional keyword arguments for the operation.
+            data (T): The input data to be processed.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
 
         Returns:
-            Any: The result of the operation.
+            Any: The result of the processing.
         """
 
     def process(self, data: T, *args, **kwargs) -> Any:
         """
-        Execute the operation with the given data.
+        Execute the processing logic on the given data.
 
         Args:
-            data (T): The input data for the operation.
-            *args: Additional positional arguments for the operation.
-            **kwargs: Additional keyword arguments for the operation.
+            data (T): The input data for processing.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
 
         Returns:
-            Any: The result of the operation.
+            Any: The processed output.
         """
-        return self._operation(data, *args, **kwargs)
+        return self._process_logic(data, *args, **kwargs)
 
     @classmethod
     def run(cls, data, *args, **kwargs):
@@ -83,27 +84,27 @@ class BaseDataOperation(ABC, Generic[T]):
 
     def __call__(self, data: Any, *args, **kwargs) -> Any:
         """
-        Allow the operation to be called as a callable object.
+        Allow the processor to be invoked like a callable function.
 
         Args:
-            data (Any): The input data for the operation.
-            *args: Additional positional arguments for the operation.
-            **kwargs: Additional keyword arguments for the operation.
+            data (Any): The input data for processing.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
 
         Returns:
-            Any: The result of the operation.
+            Any: The processed output.
         """
         return self.process(data, *args, **kwargs)
 
     @classmethod
-    def get_operation_parameter_names(cls) -> List[str]:
+    def get_processing_parameter_names(cls) -> List[str]:
         """
-        Retrieve the names of parameters required by the `_operation` method.
+        Retrieve the names of parameters required by the `_process_logic` method.
 
         Returns:
-            List[str]: A list of parameter names (excluding `data`).
+            List[str]: A list of parameter names (excluding `self` and `data`).
         """
-        signature = inspect.signature(cls._operation)
+        signature = inspect.signature(cls._process_logic)
         return [
             param.name
             for param in signature.parameters.values()
@@ -116,14 +117,14 @@ class BaseDataOperation(ABC, Generic[T]):
         return f"{self.__class__.__name__}"
 
     @classmethod
-    def get_operation_parameters_with_types(cls) -> List[Tuple[str, str]]:
+    def get_processing_parameters_with_types(cls) -> List[Tuple[str, str]]:
         """
-        Retrieve the names and type hints of parameters required by the `_operation` method.
+        Retrieve the names and type hints of parameters required by the `_process_logic` method.
 
         Returns:
             List[Tuple[str, str]]: A list of tuples (param_name, param_type).
         """
-        signature = inspect.signature(cls._operation)
+        signature = inspect.signature(cls._process_logic)
         return [
             (
                 param.name,
@@ -140,26 +141,35 @@ class BaseDataOperation(ABC, Generic[T]):
         ]
 
 
-class DataAlgorithm(BaseDataOperation):
+class DataOperation(BaseDataProcessor):
     """
-    Represents a concrete data algorithm within the semantic framework.
+    A data processing component within Semantiva that modifies input data.
 
-    This class extends BaseDataOperation to incorporate contextual updates
-    using a ContextObserver.
+    `DataOperation` extends `BaseDataProcessor` to provide transformation
+    capabilities while integrating with a `ContextObserver` for managing
+    context updates. Unlike `DataProbe`, which analyzes data without
+    modification, `DataOperation` applies computational transformations to
+    produce a modified output.
 
     Attributes:
-        context_observer (ContextObserver): An observer for managing context updates.
+        context_observer (Optional[ContextObserver]): An optional observer for tracking
+            and managing context updates during processing.
     """
 
     context_observer: Optional[ContextObserver]
 
     def _notify_context_update(self, key: str, value: Any) -> None:
         """
-        Notify the context observer about a context update.
+        Notify the context observer about a context modification.
+
+        This method updates the context state with a new value.
 
         Args:
-            key (str): The key associated with the context update.
-            value (Any): The value to update in the context.
+            key (str): The context key being updated.
+            value (Any): The new value associated with the context key.
+
+        Raises:
+            KeyError: If the provided key is not a registered context key.
         """
         if key not in self.context_keys():
             raise KeyError(f"Invalid context key '{key}' for {self.__class__.__name__}")
@@ -172,25 +182,27 @@ class DataAlgorithm(BaseDataOperation):
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize the DataAlgorithm with a ContextObserver.
+        Initialize a `DataOperation` with an optional `ContextObserver`.
 
         Args:
-            context_observer (ContextObserver): An observer for managing context updates.
-            logger (Logger, optional): An optional logger instance.
+            context_observer (Optional[ContextObserver]): An observer for managing
+                context updates. Defaults to None.
+            logger (Optional[Logger]): A logger instance for tracking execution
+                details. Defaults to None.
         """
         super().__init__(logger)
         self.context_observer = context_observer
 
     def context_keys(self) -> List[str]:
         """
-        Retrieve the list of valid context keys for the algorithm.
+        Retrieve the list of valid context keys for the data operation.
 
-        This method defines the context keys that the algorithm can update
+        This method defines the context keys that the data operation can update
         during its execution. Subclasses need to implement this method to provide
         a list of keys that are relevant to their specific functionality.
 
         Returns:
-            List[str]: A list of strings representing valid context keys.
+            List[str]: A list of context keys that an operation can update.
         """
         return []
 
@@ -199,34 +211,36 @@ class DataAlgorithm(BaseDataOperation):
         Return a string representation of the instance.
 
         Returns:
-            str: The name of the class.
+            str: The name of this data processing class.
         """
         return f"{self.__class__.__name__}"
 
     def get_created_keys(self) -> List[str]:
         """
-        Retrieves a list of keys that have been created in the current context.
+        Retrieve a list of context keys created by the data operation.
 
         Returns:
-            List[str]: A list of strings representing the created keys.
+            List[str]: A list of context keys created or modified by the operation.
         """
         return self.context_keys()
 
     @classmethod
     def signature_string(cls) -> str:
         """
-        Returns a structured multi-line string with the algorithm signature, showing:
+        Generate a structured summary of the data operation signature.
+
+        This includes:
         - Class Name
         - Input Data Type
         - Output Data Type
-        - Operation Parameter Names with Type Hints
+        - Processing Parameters with Type Hints
 
         Returns:
-            str: A formatted multi-line signature string.
+            str: A formatted multi-line string representing the operation signature.
         """
         input_type = cls.input_data_type().__name__
         output_type = cls.output_data_type().__name__
-        param_names_with_types = cls.get_operation_parameters_with_types()
+        param_names_with_types = cls.get_processing_parameters_with_types()
 
         params_section = (
             "\n\t    - "
@@ -237,34 +251,37 @@ class DataAlgorithm(BaseDataOperation):
             else " None"
         )
 
-        return f"""{cls.__name__} (DataAlgorithm)\n\tInput Type:  {input_type}\n\tOutput Type: {output_type}\n\tParameters:{params_section}\n"""
+        return f"""{cls.__name__} (DataOperation)\n\tInput Type:  {input_type}\n\tOutput Type: {output_type}\n\tParameters:{params_section}\n"""
 
     @classmethod
     @abstractmethod
     def output_data_type(cls) -> Type[BaseDataType]:
         """
-        Define the type of output data produced by the operation.
+        Define the type of output data produced by this operation.
+
+        Subclasses must implement this method to specify the expected
+        output type after processing.
 
         Returns:
-            Type[BaseDataType]: The expected output data type.
+            Type[BaseDataType]: The output data type produced by the operation.
         """
         ...
 
 
-class AlgorithmTopologyFactory:
+class OperationTopologyFactory:
     """
-    A factory that creates algorithm classes for specific (input, output) data-type pairs.
+    A factory that creates data operation classes for specific (input, output) data-type pairs.
     """
 
     @classmethod
-    def create_algorithm(
+    def create_data_operation(
         cls,
         input_type: Type[BaseDataType],
         output_type: Type[BaseDataType],
-        class_name="GeneratedAlgorithm",
+        class_name="GeneratedOperation",
     ):
         """
-        Dynamically creates a subclass of DataAlgorithm that expects `input_type`
+        Dynamically creates a subclass of DataOperation that expects `input_type`
         as input and produces `output_type` as output.
 
         Args:
@@ -273,7 +290,7 @@ class AlgorithmTopologyFactory:
             class_name (str): The name to give the generated class.
 
         Returns:
-            Type[DataAlgorithm]: A new subclass of DataAlgorithm with the specified I/O data types.
+            Type[DataOperation]: A new subclass of DataOperation with the specified I/O data types.
         """
 
         methods = {}
@@ -287,12 +304,12 @@ class AlgorithmTopologyFactory:
         methods["input_data_type"] = classmethod(input_data_type_method)
         methods["output_data_type"] = classmethod(output_data_type_method)
 
-        # Create a new type that extends DataAlgorithm
-        generated_class = type(class_name, (DataAlgorithm,), methods)
+        # Create a new type that extends DataOperation
+        generated_class = type(class_name, (DataOperation,), methods)
         return generated_class
 
 
-class DataProbe(BaseDataOperation):
+class DataProbe(BaseDataProcessor):
     """
     Represents a probe operation for monitoring or inspecting data.
 
@@ -309,7 +326,7 @@ class DataProbe(BaseDataOperation):
     @classmethod
     def signature_string(cls) -> str:
         """
-        Returns a structured multi-line string with the algorithm signature, showing:
+        Returns a structured multi-line string with the data operation signature, showing:
         - Class Name
         - Input Data Type
         - Output Data Type
@@ -319,7 +336,7 @@ class DataProbe(BaseDataOperation):
             str: A formatted multi-line signature string.
         """
         input_type = cls.input_data_type().__name__
-        param_names_with_types = cls.get_operation_parameters_with_types()
+        param_names_with_types = cls.get_processing_parameters_with_types()
 
         params_section = (
             "\n\t    - "
@@ -336,11 +353,11 @@ class DataProbe(BaseDataOperation):
 BaseType = TypeVar("BaseType", bound=BaseDataType)
 
 
-class DataCollectionProbe(BaseDataOperation, Generic[BaseType]):
+class DataCollectionProbe(BaseDataProcessor, Generic[BaseType]):
     """
     A probe for inspecting or monitoring data collections.
 
-    This class extends `BaseDataOperation` to define operations that accept
+    This class extends `BaseDataProcessor` to define operations that accept
     `DataCollectionType`, allowing the extraction of observables.
 
     Methods:
@@ -396,7 +413,7 @@ class FeatureExtractorProbeWrapper(DataProbe):
         """Returns the input data type required by the wrapped probe."""
         return self.feature_probe.input_data_type()
 
-    def _operation(self, data) -> Union[Any, Tuple[Any, ...]]:
+    def _process_logic(self, data) -> Union[Any, Tuple[Any, ...]]:
         """
         Processes the input data through the original probe and extracts the required parameter(s).
 

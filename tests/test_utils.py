@@ -1,6 +1,6 @@
 # This file contains utility classes for testing the semantiva package.
 from semantiva.data_types import BaseDataType, DataCollectionType
-from semantiva.data_operations import DataAlgorithm, DataProbe
+from semantiva.data_processors import DataOperation, DataProbe
 
 
 # Concrete implementation of BaseDataType for testing
@@ -38,9 +38,9 @@ class FloatDataCollection(DataCollectionType[FloatDataType, list]):
                 raise TypeError("Data must be a list of FloatDataType objects")
 
 
-# Concrete implementation of DataAlgorithm
-class FloatAlgorithm(DataAlgorithm):
-    """An algorithm specialized for processing FloatDataType data."""
+# Concrete implementation of DataOperation
+class FloatOperation(DataOperation):
+    """An operation specialized for processing FloatDataType data."""
 
     @classmethod
     def input_data_type(cls):
@@ -51,8 +51,8 @@ class FloatAlgorithm(DataAlgorithm):
         return FloatDataType
 
 
-class FloatCollectionMergeAlgorithm(DataAlgorithm):
-    """An algorithm specialized for merging FloatDataCollection data."""
+class FloatCollectionMergeOperation(DataOperation):
+    """An operation specialized for merging FloatDataCollection data."""
 
     @classmethod
     def input_data_type(cls):
@@ -72,22 +72,22 @@ class Float(DataProbe):
         return FloatDataType
 
 
-class FloatMultiplyAlgorithm(FloatAlgorithm):
-    """An algorithm specialized for multiplying FloatDataType data."""
+class FloatMultiplyOperation(FloatOperation):
+    """An operation specialized for multiplying FloatDataType data."""
 
-    def _operation(self, data, factor, *args, **kwargs):
+    def _process_logic(self, data, factor, *args, **kwargs):
         return FloatDataType(data.data * factor)
 
 
-class FloatCollectionSumAlgorithm(FloatCollectionMergeAlgorithm):
-    """An algorithm specialized for summing IntDataCollection data."""
+class FloatCollectionSumOperation(FloatCollectionMergeOperation):
+    """An operation specialized for summing IntDataCollection data."""
 
-    def _operation(self, data, *args, **kwargs):
+    def _process_logic(self, data, *args, **kwargs):
         return FloatDataType(sum(item.data for item in data.data))
 
 
 class FloatCollectValueProbe(Float):
     """A probe specialized for collecting the value of IntDataType data."""
 
-    def _operation(self, data, *args, **kwargs):
+    def _process_logic(self, data, *args, **kwargs):
         return data.data

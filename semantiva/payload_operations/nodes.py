@@ -2,9 +2,9 @@ from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import abstractmethod
 from .stop_watch import StopWatch
 from ..context_operations.context_operations import ContextOperation
-from ..data_operations.data_operations import (
-    BaseDataOperation,
-    DataAlgorithm,
+from ..data_processors.data_processors import (
+    BaseDataProcessor,
+    DataOperation,
     DataProbe,
 )
 from ..context_operations.context_types import ContextType, ContextCollectionType
@@ -23,7 +23,7 @@ class PipelineNode(PayloadOperation):
     to the overall transformation or analysis process.
     """
 
-    operation: BaseDataOperation | ContextOperation
+    operation: BaseDataProcessor | ContextOperation
     operation_config: Dict
     stop_watch: StopWatch
     logger: Logger
@@ -37,17 +37,17 @@ class DataNode(PipelineNode):
     in processing pipelines or networks.
 
     Attributes:
-        data_operation (BaseDataOperation): The data operation associated with the node.
+        data_operation (BaseDataProcessor): The data operation associated with the node.
         operation_config (Dict): Configuration parameters for the data operation.
         stop_watch (StopWatch): Tracks the execution time of the node's operation.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
-    operation: BaseDataOperation
+    operation: BaseDataProcessor
 
     def __init__(
         self,
-        data_operation: Type[BaseDataOperation],
+        data_operation: Type[BaseDataProcessor],
         operation_config: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
@@ -55,7 +55,7 @@ class DataNode(PipelineNode):
         Initialize a DataNode with a specific data operation and configuration.
 
         Args:
-            data_operation (Type[BaseDataOperation]): The class of the data operation associated with this node.
+            data_operation (Type[BaseDataProcessor]): The class of the data operation associated with this node.
             operation_config (Optional[Dict]): Operation parameters (overrides values extracted from context). Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
@@ -65,7 +65,7 @@ class DataNode(PipelineNode):
         )
         self.operation = (
             data_operation(self, self.logger)
-            if issubclass(data_operation, DataAlgorithm)
+            if issubclass(data_operation, DataOperation)
             else data_operation(logger=self.logger)
         )
         self.stop_watch = StopWatch()
@@ -81,7 +81,7 @@ class DataNode(PipelineNode):
         Returns:
             dict: A dictionary mapping parameter names to their values.
         """
-        parameter_names = self.operation.get_operation_parameter_names()
+        parameter_names = self.operation.get_processing_parameter_names()
         parameters = {}
         for name in parameter_names:
             parameters[name] = self._fetch_parameter_value(name, context)
@@ -320,7 +320,7 @@ class ContextNode(PipelineNode):
         operation_config = operation_config or {}
         self.operation = (
             context_operation(logger, **operation_config)
-            if issubclass(context_operation, (DataAlgorithm, ContextOperation))
+            if issubclass(context_operation, (DataOperation, ContextOperation))
             else context_operation(logger=logger)
         )
         self.operation_config = operation_config
@@ -368,7 +368,7 @@ class ContextNode(PipelineNode):
         return data, self.operation.operate_context(context)
 
 
-class AlgorithmNode(DataNode):
+class OperationNode(DataNode):
     """
     Node that executes an algorithm on data.
 
@@ -378,15 +378,15 @@ class AlgorithmNode(DataNode):
 
     def __init__(
         self,
-        data_operation: Type[DataAlgorithm],
+        data_operation: Type[DataOperation],
         operation_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize an AlgorithmNode with the specified data algorithm.
+        Initialize an OperationNode with the specified data algorithm.
 
         Args:
-            data_operation (Type[DataAlgorithm]): The data algorithm for this node.
+            data_operation (Type[DataOperation]): The data algorithm for this node.
             operation_parameters (Optional[Dict]): Initial configuration for operation parameters. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
@@ -524,7 +524,7 @@ class ProbeContextInjectorNode(ProbeNode):
 
     def __init__(
         self,
-        data_operation: Type[BaseDataOperation],
+        data_operation: Type[BaseDataProcessor],
         context_keyword: str,
         operation_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
@@ -533,7 +533,7 @@ class ProbeContextInjectorNode(ProbeNode):
         Initialize a ProbeContextInjectorNode with the specified data operation and context keyword.
 
         Args:
-            data_operation (Type[BaseDataOperation]): The data probe class for this node.
+            data_operation (Type[BaseDataProcessor]): The data probe class for this node.
             context_keyword (str): The keyword used to inject the probe result into the context.
             operation_parameters (Optional[Dict]): Operation configuration parameters. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
@@ -824,12 +824,12 @@ def node_factory(
     if issubclass(operation, ContextOperation):
         return ContextNode(operation, operation_config=parameters, logger=logger)
 
-    elif issubclass(operation, DataAlgorithm):
+    elif issubclass(operation, DataOperation):
         if context_keyword is not None:
             raise ValueError(
-                "context_keyword must not be defined for DataAlgorithm nodes."
+                "context_keyword must not be defined for DataOperation nodes."
             )
-        return AlgorithmNode(
+        return OperationNode(
             data_operation=operation,
             operation_parameters=parameters,
             logger=logger,
@@ -850,5 +850,5 @@ def node_factory(
             )
     else:
         raise ValueError(
-            "Unsupported operation type. Operation must be of type DataAlgorithm or DataProbe."
+            "Unsupported operation type. Operation must be of type DataOperation or DataProbe."
         )
