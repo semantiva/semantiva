@@ -5,29 +5,29 @@ from semantiva.specializations.audio.audio_data_types import (
 )
 from semantiva.logger import Logger
 from semantiva.payload_operations import Pipeline
-from semantiva.specializations.audio.audio_operations import SingleChannelAudioAlgorithm
-from .test_audio_algorithm import (
-    SingleChannelAudioMultiplyAlgorithm,
-    DualChannelAudioMultiplyAlgorithm,
+from semantiva.specializations.audio.audio_operations import SingleChannelAudioOperation
+from .test_audio_operation import (
+    SingleChannelAudioMultiplyOperation,
+    DualChannelAudioMultiplyOperation,
     SingleChannelMockDataProbe,
 )
 
 
-class SingleChannelAudioDummyAlgorithm(SingleChannelAudioAlgorithm):
+class SingleChannelAudioDummyOperation(SingleChannelAudioOperation):
     """
-    A dummy algorithm to test pipeline inspection.
+    A dummy operation to test pipeline inspection.
     """
 
-    def _operation(self, data, mock_keyword: str):
+    def _process_logic(self, data, mock_keyword: str):
         return data
 
 
-class SingleChannelAudioDummyContextAlgorithm(SingleChannelAudioAlgorithm):
+class SingleChannelAudioDummyContextOperation(SingleChannelAudioOperation):
     """
-    A dummy algorithm to test pipeline inspection.
+    A dummy operation to test pipeline inspection.
     """
 
-    def _operation(self, data, dummy_context: str):
+    def _process_logic(self, data, dummy_context: str):
         return data
 
 
@@ -43,16 +43,16 @@ def test_pipeline_execution(single_channel_audio_data):
     """
     Test the execution of a pipeline with multiple nodes.
 
-    The pipeline consists of two MultiplyAudioAlgorithm nodes, each applying a multiplication factor.
+    The pipeline consists of two MultiplyAudioOperation nodes, each applying a multiplication factor.
     """
     # Define node configurations
     node_configurations = [
         {
-            "operation": SingleChannelAudioMultiplyAlgorithm,
+            "operation": SingleChannelAudioMultiplyOperation,
             "parameters": {"factor": 2.0},
         },
         {
-            "operation": SingleChannelAudioMultiplyAlgorithm,
+            "operation": SingleChannelAudioMultiplyOperation,
             "parameters": {"factor": 0.5},
         },
         {
@@ -63,10 +63,10 @@ def test_pipeline_execution(single_channel_audio_data):
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": SingleChannelAudioDummyAlgorithm,
+            "operation": SingleChannelAudioDummyOperation,
         },
         {
-            "operation": SingleChannelAudioDummyContextAlgorithm,
+            "operation": SingleChannelAudioDummyContextOperation,
         },
     ]
 
@@ -121,11 +121,11 @@ def test_pipeline_invalid_configuration():
     # Define invalid node configurations
     node_configurations = [
         {
-            "operation": SingleChannelAudioMultiplyAlgorithm,
+            "operation": SingleChannelAudioMultiplyOperation,
             "parameters": {"factor": 2.0},
         },
         {
-            "operation": DualChannelAudioMultiplyAlgorithm,
+            "operation": DualChannelAudioMultiplyOperation,
             "parameters": {"factor": 0.5},
         },
     ]

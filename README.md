@@ -13,7 +13,7 @@ By enforcing **type-safe** relationships between data and algorithms, Semantiva 
    - Ensures each module speaks a consistent “domain language,” reducing misunderstandings and promoting maintainability.
 
 2. **Type-Oriented Development**
-   - Establishes robust contracts between data and algorithms.
+   - Establishes robust contracts between data and operations.
    - Minimizes errors by validating data structures at definition time, preventing mismatches or incompatible operations.
 
 3. **Semantic Transparency & AI-Readiness**
@@ -22,17 +22,17 @@ By enforcing **type-safe** relationships between data and algorithms, Semantiva 
    - Enables AI assistants to understand, suggest, and even co-design workflows based on structured metadata and domain logic.
 
 4. **Modular & Extensible Architecture**
-   - Supports adding new data types, algorithm types, and domain ontologies without disrupting existing components.
+   - Supports adding new data types, operation types, and domain ontologies without disrupting existing components.
    - Adapts naturally to diverse applications—ranging from basic string manipulations to advanced imaging pipelines or HPC-scale workloads.
    - Allows intelligent agents to interact with and modify workflows dynamically, making it a natural fit for AI-assisted design and automation.
 
 ## Why Semantiva?
 
-- **Clarity & Consistency**: Well-defined semantics for data and algorithms ensure that both humans and AI systems understand precisely how information flows and transforms.
+- **Clarity & Consistency**: Well-defined semantics for data and operations ensure that both humans and AI systems understand precisely how information flows and transforms.
 - **Adaptive Workflows**: Easily extend pipelines with new steps or data types, minimizing rework when domain requirements evolve.
 - **Scalability & HPC Integration**: Abstract base classes and a pipeline-oriented design let users scale operations seamlessly, whether on local machines or high-performance clusters.
 - **AI-Driven Collaboration**: Semantiva’s structured approach enables AI systems to assist with workflow optimizations, debugging, and dynamic pipeline generation.
-- **Interdisciplinary Collaboration**: A shared language of data and algorithm types fosters better communication across physics, mathematics, engineering, and software teams.
+- **Interdisciplinary Collaboration**: A shared language of data and operation types fosters better communication across physics, mathematics, engineering, and software teams.
 
 ## AI-Enhanced Development Potential
 
@@ -57,8 +57,8 @@ This makes Semantiva uniquely suited to the evolving landscape of **human-AI col
 3. **Payload Operations (Pipelines)**
    - Orchestrates the execution of multiple operations, combining data transformations and context adaptations into a coherent workflow.
 
-4. **Data Types & Algorithm Types**
-   - Defines the structure and constraints of domain-specific data, alongside compatible algorithms (e.g., `Image` ↔ `ImageAlgorithm`), guaranteeing semantic integrity.
+4. **Data Types & Operation Types**
+   - Defines the structure and constraints of domain-specific data, alongside compatible operations (e.g., `Image` ↔ `ImageOperation`), guaranteeing semantic integrity.
 
 5. **Execution Tools**
    - Utilities for executing, monitoring, and debugging pipelines, supporting straightforward deployment and scaling.
@@ -71,7 +71,7 @@ Semantiva is released under the [MIT License](./LICENSE), promoting collaborativ
 
 ## Getting Started: A Minimal Example
 
-Below is a quick demonstration showing how Semantiva can handle a simple string data type and a matching algorithm. For more advanced domains—like imaging, wafer metrology, or large-scale simulations—users can define new data and algorithm types to match their specific needs.
+Below is a quick demonstration showing how Semantiva can handle a simple string data type and a matching operation. For more advanced domains—like imaging, wafer metrology, or large-scale simulations—users can define new data and operation types to match their specific needs.
 
 ```python
 # 1) Define StringLiteralDataType
@@ -85,18 +85,18 @@ class StringLiteralDataType(BaseDataType):
         assert isinstance(data, str), "Data must be a string."
 
 
-# 2) Create a StringLiteralAlgorithm
-from semantiva.data_operations import AlgorithmTopologyFactory
+# 2) Create a StringLiteralOperation
+from semantiva.data_operations import OperationTopologyFactory
 
-StringLiteralAlgorithm = AlgorithmTopologyFactory.create_algorithm(
+StringLiteralOperation = OperationTopologyFactory.create_operation(
     input_type=StringLiteralDataType,
     output_type=StringLiteralDataType,
-    class_name="StringLiteralAlgorithm",
+    class_name="StringLiteralOperation",
 )
 
 
-# 3) Define an Operation Extending StringLiteralAlgorithm
-class HelloOperation(StringLiteralAlgorithm):
+# 3) Define an Operation Extending StringLiteralOperation
+class HelloOperation(StringLiteralOperation):
     def _operation(self, data: StringLiteralDataType) -> StringLiteralDataType:
         return StringLiteralDataType(f"Hello, {data.data}")
 
@@ -124,8 +124,8 @@ if __name__ == "__main__":
 ### Key Takeaways
 
 * **Strong Type Contracts**: The `StringLiteralDataType` enforces the string constraint; incompatible data will fail early.
-* **Algorithm-Data Alignment**: `HelloOperation` inherits from `StringLiteralAlgorithm`, ensuring it can only act on `StringLiteralDataType`.
-* **Scalable Pipeline**: Extend this structure with domain-specific types (e.g., `Image`, `Spectrum`, `AudioClip`) and matching algorithms as needs grow.
+* **Operation-Data Alignment**: `HelloOperation` inherits from `StringLiteralOperation`, ensuring it can only act on `StringLiteralDataType`.
+* **Scalable Pipeline**: Extend this structure with domain-specific types (e.g., `Image`, `Spectrum`, `AudioClip`) and matching operations as needs grow.
 
 ## Summary
 

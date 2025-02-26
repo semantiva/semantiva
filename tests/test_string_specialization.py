@@ -32,28 +32,28 @@ class StringLiteralDataType(BaseDataType):
 
 
 #########################
-# Step 2: Create a Specialized StringLiteralAlgorithm Using AlgorithmTopologyFactory
+# Step 2: Create a Specialized StringLiteralOperation Using OperationTopologyFactory
 #########################
-from semantiva.data_operations import AlgorithmTopologyFactory
+from semantiva.data_processors import OperationTopologyFactory
 
-# Dynamically create a base algorithm class for (StringLiteralDataType -> StringLiteralDataType)
-StringLiteralAlgorithm = AlgorithmTopologyFactory.create_algorithm(
+# Dynamically create a base operation class for (StringLiteralDataType -> StringLiteralDataType)
+StringLiteralOperation = OperationTopologyFactory.create_data_operation(
     input_type=StringLiteralDataType,
     output_type=StringLiteralDataType,
-    class_name="StringLiteralAlgorithm",
+    class_name="StringLiteralOperation",
 )
 
 
 #########################
-# Step 3: Define HelloOperation (Extending StringLiteralAlgorithm)
+# Step 3: Define HelloOperation (Extending StringLiteralOperation)
 #########################
-class HelloOperation(StringLiteralAlgorithm):
+class HelloOperation(StringLiteralOperation):
     """
     A simple operation that modifies the input string to greet the inout
     and returns the updated value as a new StringLiteralDataType.
     """
 
-    def _operation(self, data: StringLiteralDataType) -> StringLiteralDataType:
+    def _process_logic(self, data: StringLiteralDataType) -> StringLiteralDataType:
         """
         Prepends "Hello, " to the input string and returns it as a new StringLiteralDataType.
 

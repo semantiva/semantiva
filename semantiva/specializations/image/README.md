@@ -18,7 +18,7 @@ This README demonstrates how to **generate, manipulate, visualize, and verify 2D
 import matplotlib.pyplot as plt
 from semantiva.specializations.image.image_loaders_savers_generators import TwoDGaussianImageGenerator
 from semantiva.specializations.image.image_data_types import ImageStackDataType
-from semantiva.specializations.image.image_algorithms import (
+from semantiva.specializations.image.image_operations import (
     StackToImageMeanProjector,
     ImageStackToSideBySideProjector,
 )
@@ -42,7 +42,7 @@ for idx, image in enumerate([image1, image2, image3], start=1):
 image_stack = ImageStackDataType.from_list([image1, image2, image3])
 
 
-# Step 4: Apply Image Processing Algorithms
+# Step 4: Apply Image Processing Operations
 
 # 4.1: Compute the mean projection of the stack
 mean_projector = StackToImageMeanProjector()

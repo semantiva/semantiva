@@ -14,7 +14,7 @@ from semantiva.specializations.image.image_loaders_savers_generators import (
 class TwoDGaussianStdDevProbe(ImageProbe):
     """A probe to extract the standard deviation of a 2D Gaussian from an image."""
 
-    def _operation(self, data):
+    def _process_logic(self, data):
         gaussian_fitter_probe = TwoDGaussianFitterProbe()
         std_dev = gaussian_fitter_probe.process(data)["std_dev_x"]
         return std_dev

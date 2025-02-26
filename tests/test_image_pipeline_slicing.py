@@ -7,7 +7,7 @@ from semantiva.specializations.image.image_loaders_savers_generators import (
     ImageDataRandomGenerator,
     ImageStackRandomGenerator,
 )
-from semantiva.specializations.image.image_algorithms import (
+from semantiva.specializations.image.image_operations import (
     ImageAddition,
     ImageSubtraction,
     ImageCropper,

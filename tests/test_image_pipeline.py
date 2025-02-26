@@ -5,7 +5,7 @@ from semantiva.specializations.image.image_data_types import (
     ImageDataType,
 )
 from semantiva.payload_operations import Pipeline
-from semantiva.specializations.image.image_algorithms import (
+from semantiva.specializations.image.image_operations import (
     ImageAddition,
     StackToImageMeanProjector,
 )
@@ -44,7 +44,7 @@ def random_image2():
 
 def test_image_pipeline_execution(image_stack_data, random_image1, random_image2):
     """
-    Test the execution of a pipeline with multiple image algorithms.
+    Test the execution of a pipeline with multiple image operations.
 
     The pipeline consists of:
     1. StackToImageMeanProjector: Flattens the image stack to a 2D image.
