@@ -1,6 +1,6 @@
 import pytest
 from semantiva.execution_tools.tasks import PayloadOperationTask
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from semantiva.specializations.image.image_loaders_savers_generators import (
     ImageDataRandomGenerator,
     ImageStackRandomGenerator,
@@ -57,19 +57,19 @@ def test_pipeline_task(random_image, another_random_image):
 
     node_configurations = [
         {
-            "operation": StackToImageMeanProjector,
+            "processor": StackToImageMeanProjector,
             "parameters": {},
         },
         {
-            "operation": ImageAddition,
+            "processor": ImageAddition,
             "parameters": {"image_to_add": random_image},
         },
         {
-            "operation": ImageSubtraction,
+            "processor": ImageSubtraction,
             "parameters": {"image_to_subtract": another_random_image},
         },
         {
-            "operation": ImageCropper,
+            "processor": ImageCropper,
             "parameters": {"x_start": 50, "x_end": 200, "y_start": 50, "y_end": 200},
         },
     ]
@@ -102,11 +102,11 @@ def test_pipeline_slicing(random_image_stack, random_image, another_random_image
 
     node_configurations = [
         {
-            "operation": ImageAddition,
+            "processor": ImageAddition,
             "parameters": {"image_to_add": random_image},
         },
         {
-            "operation": ImageSubtraction,
+            "processor": ImageSubtraction,
             "parameters": {"image_to_subtract": another_random_image},
         },
     ]

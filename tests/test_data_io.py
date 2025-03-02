@@ -2,7 +2,7 @@ import pytest
 from typing import Tuple
 
 from semantiva.data_types.data_types import BaseDataType, DataCollectionType
-from semantiva.context_operations import ContextType
+from semantiva.context_processors import ContextType
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 from .test_utils import FloatDataType
 

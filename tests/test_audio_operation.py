@@ -11,7 +11,7 @@ from semantiva.specializations.audio.audio_operations import (
 )
 
 from semantiva.payload_operations import node_factory
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from semantiva.component_loader import ComponentLoader
 
 
@@ -140,7 +140,7 @@ def test_single_channel_context_notification_operation(single_channel_audio_data
 
     # Define the node configuration
     node_configuration = {
-        "operation": SingleChannelAudioMockContextInjectorOperation,
+        "processor": SingleChannelAudioMockContextInjectorOperation,
         "parameters": {"factor": 2.5},
     }
 

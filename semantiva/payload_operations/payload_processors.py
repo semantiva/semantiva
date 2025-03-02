@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional
-from ..context_operations.context_types import ContextType
-from ..context_operations.context_observer import ContextObserver
+from ..context_processors.context_types import ContextType
+from ..context_processors.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType
 from ..logger import Logger
 from ..component_loader import ComponentLoader
 
 
-class PayloadOperation(ContextObserver, ABC):
+class PayloadProcessor(ContextObserver, ABC):
     """
     Base class for operations involving payloads in the semantic framework.
 

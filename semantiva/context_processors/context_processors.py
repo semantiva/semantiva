@@ -1,12 +1,12 @@
 from typing import List, Optional, Union
 from abc import ABC, abstractmethod
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types.data_types import BaseDataType
 from semantiva.logger import Logger
 from semantiva.workflows.fitting_model import FittingModel
 
 
-class ContextOperation(ABC):
+class ContextProcessor(ABC):
     """
     Abstract base class for defining operations on a context.
 
@@ -20,7 +20,7 @@ class ContextOperation(ABC):
         self.logger = logger if logger else Logger()
 
     @abstractmethod
-    def _operate_context(self, context: ContextType) -> ContextType:
+    def _process_logic(self, context: ContextType) -> ContextType:
         """
         Perform the core logic of the context operation.
 
@@ -51,7 +51,7 @@ class ContextOperation(ABC):
         """
         Execute the context operation.
 
-        Calls the subclass-implemented `_operate_context` method to perform the
+        Calls the subclass-implemented `_process_logic` method to perform the
         operation on the provided context.
 
         Args:
@@ -61,7 +61,7 @@ class ContextOperation(ABC):
             ContextType: The result of the context operation.
         """
         self.logger.debug(f"Executing {self.__class__.__name__}")
-        return self._operate_context(context)
+        return self._process_logic(context)
 
     @abstractmethod
     def get_required_keys(self) -> List[str]:
@@ -97,8 +97,8 @@ class ContextOperation(ABC):
         return f"{self.__class__.__name__}"
 
 
-class ModelFittingContextOperation(ContextOperation):
-    """ContextOperation that fits extracted features using a specified model."""
+class ModelFittingContextProcessor(ContextProcessor):
+    """ContextProcessor that fits extracted features using a specified model."""
 
     def __init__(
         self,
@@ -126,7 +126,7 @@ class ModelFittingContextOperation(ContextOperation):
                 f"independent_var_key must be a string, got {type(independent_var_key).__name__} with value {independent_var_key}"
             )
 
-    def _operate_context(self, context):
+    def _process_logic(self, context):
         """Fit extracted features to the model using context data."""
 
         # Retrieve independent and dependent variables from context

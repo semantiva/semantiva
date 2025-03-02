@@ -244,7 +244,7 @@ class ContextCollectionType(ContextType):
                 raise ValueError(
                     f"Key '{key}' is present in both the global collection and the individual context. "
                     "This fragile data structure design prevents proper merging.\n="
-                    "Consider renaming the key or use a ContextOperation to improve the data structure."
+                    "Consider renaming the key or use a ContextProcessor to improve the data structure."
                 )
 
         # Merge dictionaries: keys from the global collection (_context_container)
@@ -284,7 +284,7 @@ class ContextCollectionType(ContextType):
             raise ValueError(
                 f"Key '{key}' is present in both the global collection and individual contexts. "
                 "This fragile data structure design prevents proper merging. "
-                "Consider renaming the key or using a ContextOperation to improve the data structure."
+                "Consider renaming the key or using a ContextProcessor to improve the data structure."
             )
 
         # Return the value from the global context if it exists.
@@ -425,7 +425,7 @@ class ContextCollectionType(ContextType):
             raise ValueError(
                 f"Conflicting key(s) found in both global and individual contexts: {', '.join(conflict_keys)}. "
                 "This fragile data structure design prevents proper merging. "
-                "Consider renaming the key or using a ContextOperation to improve the data structure."
+                "Consider renaming the key or using a ContextProcessor to improve the data structure."
             )
 
         # Return the union of keys.

@@ -1,6 +1,6 @@
 import pytest
 from semantiva.logger import Logger
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from semantiva.specializations.image.image_data_types import (
     ImageDataType,
 )
@@ -55,19 +55,19 @@ def test_image_pipeline_execution(image_stack_data, random_image1, random_image2
     # Define node configurations
     node_configurations = [
         {
-            "operation": "StackToImageMeanProjector",
+            "processor": "StackToImageMeanProjector",
             "parameters": {},
         },
         {
-            "operation": "ImageAddition",
+            "processor": "ImageAddition",
             "parameters": {"image_to_add": random_image1},
         },
         {
-            "operation": "ImageSubtraction",
+            "processor": "ImageSubtraction",
             "parameters": {"image_to_subtract": random_image2},
         },
         {
-            "operation": "ImageCropper",
+            "processor": "ImageCropper",
             "parameters": {"x_start": 50, "x_end": 200, "y_start": 50, "y_end": 200},
         },
     ]

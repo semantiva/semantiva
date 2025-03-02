@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, TypeVar, Generic
-from semantiva.context_operations import ContextType
+from semantiva.context_processors import ContextType
 from semantiva.data_types import BaseDataType
 
 T = TypeVar("T", bound=BaseDataType)

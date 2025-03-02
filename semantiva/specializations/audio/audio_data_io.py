@@ -4,7 +4,7 @@ from semantiva.data_io import (
     PayloadSink,
 )
 from semantiva.data_types import BaseDataType
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from .audio_data_types import SingleChannelAudioDataType, DualChannelAudioDataType
 
 

@@ -3,8 +3,8 @@ import importlib.util
 from importlib import import_module
 from typing import List, Set
 from pathlib import Path
-from semantiva.context_operations.context_operations import (
-    ContextOperation,
+from semantiva.context_processors.context_processors import (
+    ContextProcessor,
     ContextType,
 )
 from semantiva.logger import Logger
@@ -12,18 +12,18 @@ from semantiva.logger import Logger
 
 def context_renamer_factory(original_key: str, destination_key: str):
     """
-    Factory function that creates a ContextOperation subclass to rename context keys.
+    Factory function that creates a ContextProcessor subclass to rename context keys.
 
     Args:
         original_key (str): The key to rename.
         destination_key (str): The new key name.
 
     Returns:
-        Type[ContextOperation]: A dynamically generated class that renames context keys,
+        Type[ContextProcessor]: A dynamically generated class that renames context keys,
                                   with a name of the form "Rename_<original_key>_to_<destination_key>_Operation".
     """
 
-    def _operate_context(self, context: ContextType) -> ContextType:
+    def _process_logic(self, context: ContextType) -> ContextType:
         """
         Rename a context key.
 
@@ -64,7 +64,7 @@ def context_renamer_factory(original_key: str, destination_key: str):
 
     # Define the class attributes and methods in a dictionary
     class_attrs = {
-        "_operate_context": _operate_context,
+        "_process_logic": _process_logic,
         "get_required_keys": get_required_keys,
         "get_created_keys": get_created_keys,
         "get_suppressed_keys": get_suppressed_keys,
@@ -73,23 +73,23 @@ def context_renamer_factory(original_key: str, destination_key: str):
     # Create a dynamic class name that clearly shows the renaming transformation
     dynamic_class_name = f"Rename_{original_key}_to_{destination_key}"
 
-    # Create and return the dynamically named class that inherits from ContextOperation.
-    return type(dynamic_class_name, (ContextOperation,), class_attrs)
+    # Create and return the dynamically named class that inherits from ContextProcessor.
+    return type(dynamic_class_name, (ContextProcessor,), class_attrs)
 
 
 def context_deleter_factory(key: str):
     """
-    Factory function that creates a ContextOperation subclass to delete a context key.
+    Factory function that creates a ContextProcessor subclass to delete a context key.
 
     Args:
         key (str): The key to delete.
 
     Returns:
-        Type[ContextOperation]: A dynamically generated class that removes a key, with a name
+        Type[ContextProcessor]: A dynamically generated class that removes a key, with a name
                                  of the form "Delete_<key>_Operation".
     """
 
-    def _operate_context(self, context: ContextType) -> ContextType:
+    def _process_logic(self, context: ContextType) -> ContextType:
         """
         Remove a key/value pair from the context.
 
@@ -126,7 +126,7 @@ def context_deleter_factory(key: str):
 
     # Define the class attributes and methods in a dictionary
     class_attrs = {
-        "_operate_context": _operate_context,
+        "_process_logic": _process_logic,
         "get_required_keys": get_required_keys,
         "get_created_keys": get_created_keys,
         "get_suppressed_keys": get_suppressed_keys,
@@ -135,8 +135,8 @@ def context_deleter_factory(key: str):
     # Create a dynamic class name
     dynamic_class_name = f"Delete_{key}"
 
-    # Create and return the dynamically named class that inherits from ContextOperation.
-    return type(dynamic_class_name, (ContextOperation,), class_attrs)
+    # Create and return the dynamically named class that inherits from ContextProcessor.
+    return type(dynamic_class_name, (ContextProcessor,), class_attrs)
 
 
 class ComponentLoader:
@@ -151,7 +151,7 @@ class ComponentLoader:
         """Initialize default modules at the class level"""
         cls._registered_modules.add("semantiva.specializations.image.image_operations")
         cls._registered_modules.add("semantiva.specializations.image.image_probes")
-        cls._registered_modules.add("semantiva.context_operations.context_operations")
+        cls._registered_modules.add("semantiva.context_processors.context_processors")
 
     @classmethod
     def register_paths(cls, paths: str | List[str]):
@@ -185,6 +185,9 @@ class ComponentLoader:
     def get_class(cls, class_name: str):
         """Lookup in registered paths and modules for the class and
         return its type. It starts with modules and then looks in paths."""
+        logger = Logger()
+        logger.debug(f"Resolving class name {class_name}")
+
         if class_name.startswith("rename:"):
             match = re.match(r"rename:(.*?):(.*?)$", class_name)
             if match:

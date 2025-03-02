@@ -1,5 +1,5 @@
 import pytest
-from semantiva.context_operations.context_types import (
+from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
 )

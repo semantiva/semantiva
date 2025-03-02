@@ -60,7 +60,7 @@ class TwoDGaussianFitterProbe(ImageProbe):
         )
         return np.ravel(two_d_gaussian)
 
-    def calculate_r_squared(self, data, fitted_data):
+    def _calculate_r_squared(self, data, fitted_data):
         """
         Calculate the R² goodness-of-fit score for a 2D Gaussian fit.
 
@@ -115,7 +115,7 @@ class TwoDGaussianFitterProbe(ImageProbe):
         fitted_data = self.two_d_gaussian((x, y), *fit_params[0]).reshape(
             data.data.shape
         )
-        r_squared = self.calculate_r_squared(data, fitted_data)
+        r_squared = self._calculate_r_squared(data, fitted_data)
 
         return {
             "peak_center": (fit_params[0][1], fit_params[0][2]),
@@ -135,18 +135,9 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
     - Using **second-moment (σ_x, σ_y) estimation** for better initial guesses.
     - Ensuring **principal axes are uniquely defined** to prevent swaps.
     - Incorporating **weighting techniques** from optical beam propagation.
-
-    Attributes:
-        None (inherits methods and attributes from `ImageProbe`).
-
-    Methods:
-        two_d_gaussian: Defines the **rotated 2D Gaussian function**.
-        estimate_initial_params: Provides **better initial estimates** for stable fitting.
-        calculate_r_squared: Computes the **R² goodness-of-fit score**.
-        _operation: Fits a **tilted** Gaussian function and extracts parameters.
     """
 
-    def two_d_gaussian(self, xy, amplitude, xo, yo, sigma_x, sigma_y, theta):
+    def _two_d_gaussian(self, xy, amplitude, xo, yo, sigma_x, sigma_y, theta):
         """
         Define a **rotated 2D Gaussian function**.
 
@@ -178,7 +169,7 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
         )
         return np.ravel(gaussian)
 
-    def estimate_initial_params(self, data: np.ndarray):
+    def _estimate_initial_params(self, data: np.ndarray):
         """
         Estimate initial parameters for stable fitting using **second-moment analysis**.
 
@@ -220,7 +211,7 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
             theta,
         )
 
-    def calculate_r_squared(self, data, fitted_data):
+    def _calculate_r_squared(self, data, fitted_data):
         """
         Compute the **R² goodness-of-fit** score for the fitted Gaussian model.
 
@@ -261,18 +252,18 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
         x, y = np.meshgrid(x, y)
 
         # Get initial parameter estimates
-        initial_guess = self.estimate_initial_params(data.data)
+        initial_guess = self._estimate_initial_params(data.data)
 
         # Perform curve fitting
         fit_params, _ = curve_fit(
-            self.two_d_gaussian, (x, y), data.data.ravel(), p0=initial_guess
+            self._two_d_gaussian, (x, y), data.data.ravel(), p0=initial_guess
         )
 
         # Compute fitted Gaussian
-        fitted_data = self.two_d_gaussian((x, y), *fit_params).reshape(data.data.shape)
+        fitted_data = self._two_d_gaussian((x, y), *fit_params).reshape(data.data.shape)
 
         # Calculate goodness-of-fit score
-        r_squared = self.calculate_r_squared(data, fitted_data)
+        r_squared = self._calculate_r_squared(data, fitted_data)
 
         return {
             "peak_center": (fit_params[1], fit_params[2]),
