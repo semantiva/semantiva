@@ -1,20 +1,20 @@
 pipeline:
   nodes:
-    - operation: "ImageAddition"
+    - processor: "ImageAddition"
 
-    - operation: "BasicImageProbe"
+    - processor: "BasicImageProbe"
       context_keyword: "debug_info"
 
-    - operation: "ImageAddition"
+    - processor: "ImageAddition"
 
-    - operation: "rename:debug_info:final_info"
+    - processor: "rename:debug_info:final_info"
 
-    - operation: "ImageCropper"
+    - processor: "ImageCropper"
       parameters:
         x_start: 10
         x_end: 20
         y_start: 10
         y_end: 20
 
-    - operation: "delete:image_to_add"
+    - processor: "delete:image_to_add"
 

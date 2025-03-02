@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Type, Dict, Optional
 from ..data_io import PayloadSource, PayloadSink
-from ..payload_operations import PayloadOperation
+from ..payload_operations import PayloadProcessor
 
 
 class ComputingTask(ABC):
@@ -56,7 +56,7 @@ class PayloadOperationTask(ComputingTask):
 
     payload_source_class: Type[PayloadSource]
     payload_source_parameters: Dict
-    payload_operation_class: Type[PayloadOperation]
+    payload_operation_class: Type[PayloadProcessor]
     payload_operation_config: Dict
     payload_sink_class: Optional[Type[PayloadSink]]
     payload_sink_parameters: Optional[Dict]
@@ -65,7 +65,7 @@ class PayloadOperationTask(ComputingTask):
         self,
         payload_source_class: Type[PayloadSource],
         payload_source_parameters: Dict,
-        payload_operation_class: Type[PayloadOperation],
+        payload_operation_class: Type[PayloadProcessor],
         payload_operation_config: Dict,
         payload_sink_class: Optional[Type[PayloadSink]] = None,
         payload_sink_parameters: Optional[Dict] = None,

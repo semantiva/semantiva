@@ -1,5 +1,5 @@
 import pytest
-from semantiva.context_operations.context_types import (
+from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
 )
@@ -50,29 +50,29 @@ def test_pipeline_execution(float_data, empty_context):
     # Define node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyOperation,
+            "processor": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {
-            "operation": FloatMultiplyOperation,
+            "processor": FloatMultiplyOperation,
             "parameters": {"factor": 3},
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
             "context_keyword": "dummy_keyword",
         },
         {
-            "operation": "rename:mock_keyword:final_keyword",
+            "processor": "rename:mock_keyword:final_keyword",
         },
         {
-            "operation": "delete:dummy_keyword",
+            "processor": "delete:dummy_keyword",
         },
     ]
 
@@ -99,14 +99,14 @@ def test_pipeline_execution_with_single_context(float_data_collection, empty_con
     # Define node configurations
     node_configurations = [
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
         },
         {
-            "operation": FloatMultiplyOperation,
+            "processor": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
     ]
@@ -141,21 +141,21 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
     # Define node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyOperation,
+            "processor": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": "rename:mock_keyword:final_keyword",
+            "processor": "rename:mock_keyword:final_keyword",
         },
         {
-            "operation": FloatCollectionSumOperation,
+            "processor": FloatCollectionSumOperation,
         },
     ]
 
@@ -187,15 +187,15 @@ def test_pipeline_slicing_with_context_collection(
     # Define node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyOperation,
+            "processor": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
         },
     ]
 
@@ -228,11 +228,11 @@ def test_image_pipeline_invalid_configuration():
     # Define invalid node configurations
     node_configurations = [
         {
-            "operation": FloatMultiplyOperation,
+            "processor": FloatMultiplyOperation,
             "parameters": {"factor": 2},
         },
         {
-            "operation": HelloOperation,
+            "processor": HelloOperation,
         },
     ]
 

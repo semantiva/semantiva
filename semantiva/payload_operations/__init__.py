@@ -1,4 +1,4 @@
-from .payload_operations import PayloadOperation
+from .payload_processors import PayloadProcessor
 from .nodes import (
     DataNode,
     OperationNode,

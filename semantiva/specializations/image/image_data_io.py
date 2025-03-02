@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from typing_extensions import override
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 from .image_data_types import ImageDataType, ImageStackDataType
 

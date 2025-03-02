@@ -1,10 +1,10 @@
 import pytest
 from typing import List
-from semantiva.context_operations.context_operations import (
-    ContextOperation,
-    ModelFittingContextOperation,
+from semantiva.context_processors.context_processors import (
+    ContextProcessor,
+    ModelFittingContextProcessor,
 )
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from semantiva.logger import Logger
 from semantiva.workflows.fitting_model import FittingModel
 
@@ -14,8 +14,8 @@ class MockFittingModel(FittingModel):
         return {"fit_results": "mock_results"}
 
 
-class MockContextOperation(ContextOperation):
-    def _operate_context(self, context: ContextType) -> ContextType:
+class MockContextProcessor(ContextProcessor):
+    def _process_logic(self, context: ContextType) -> ContextType:
         context.set_value("operation_result", "success")
         return context
 
@@ -29,17 +29,17 @@ class MockContextOperation(ContextOperation):
         return []
 
 
-def test_mock_context_operation():
+def test_mock_context_processor():
     context = ContextType({"required_key": "value"})
-    operation = MockContextOperation()
+    operation = MockContextProcessor()
     result_context = operation.operate_context(context)
     assert result_context.get_value("operation_result") == "success"
 
 
-def test_model_fitting_context_operation():
+def test_model_fitting_context_processor():
     context = ContextType({"independent_var": [1, 2, 3], "dependent_var": [4, 5, 6]})
     fitting_model = MockFittingModel()
-    operation = ModelFittingContextOperation(
+    operation = ModelFittingContextProcessor(
         logger=Logger(),
         fitting_model=fitting_model,
         independent_var_key="independent_var",

@@ -97,7 +97,7 @@ StringLiteralOperation = OperationTopologyFactory.create_operation(
 
 # 3) Define an Operation Extending StringLiteralOperation
 class HelloOperation(StringLiteralOperation):
-    def _operation(self, data: StringLiteralDataType) -> StringLiteralDataType:
+    def _process_logic(self, data: StringLiteralDataType) -> StringLiteralDataType:
         return StringLiteralDataType(f"Hello, {data.data}")
 
 
@@ -106,7 +106,7 @@ from semantiva.payload_operations import Pipeline
 
 node_configurations = [
     {
-        "operation": HelloOperation,
+        "processor": HelloOperation,
         "parameters": {},
     },
 ]

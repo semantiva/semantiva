@@ -1,7 +1,7 @@
 import pytest
 from semantiva.specializations.image.image_probes import TwoDGaussianFitterProbe
 from semantiva.workflows.fitting_model import PolynomialFittingModel
-from semantiva.context_operations.context_operations import ModelFittingContextOperation
+from semantiva.context_processors.context_processors import ModelFittingContextProcessor
 from semantiva.payload_operations.pipeline import Pipeline
 from semantiva.specializations.image.image_probes import ImageProbe
 
@@ -42,11 +42,11 @@ def test_pipeline_single_string_key(image_stack):
     image_data, t_values = image_stack
     node_configurations = [
         {
-            "operation": TwoDGaussianStdDevProbe,
+            "processor": TwoDGaussianStdDevProbe,
             "context_keyword": "std_dev_features",
         },
         {
-            "operation": ModelFittingContextOperation,
+            "processor": ModelFittingContextProcessor,
             "parameters": {
                 "fitting_model": PolynomialFittingModel(degree=1),
                 "independent_var_key": "t_values",
@@ -66,11 +66,11 @@ def test_pipeline_tuple_key(image_stack):
     image_data, t_values = image_stack
     node_configurations = [
         {
-            "operation": TwoDGaussianFitterProbe,
+            "processor": TwoDGaussianFitterProbe,
             "context_keyword": "gaussian_fit_parameters",
         },
         {
-            "operation": ModelFittingContextOperation,
+            "processor": ModelFittingContextProcessor,
             "parameters": {
                 "fitting_model": PolynomialFittingModel(degree=1),
                 "independent_var_key": "t_values",
