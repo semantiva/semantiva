@@ -73,7 +73,7 @@ class HelloOperation(StringLiteralOperation):
 
 node_configurations = [
     {
-        "operation": HelloOperation,
+        "processor": HelloOperation,
         "parameters": {},  # No extra parameters needed
     },
 ]

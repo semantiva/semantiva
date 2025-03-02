@@ -2,7 +2,7 @@ import pytest
 from semantiva.payload_operations import Pipeline
 from semantiva.specializations.image.image_data_types import ImageDataType
 from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
-from semantiva.context_operations.context_types import ContextType
+from semantiva.context_processors.context_types import ContextType
 from semantiva.specializations.image.image_loaders_savers_generators import (
     ImageDataRandomGenerator,
 )

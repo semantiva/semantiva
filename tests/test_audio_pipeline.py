@@ -22,7 +22,7 @@ class SingleChannelAudioDummyOperation(SingleChannelAudioOperation):
         return data
 
 
-class SingleChannelAudioDummyContextOperation(SingleChannelAudioOperation):
+class SingleChannelAudioDummyContextProcessor(SingleChannelAudioOperation):
     """
     A dummy operation to test pipeline inspection.
     """
@@ -48,25 +48,25 @@ def test_pipeline_execution(single_channel_audio_data):
     # Define node configurations
     node_configurations = [
         {
-            "operation": SingleChannelAudioMultiplyOperation,
+            "processor": SingleChannelAudioMultiplyOperation,
             "parameters": {"factor": 2.0},
         },
         {
-            "operation": SingleChannelAudioMultiplyOperation,
+            "processor": SingleChannelAudioMultiplyOperation,
             "parameters": {"factor": 0.5},
         },
         {
-            "operation": SingleChannelMockDataProbe,
+            "processor": SingleChannelMockDataProbe,
         },
         {
-            "operation": SingleChannelMockDataProbe,
+            "processor": SingleChannelMockDataProbe,
             "context_keyword": "mock_keyword",
         },
         {
-            "operation": SingleChannelAudioDummyOperation,
+            "processor": SingleChannelAudioDummyOperation,
         },
         {
-            "operation": SingleChannelAudioDummyContextOperation,
+            "processor": SingleChannelAudioDummyContextProcessor,
         },
     ]
 
@@ -121,11 +121,11 @@ def test_pipeline_invalid_configuration():
     # Define invalid node configurations
     node_configurations = [
         {
-            "operation": SingleChannelAudioMultiplyOperation,
+            "processor": SingleChannelAudioMultiplyOperation,
             "parameters": {"factor": 2.0},
         },
         {
-            "operation": DualChannelAudioMultiplyOperation,
+            "processor": DualChannelAudioMultiplyOperation,
             "parameters": {"factor": 0.5},
         },
     ]

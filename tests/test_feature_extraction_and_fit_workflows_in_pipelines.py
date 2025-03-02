@@ -1,7 +1,7 @@
 import pytest
 from .test_utils import FloatDataCollection, FloatDataType, FloatCollectValueProbe
 from semantiva.workflows.fitting_model import PolynomialFittingModel
-from semantiva.context_operations.context_operations import ModelFittingContextOperation
+from semantiva.context_processors.context_processors import ModelFittingContextProcessor
 from semantiva.payload_operations.pipeline import Pipeline
 
 
@@ -19,11 +19,11 @@ def test_pipeline_single_string_key(linear_int_data_collection):
     t_values = [i for i in range(len(linear_int_data_collection))]
     node_configurations = [
         {
-            "operation": FloatCollectValueProbe,
+            "processor": FloatCollectValueProbe,
             "context_keyword": "data_values",
         },
         {
-            "operation": ModelFittingContextOperation,
+            "processor": ModelFittingContextProcessor,
             "parameters": {
                 "fitting_model": PolynomialFittingModel(degree=1),
                 "independent_var_key": "t_values",

@@ -3,7 +3,7 @@ from typing import Any, List, Optional, Type, TypeVar, Generic, Union, Tuple
 
 from abc import ABC, abstractmethod
 
-from ..context_operations.context_observer import ContextObserver
+from ..context_processors.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..logger import Logger
 
