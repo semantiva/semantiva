@@ -118,7 +118,8 @@ class TwoDGaussianFitterProbe(ImageProbe):
         r_squared = self._calculate_r_squared(data, fitted_data)
 
         return {
-            "peak_center": (fit_params[0][1], fit_params[0][2]),
+            "x_0": fit_params[0][1],
+            "y_0": fit_params[0][2],
             "amplitude": fit_params[0][0],
             "std_dev_x": fit_params[0][3],
             "std_dev_y": fit_params[0][4],
@@ -238,7 +239,8 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
 
         Returns:
             dict: A dictionary containing:
-                - `"peak_center"`: (x, y) coordinates of the Gaussian peak.
+                - `"x_0"`: x coordinate of the Gaussian peak.
+                - `"y_0"`: y coordinate of the Gaussian peak.
                 - `"amplitude"`: Peak intensity of the Gaussian.
                 - `"std_dev_x"`: Standard deviation along the **primary axis**.
                 - `"std_dev_y"`: Standard deviation along the **perpendicular axis**.
@@ -266,7 +268,8 @@ class TwoDTiltedGaussianFitterProbe(ImageProbe):
         r_squared = self._calculate_r_squared(data, fitted_data)
 
         return {
-            "peak_center": (fit_params[1], fit_params[2]),
+            "x_0": fit_params[1],
+            "y_0": fit_params[2],
             "amplitude": fit_params[0],
             "std_dev_x": fit_params[3],
             "std_dev_y": fit_params[4],

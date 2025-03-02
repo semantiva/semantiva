@@ -317,7 +317,8 @@ class TwoDGaussianImageGenerator(ImageDataSource):
 
     def _get_data(
         self,
-        center: tuple[float | int, float | int],  # (x, y) position
+        x_0: float | int,  # x position
+        y_0: float | int,  # y position
         std_dev: float | tuple[float, float],  # Allow single float or tuple
         amplitude: float,
         angle: float = 0.0,  # Rotation angle in degrees
@@ -337,7 +338,7 @@ class TwoDGaussianImageGenerator(ImageDataSource):
         Returns:
             ImageDataType: A n image with a 2D Gaussian shape.
         """
-        x_center, y_center = center
+        x_center, y_center = x_0, y_0
 
         if isinstance(std_dev, (int, float)):
             std_dev_x, std_dev_y = std_dev, std_dev
