@@ -22,17 +22,20 @@ class TwoDGaussianStdDevProbe(ImageProbe):
 
 @pytest.fixture
 def image_stack():
-    """Fixture to provide a sample image stack with 3 frames."""
+    """Fixture to provide a sample image stack with 3 frames using smaller images."""
     generator = ParametricImageStackGenerator(
         num_frames=3,
         parametric_expressions={
-            "center": "(350 + 200 * t, 625 - 100 * t + 100  * t ** 2)",
-            "std_dev": "30 + 20 * t",
+            "x_0": "50 + 5 * t",  # Adjusted peak x position to remain within a 128px image
+            "y_0": "50 + 5 * t",  # Adjusted peak y position accordingly
+            "std_dev": "10 + 2 * t",  # Reduced standard deviation for a smaller image
             "amplitude": "100",
         },
         param_ranges={"t": (-1, 2)},
         image_generator=TwoDGaussianImageGenerator(),
-        image_generator_params={"image_size": (1024, 1024)},
+        image_generator_params={
+            "image_size": (128, 128)
+        },  # Use a much smaller image size
     )
     return generator.get_data(), generator.t_values
 
