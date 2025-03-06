@@ -87,17 +87,19 @@ class ImageInteractiveViewer:
         "Large (1000x800)": {"figsize": (10, 8), "labelsize": 14},
     }
 
-    @classmethod
-    def view(
-        cls,
+    def __init__(
+        self,
         data: ImageDataType,
-        title: str = "",
-        colorbar: bool = False,
-        cmap: str = "viridis",
-        log_scale: bool = False,
+        title: str,
+        colorbar: bool,
+        cmap: str,
+        log_scale: bool,
+        xlabel: str,
+        ylabel: str,
     ):
-        """Create an interactive image viewer with ipywidgets."""
-
+        self.title = title
+        self.xlabel = xlabel
+        self.ylabel = ylabel
         # Widgets
         colorbar_widget = widgets.Checkbox(value=colorbar, description="Colorbar")
         log_scale_widget = widgets.Checkbox(value=log_scale, description="Log Scale")
@@ -117,12 +119,9 @@ class ImageInteractiveViewer:
             step=0.1,
             description="vmax",
         )
-        title_widget = widgets.Text(value=title, description="Title:")
-        xlabel_widget = widgets.Text(value="", description="X Label:")
-        ylabel_widget = widgets.Text(value="", description="Y Label:")
 
         figure_size_widget = widgets.Dropdown(
-            options=list(cls.FIGURE_OPTIONS.keys()),
+            options=list(self.FIGURE_OPTIONS.keys()),
             value="Medium (700x500)",
             description="Figure Size:",
         )
@@ -144,16 +143,13 @@ class ImageInteractiveViewer:
 
         # Bind widgets to the plotting function
         interactive_plot = widgets.interactive(
-            cls._update_plot,
+            self._update_plot,
             data=widgets.fixed(data),
             colorbar=colorbar_widget,
             log_scale=log_scale_widget,
             cmap=cmap_widget,
             vmin=vmin_widget,
             vmax=vmax_widget,
-            title=title_widget,
-            xlabel=xlabel_widget,
-            ylabel=ylabel_widget,
             figure_size=figure_size_widget,
         )
 
@@ -161,30 +157,41 @@ class ImageInteractiveViewer:
         display(interactive_plot)
 
     @classmethod
-    def _update_plot(
+    def view(
         cls,
+        data: ImageDataType,
+        title: str = "",
+        colorbar: bool = False,
+        cmap: str = "viridis",
+        log_scale: bool = False,
+        xlabel: str = "",
+        ylabel: str = "",
+    ):
+        """Create an interactive image viewer with ipywidgets."""
+
+        cls(data, title, colorbar, cmap, log_scale, xlabel, ylabel)
+
+    def _update_plot(
+        self,
         data: ImageDataType,
         colorbar: bool,
         log_scale: bool,
         cmap: str,
         vmin: float,
         vmax: float,
-        title: str,
-        xlabel: str,
-        ylabel: str,
         figure_size: str,
     ):
         """Update plot based on widget values."""
-        fig_options = cls.FIGURE_OPTIONS[figure_size]
+        fig_options = self.FIGURE_OPTIONS[figure_size]
         figsize = fig_options["figsize"]
         labelsize = fig_options["labelsize"]
 
         plt.figure(figsize=figsize)
         norm = LogNorm(vmin=vmin, vmax=vmax) if log_scale else None
         plt.imshow(data.data, cmap=cmap, norm=norm)
-        plt.title(title, fontsize=labelsize + 2)
-        plt.xlabel(xlabel, fontsize=labelsize)
-        plt.ylabel(ylabel, fontsize=labelsize)
+        plt.title(self.title, fontsize=labelsize + 2)
+        plt.xlabel(self.xlabel, fontsize=labelsize)
+        plt.ylabel(self.ylabel, fontsize=labelsize)
         plt.xticks(fontsize=labelsize - 2)
         plt.yticks(fontsize=labelsize - 2)
         if colorbar:
