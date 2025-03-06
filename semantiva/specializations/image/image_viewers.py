@@ -1,14 +1,14 @@
 import numpy as np
-import ipywidgets as widgets
 from typing import TypedDict
+import ipywidgets as widgets
 from IPython.display import display, HTML
-from matplotlib.colors import LogNorm
+from matplotlib.colors import LogNorm, Normalize
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from matplotlib.figure import Figure
-from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons
+from matplotlib.widgets import Slider, RadioButtons, CheckButtons
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.colors import LogNorm
 from semantiva.specializations.image.image_data_types import (
     ImageDataType,
     ImageStackDataType,
@@ -169,7 +169,7 @@ class ImageInteractiveViewer:
     ):
         """Create an interactive image viewer with ipywidgets."""
 
-        cls(data, title, colorbar, cmap, log_scale, xlabel, ylabel)
+        return cls(data, title, colorbar, cmap, log_scale, xlabel, ylabel)
 
     def _update_plot(
         self,
@@ -208,7 +208,17 @@ class ImageStackAnimator:
     """
 
     @classmethod
-    def view(cls, image_stack: ImageStackDataType, frame_duration: int = 200):
+    def view(
+        cls,
+        image_stack: ImageStackDataType,
+        title: str = "",
+        colorbar: bool = False,
+        cmap: str = "hot",
+        log_scale: bool = False,
+        xlabel: str = "",
+        ylabel: str = "",
+        frame_duration: int = 200,
+    ):
         """
         Creates and displays an animation using matplotlib.animation.
 
@@ -216,6 +226,18 @@ class ImageStackAnimator:
             image_stack (ImageStackDataType): Stack of images to animate.
         """
         fig, ax = plt.subplots()
+
+        # Compute global min/max values for consistent color scaling
+        all_data = np.array([img.data for img in image_stack.data])
+        vmin, vmax = all_data.min(), all_data.max()
+
+        # Define log normalization if log scale is enabled
+        norm = LogNorm(vmin=max(1e-34, vmin), vmax=vmax) if log_scale else None
+
+        # Add colorbar if requested
+        if colorbar:
+            cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax)
+
         frames = []
 
         for img in image_stack.data:
@@ -225,7 +247,10 @@ class ImageStackAnimator:
                 * 255
                 / (img_array.max() - img_array.min())
             ).astype(np.uint8)
-            frame = ax.imshow(img_normalized, cmap="hot", animated=True)
+            ax.title.set_text(title)
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel(ylabel)
+            frame = ax.imshow(img_normalized, cmap=cmap, animated=True, norm=norm)
             frames.append([frame])
 
         ani = animation.ArtistAnimation(fig, frames, interval=frame_duration, blit=True)
@@ -252,16 +277,29 @@ class ImageCrossSectionInteractiveViewer:
         viewer = ImageCrossSectionInteractiveViewer.view(image_data)
     """
 
-    def __init__(self, image_data):
+    def __init__(
+        self,
+        image_data: ImageDataType,
+        title: str = "",
+        colorbar: bool = False,
+        cmap: str = "hot",
+        log_scale: bool = False,
+        xlabel: str = "",
+        ylabel: str = "",
+    ):
         self._image_data = image_data.data
         self._ny, self._nx = self._image_data.shape
         self._cur_x = self._nx // 2
         self._cur_y = self._ny // 2
         self._z_max = self._image_data.max()
         self._z_min = self._image_data.min()
-        self._cmap = "hot"
-        self._log_scale = False
+        self._cmap = cmap
+        self._log_scale = log_scale
         self._auto_scale = False
+        self._title = title
+        self._use_colorbar = colorbar
+        self._xlabel = xlabel
+        self._ylabel = ylabel
 
         self._fig, self._main_ax = plt.subplots(figsize=(7, 7))
         self._fig.subplots_adjust(top=0.85, bottom=0.2)
@@ -280,9 +318,14 @@ class ImageCrossSectionInteractiveViewer:
         self._img = self._main_ax.imshow(
             self._image_data, origin="lower", cmap=self._cmap, norm=self._norm
         )
-        self._colorbar = self._fig.colorbar(
-            self._img, ax=self._main_ax, orientation="vertical", shrink=0.8
-        )
+        if self._use_colorbar:
+            self._colorbar = self._fig.colorbar(
+                self._img, ax=self._main_ax, orientation="vertical", shrink=0.8
+            )
+
+        self._top_ax.set_title(title)
+        self._main_ax.set_xlabel(xlabel)
+        self._main_ax.set_ylabel(ylabel)
 
         self._main_ax.autoscale(enable=False)
         self._right_ax.autoscale(enable=False)
@@ -307,8 +350,17 @@ class ImageCrossSectionInteractiveViewer:
         self._update_profiles()
 
     @classmethod
-    def view(cls, image_data: ImageDataType):
-        return cls(image_data)
+    def view(
+        cls,
+        image_data: ImageDataType,
+        title: str = "",
+        colorbar: bool = False,
+        cmap: str = "hot",
+        log_scale: bool = False,
+        xlabel: str = "",
+        ylabel: str = "",
+    ):
+        return cls(image_data, title, colorbar, cmap, log_scale, xlabel, ylabel)
 
     def _update_norm(self):
         """Update normalization mode based on log scale checkbox"""
@@ -378,7 +430,8 @@ class ImageCrossSectionInteractiveViewer:
             self._log_scale = not self._log_scale
             self._update_norm()
             self._img.set_norm(self._norm)
-            self._colorbar.update_normal(self._img)
+            if self._use_colorbar:
+                self._colorbar.update_normal(self._img)
             self._update_profiles()
             self._fig.canvas.draw_idle()
 
@@ -409,7 +462,7 @@ class ImageCrossSectionInteractiveViewer:
         )
         self._y_slider.on_changed(self._update_cross_section)
 
-        ax_check_buttons = plt.axes([0.3, 0.85, 0.2, 0.1])
+        ax_check_buttons = plt.axes([0.5, 0.9, 0.2, 0.1])
         self._check_buttons = CheckButtons(
             ax_check_buttons,
             ["Log Scale", "Auto Scale"],
@@ -419,8 +472,13 @@ class ImageCrossSectionInteractiveViewer:
         self._check_buttons.on_clicked(self._toggle_autoscale)
 
         ax_cmap_radio = plt.axes([0.75, 0.85, 0.15, 0.15])
+        options_list = ["viridis", "plasma", "gray", "magma", "hot"]
+        for i, option in enumerate(options_list):
+            if option == self._cmap:
+                active = i
+                break
         self._cmap_radio = RadioButtons(
-            ax_cmap_radio, ["viridis", "plasma", "gray", "magma", "hot"], active=4
+            ax_cmap_radio, ["viridis", "plasma", "gray", "magma", "hot"], active=i
         )
         self._cmap_radio.on_clicked(self._update_cmap)
 
@@ -448,7 +506,16 @@ class ImageXYProjectionViewer:
     """
 
     @classmethod
-    def view(cls, image: ImageDataType, colormap="hot", log_scale=False):
+    def view(
+        cls,
+        image: ImageDataType,
+        title: str = "",
+        colorbar: bool = False,
+        cmap: str = "hot",
+        log_scale: bool = False,
+        xlabel: str = "",
+        ylabel: str = "",
+    ):
         """Display an image with X and Y projections."""
         image_data = image.data
         ny, nx = image_data.shape
@@ -465,16 +532,22 @@ class ImageXYProjectionViewer:
         divider = make_axes_locatable(main_ax)
         top_ax = divider.append_axes("top", 1.05, pad=0.1, sharex=main_ax)
         right_ax = divider.append_axes("right", 1.05, pad=0.1, sharey=main_ax)
+        top_ax.set_title(title)
+        main_ax.set_xlabel(xlabel)
+        main_ax.set_ylabel(ylabel)
 
         top_ax.xaxis.set_tick_params(labelbottom=False)
         right_ax.yaxis.set_tick_params(labelleft=False)
 
         norm = LogNorm(vmin=1e-2, vmax=z_max) if log_scale else None
 
-        img = main_ax.imshow(image_data, origin="lower", cmap=colormap, norm=norm)
+        img = main_ax.imshow(image_data, origin="lower", cmap=cmap, norm=norm)
 
         # Add colorbar
-        colorbar = fig.colorbar(img, ax=main_ax, orientation="vertical", shrink=0.8)
+        if colorbar:
+            color_bar = fig.colorbar(
+                img, ax=main_ax, orientation="vertical", shrink=0.8
+            )
 
         main_ax.autoscale(enable=True)
         right_ax.autoscale(enable=True)

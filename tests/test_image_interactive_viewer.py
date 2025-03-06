@@ -10,6 +10,12 @@ from semantiva.specializations.image.image_viewers import (
 from semantiva.specializations.image.image_data_types import ImageDataType
 
 
+@pytest.fixture(autouse=True)
+def disable_plt_show(monkeypatch):
+    """Prevents matplotlib figures from being displayed during pytest runs."""
+    monkeypatch.setattr(plt, "show", lambda: None)
+
+
 # Sample test data
 @pytest.fixture
 def test_image():
@@ -28,7 +34,7 @@ def test_figure_options():
 
 def test_generate_widgets(test_image):
     """Test that interactive widgets are correctly created."""
-    viewer = ImageInteractiveViewer()
+    viewer = ImageInteractiveViewer.view(test_image)
 
     # Create widgets
     colorbar_widget = Checkbox(value=False, description="Colorbar")
@@ -85,16 +91,13 @@ def test_update_plot(monkeypatch, test_image):
     monkeypatch.setattr(plt, "show", mock_show)
 
     # Call update_plot with dummy values
-    ImageInteractiveViewer._update_plot(
+    ImageInteractiveViewer.view(test_image)._update_plot(
         test_image,
         colorbar=True,
         log_scale=True,
         cmap="plasma",
         vmin=0.1,
         vmax=1.0,
-        title="Test Plot",
-        xlabel="X Axis",
-        ylabel="Y Axis",
         figure_size="Medium (700x500)",
     )
 
