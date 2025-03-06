@@ -366,7 +366,10 @@ class ContextNode(PipelineNode):
         Returns:
             tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
         """
-        return data, self.processor.operate_context(context)
+        self.stop_watch.start()
+        updated_context = self.processor.operate_context(context)
+        self.stop_watch.stop()
+        return data, updated_context
 
 
 class OperationNode(DataNode):
