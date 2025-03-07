@@ -18,6 +18,14 @@ Here is the updated changelog with the missing items included and the requested 
 ### Changed
 - **Enchance Logger functionality**
  - Improve initialization and reconfiguration of Semantiva Logger
+- **Rename software components**
+  - **`ContextOperation` → `ContextProcessor`**
+  - **`BaseDataOperation` → `BaseDataProcessor`**
+    - **Justification:** The term **"Processor"** explicitly defines a **generic role** of handling data, whether through **analysis (non-modifying)** or **transformation (modifying)**.
+  - **`DataAlgorithm` → `DataOperation`**
+  - **Justification:**
+    - The word **"Algorithm"** is too **broad and overloaded** across different fields.
+    - **"Operation"** aligns well with mathematical and computational principles, clearly indicating that this component **modifies** data.
 
 ### Added
 
@@ -66,6 +74,10 @@ Here is the updated changelog with the missing items included and the requested 
 ### Removed
 - **Deprecated Data Collection Fit Probe**:
   - `data_collection_fit_probe.py` was removed, replaced by improved feature extraction workflows.
+
+- **Semantiva specializations split from main repository**:
+  - Image specialization moved to  `semantiva-imaging` 
+  - Audio specialization moved to  `semantiva-audio`  
 
 ## [v0.2.0] - 2025-01-27
 
