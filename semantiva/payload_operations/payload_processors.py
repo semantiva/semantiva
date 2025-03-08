@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 from ..context_processors.context_types import ContextType
 from ..context_processors.context_observer import ContextObserver
-from ..data_types.data_types import BaseDataType
+from ..data_types.data_types import BaseDataType, NoDataType
 from ..logger import Logger
 from ..component_loader import ComponentLoader
 
@@ -34,7 +34,9 @@ class PayloadProcessor(ContextObserver, ABC):
     def _process(self, data: BaseDataType, context: ContextType): ...
 
     def process(
-        self, data: BaseDataType, context: ContextType | dict[Any, Any]
+        self,
+        data: BaseDataType | None = None,
+        context: ContextType | dict[Any, Any] | None = None,
     ) -> tuple[BaseDataType, ContextType]:
         """
         Public method to execute the payload processing logic.
@@ -52,6 +54,8 @@ class PayloadProcessor(ContextObserver, ABC):
         Raises:
             NotImplementedError: If the `_process` method is not implemented in a subclass.
         """
+        context = context or {}
+        data = data or NoDataType()
         context_ = ContextType(context) if isinstance(context, dict) else context
         assert isinstance(
             context_, ContextType

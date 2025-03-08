@@ -163,3 +163,21 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
         for item in items:
             instance.append(item)
         return instance
+
+
+class NoDataType(BaseDataType[None]):
+    """
+    A data type representing the absence of data in Semantiva.
+    """
+
+    def validate(self, data: None) -> bool:
+        return data is None
+
+    def __str__(self) -> str:
+        return "NoDataType"
+
+    def __init__(self, data: None = None, *args, **kwargs):
+        """
+        Initializes a NoDataType instance
+        """
+        super().__init__(data, *args, **kwargs)

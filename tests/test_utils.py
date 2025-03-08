@@ -1,6 +1,7 @@
 # This file contains utility classes for testing the semantiva package.
 from semantiva.data_types import BaseDataType, DataCollectionType
 from semantiva.data_processors import DataOperation, DataProbe
+from semantiva.data_io import DataSource
 
 
 # Concrete implementation of BaseDataType for testing
@@ -42,24 +43,24 @@ class FloatDataCollection(DataCollectionType[FloatDataType, list]):
 class FloatOperation(DataOperation):
     """An operation specialized for processing FloatDataType data."""
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         return FloatDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         return FloatDataType
 
 
 class FloatCollectionMergeOperation(DataOperation):
     """An operation specialized for merging FloatDataCollection data."""
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         return FloatDataCollection
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         return FloatDataType
 
 
@@ -67,8 +68,8 @@ class FloatCollectionMergeOperation(DataOperation):
 class Float(DataProbe):
     """A probe specialized for processing FloatDataType data."""
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         return FloatDataType
 
 
@@ -91,3 +92,15 @@ class FloatCollectValueProbe(Float):
 
     def _process_logic(self, data, *args, **kwargs):
         return data.data
+
+
+# Lets create a mock data source for testing
+class FloatMockDataSource(DataSource):
+    """Concrete implementation of DataSource providing FloatDataType data."""
+
+    def _get_data(self, *args, **kwargs) -> FloatDataType:
+        return FloatDataType(123.0)
+
+    @staticmethod
+    def output_data_type():
+        return FloatDataType

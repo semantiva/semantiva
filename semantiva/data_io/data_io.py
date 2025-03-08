@@ -46,8 +46,9 @@ class DataSource(ABC):
         """
         return self._get_data(*args, **kwargs)
 
+    @staticmethod
     @abstractmethod
-    def output_data_type(self):
+    def output_data_type():
         """
         Define the type of data provided by this source.
 
@@ -55,6 +56,10 @@ class DataSource(ABC):
             type: The data type provided by the source.
         """
         ...
+
+    @classmethod
+    def __str__(cls) -> str:
+        return f"{cls.__name__}"
 
 
 class PayloadSource(ABC):
@@ -97,8 +102,9 @@ class PayloadSource(ABC):
         """
         return self._get_payload(*args, **kwargs)
 
+    @staticmethod
     @abstractmethod
-    def output_data_type(self) -> BaseDataType:
+    def output_data_type() -> BaseDataType:
         """
         Define the type of payload provided by this source.
 
@@ -106,6 +112,10 @@ class PayloadSource(ABC):
             BaseDataType: The data type provided by the source.
         """
         ...
+
+    @classmethod
+    def __str__(cls) -> str:
+        return f"{cls.__name__}"
 
 
 class DataSink(ABC, Generic[T]):
@@ -148,14 +158,19 @@ class DataSink(ABC, Generic[T]):
         """
         return self._send_data(data, *args, **kwargs)
 
+    @staticmethod
     @abstractmethod
-    def input_data_type(self) -> BaseDataType[T]:
+    def input_data_type() -> BaseDataType[T]:
         """
         Define the type of data consumed by this sink.
 
         Returns:
             BaseDataType: The data type consumed by the sink.
         """
+
+    @classmethod
+    def __str__(cls) -> str:
+        return f"{cls.__name__}"
 
 
 class PayloadSink(ABC, Generic[T]):
@@ -201,11 +216,16 @@ class PayloadSink(ABC, Generic[T]):
         """
         self._send_payload(data, context, *args, **kwargs)
 
+    @staticmethod
     @abstractmethod
-    def input_data_type(self) -> BaseDataType[T]:
+    def input_data_type() -> BaseDataType[T]:
         """
         Define the type of data consumed by this sink.
 
         Returns:
             BaseDataType: The data type consumed by the sink.
         """
+
+    @classmethod
+    def __str__(cls) -> str:
+        return f"{cls.__name__}"
