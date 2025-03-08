@@ -315,7 +315,9 @@ class ImageDataRandomGenerator(ImageDataSource):
 class TwoDGaussianImageGenerator(ImageDataSource):
     """Generates an image with a 2D Gaussian signal with optional rotation."""
 
+    # @classmethod
     def _get_data(
+        # cls,
         self,
         x_0: float | int,  # x position
         y_0: float | int,  # y position

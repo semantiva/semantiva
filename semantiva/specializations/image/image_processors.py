@@ -14,8 +14,8 @@ class ImageOperation(DataOperation):
         output_data_type: Returns the type of data output by the operation.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -24,8 +24,8 @@ class ImageOperation(DataOperation):
         """
         return ImageDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         """
         Specify the output data type for the operation.
 
@@ -47,8 +47,8 @@ class ImageStackAlgorithm(DataOperation):
         output_data_type: Returns the type of data output by the operation.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -57,8 +57,8 @@ class ImageStackAlgorithm(DataOperation):
         """
         return ImageStackDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         """
         Specify the output data type for the operation.
 
@@ -80,8 +80,8 @@ class ImageStackToImageProjector(DataOperation):
         output_data_type: Returns the type of data output by the operation.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -90,8 +90,8 @@ class ImageStackToImageProjector(DataOperation):
         """
         return ImageStackDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         """
         Specify the output data type for the operation.
 
@@ -112,8 +112,8 @@ class ImageProbe(DataProbe):
         input_data_type: Returns the expected input data type.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -134,8 +134,8 @@ class ImageStackProbe(DataProbe):
         input_data_type: Returns the expected input data type.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 

@@ -14,8 +14,8 @@ class SingleChannelAudioOperation(DataOperation):
         output_data_type: Returns the type of data output by the operation.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -24,8 +24,8 @@ class SingleChannelAudioOperation(DataOperation):
         """
         return SingleChannelAudioDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         """
         Specify the output data type for the operation.
 
@@ -47,8 +47,8 @@ class DualChannelAudioOperation(DataOperation):
         output_data_type: Returns the type of data output by the operation.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -57,8 +57,8 @@ class DualChannelAudioOperation(DataOperation):
         """
         return DualChannelAudioDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         """
         Specify the output data type for the operation.
 
@@ -81,8 +81,8 @@ class DualChannelMergerOperation(DataOperation):
         output_data_type: Returns the type of data output by the operation.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -91,8 +91,8 @@ class DualChannelMergerOperation(DataOperation):
         """
         return DualChannelAudioDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         """
         Specify the output data type for the operation.
 
@@ -115,8 +115,8 @@ class SingleChannelExpanderOperation(DataOperation):
         output_data_type: Returns the type of data output by the operation.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the operation.
 
@@ -125,8 +125,8 @@ class SingleChannelExpanderOperation(DataOperation):
         """
         return SingleChannelAudioDataType
 
-    @classmethod
-    def output_data_type(cls):
+    @staticmethod
+    def output_data_type():
         """
         Specify the output data type for the operation.
 
@@ -149,8 +149,8 @@ class SingleChannelAudioProbe(DataProbe):
         input_data_type: Returns the expected input data type for the probe.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the probe.
 
@@ -173,8 +173,8 @@ class DualChannelAudioProbe(DataProbe):
         input_data_type: Returns the expected input data type for the probe.
     """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         """
         Specify the input data type for the probe.
 

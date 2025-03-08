@@ -30,7 +30,8 @@ class FloatDataSource(DataSource):
         # Return a fixed IntDataType for testing
         return FloatDataType(123.0)
 
-    def output_data_type(self):
+    @staticmethod
+    def output_data_type():
         # Return the type of data we are providing
         return FloatDataType
 
@@ -45,7 +46,8 @@ class IntPayloadSource(PayloadSource):
         # Return a tuple of data and context
         return (FloatDataType(456.0), DummyContext())
 
-    def output_data_type(self):
+    @staticmethod
+    def output_data_type():
         # Return the type of data in the payload
         return FloatDataType
 
@@ -63,7 +65,8 @@ class FloatDataSink(DataSink[FloatDataType]):
         # Keep track of the last data we received
         self.last_data_sent = data
 
-    def input_data_type(self):
+    @staticmethod
+    def input_data_type():
         # Return the type of data we accept
         return FloatDataType
 

@@ -152,6 +152,9 @@ class ComponentLoader:
         cls._registered_modules.add("semantiva.specializations.image.image_operations")
         cls._registered_modules.add("semantiva.specializations.image.image_probes")
         cls._registered_modules.add("semantiva.context_processors.context_processors")
+        cls._registered_modules.add(
+            "semantiva.specializations.image.image_loaders_savers_generators"
+        )
 
     @classmethod
     def register_paths(cls, paths: str | List[str]):

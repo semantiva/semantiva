@@ -34,8 +34,8 @@ class ContextProcessor(ABC):
             ContextType: The modified (or unchanged) context after the operation.
         """
 
-    @classmethod
-    def input_data_type(cls):
+    @staticmethod
+    def input_data_type():
         return BaseDataType
 
     def get_processing_parameter_names(self) -> List[str]:

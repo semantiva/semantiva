@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple
 from .stop_watch import StopWatch
 from .payload_processors import PayloadProcessor
-from .nodes import (
+from .nodes.nodes import (
     DataNode,
     OperationNode,
     ContextNode,
@@ -12,7 +12,7 @@ from ..logger import Logger
 from ..data_types.data_types import BaseDataType, DataCollectionType
 from ..data_processors.data_processors import DataOperation
 from ..context_processors.context_types import ContextType
-from .nodes import node_factory
+from .nodes.node_factory import node_factory
 
 
 class Pipeline(PayloadProcessor):
