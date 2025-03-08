@@ -1,7 +1,7 @@
 # This file contains utility classes for testing the semantiva package.
 from semantiva.data_types import BaseDataType, DataCollectionType
 from semantiva.data_processors import DataOperation, DataProbe
-from semantiva.data_io import DataSource
+from semantiva.data_io import DataSource, DataSink
 
 
 # Concrete implementation of BaseDataType for testing
@@ -94,7 +94,6 @@ class FloatCollectValueProbe(Float):
         return data.data
 
 
-# Lets create a mock data source for testing
 class FloatMockDataSource(DataSource):
     """Concrete implementation of DataSource providing FloatDataType data."""
 
@@ -103,4 +102,15 @@ class FloatMockDataSource(DataSource):
 
     @staticmethod
     def output_data_type():
+        return FloatDataType
+
+
+class FloatMockDataSink(DataSink):
+    """Concrete implementation of Datasink for FloatDataType data."""
+
+    def _send_data(self, data: BaseDataType, path: str, *args, **kwargs):
+        return
+
+    @staticmethod
+    def input_data_type():
         return FloatDataType

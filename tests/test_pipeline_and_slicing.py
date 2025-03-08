@@ -11,6 +11,7 @@ from .test_utils import (
     FloatCollectValueProbe,
     FloatCollectionSumOperation,
     FloatMockDataSource,
+    FloatMockDataSink,
 )
 from .test_string_specialization import HelloOperation
 
@@ -252,6 +253,10 @@ def test_data_io_node():
         {
             "processor": FloatMultiplyOperation,
             "parameters": {"factor": 2},
+        },
+        {
+            "processor": FloatMockDataSink,
+            "parameters": {"path": "mock_file.txt"},
         },
     ]
 
