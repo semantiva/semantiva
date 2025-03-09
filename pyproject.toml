@@ -6,19 +6,12 @@ license = "MIT"
 readme = "README.md" 
 requires-python = ">=3.10.12"
 dependencies = [
-    "black ==24.10.0",
-    "mypy ==1.14.1",
-    "numpy ==2.2.1",
-    "pillow ==11.1.0",
-    "pylint ==3.3.3",
-    "pytest ==8.3.4",
-    "scipy",
+    "black >=24.10.0",
+    "mypy >=1.14.1",
+    "numpy >=2.2.1",
+    "pylint >=3.3.3",
+    "pytest >=8.3.4",
     "coverage",
-    "matplotlib",
-    "ipywidgets",
-    "types-PyYAML",
-    "pyyaml",
-    "ipympl",
 ]
 distribution = true
 

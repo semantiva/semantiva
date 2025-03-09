@@ -1,0 +1,2 @@
+from .specialization_loader import SemantivaSpecialization
+from .specialization_loader import load_specializations
