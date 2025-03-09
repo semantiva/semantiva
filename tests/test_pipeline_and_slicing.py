@@ -10,6 +10,8 @@ from .test_utils import (
     FloatMultiplyOperation,
     FloatCollectValueProbe,
     FloatCollectionSumOperation,
+    FloatMockDataSource,
+    FloatMockDataSink,
 )
 from .test_string_specialization import HelloOperation
 
@@ -239,3 +241,29 @@ def test_image_pipeline_invalid_configuration():
     # Check that initializing the pipeline raises an AssertionError
     with pytest.raises(AssertionError):
         _ = Pipeline(node_configurations)
+
+
+def test_data_io_node():
+    """Test the execution of a pipeline with a data IO node."""
+    # Define node configurations
+    node_configurations = [
+        {
+            "processor": FloatMockDataSource,
+        },
+        {
+            "processor": FloatMultiplyOperation,
+            "parameters": {"factor": 2},
+        },
+        {
+            "processor": FloatMockDataSink,
+            "parameters": {"path": "mock_file.txt"},
+        },
+    ]
+
+    # Create a pipeline
+    pipeline = Pipeline(node_configurations)
+
+    # Process the data
+    data, context = pipeline.process()
+
+    assert data.data == FloatMockDataSource().get_data().data * 2.0

@@ -28,9 +28,9 @@ class BaseDataProcessor(ABC, Generic[T]):
         else:
             self.logger = Logger()
 
-    @classmethod
+    @staticmethod
     @abstractmethod
-    def input_data_type(cls) -> Type[BaseDataType]:
+    def input_data_type() -> Type[BaseDataType]:
         """
         Define the expected type of input data for processing.
 
@@ -113,8 +113,9 @@ class BaseDataProcessor(ABC, Generic[T]):
             not in {inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD}
         ]
 
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}"
+    @classmethod
+    def __str__(cls) -> str:
+        return f"{cls.__name__}"
 
     @classmethod
     def get_processing_parameters_with_types(cls) -> List[Tuple[str, str]]:
@@ -206,15 +207,6 @@ class DataOperation(BaseDataProcessor):
         """
         return []
 
-    def __str__(self) -> str:
-        """
-        Return a string representation of the instance.
-
-        Returns:
-            str: The name of this data processing class.
-        """
-        return f"{self.__class__.__name__}"
-
     def get_created_keys(self) -> List[str]:
         """
         Retrieve a list of context keys created by the data operation.
@@ -253,9 +245,9 @@ class DataOperation(BaseDataProcessor):
 
         return f"""{cls.__name__} (DataOperation)\n\tInput Type:  {input_type}\n\tOutput Type: {output_type}\n\tParameters:{params_section}\n"""
 
-    @classmethod
+    @staticmethod
     @abstractmethod
-    def output_data_type(cls) -> Type[BaseDataType]:
+    def output_data_type() -> Type[BaseDataType]:
         """
         Define the type of output data produced by this operation.
 
@@ -293,16 +285,16 @@ class OperationTopologyFactory:
             Type[DataOperation]: A new subclass of DataOperation with the specified I/O data types.
         """
 
-        methods = {}
+        methods: dict = {}
 
-        def input_data_type_method(self_or_cls) -> Type[BaseDataType]:
+        def input_data_type_method() -> Type[BaseDataType]:
             return input_type
 
-        def output_data_type_method(self_or_cls) -> Type[BaseDataType]:
+        def output_data_type_method() -> Type[BaseDataType]:
             return output_type
 
-        methods["input_data_type"] = classmethod(input_data_type_method)
-        methods["output_data_type"] = classmethod(output_data_type_method)
+        methods["input_data_type"] = staticmethod(input_data_type_method)
+        methods["output_data_type"] = staticmethod(output_data_type_method)
 
         # Create a new type that extends DataOperation
         generated_class = type(class_name, (DataOperation,), methods)
@@ -367,8 +359,8 @@ class DataCollectionProbe(BaseDataProcessor, Generic[BaseType]):
     def __init__(self, logger=None):
         super().__init__(logger)
 
-    @classmethod
-    def input_data_type(cls) -> Type[DataCollectionType]:
+    @staticmethod
+    def input_data_type() -> Type[DataCollectionType]:
         """
         Specifies the input data type for the probe.
 

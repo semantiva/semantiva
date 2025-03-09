@@ -1,17 +1,16 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import abstractmethod
-from .stop_watch import StopWatch
-from ..context_processors.context_processors import ContextProcessor
-from ..data_processors.data_processors import (
+from ..stop_watch import StopWatch
+from ...context_processors.context_processors import ContextProcessor
+from ...data_processors.data_processors import (
     BaseDataProcessor,
     DataOperation,
     DataProbe,
 )
-from ..context_processors.context_types import ContextType, ContextCollectionType
-from ..data_types.data_types import BaseDataType, DataCollectionType
-from ..logger import Logger
-from ..component_loader import ComponentLoader
-from .payload_processors import PayloadProcessor
+from ...context_processors.context_types import ContextType, ContextCollectionType
+from ...data_types.data_types import BaseDataType, DataCollectionType
+from ...logger import Logger
+from ..payload_processors import PayloadProcessor
 
 
 class PipelineNode(PayloadProcessor):
@@ -58,6 +57,7 @@ class DataNode(PipelineNode):
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         super().__init__(logger)
+        print("processor", processor)
         self.logger.debug(
             f"Initializing {self.__class__.__name__} ({processor.__name__})"
         )
@@ -98,6 +98,9 @@ class DataNode(PipelineNode):
         """
         if name in self.processor_config:
             return self.processor_config[name]
+        assert (
+            name in context.keys()
+        ), f"Unable to resolve parameter '{name}' from context or node configuration."
         return context.get_value(name)
 
     def __str__(self) -> str:
@@ -781,75 +784,3 @@ class ProbeResultCollectorNode(ProbeNode):
             probed_results.append(probe_result)
         self.collect(probed_results)
         return data_collection, context
-
-
-def node_factory(
-    node_definition: Dict,
-    logger: Optional[Logger] = None,
-) -> DataNode | ContextNode:
-    """
-    Factory function to create an appropriate node instance based on the given definition.
-
-    The node definition dictionary should include:
-      - "processor": The class (or a string that can be resolved to a class) for the processor.
-      - "parameters": (Optional) A dictionary of parameters for the processor.
-      - "context_keyword": (Optional) A string specifying the context key for probe injection.
-
-    Args:
-        node_definition (Dict): A dictionary describing the node configuration.
-        logger (Optional[Logger]): Optional logger instance for diagnostic messages.
-
-    Returns:
-        DataNode | ContextNode: An instance of a subclass of DataNode or ContextNode.
-
-    Raises:
-        ValueError: If the node definition is invalid or if the processor type is unsupported.
-    """
-
-    def get_class(class_name):
-        """Helper function to retrieve the class from the loader if the input is a string."""
-        if isinstance(class_name, str):
-            return ComponentLoader.get_class(class_name)
-        return class_name
-
-    processor = node_definition.get("processor")
-    parameters = node_definition.get("parameters", {})
-    context_keyword = node_definition.get("context_keyword")
-
-    # Resolve the processor class if provided as a string.
-    processor = get_class(processor)
-
-    if processor is None or not isinstance(processor, type):
-        raise ValueError("processor must be a class type or a string, not None.")
-
-    if issubclass(processor, ContextProcessor):
-        return ContextNode(processor, processor_config=parameters, logger=logger)
-
-    elif issubclass(processor, DataOperation):
-        if context_keyword is not None:
-            raise ValueError(
-                "context_keyword must not be defined for DataOperation nodes."
-            )
-        return OperationNode(
-            processor=processor,
-            processor_parameters=parameters,
-            logger=logger,
-        )
-    elif issubclass(processor, DataProbe):
-        if context_keyword is not None:
-            return ProbeContextInjectorNode(
-                processor=processor,
-                context_keyword=context_keyword,
-                processor_parameters=parameters,
-                logger=logger,
-            )
-        else:
-            return ProbeResultCollectorNode(
-                processor=processor,
-                processor_parameters=parameters,
-                logger=logger,
-            )
-    else:
-        raise ValueError(
-            "Unsupported processor. Processor must be of type DataOperation or DataProbe."
-        )
