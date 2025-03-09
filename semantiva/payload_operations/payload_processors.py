@@ -4,7 +4,6 @@ from ..context_processors.context_types import ContextType
 from ..context_processors.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType, NoDataType
 from ..logger import Logger
-from ..component_loader import ComponentLoader
 
 
 class PayloadProcessor(ContextObserver, ABC):
