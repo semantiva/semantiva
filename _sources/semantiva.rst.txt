@@ -7,9 +7,11 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   semantiva.context_operations
+   semantiva.component_loader
+   semantiva.configurations
+   semantiva.context_processors
    semantiva.data_io
-   semantiva.data_operations
+   semantiva.data_processors
    semantiva.data_types
    semantiva.execution_tools
    semantiva.logger

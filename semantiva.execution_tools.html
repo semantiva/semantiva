@@ -48,9 +48,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
@@ -137,7 +139,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>payload_source_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><em>PayloadSource</em></a><em>]</em>)</p></li>
 <li><p><strong>payload_source_parameters</strong> (<em>Dict</em>)</p></li>
-<li><p><strong>payload_operation_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation" title="semantiva.payload_operations.payload_operations.PayloadOperation"><em>PayloadOperation</em></a><em>]</em>)</p></li>
+<li><p><strong>payload_operation_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor" title="semantiva.payload_operations.payload_processors.PayloadProcessor"><em>PayloadProcessor</em></a><em>]</em>)</p></li>
 <li><p><strong>payload_operation_config</strong> (<em>Dict</em>)</p></li>
 <li><p><strong>payload_sink_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink"><em>PayloadSink</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>payload_sink_parameters</strong> (<em>Dict</em><em> | </em><em>None</em>)</p></li>
@@ -172,7 +174,7 @@
 <dd><p>Class responsible for the payload operation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Type[<a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation" title="semantiva.payload_operations.payload_operations.PayloadOperation">PayloadOperation</a>]</p>
+<dd class="field-odd"><p>Type[PayloadOperation]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -212,7 +214,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">payload_operation_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation" title="semantiva.payload_operations.payload_operations.PayloadOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadOperation</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">payload_operation_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor" title="semantiva.payload_operations.payload_processors.PayloadProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadProcessor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

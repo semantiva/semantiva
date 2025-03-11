@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="semantiva.context_operations package" href="semantiva.context_operations.html" />
+    <link rel="next" title="semantiva.component_loader package" href="semantiva.component_loader.html" />
     <link rel="prev" title="semantiva" href="modules.html" /> 
 </head>
 
@@ -48,9 +48,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">semantiva package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
@@ -96,51 +98,90 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.context_operations.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.context_operations.html#module-semantiva.context_operations.context_observer">semantiva.context_operations.context_observer module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver"><code class="docutils literal notranslate"><span class="pre">ContextObserver</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver.update_context"><code class="docutils literal notranslate"><span class="pre">ContextObserver.update_context()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.component_loader.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.component_loader.html#module-semantiva.component_loader.component_loader">semantiva.component_loader.component_loader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.ComponentLoader"><code class="docutils literal notranslate"><span class="pre">ComponentLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.ComponentLoader.get_class"><code class="docutils literal notranslate"><span class="pre">ComponentLoader.get_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.ComponentLoader.get_registered_modules"><code class="docutils literal notranslate"><span class="pre">ComponentLoader.get_registered_modules()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.ComponentLoader.get_registered_paths"><code class="docutils literal notranslate"><span class="pre">ComponentLoader.get_registered_paths()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.ComponentLoader.initialize_default_modules"><code class="docutils literal notranslate"><span class="pre">ComponentLoader.initialize_default_modules()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.ComponentLoader.register_modules"><code class="docutils literal notranslate"><span class="pre">ComponentLoader.register_modules()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.ComponentLoader.register_paths"><code class="docutils literal notranslate"><span class="pre">ComponentLoader.register_paths()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.context_deleter_factory"><code class="docutils literal notranslate"><span class="pre">context_deleter_factory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.component_loader.html#semantiva.component_loader.component_loader.context_renamer_factory"><code class="docutils literal notranslate"><span class="pre">context_renamer_factory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.component_loader.html#module-semantiva.component_loader">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.configurations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.configurations.html#module-semantiva.configurations.load_pipeline_from_yaml">semantiva.configurations.load_pipeline_from_yaml module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.configurations.html#semantiva.configurations.load_pipeline_from_yaml.load_pipeline_from_yaml"><code class="docutils literal notranslate"><span class="pre">load_pipeline_from_yaml()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.configurations.html#module-semantiva.configurations">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.context_processors.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.context_processors.html#module-semantiva.context_processors.context_observer">semantiva.context_processors.context_observer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver"><code class="docutils literal notranslate"><span class="pre">ContextObserver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver.update_context"><code class="docutils literal notranslate"><span class="pre">ContextObserver.update_context()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.context_operations.html#module-semantiva.context_operations.context_operations">semantiva.context_operations.context_operations module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation"><code class="docutils literal notranslate"><span class="pre">ContextOperation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation.get_created_keys"><code class="docutils literal notranslate"><span class="pre">ContextOperation.get_created_keys()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation.get_required_keys"><code class="docutils literal notranslate"><span class="pre">ContextOperation.get_required_keys()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation.get_suppressed_keys"><code class="docutils literal notranslate"><span class="pre">ContextOperation.get_suppressed_keys()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation.logger"><code class="docutils literal notranslate"><span class="pre">ContextOperation.logger</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation.operate_context"><code class="docutils literal notranslate"><span class="pre">ContextOperation.operate_context()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.context_processors.html#module-semantiva.context_processors.context_processors">semantiva.context_processors.context_processors module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor"><code class="docutils literal notranslate"><span class="pre">ContextProcessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_created_keys"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_created_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_processing_parameter_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_required_keys"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_required_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_suppressed_keys"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_suppressed_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.input_data_type"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.input_data_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.logger"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.operate_context"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.operate_context()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextPassthrough"><code class="docutils literal notranslate"><span class="pre">ContextPassthrough</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextPassthrough.get_created_keys"><code class="docutils literal notranslate"><span class="pre">ContextPassthrough.get_created_keys()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextPassthrough.get_required_keys"><code class="docutils literal notranslate"><span class="pre">ContextPassthrough.get_required_keys()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextPassthrough.get_suppressed_keys"><code class="docutils literal notranslate"><span class="pre">ContextPassthrough.get_suppressed_keys()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.context_operations.html#module-semantiva.context_operations.context_types">semantiva.context_operations.context_types module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextCollectionType"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextCollectionType.append"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.append()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType"><code class="docutils literal notranslate"><span class="pre">ContextType</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType._context_container"><code class="docutils literal notranslate"><span class="pre">ContextType._context_container</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType.clear"><code class="docutils literal notranslate"><span class="pre">ContextType.clear()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType.delete_value"><code class="docutils literal notranslate"><span class="pre">ContextType.delete_value()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType.get_value"><code class="docutils literal notranslate"><span class="pre">ContextType.get_value()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType.items"><code class="docutils literal notranslate"><span class="pre">ContextType.items()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType.keys"><code class="docutils literal notranslate"><span class="pre">ContextType.keys()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType.set_value"><code class="docutils literal notranslate"><span class="pre">ContextType.set_value()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType.values"><code class="docutils literal notranslate"><span class="pre">ContextType.values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ModelFittingContextProcessor"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ModelFittingContextProcessor.get_created_keys"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.get_created_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ModelFittingContextProcessor.get_required_keys"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.get_required_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_processors.ModelFittingContextProcessor.get_suppressed_keys"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.get_suppressed_keys()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.context_operations.html#module-semantiva.context_operations">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.context_processors.html#module-semantiva.context_processors.context_types">semantiva.context_processors.context_types module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.append"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.clear"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.delete_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.delete_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.get_item"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.get_item()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.get_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.get_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.items"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.items()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.keys"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.set_item_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.set_item_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.set_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.set_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.values"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType"><code class="docutils literal notranslate"><span class="pre">ContextType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType._context_container"><code class="docutils literal notranslate"><span class="pre">ContextType._context_container</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType.clear"><code class="docutils literal notranslate"><span class="pre">ContextType.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType.delete_value"><code class="docutils literal notranslate"><span class="pre">ContextType.delete_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType.get_value"><code class="docutils literal notranslate"><span class="pre">ContextType.get_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType.items"><code class="docutils literal notranslate"><span class="pre">ContextType.items()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType.keys"><code class="docutils literal notranslate"><span class="pre">ContextType.keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType.set_value"><code class="docutils literal notranslate"><span class="pre">ContextType.set_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType.values"><code class="docutils literal notranslate"><span class="pre">ContextType.values()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.context_processors.html#module-semantiva.context_processors">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a><ul>
@@ -182,45 +223,56 @@
 <li class="toctree-l2"><a class="reference internal" href="semantiva.data_io.html#module-semantiva.data_io">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.data_operations.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.data_operations.html#module-semantiva.data_operations.data_collection_fit_probe">semantiva.data_operations.data_collection_fit_probe module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_collection_fit_probe.create_collection_feature_extraction_and_fit_probe"><code class="docutils literal notranslate"><span class="pre">create_collection_feature_extraction_and_fit_probe()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.data_processors.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.data_processors.html#module-semantiva.data_processors.data_io_wrapper_factory">semantiva.data_processors.data_io_wrapper_factory module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_io_wrapper_factory.DataIOWrapperFactory"><code class="docutils literal notranslate"><span class="pre">DataIOWrapperFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_io_wrapper_factory.DataIOWrapperFactory.create_data_operation"><code class="docutils literal notranslate"><span class="pre">DataIOWrapperFactory.create_data_operation()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.data_operations.html#module-semantiva.data_operations.data_operations">semantiva.data_operations.data_operations module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.AlgorithmTopologyFactory"><code class="docutils literal notranslate"><span class="pre">AlgorithmTopologyFactory</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.AlgorithmTopologyFactory.create_algorithm"><code class="docutils literal notranslate"><span class="pre">AlgorithmTopologyFactory.create_algorithm()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation"><code class="docutils literal notranslate"><span class="pre">BaseDataOperation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation.get_operation_parameter_names"><code class="docutils literal notranslate"><span class="pre">BaseDataOperation.get_operation_parameter_names()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation.input_data_type"><code class="docutils literal notranslate"><span class="pre">BaseDataOperation.input_data_type()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation.logger"><code class="docutils literal notranslate"><span class="pre">BaseDataOperation.logger</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation.output_data_type"><code class="docutils literal notranslate"><span class="pre">BaseDataOperation.output_data_type()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation.process"><code class="docutils literal notranslate"><span class="pre">BaseDataOperation.process()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.data_processors.html#module-semantiva.data_processors.data_processors">semantiva.data_processors.data_processors module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor.get_created_keys"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor.get_created_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor.get_processing_parameter_names"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor.get_processing_parameter_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor.get_processing_parameters_with_types"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor.get_processing_parameters_with_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor.input_data_type"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor.input_data_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor.logger"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor.process"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor.process()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.BaseDataProcessor.run"><code class="docutils literal notranslate"><span class="pre">BaseDataProcessor.run()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm"><code class="docutils literal notranslate"><span class="pre">DataAlgorithm</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm.context_observer"><code class="docutils literal notranslate"><span class="pre">DataAlgorithm.context_observer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm.context_keys"><code class="docutils literal notranslate"><span class="pre">DataAlgorithm.context_keys()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#id0"><code class="docutils literal notranslate"><span class="pre">DataAlgorithm.context_observer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataCollectionProbe"><code class="docutils literal notranslate"><span class="pre">DataCollectionProbe</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataCollectionProbe.input_data_type"><code class="docutils literal notranslate"><span class="pre">DataCollectionProbe.input_data_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#id0"><code class="docutils literal notranslate"><span class="pre">DataCollectionProbe.input_data_type()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe"><code class="docutils literal notranslate"><span class="pre">DataCollectionFeatureExtractionProbe</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataCollectionFeatureExtractionProbe.feature_extractor"><code class="docutils literal notranslate"><span class="pre">DataCollectionFeatureExtractionProbe.feature_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataOperation"><code class="docutils literal notranslate"><span class="pre">DataOperation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataOperation.context_observer"><code class="docutils literal notranslate"><span class="pre">DataOperation.context_observer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataOperation.context_keys"><code class="docutils literal notranslate"><span class="pre">DataOperation.context_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#id1"><code class="docutils literal notranslate"><span class="pre">DataOperation.context_observer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataOperation.get_created_keys"><code class="docutils literal notranslate"><span class="pre">DataOperation.get_created_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataOperation.output_data_type"><code class="docutils literal notranslate"><span class="pre">DataOperation.output_data_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataOperation.signature_string"><code class="docutils literal notranslate"><span class="pre">DataOperation.signature_string()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataCollectionProbe"><code class="docutils literal notranslate"><span class="pre">DataCollectionProbe</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataCollectionProbe.input_data_type"><code class="docutils literal notranslate"><span class="pre">DataCollectionProbe.input_data_type()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html#id1"><code class="docutils literal notranslate"><span class="pre">DataCollectionProbe.input_data_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataProbe"><code class="docutils literal notranslate"><span class="pre">DataProbe</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataProbe.get_created_keys"><code class="docutils literal notranslate"><span class="pre">DataProbe.get_created_keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataProbe.signature_string"><code class="docutils literal notranslate"><span class="pre">DataProbe.signature_string()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataProbe"><code class="docutils literal notranslate"><span class="pre">DataProbe</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.create_data_collection_feature_extraction_probe"><code class="docutils literal notranslate"><span class="pre">create_data_collection_feature_extraction_probe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.FeatureExtractorProbeWrapper"><code class="docutils literal notranslate"><span class="pre">FeatureExtractorProbeWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.FeatureExtractorProbeWrapper.input_data_type"><code class="docutils literal notranslate"><span class="pre">FeatureExtractorProbeWrapper.input_data_type()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.data_operations.html#module-semantiva.data_operations">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.OperationTopologyFactory"><code class="docutils literal notranslate"><span class="pre">OperationTopologyFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html#semantiva.data_processors.data_processors.OperationTopologyFactory.create_data_operation"><code class="docutils literal notranslate"><span class="pre">OperationTopologyFactory.create_data_operation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.data_processors.html#module-semantiva.data_processors">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a><ul>
@@ -236,6 +288,10 @@
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType.append"><code class="docutils literal notranslate"><span class="pre">DataCollectionType.append()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType.collection_base_type"><code class="docutils literal notranslate"><span class="pre">DataCollectionType.collection_base_type()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType.from_list"><code class="docutils literal notranslate"><span class="pre">DataCollectionType.from_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.NoDataType"><code class="docutils literal notranslate"><span class="pre">NoDataType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.NoDataType.validate"><code class="docutils literal notranslate"><span class="pre">NoDataType.validate()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -289,58 +345,29 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="semantiva.payload_operations.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.payload_operations.html#module-semantiva.payload_operations.payload_operations">semantiva.payload_operations.payload_operations module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.AlgorithmNode"><code class="docutils literal notranslate"><span class="pre">AlgorithmNode</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.AlgorithmNode.data_operation"><code class="docutils literal notranslate"><span class="pre">AlgorithmNode.data_operation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.payload_operations.html#module-semantiva.payload_operations.payload_processors">semantiva.payload_operations.payload_processors module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor"><code class="docutils literal notranslate"><span class="pre">PayloadProcessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor.context"><code class="docutils literal notranslate"><span class="pre">PayloadProcessor.context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor.data"><code class="docutils literal notranslate"><span class="pre">PayloadProcessor.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor.logger"><code class="docutils literal notranslate"><span class="pre">PayloadProcessor.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor.process"><code class="docutils literal notranslate"><span class="pre">PayloadProcessor.process()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Node.data_operation"><code class="docutils literal notranslate"><span class="pre">Node.data_operation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Node.context_operation"><code class="docutils literal notranslate"><span class="pre">Node.context_operation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Node.operation_config"><code class="docutils literal notranslate"><span class="pre">Node.operation_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Node.stop_watch"><code class="docutils literal notranslate"><span class="pre">Node.stop_watch</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id0"><code class="docutils literal notranslate"><span class="pre">Node.context_operation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id1"><code class="docutils literal notranslate"><span class="pre">Node.data_operation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Node.logger"><code class="docutils literal notranslate"><span class="pre">Node.logger</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id2"><code class="docutils literal notranslate"><span class="pre">Node.operation_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id3"><code class="docutils literal notranslate"><span class="pre">Node.stop_watch</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation"><code class="docutils literal notranslate"><span class="pre">PayloadOperation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation.context"><code class="docutils literal notranslate"><span class="pre">PayloadOperation.context</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation.data"><code class="docutils literal notranslate"><span class="pre">PayloadOperation.data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation.logger"><code class="docutils literal notranslate"><span class="pre">PayloadOperation.logger</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.PayloadOperation.process"><code class="docutils literal notranslate"><span class="pre">PayloadOperation.process()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.payload_operations.html#module-semantiva.payload_operations.pipeline">semantiva.payload_operations.pipeline module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline"><code class="docutils literal notranslate"><span class="pre">Pipeline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.pipeline_configuration"><code class="docutils literal notranslate"><span class="pre">Pipeline.pipeline_configuration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.nodes"><code class="docutils literal notranslate"><span class="pre">Pipeline.nodes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.stop_watch"><code class="docutils literal notranslate"><span class="pre">Pipeline.stop_watch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.get_probe_results"><code class="docutils literal notranslate"><span class="pre">Pipeline.get_probe_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.get_timers"><code class="docutils literal notranslate"><span class="pre">Pipeline.get_timers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.inspect"><code class="docutils literal notranslate"><span class="pre">Pipeline.inspect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id0"><code class="docutils literal notranslate"><span class="pre">Pipeline.nodes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id13"><code class="docutils literal notranslate"><span class="pre">Pipeline.pipeline_configuration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id14"><code class="docutils literal notranslate"><span class="pre">Pipeline.stop_watch</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Pipeline"><code class="docutils literal notranslate"><span class="pre">Pipeline</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Pipeline.pipeline_configuration"><code class="docutils literal notranslate"><span class="pre">Pipeline.pipeline_configuration</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Pipeline.nodes"><code class="docutils literal notranslate"><span class="pre">Pipeline.nodes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Pipeline.stop_watch"><code class="docutils literal notranslate"><span class="pre">Pipeline.stop_watch</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Pipeline.get_probe_results"><code class="docutils literal notranslate"><span class="pre">Pipeline.get_probe_results()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Pipeline.get_timers"><code class="docutils literal notranslate"><span class="pre">Pipeline.get_timers()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.Pipeline.inspect"><code class="docutils literal notranslate"><span class="pre">Pipeline.inspect()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id4"><code class="docutils literal notranslate"><span class="pre">Pipeline.nodes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id5"><code class="docutils literal notranslate"><span class="pre">Pipeline.pipeline_configuration</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#id6"><code class="docutils literal notranslate"><span class="pre">Pipeline.stop_watch</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode"><code class="docutils literal notranslate"><span class="pre">ProbeContextInjectorNode</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.data_operation"><code class="docutils literal notranslate"><span class="pre">ProbeContextInjectorNode.data_operation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.context_operation"><code class="docutils literal notranslate"><span class="pre">ProbeContextInjectorNode.context_operation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.context_keyword"><code class="docutils literal notranslate"><span class="pre">ProbeContextInjectorNode.context_keyword</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.operation_parameters"><code class="docutils literal notranslate"><span class="pre">ProbeContextInjectorNode.operation_parameters</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeNode"><code class="docutils literal notranslate"><span class="pre">ProbeNode</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode"><code class="docutils literal notranslate"><span class="pre">ProbeResultCollectorNode</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode._probed_data"><code class="docutils literal notranslate"><span class="pre">ProbeResultCollectorNode._probed_data</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.clear_collected_data"><code class="docutils literal notranslate"><span class="pre">ProbeResultCollectorNode.clear_collected_data()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.collect"><code class="docutils literal notranslate"><span class="pre">ProbeResultCollectorNode.collect()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.get_collected_data"><code class="docutils literal notranslate"><span class="pre">ProbeResultCollectorNode.get_collected_data()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_operations.node_factory"><code class="docutils literal notranslate"><span class="pre">node_factory()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="semantiva.payload_operations.html#module-semantiva.payload_operations.stop_watch">semantiva.payload_operations.stop_watch module</a><ul>
@@ -358,26 +385,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="semantiva.specializations.html">semantiva.specializations package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="semantiva.specializations.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.specializations.audio.html">semantiva.specializations.audio package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.audio.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.audio.html#module-semantiva.specializations.audio.audio_data_io">semantiva.specializations.audio.audio_data_io module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.audio.html#module-semantiva.specializations.audio.audio_data_types">semantiva.specializations.audio.audio_data_types module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.audio.html#module-semantiva.specializations.audio.audio_operations">semantiva.specializations.audio.audio_operations module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.audio.html#module-semantiva.specializations.audio">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.specializations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.specializations.html#module-semantiva.specializations.specialization_loader">semantiva.specializations.specialization_loader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.specializations.html#semantiva.specializations.specialization_loader.SemantivaSpecialization"><code class="docutils literal notranslate"><span class="pre">SemantivaSpecialization</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.html#semantiva.specializations.specialization_loader.SemantivaSpecialization.register"><code class="docutils literal notranslate"><span class="pre">SemantivaSpecialization.register()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="semantiva.specializations.image.html">semantiva.specializations.image package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#module-semantiva.specializations.image.image_algorithms">semantiva.specializations.image.image_algorithms module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#module-semantiva.specializations.image.image_data_io">semantiva.specializations.image.image_data_io module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#module-semantiva.specializations.image.image_data_types">semantiva.specializations.image.image_data_types module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#module-semantiva.specializations.image.image_loaders_savers_generators">semantiva.specializations.image.image_loaders_savers_generators module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#module-semantiva.specializations.image.image_operations">semantiva.specializations.image.image_operations module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#module-semantiva.specializations.image.image_probes">semantiva.specializations.image.image_probes module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.image.html#module-semantiva.specializations.image">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.specializations.html#semantiva.specializations.specialization_loader.load_specializations"><code class="docutils literal notranslate"><span class="pre">load_specializations()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="semantiva.specializations.html#module-semantiva.specializations">Module contents</a></li>
@@ -396,7 +410,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="modules.html" class="btn btn-neutral float-left" title="semantiva" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="semantiva.context_operations.html" class="btn btn-neutral float-right" title="semantiva.context_operations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="semantiva.component_loader.html" class="btn btn-neutral float-right" title="semantiva.component_loader package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

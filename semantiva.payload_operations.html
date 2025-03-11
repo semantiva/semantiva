@@ -48,9 +48,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
@@ -96,128 +98,12 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-semantiva.payload_operations.payload_operations">
-<span id="semantiva-payload-operations-payload-operations-module"></span><h2>semantiva.payload_operations.payload_operations module<a class="headerlink" href="#module-semantiva.payload_operations.payload_operations" title="Link to this heading"></a></h2>
+<section id="module-semantiva.payload_operations.payload_processors">
+<span id="semantiva-payload-operations-payload-processors-module"></span><h2>semantiva.payload_operations.payload_processors module<a class="headerlink" href="#module-semantiva.payload_operations.payload_processors" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.AlgorithmNode">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">AlgorithmNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.AlgorithmNode" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.payload_operations.payload_operations.Node" title="semantiva.payload_operations.payload_operations.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></p>
-<p>A specialized node for executing algorithmic operations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_operation</strong> (<a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><em>BaseDataOperation</em></a>)</p></li>
-<li><p><strong>context_operation</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation"><em>ContextOperation</em></a>)</p></li>
-<li><p><strong>operation_parameters</strong> (<em>Dict</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.AlgorithmNode.data_operation">
-<span class="sig-name descname"><span class="pre">data_operation</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.AlgorithmNode.data_operation" title="Link to this definition"></a></dt>
-<dd><p>The data algorithm associated with the node.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataAlgorithm" title="semantiva.data_operations.data_operations.DataAlgorithm">DataAlgorithm</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Node">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Node" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.payload_operations.payload_operations.PayloadOperation" title="semantiva.payload_operations.payload_operations.PayloadOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadOperation</span></code></a></p>
-<p>Represents a node in the semantic framework.</p>
-<p>A node is associated with a data operation and acts as a fundamental unit
-in processing pipelines or networks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_operation</strong> (<a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><em>BaseDataOperation</em></a>)</p></li>
-<li><p><strong>context_operation</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation"><em>ContextOperation</em></a>)</p></li>
-<li><p><strong>operation_config</strong> (<em>Dict</em>)</p></li>
-<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Node.data_operation">
-<span class="sig-name descname"><span class="pre">data_operation</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Node.data_operation" title="Link to this definition"></a></dt>
-<dd><p>The data operation associated with the node.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation">BaseDataOperation</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Node.context_operation">
-<span class="sig-name descname"><span class="pre">context_operation</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Node.context_operation" title="Link to this definition"></a></dt>
-<dd><p>Handles the contextual aspects of the node.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation">ContextOperation</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Node.operation_config">
-<span class="sig-name descname"><span class="pre">operation_config</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Node.operation_config" title="Link to this definition"></a></dt>
-<dd><p>Configuration parameters for the data operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Node.stop_watch">
-<span class="sig-name descname"><span class="pre">stop_watch</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Node.stop_watch" title="Link to this definition"></a></dt>
-<dd><p>Tracks the execution time of the node’s operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#semantiva.payload_operations.stop_watch.StopWatch" title="semantiva.payload_operations.stop_watch.StopWatch">StopWatch</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">context_operation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextOperation</span></code></a></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">data_operation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataOperation</span></code></a></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Node.logger">
-<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></em><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Node.logger" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">operation_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">stop_watch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#semantiva.payload_operations.stop_watch.StopWatch" title="semantiva.payload_operations.stop_watch.StopWatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">StopWatch</span></code></a></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.PayloadOperation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">PayloadOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.PayloadOperation" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_observer.ContextObserver" title="semantiva.context_operations.context_observer.ContextObserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextObserver</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dt class="sig sig-object py" id="semantiva.payload_operations.payload_processors.PayloadProcessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_processors.</span></span><span class="sig-name descname"><span class="pre">PayloadProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_processors.PayloadProcessor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver" title="semantiva.context_processors.context_observer.ContextObserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextObserver</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>Base class for operations involving payloads in the semantic framework.</p>
 <p>This class extends ContextObserver to incorporate context management capabilities
 into payload-related operations.</p>
@@ -227,8 +113,8 @@ into payload-related operations.</p>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.PayloadOperation.context">
-<span class="sig-name descname"><span class="pre">context</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.PayloadOperation.context" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.payload_operations.payload_processors.PayloadProcessor.context">
+<span class="sig-name descname"><span class="pre">context</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_processors.PayloadProcessor.context" title="Link to this definition"></a></dt>
 <dd><p>Inherited from ContextObserver, stores context key-value pairs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -238,8 +124,8 @@ into payload-related operations.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.PayloadOperation.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.PayloadOperation.data" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.payload_operations.payload_processors.PayloadProcessor.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_processors.PayloadProcessor.data" title="Link to this definition"></a></dt>
 <dd><p>An instance of a class derived from BaseDataType.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -249,13 +135,13 @@ into payload-related operations.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.PayloadOperation.logger">
-<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></em><a class="headerlink" href="#semantiva.payload_operations.payload_operations.PayloadOperation.logger" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.payload_operations.payload_processors.PayloadProcessor.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></em><a class="headerlink" href="#semantiva.payload_operations.payload_processors.PayloadProcessor.logger" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.PayloadOperation.process">
-<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.PayloadOperation.process" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.payload_operations.payload_processors.PayloadProcessor.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_processors.PayloadProcessor.process" title="Link to this definition"></a></dt>
 <dd><p>Public method to execute the payload processing logic.</p>
 <p>This method serves as an entry point to invoke the concrete implementation
 of the <cite>_process</cite> method, which must be defined in subclasses.</p>
@@ -264,8 +150,8 @@ of the <cite>_process</cite> method, which must be defined in subclasses.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> – Variable-length positional arguments to be passed to the <cite>_process</cite> method.</p></li>
 <li><p><strong>**kwargs</strong> – Variable-length keyword arguments to be passed to the <cite>_process</cite> method.</p></li>
-<li><p><strong>data</strong> (<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a>)</p></li>
-<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a><em> | </em><em>dict</em><em>[</em><em>Any</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType"><em>ContextType</em></a><em> | </em><em>dict</em><em>[</em><em>Any</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -282,14 +168,96 @@ of the <cite>_process</cite> method, which must be defined in subclasses.</p>
 
 </dd></dl>
 
+</section>
+<section id="module-semantiva.payload_operations.pipeline">
+<span id="semantiva-payload-operations-pipeline-module"></span><h2>semantiva.payload_operations.pipeline module<a class="headerlink" href="#module-semantiva.payload_operations.pipeline" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Pipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">Pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_configuration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Pipeline" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.payload_operations.payload_operations.PayloadOperation" title="semantiva.payload_operations.payload_operations.PayloadOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadOperation</span></code></a></p>
+<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.pipeline.</span></span><span class="sig-name descname"><span class="pre">Pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_configuration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.payload_operations.payload_processors.PayloadProcessor" title="semantiva.payload_operations.payload_processors.PayloadProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadProcessor</span></code></a></p>
 <p>Represents a pipeline for orchestrating multiple payload operations.</p>
-<p>A pipeline is a structured collecton of nodes or operations designed to process
+<p>A pipeline is a structured collection of nodes or operations designed to process
 <cite>BaseDataType</cite> data and context in a systematic manner. It enables the execution
 of complex workflows by chaining multiple <cite>Node</cite> instances together.</p>
+<p>Node Configuration:
+Each node in the pipeline is defined using a dictionary with the following keys:</p>
+<ul class="simple">
+<li><p><cite>processor</cite> (required): The operation to perform, either a <cite>DataOperation (DataOperation</cite> or <cite>DataProbe</cite>) or a <cite>ContextProcessor</cite>.</p></li>
+<li><p><cite>parameters</cite> (optional, default=`{}`): A dictionary of parameters for the operation.
+If an operation parameter is <strong>not explicitly defined</strong> in the pipeline configuration,
+it is extracted from the <strong>context</strong>, using the parameter name as the context keyword.
+Parameters explicitly defined in the pipeline configuration take precedence over those
+obtained from the context.</p></li>
+</ul>
+<p>### Node Types:</p>
+<ol class="arabic">
+<li><p><strong>OperationNode</strong>:
+- Configured when a <cite>DataOperation</cite> is given as the <cite>processor</cite>.
+- Example:</p>
+<blockquote>
+<div><p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+{</p>
+<blockquote>
+<div><p>“processor”: SomeDataOperation,
+“parameters”: {“param1”: value1, “param2”: value2}</p>
+</div></blockquote>
+</div></blockquote>
+<ul class="simple">
+<li><p>Defaults:
+- <cite>parameters</cite> defaults to an empty dictionary <cite>{}</cite>.</p></li>
+</ul>
+</li>
+<li><p><strong>ProbeContextInjectorNode</strong>:
+- Configured when a <cite>DataProbe</cite> is used as the <cite>processor</cite>, and <cite>context_keyword</cite> is <strong>not</strong> provided.
+- This node collects probe results. No changes in data or context information.
+- Example:</p>
+<blockquote>
+<div><p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>python
+{</p>
+<blockquote>
+<div><p>“processor”: SomeDataProbe</p>
+</div></blockquote>
+</div></blockquote>
+<ul class="simple">
+<li><p>Defaults:
+- <cite>parameters</cite> defaults to <cite>{}</cite>.</p></li>
+</ul>
+</li>
+<li><p><strong>ProbeResultCollectorNode</strong>:
+- Configured when a <cite>DataProbe</cite> is used as the <cite>processor</cite>, and <cite>context_keyword</cite> <strong>is</strong> provided.
+- Stores collected probe results in the context container under the specified keyword.
+- Example:</p>
+<blockquote>
+<div><p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
+{</p>
+<blockquote>
+<div><p>“processor”: SomeDataProbe,
+“context_keyword”: “some_probe_keyword”</p>
+</div></blockquote>
+</div></blockquote>
+<ul class="simple">
+<li><p>Defaults:
+- <cite>parameters</cite> defaults to <cite>{}</cite>.</p></li>
+</ul>
+</li>
+</ol>
+<p>### Data Processing and Slicing:</p>
+<dl class="simple">
+<dt>The pipeline processes data and context sequentially through its nodes. Processing follows these rules:</dt><dd><ol class="arabic simple">
+<li><p>If the node’s expected input type matches the current data type exactly,
+the node processes the entire data object in a single call. This is the nominal operation.</p></li>
+<li><p>If the current data is a <cite>DataCollectionType</cite> and the node process its base type,
+data is processed <strong>element-wise</strong> using a slicing stratgy.</p></li>
+<li><p>If neither condition applies, an error is raised (invalid pipeline topology).</p></li>
+</ol>
+</dd>
+<dt>The pipeline supports both <cite>ContextType</cite> and <cite>ContextCollectionType</cite>:</dt><dd><ul class="simple">
+<li><p>When slicing data, if the context is a <cite>ContextCollectionType</cite>, it is sliced in parallel.</p></li>
+<li><p>If the context is a single <cite>ContextType</cite>, it is <strong>reused</strong> for each data item and the result
+of the context operation is not passed to the next node.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -299,8 +267,8 @@ of complex workflows by chaining multiple <cite>Node</cite> instances together.<
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Pipeline.pipeline_configuration">
-<span class="sig-name descname"><span class="pre">pipeline_configuration</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Pipeline.pipeline_configuration" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.pipeline_configuration">
+<span class="sig-name descname"><span class="pre">pipeline_configuration</span></span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.pipeline_configuration" title="Link to this definition"></a></dt>
 <dd><p>A list of dictionaries defining the configuration
 for each node in the pipeline.</p>
 <dl class="field-list simple">
@@ -311,20 +279,20 @@ for each node in the pipeline.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Pipeline.nodes">
-<span class="sig-name descname"><span class="pre">nodes</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Pipeline.nodes" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.nodes">
+<span class="sig-name descname"><span class="pre">nodes</span></span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.nodes" title="Link to this definition"></a></dt>
 <dd><p>The list of nodes that make up the pipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="#semantiva.payload_operations.payload_operations.Node" title="semantiva.payload_operations.payload_operations.Node">Node</a>]</p>
+<dd class="field-odd"><p>List[Node]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Pipeline.stop_watch">
-<span class="sig-name descname"><span class="pre">stop_watch</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Pipeline.stop_watch" title="Link to this definition"></a></dt>
-<dd><p>Tracks the execution time of the pipeline.</p>
+<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.stop_watch">
+<span class="sig-name descname"><span class="pre">stop_watch</span></span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.stop_watch" title="Link to this definition"></a></dt>
+<dd><p>Tracks the execution time of nodes in the pipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#semantiva.payload_operations.stop_watch.StopWatch" title="semantiva.payload_operations.stop_watch.StopWatch">StopWatch</a></p>
@@ -333,9 +301,9 @@ for each node in the pipeline.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Pipeline.get_probe_results">
-<span class="sig-name descname"><span class="pre">get_probe_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Pipeline.get_probe_results" title="Link to this definition"></a></dt>
-<dd><p>Retrieve the collected data from all probe nodes in the pipeline.</p>
+<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.get_probe_results">
+<span class="sig-name descname"><span class="pre">get_probe_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.get_probe_results" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the collected data from all probe collector nodes in the pipeline.</p>
 <p>This method iterates through the pipeline’s nodes and checks for instances of
 <cite>ProbeResultCollectorNode</cite>. For each such node, it retrieves the collected data and
 associates it with the corresponding node’s index in the pipeline.</p>
@@ -359,8 +327,8 @@ and values are the collected data from the probe nodes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Pipeline.get_timers">
-<span class="sig-name descname"><span class="pre">get_timers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Pipeline.get_timers" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.get_timers">
+<span class="sig-name descname"><span class="pre">get_timers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.get_timers" title="Link to this definition"></a></dt>
 <dd><p>Retrieve timing information for each node’s execution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -377,16 +345,25 @@ and values are the collected data from the probe nodes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.Pipeline.inspect">
-<span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.Pipeline.inspect" title="Link to this definition"></a></dt>
-<dd><p>Inspect the current pipeline structure and return its summary, including execution time.</p>
+<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.inspect">
+<span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.inspect" title="Link to this definition"></a></dt>
+<dd><p>Return a comprehensive summary of the pipeline’s structure, including details about
+each node, how parameters are derived, any context modifications, and total
+execution time.</p>
+<p>The summary covers:
+• Node details: The class names of the nodes and their operations.
+• Parameters: Which parameters come from the pipeline configuration versus the</p>
+<blockquote>
+<div><p>context.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Context updates: The keywords that each node creates or modifies in the context.</p></li>
+<li><p>Required context keys: The set of context parameters necessary for the pipeline.</p></li>
+<li><p>Execution time: The pipeline’s cumulative execution time, tracked by the StopWatch.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>A summary of the pipeline including nodes and their collecton, as well as</dt><dd><p>the total pipeline execution time.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p>A formatted report describing the pipeline composition and relevant details.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
@@ -395,185 +372,20 @@ and values are the collected data from the probe nodes.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="#semantiva.payload_operations.payload_operations.Node" title="semantiva.payload_operations.payload_operations.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">DataNode</span></code><span class="pre">]</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">pipeline_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">pipeline_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id6">
-<span class="sig-name descname"><span class="pre">stop_watch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#semantiva.payload_operations.stop_watch.StopWatch" title="semantiva.payload_operations.stop_watch.StopWatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">StopWatch</span></code></a></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">stop_watch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#semantiva.payload_operations.stop_watch.StopWatch" title="semantiva.payload_operations.stop_watch.StopWatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">StopWatch</span></code></a></em><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeContextInjectorNode">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">ProbeContextInjectorNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_keyword</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.payload_operations.payload_operations.ProbeNode" title="semantiva.payload_operations.payload_operations.ProbeNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbeNode</span></code></a></p>
-<p>A node for injecting context-related information into the semantic framework.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_operation</strong> (<a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><em>BaseDataOperation</em></a>)</p></li>
-<li><p><strong>context_operation</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation"><em>ContextOperation</em></a>)</p></li>
-<li><p><strong>context_keyword</strong> (<em>str</em>)</p></li>
-<li><p><strong>operation_parameters</strong> (<em>Dict</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.data_operation">
-<span class="sig-name descname"><span class="pre">data_operation</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.data_operation" title="Link to this definition"></a></dt>
-<dd><p>The data probe for this node.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.DataProbe" title="semantiva.data_operations.data_operations.DataProbe">DataProbe</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.context_operation">
-<span class="sig-name descname"><span class="pre">context_operation</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.context_operation" title="Link to this definition"></a></dt>
-<dd><p>The context operation for this node.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation">ContextOperation</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.context_keyword">
-<span class="sig-name descname"><span class="pre">context_keyword</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.context_keyword" title="Link to this definition"></a></dt>
-<dd><p>The keyword used for injecting context information.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.operation_parameters">
-<span class="sig-name descname"><span class="pre">operation_parameters</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeContextInjectorNode.operation_parameters" title="Link to this definition"></a></dt>
-<dd><p>Configuration for operation parameters (default: None).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[Dict]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeNode">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">ProbeNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeNode" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.payload_operations.payload_operations.Node" title="semantiva.payload_operations.payload_operations.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></p>
-<p>A specialized node for probing data within the framework.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_operation</strong> (<a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><em>BaseDataOperation</em></a>)</p></li>
-<li><p><strong>context_operation</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation"><em>ContextOperation</em></a>)</p></li>
-<li><p><strong>operation_config</strong> (<em>Dict</em>)</p></li>
-<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeResultCollectorNode">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">ProbeResultCollectorNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.payload_operations.payload_operations.ProbeNode" title="semantiva.payload_operations.payload_operations.ProbeNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProbeNode</span></code></a></p>
-<p>A node for collecting probed data during operations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_operation</strong> (<a class="reference internal" href="semantiva.data_operations.html#semantiva.data_operations.data_operations.BaseDataOperation" title="semantiva.data_operations.data_operations.BaseDataOperation"><em>BaseDataOperation</em></a>)</p></li>
-<li><p><strong>context_operation</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_operations.ContextOperation" title="semantiva.context_operations.context_operations.ContextOperation"><em>ContextOperation</em></a>)</p></li>
-<li><p><strong>operation_parameters</strong> (<em>Dict</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeResultCollectorNode._probed_data">
-<span class="sig-name descname"><span class="pre">_probed_data</span></span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode._probed_data" title="Link to this definition"></a></dt>
-<dd><p>A list of data collected during probing operations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.clear_collected_data">
-<span class="sig-name descname"><span class="pre">clear_collected_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.clear_collected_data" title="Link to this definition"></a></dt>
-<dd><p>Clear all collected data for reuse in iterative processes.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.collect">
-<span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.collect" title="Link to this definition"></a></dt>
-<dd><p>Collect data from the probe operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>Any</em>) – The data to collect.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.get_collected_data">
-<span class="sig-name descname"><span class="pre">get_collected_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.ProbeResultCollectorNode.get_collected_data" title="Link to this definition"></a></dt>
-<dd><p>Retrieve all collected data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The list of collected data.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>List[Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.payload_operations.payload_operations.node_factory">
-<span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.payload_operations.</span></span><span class="sig-name descname"><span class="pre">node_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.payload_operations.node_factory" title="Link to this definition"></a></dt>
-<dd><p>Factory function to create a Node instance based on the given definition.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>node_definition</strong> (<em>Dict</em>) – A dictionary defining the node structure. Expected keys:
-- “operation”: An instance of DataOperation (required).
-- “context_operation”: An instance of ContextOperation (optional).
-- “parameters”: A dictionary of operation parameters (optional).
-- “context_keyword”: A string defining a context keyword (optional).</p></li>
-<li><p><strong>logger</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em>]</em>) – A logging instance for debugging or operational logging. Can be <cite>None</cite>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>An instance of the appropriate Node subclass.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#semantiva.payload_operations.payload_operations.Node" title="semantiva.payload_operations.payload_operations.Node">Node</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the node definition is invalid or incompatible.</p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>

@@ -1,0 +1,29 @@
+semantiva.data\_processors package
+==================================
+
+Submodules
+----------
+
+semantiva.data\_processors.data\_io\_wrapper\_factory module
+------------------------------------------------------------
+
+.. automodule:: semantiva.data_processors.data_io_wrapper_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+semantiva.data\_processors.data\_processors module
+--------------------------------------------------
+
+.. automodule:: semantiva.data_processors.data_processors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.data_processors
+   :members:
+   :undoc-members:
+   :show-inheritance:

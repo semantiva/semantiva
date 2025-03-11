@@ -1,14 +1,16 @@
 semantiva.specializations package
 =================================
 
-Subpackages
------------
+Submodules
+----------
 
-.. toctree::
-   :maxdepth: 4
+semantiva.specializations.specialization\_loader module
+-------------------------------------------------------
 
-   semantiva.specializations.audio
-   semantiva.specializations.image
+.. automodule:: semantiva.specializations.specialization_loader
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

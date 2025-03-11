@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="semantiva.execution_tools package" href="semantiva.execution_tools.html" />
-    <link rel="prev" title="semantiva.data_operations package" href="semantiva.data_operations.html" /> 
+    <link rel="prev" title="semantiva.data_processors package" href="semantiva.data_processors.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,9 +48,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.data_types package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
@@ -213,6 +215,37 @@ based on the class definition.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_types.data_types.NoDataType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.data_types.</span></span><span class="sig-name descname"><span class="pre">NoDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.data_types.NoDataType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<p>A data type representing the absence of data in Semantiva.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_types.data_types.NoDataType.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.data_types.NoDataType.validate" title="Link to this definition"></a></dt>
+<dd><p>Abstract method to validate the encapsulated data.</p>
+<p>This method must be implemented by subclasses to define specific
+validation rules for the data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the data is valid, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>None</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-semantiva.data_types">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.data_types" title="Link to this heading"></a></h2>
@@ -223,7 +256,7 @@ based on the class definition.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="semantiva.data_operations.html" class="btn btn-neutral float-left" title="semantiva.data_operations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.data_processors.html" class="btn btn-neutral float-left" title="semantiva.data_processors package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="semantiva.execution_tools.html" class="btn btn-neutral float-right" title="semantiva.execution_tools package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

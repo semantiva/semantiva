@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="semantiva.data_operations package" href="semantiva.data_operations.html" />
-    <link rel="prev" title="semantiva.context_operations package" href="semantiva.context_operations.html" /> 
+    <link rel="next" title="semantiva.data_processors package" href="semantiva.data_processors.html" />
+    <link rel="prev" title="semantiva.context_processors package" href="semantiva.context_processors.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,9 +48,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="semantiva.context_operations.html">semantiva.context_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.data_io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="semantiva.data_operations.html">semantiva.data_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
@@ -135,7 +137,7 @@ data provided by other components in the framework.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd><p>Define the type of data consumed by this sink.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -214,7 +216,7 @@ by other components in the framework.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id3">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
 <dd><p>Define the type of data provided by this source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -249,7 +251,7 @@ both data and its associated context provided by other components in the framewo
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>T</em>)</p></li>
-<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType"><em>ContextType</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -257,7 +259,7 @@ both data and its associated context provided by other components in the framewo
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink.input_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.input_data_type" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.input_data_type" title="Link to this definition"></a></dt>
 <dd><p>Define the type of data consumed by this sink.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -277,7 +279,7 @@ both data and its associated context provided by other components in the framewo
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a>) – The data payload to consume.</p></li>
-<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a>) – The context associated with the data.</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType"><em>ContextType</em></a>) – The context associated with the data.</p></li>
 <li><p><strong>*args</strong> – Additional positional arguments for payload consumption.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments for payload consumption.</p></li>
 </ul>
@@ -309,7 +311,7 @@ the framework.</p>
 <dd><p>Public method to fetch payloads by invoking <cite>_get_payload</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Tuple</em>[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a>, <a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType"><em>ContextType</em></a>]</p>
+<dd class="field-odd"><p><em>Tuple</em>[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a>, <a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType"><em>ContextType</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,14 +342,14 @@ the framework.</p>
 <dd class="field-even"><p>The retrieved payload and its context</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType">BaseDataType</a>, <a class="reference internal" href="semantiva.context_operations.html#semantiva.context_operations.context_types.ContextType" title="semantiva.context_operations.context_types.ContextType">ContextType</a>]</p>
+<dd class="field-odd"><p>Tuple[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType">BaseDataType</a>, <a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType">ContextType</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id6">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
 <dd><p>Define the type of payload provided by this source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -371,8 +373,8 @@ the framework.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="semantiva.context_operations.html" class="btn btn-neutral float-left" title="semantiva.context_operations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="semantiva.data_operations.html" class="btn btn-neutral float-right" title="semantiva.data_operations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="semantiva.context_processors.html" class="btn btn-neutral float-left" title="semantiva.context_processors package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.data_processors.html" class="btn btn-neutral float-right" title="semantiva.data_processors package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

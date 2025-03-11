@@ -1,29 +1,29 @@
-semantiva.context\_operations package
+semantiva.context\_processors package
 =====================================
 
 Submodules
 ----------
 
-semantiva.context\_operations.context\_observer module
+semantiva.context\_processors.context\_observer module
 ------------------------------------------------------
 
-.. automodule:: semantiva.context_operations.context_observer
+.. automodule:: semantiva.context_processors.context_observer
    :members:
    :undoc-members:
    :show-inheritance:
 
-semantiva.context\_operations.context\_operations module
+semantiva.context\_processors.context\_processors module
 --------------------------------------------------------
 
-.. automodule:: semantiva.context_operations.context_operations
+.. automodule:: semantiva.context_processors.context_processors
    :members:
    :undoc-members:
    :show-inheritance:
 
-semantiva.context\_operations.context\_types module
+semantiva.context\_processors.context\_types module
 ---------------------------------------------------
 
-.. automodule:: semantiva.context_operations.context_types
+.. automodule:: semantiva.context_processors.context_types
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,7 +31,7 @@ semantiva.context\_operations.context\_types module
 Module contents
 ---------------
 
-.. automodule:: semantiva.context_operations
+.. automodule:: semantiva.context_processors
    :members:
    :undoc-members:
    :show-inheritance:

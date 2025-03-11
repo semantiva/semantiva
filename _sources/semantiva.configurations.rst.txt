@@ -1,0 +1,21 @@
+semantiva.configurations package
+================================
+
+Submodules
+----------
+
+semantiva.configurations.load\_pipeline\_from\_yaml module
+----------------------------------------------------------
+
+.. automodule:: semantiva.configurations.load_pipeline_from_yaml
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.configurations
+   :members:
+   :undoc-members:
+   :show-inheritance:

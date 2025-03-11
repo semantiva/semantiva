@@ -1,0 +1,21 @@
+semantiva.component\_loader package
+===================================
+
+Submodules
+----------
+
+semantiva.component\_loader.component\_loader module
+----------------------------------------------------
+
+.. automodule:: semantiva.component_loader.component_loader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.component_loader
+   :members:
+   :undoc-members:
+   :show-inheritance:
