@@ -1,7 +1,7 @@
 [project]
 name = "semantiva"
-version = "0.1.0"
-description = "The Semantiva is a modular and extensible framework designed to enable semantic transparency and ontology-driven processing for data operations."
+version = "0.3.0"
+description = "Semantiva: An HPC-ready, domain-driven, type-oriented framework that delivers semantic transparency to advanced scientific computing."
 license = "MIT" 
 readme = "README.md" 
 requires-python = ">=3.10.12"
@@ -23,7 +23,7 @@ distribution = true
 
 [tool.pylint]
 # Configuration for pylint (static analysis)
-max-line-length = 100  
+max-line-length = 120  
 fail-under = 7.5
 
 [tool.mypy]

@@ -8,7 +8,7 @@ Here is the updated changelog with the missing items included and the requested 
 
 ---
 
-## [UNRELEASED] -
+## [v0.3.0] - 2025-03-11
 
 ### Fixed
 - **Fixed inconsistent user of `ContextType` methods on `ContextCollectionType`**
@@ -28,6 +28,17 @@ Here is the updated changelog with the missing items included and the requested 
     - **"Operation"** aligns well with mathematical and computational principles, clearly indicating that this component **modifies** data.
 
 ### Added
+
+- **Added SemantivaSpecialization Interface**
+  - Introduced dynamic plugin-based specialization loading.
+  - Implemented **Dynamic Specialization Loading**: Specializations are now treated as plugins that can be registered and discovered dynamically.
+
+- **Feature: Enable Data IO components into pipelines**
+  - Allow `DataSource` and `DataSink` classes to be wrapped as pipeline steps via `DataIOWrapperFactory`.
+  - Introduce `DataIOWrapperFactory` and `DataIONodeFactory` to wrap `DataSource`, `PayloadSource`, `DataSink`, and `PayloadSink` classes as pipeline nodes.
+  - Convert `input_data_type` and `output_data_type` methods to `@staticmethod` in multiple classes for consistency and easier wrapping.
+  - Add new node classes (`DataSourceNode`, `PayloadSourceNode`, `DataSinkNode`, `PayloadSinkNode`) to handle direct data injection, saving, and payload-based I/O within pipelines.
+  - Update tests to validate the new I/O functionality in pipeline execution.
 
 - **Added AI-Enhanced Development Potential to README.me**:
   - Added a new section in README.md that highlights Semantiva's AI-compatible co-design capabilities.
