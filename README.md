@@ -68,110 +68,26 @@ This makes Semantiva uniquely suited to the evolving landscape of **human-AI col
 5. **Execution Tools**
    - Utilities for executing, monitoring, and debugging pipelines, supporting straightforward deployment and scaling.
 
+## Getting Started with Semantiva
+
+To quickly dive into Semantiva, explore the following resources:
+
+- **Advanced Workflow Demo:**  
+   Check out the [Semantiva Imaging](https://github.com/semantiva/semantiva-imaging) repository for a detailed demo on designing advanced imaging pipelines.
+
+- **Interactive Hands-On Notebooks:**  
+   Practice with real-world examples available in the [semantiva-hands-on-intro](https://github.com/semantiva/semantiva-hands-on-intro) repository, which provides step-by-step guides and notebooks.
+
+- **Extended Documentation:**  
+   Visit [docs.semantiva.org](https://docs.semantiva.org/) for comprehensive reference material on Semantiva's architecture, principles, and usage.
+
+These resources offer a practical roadmap to mastering the framework and leveraging its full potential in your projects.
+ 
+---
+
 ## License
 
 Semantiva is released under the [MIT License](./LICENSE), promoting collaborative development and broad adoption.
-
----
-
-## Getting Started: A Minimal Example
-
-Below is a quick demonstration showing how Semantiva can handle a simple string data type and a matching operation. For more advanced domains—like imaging, wafer metrology, or large-scale simulations—users can define new data and operation types to match their specific needs.
-
-
- 
-```python
- 
-# 1) Define StringLiteralDataType
- 
-from semantiva.data_types import BaseDataType
- 
-
- 
-class StringLiteralDataType(BaseDataType):
- 
-    def __init__(self, data: str):
- 
-        super().__init__(data)
- 
-
- 
-    def validate(self, data):
- 
-        assert isinstance(data, str), "Data must be a string."
- 
-
- 
-
- 
-# 2) Create a StringLiteralOperation
- 
-from semantiva.data_processors import OperationTopologyFactory
- 
-
-StringLiteralOperation = OperationTopologyFactory.create_data_operation(
- 
-    input_type=StringLiteralDataType,
- 
-    output_type=StringLiteralDataType,
- 
-    class_name="StringLiteralOperation",
- 
-)
- 
-# 3) Define an Operation Extending StringLiteralOperation
-
- 
-class HelloOperation(StringLiteralOperation):
-
-    def _process_logic(self, data: StringLiteralDataType) -> StringLiteralDataType:
- 
-        return StringLiteralDataType(f"Hello, {data.data}")
- 
-
-# 4) Build a Minimal Pipeline
- 
-from semantiva.payload_operations import Pipeline
- 
-node_configurations = [
- 
-    {
-        "processor": HelloOperation,
-        "parameters": {},
-    },
- 
-]
- 
-if __name__ == "__main__":
- 
-    pipeline = Pipeline(node_configurations)
- 
-    input_data = StringLiteralDataType("World!")
- 
-    output_data, _ = pipeline.process(input_data, {})
- 
-    print("Pipeline completed. Final output:", output_data.data) # "Hello, World!"
- 
-
- 
-```
-
----
-
-### Key Takeaways
-
-* **Dual-Channel Processing**: Semantiva simultaneously processes **data** (the generated image stack) and **metadata** (like `t_values` and fitting parameters), ensuring each pipeline step can **dynamically** adapt based on evolving context.  
-* **Parametric Generation & Feature Extraction**: You can generate synthetic images via symbolic expressions, then extract domain-specific features (e.g., Gaussian parameters) in one coherent workflow.  
-* **Dynamic Parameter Injection**: Each node reads from and writes to a shared metadata context. That means you can modify or extend these parameters (e.g., changing the polynomial degree or image size) **without** altering code logic.  
-* **Multi-Stage Modeling**: By chaining multiple `ModelFittingContextProcessor` steps, you can fit various features to different independent variables—particularly useful for research or production pipelines where multiple relationships must be modeled.  
-* **Traceable & Auditable**: The final pipeline `context` retains the entire metadata history—including extracted features and fitted coefficients. This allows for transparent auditing, reproducibility, and potential handoff to subsequent pipelines or AI tools.
-
-> With Semantiva’s **dual-channel** approach, you gain the flexibility to adapt pipeline logic on the fly. Even advanced tasks—such as parametric signal generation, feature extraction, and multi-stage model fitting—become modular, maintainable, and straightforward to extend.
-
-## Summary
-
-**Semantiva** delivers a structured, type-safe, and domain-driven environment for designing adaptable data pipelines. By emphasizing semantic transparency and explicit domain alignment, it reduces cognitive load, fosters cross-disciplinary collaboration, and enables confident scaling to more complex or HPC-intensive problems—without sacrificing clarity or maintainability. Whether implementing straightforward text operations or tackling sophisticated scientific and industrial tasks, Semantiva equips developers and researchers with the tools to build robust, interpretable, and future-ready data solutions.
-
 
 ---
 
