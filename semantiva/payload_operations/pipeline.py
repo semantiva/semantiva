@@ -260,15 +260,12 @@ class Pipeline(PayloadProcessor):
         injected_or_created_keywords: set[str] = set()
         # Context keys deleted by the pipeline
         deleted_keys: set[str] = set()
-        # Context keys deleted and used by the pipeline
-        used_deleted_keys: set[str] = set()
 
         for index, node in enumerate(self.nodes, start=1):
             node_summary = self._build_node_summary(
                 node,
                 index,
                 deleted_keys,
-                used_deleted_keys,
                 all_required_params,
                 injected_or_created_keywords,
             )
@@ -276,7 +273,7 @@ class Pipeline(PayloadProcessor):
 
         # Calculate the context keys required by the pipeline
         required_context_keys = self._calculate_required_context_keys(
-            all_required_params, injected_or_created_keywords, used_deleted_keys
+            all_required_params, injected_or_created_keywords
         )
         # Add the required context keys to the summary
         summary_lines.insert(
@@ -296,12 +293,12 @@ class Pipeline(PayloadProcessor):
         node: PipelineNode,
         index: int,
         deleted_keys: set[str],
-        used_deleted_keys: set[str],
         all_required_params: set[str],
         injected_or_created_keywords: set[str],
     ) -> list[str]:
         """Build a summary for a single node, updating tracking sets."""
         # Extract operation parameters and configuration parameters
+
         operation_params = set(node.processor.get_processing_parameter_names())
         config_params = set(node.processor_config.keys())
         # context parameters are operation parameters not in the configuration
@@ -318,14 +315,14 @@ class Pipeline(PayloadProcessor):
         # Validate if the node requires keys previously deleted
         # but not present in the configuration
         self._validate_deleted_keys(
-            index, operation_params, config_params, deleted_keys, used_deleted_keys
+            index, operation_params, config_params, deleted_keys
         )
 
         node_summary_lines = [
             f"\n\t{index}. Node: {node.processor.__class__.__name__} ({node.__class__.__name__})",
             f"\t\tParameters: {self._format_set(operation_params)}",
             f"\t\t\tFrom pipeline configuration: {self._format_pipeline_config(node.processor_config)}",
-            f"\t\t\tFrom context: {self._format_set(context_params - (injected_or_created_keywords - used_deleted_keys))}",
+            f"\t\t\tFrom context: {self._format_set(context_params)}",
             f"\t\tContext additions: {self._format_set(created_keys)}",
         ]
 
@@ -345,7 +342,6 @@ class Pipeline(PayloadProcessor):
         operation_params: set[str],
         config_params: set[str],
         deleted_keys: set[str],
-        used_deleted_keys: set[str],
     ) -> None:
         """Raise error if node requires keys previously deleted."""
         missing_deleted_keys = operation_params & deleted_keys
@@ -353,16 +349,14 @@ class Pipeline(PayloadProcessor):
             raise PipelineConfigurationError(
                 f"Node {index} requires context keys previously deleted: {missing_deleted_keys}"
             )
-        used_deleted_keys.update(missing_deleted_keys)
 
     def _calculate_required_context_keys(
         self,
         all_required_params: set[str],
         injected_or_created_keywords: set[str],
-        used_deleted_keys: set[str],
     ) -> set[str]:
         """Calculate which context keys are ultimately needed."""
-        return all_required_params - (injected_or_created_keywords - used_deleted_keys)
+        return all_required_params - injected_or_created_keywords
 
     def _format_pipeline_config(self, processor_config: dict[str, Any]) -> str:
         """Format parameters explicitly set in pipeline config."""
