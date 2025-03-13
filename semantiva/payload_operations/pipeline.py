@@ -252,6 +252,15 @@ class Pipeline(PayloadProcessor):
     def inspect(self) -> str:
         """
         Return a comprehensive summary of the pipeline's structure.
+        The summary covers:
+            • Node details: The class names of the nodes and their operations.
+            • Parameters: Which parameters come from the pipeline configuration versus the
+                        context.
+            • Context updates: The keywords that each node creates or modifies in the context.
+            • Required context keys: The set of context parameters necessary for the pipeline.
+            • Execution time: The pipeline's cumulative execution time, tracked by the StopWatch.
+        Returns:
+            str: A formatted report describing the pipeline composition and relevant details.
         """
         summary_lines = ["Pipeline Structure:"]
         # All context keys required by the pipeline
