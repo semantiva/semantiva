@@ -1,6 +1,16 @@
+<<<<<<< HEAD
 from typing import Any, Dict, List, Optional, Tuple
+=======
+from typing import Any, Dict, List, Optional, Tuple, Type
+from semantiva.exceptions.pipeline import (
+    PipelineConfigurationError,
+    PipelineTopologyError,
+)
+from .stop_watch import StopWatch
+>>>>>>> 9ff7272 (Fixed bug in pipeline inspection. Added key supression and custom exceptions for pipeline)
 from .payload_processors import PayloadProcessor
 from .nodes.nodes import (
+    PipelineNode,
     DataNode,
     OperationNode,
     ContextNode,
@@ -169,14 +179,15 @@ class Pipeline(PayloadProcessor):
         )
         input_type = _get_base_type(node.processor.input_data_type())
         # Enforce strict type matching otherwise
-        assert issubclass(output_type, input_type) or issubclass(
-            input_type, output_type
-        ), (
-            f"Invalid pipeline topology: Output of "
-            f"{last_type_constraining_node.processor.__class__.__name__} "
-            f"({output_type}) not compatible with "
-            f"{node.processor.__class__.__name__} ({input_type})."
-        )
+        if not (
+            issubclass(output_type, input_type) or issubclass(input_type, output_type)
+        ):
+            raise PipelineTopologyError(
+                f" Output of "
+                f"{last_type_constraining_node.processor.__class__.__name__} "
+                f"({output_type}) not compatible with "
+                f"{node.processor.__class__.__name__} ({input_type})."
+            )
 
         # Add the node if it passes validation
         self.nodes.append(node)
@@ -209,7 +220,18 @@ class Pipeline(PayloadProcessor):
             # Get the expected input type for the node's operation
             input_type = node.processor.input_data_type()
 
+<<<<<<< HEAD
             if issubclass(type(result_data), input_type):
+=======
+            if (
+                isinstance(result_data, input_type)
+                or (
+                    isinstance(result_data, DataCollectionType)
+                    and input_type == result_data.collection_base_type()
+                )
+                or (issubclass(type(result_data), input_type))
+            ):
+>>>>>>> 9ff7272 (Fixed bug in pipeline inspection. Added key supression and custom exceptions for pipeline)
                 result_data, result_context = node.process(result_data, result_context)
 
             # Case 2: Incompatible data type
@@ -229,70 +251,126 @@ class Pipeline(PayloadProcessor):
 
     def inspect(self) -> str:
         """
-        Return a comprehensive summary of the pipeline's structure, including details about
-        each node, how parameters are derived, any context modifications, and total
-        execution time.
-
-        The summary covers:
-        • Node details: The class names of the nodes and their operations.
-        • Parameters: Which parameters come from the pipeline configuration versus the
-            context.
-        • Context updates: The keywords that each node creates or modifies in the context.
-        • Required context keys: The set of context parameters necessary for the pipeline.
-        • Execution time: The pipeline's cumulative execution time, tracked by the StopWatch.
-
-        Returns:
-            str: A formatted report describing the pipeline composition and relevant details.
+        Return a comprehensive summary of the pipeline's structure.
         """
-
-        def format_set(values: set[str] | List[str]) -> str:
-            """Return a comma-separated string of sorted set items or 'None' if empty."""
-            return ", ".join(sorted(values)) if values else "None"
-
         summary_lines = ["Pipeline Structure:"]
-        all_required_params = set()
-        probe_injector_keywords = set()
+        # All context keys required by the pipeline
+        all_required_params: set[str] = set()
+        # Context keys injected or created by the pipeline
+        injected_or_created_keywords: set[str] = set()
+        # Context keys deleted by the pipeline
+        deleted_keys: set[str] = set()
+        # Context keys deleted and used by the pipeline
+        used_deleted_keys: set[str] = set()
 
         for index, node in enumerate(self.nodes, start=1):
-            # Gather parameter details from node operation
-            operation_param_names = set(node.processor.get_processing_parameter_names())
-            config_param_names = set(node.processor_config.keys())
-            context_param_names = operation_param_names - config_param_names
+            node_summary = self._build_node_summary(
+                node,
+                index,
+                deleted_keys,
+                used_deleted_keys,
+                all_required_params,
+                injected_or_created_keywords,
+            )
+            summary_lines.extend(node_summary)
 
-            # Keep track of any ProbeContextInjectorNode keyword to exclude it from "required" lists
-            if isinstance(node, ProbeContextInjectorNode):
-                probe_injector_keywords.add(node.context_keyword)
-
-            # Add these context param names to the global set of required keys
-            all_required_params.update(context_param_names)
-
-            # Prepare a string of explicitly configured parameters with their assigned values
-            if node.processor_config:
-                config_with_values = ", ".join(
-                    f"{key}={value}" for key, value in node.processor_config.items()
-                )
-            else:
-                config_with_values = "None"
-
-            # Build up a textual summary of this node
-            lines_for_node = [
-                f"\n\t{index}. Node: {node.processor.__class__.__name__} ({node.__class__.__name__})",
-                f"\t\tParameters: {format_set(operation_param_names)}",
-                f"\t\t\tFrom pipeline configuration: {config_with_values}",
-                f"\t\t\tFrom context: {format_set(context_param_names - probe_injector_keywords)}",
-                f"\t\tContext additions: {format_set(node.get_created_keys())}",
-            ]
-            summary_lines.extend(lines_for_node)
-
-        # Determine which context keys are still needed, excluding those created by probe injector nodes
-        needed_context_keys = all_required_params - probe_injector_keywords
-
+        # Calculate the context keys required by the pipeline
+        required_context_keys = self._calculate_required_context_keys(
+            all_required_params, injected_or_created_keywords, used_deleted_keys
+        )
+        # Add the required context keys to the summary
         summary_lines.insert(
-            1, f"\tRequired context keys: {format_set(needed_context_keys)}"
+            1, f"\tRequired context keys: {self._format_set(required_context_keys)}"
         )
 
-        # Return the final summary as one string
         return "\n".join(summary_lines)
+
+    # --- Extracted Helper Methods ---
+
+    def _format_set(self, values: set[str] | list[str]) -> str:
+        """Return a comma-separated string of sorted set items or 'None' if empty."""
+        return ", ".join(sorted(values)) if values else "None"
+
+    def _build_node_summary(
+        self,
+        node: PipelineNode,
+        index: int,
+        deleted_keys: set[str],
+        used_deleted_keys: set[str],
+        all_required_params: set[str],
+        injected_or_created_keywords: set[str],
+    ) -> list[str]:
+        """Build a summary for a single node, updating tracking sets."""
+        # Extract operation parameters and configuration parameters
+        operation_params = set(node.processor.get_processing_parameter_names())
+        config_params = set(node.processor_config.keys())
+        # context parameters are operation parameters not in the configuration
+        context_params = operation_params - config_params
+
+        all_required_params.update(context_params)
+        created_keys = node.processor.get_created_keys()
+        injected_or_created_keywords.update(created_keys)
+
+        # If the node is a ProbeContextInjectorNode, add the context keyword to the set
+        if isinstance(node, ProbeContextInjectorNode):
+            injected_or_created_keywords.add(node.context_keyword)
+
+        # Validate if the node requires keys previously deleted
+        # but not present in the configuration
+        self._validate_deleted_keys(
+            index, operation_params, config_params, deleted_keys, used_deleted_keys
+        )
+
+        node_summary_lines = [
+            f"\n\t{index}. Node: {node.processor.__class__.__name__} ({node.__class__.__name__})",
+            f"\t\tParameters: {self._format_set(operation_params)}",
+            f"\t\t\tFrom pipeline configuration: {self._format_pipeline_config(node.processor_config)}",
+            f"\t\t\tFrom context: {self._format_set(context_params - (injected_or_created_keywords - used_deleted_keys))}",
+            f"\t\tContext additions: {self._format_set(created_keys)}",
+        ]
+
+        # Add context suppressions if the node is a ContextNode
+        if isinstance(node, ContextNode):
+            suppressed_keys = node.processor.get_suppressed_keys()
+            deleted_keys.update(suppressed_keys)
+            node_summary_lines.append(
+                f"\t\tContext suppressions: {self._format_set(suppressed_keys)}"
+            )
+
+        return node_summary_lines
+
+    def _validate_deleted_keys(
+        self,
+        index: int,
+        operation_params: set[str],
+        config_params: set[str],
+        deleted_keys: set[str],
+        used_deleted_keys: set[str],
+    ) -> None:
+        """Raise error if node requires keys previously deleted."""
+        missing_deleted_keys = operation_params & deleted_keys
+        if not missing_deleted_keys.issubset(config_params):
+            raise PipelineConfigurationError(
+                f"Node {index} requires context keys previously deleted: {missing_deleted_keys}"
+            )
+        used_deleted_keys.update(missing_deleted_keys)
+
+    def _calculate_required_context_keys(
+        self,
+        all_required_params: set[str],
+        injected_or_created_keywords: set[str],
+        used_deleted_keys: set[str],
+    ) -> set[str]:
+        """Calculate which context keys are ultimately needed."""
+        return all_required_params - (injected_or_created_keywords - used_deleted_keys)
+
+    def _format_pipeline_config(self, processor_config: dict[str, Any]) -> str:
+        """Format parameters explicitly set in pipeline config."""
+        if processor_config:
+            return ", ".join(
+                f"{key}={value}" for key, value in processor_config.items()
+            )
+        return "None"
 
     def get_timers(self) -> str:
         """
