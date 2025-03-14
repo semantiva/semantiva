@@ -63,12 +63,12 @@ class DataSourceNode(DataNode):
         Returns:
             Tuple[BaseDataType, ContextType]: The processed data and updated context.
         """
-        self.stop_watch.start()
+
         # Save the current context to be used by the processor
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         output_data = self.processor.process(data, **parameters)
-        self.stop_watch.stop()
+
         return output_data, self.observer_context
 
     def _execute_data_collection_context_collection(self, data_collection, context):
@@ -130,12 +130,12 @@ class PayloadSourceNode(DataNode):
         Returns:
             Tuple[BaseDataType, ContextType]: The processed data and updated context.
         """
-        self.stop_watch.start()
+
         # Save the current context to be used by the processor
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         loaded_data, loaded_context = self.processor.process(data, **parameters)
-        self.stop_watch.stop()
+
         # Merge context and loaded_context
         for key, value in loaded_context.items():
             if key in context.keys():
@@ -202,12 +202,12 @@ class DataSinkNode(DataNode):
         Returns:
             Tuple[BaseDataType, ContextType]: The processed data and updated context.
         """
-        self.stop_watch.start()
+
         # Save the current context to be used by the processor
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         output_data = self.processor.process(data, **parameters)
-        self.stop_watch.stop()
+
         return output_data, self.observer_context
 
     def _execute_data_collection_context_collection(self, data_collection, context):
@@ -269,12 +269,12 @@ class PayloadSinkNode(DataNode):
         Returns:
             Tuple[BaseDataType, ContextType]: The processed data and updated context.
         """
-        self.stop_watch.start()
+
         # Save the current context to be used by the processor
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         output_data = self.processor.process(data, **parameters)
-        self.stop_watch.stop()
+
         return output_data, self.observer_context
 
     def _execute_data_collection_context_collection(self, data_collection, context):

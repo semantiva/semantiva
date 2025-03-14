@@ -4,6 +4,7 @@ from ..context_processors.context_types import ContextType
 from ..context_processors.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType, NoDataType
 from ..logger import Logger
+from ..payload_operations.stop_watch import StopWatch
 
 
 class PayloadProcessor(ContextObserver, ABC):
@@ -19,9 +20,11 @@ class PayloadProcessor(ContextObserver, ABC):
     """
 
     logger: Logger
+    stop_watch: StopWatch
 
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__()
+        self.stop_watch = StopWatch()
         if logger:
             # If a logger instance is provided, use it
             self.logger = logger
@@ -59,4 +62,7 @@ class PayloadProcessor(ContextObserver, ABC):
         assert isinstance(
             context_, ContextType
         ), f"Context must be a dictionary of an instance of `ContextType`. Got {type(context)}"
-        return self._process(data, context_)
+        self.stop_watch.start()
+        payload_processor_result = self._process(data, context_)
+        self.stop_watch.stop()
+        return payload_processor_result
