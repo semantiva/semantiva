@@ -1,6 +1,6 @@
 [project]
 name = "semantiva"
-version = "0.3.0"
+dynamic = ["version"]
 description = "Semantiva: An HPC-ready, domain-driven, type-oriented framework that delivers semantic transparency to advanced scientific computing."
 license = "MIT" 
 readme = "README.md" 
@@ -42,3 +42,7 @@ build-backend = "pdm.backend"
 
 [tool.pdm.scripts]
 cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
+
+[tool.pdm.version]
+source = "scm"
+fallback_version = "0.0.0"
