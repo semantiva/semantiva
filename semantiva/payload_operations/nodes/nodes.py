@@ -369,9 +369,9 @@ class ContextNode(PipelineNode):
         Returns:
             tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
         """
-        self.stop_watch.start()
+
         updated_context = self.processor.operate_context(context)
-        self.stop_watch.stop()
+
         return data, updated_context
 
 
@@ -425,12 +425,12 @@ class OperationNode(DataNode):
         Returns:
             Tuple[BaseDataType, ContextType]: The processed data and the updated context.
         """
-        self.stop_watch.start()
+
         # Save the current context to be used by the processor
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         output_data = self.processor.process(data, **parameters)
-        self.stop_watch.stop()
+
         return output_data, self.observer_context
 
     def _execute_data_collection_single_context(
@@ -590,11 +590,11 @@ class ProbeContextInjectorNode(ProbeNode):
         Returns:
             Tuple[BaseDataType, ContextType]: The unchanged data and the updated context with the probe result.
         """
-        self.stop_watch.start()
+
         parameters = self._get_processor_parameters(context)
         probe_result = self.processor.process(data, **parameters)
         context.set_value(self.context_keyword, probe_result)
-        self.stop_watch.stop()
+
         return data, context
 
     def _execute_data_collection_single_context(

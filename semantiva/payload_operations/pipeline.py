@@ -1,5 +1,4 @@
 from typing import Any, Dict, List, Optional, Tuple
-from .stop_watch import StopWatch
 from .payload_processors import PayloadProcessor
 from .nodes.nodes import (
     DataNode,
@@ -95,7 +94,6 @@ class Pipeline(PayloadProcessor):
 
     pipeline_configuration: List[Dict]
     nodes: List[DataNode]
-    stop_watch: StopWatch
 
     def __init__(
         self, pipeline_configuration: List[Dict], logger: Optional[Logger] = None
@@ -118,7 +116,6 @@ class Pipeline(PayloadProcessor):
         super().__init__(logger)
         self.nodes: List[DataNode] = []
         self.pipeline_configuration: List[Dict] = pipeline_configuration
-        self.stop_watch = StopWatch()
         self._initialize_nodes()
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
@@ -211,7 +208,7 @@ class Pipeline(PayloadProcessor):
         Raises:
             TypeError: If the node's expected input type does not match the current data type.
         """
-        self.stop_watch.start()
+
         result_data, result_context = data, context
         self.logger.info("Start processing pipeline")
         for index, node in enumerate(self.nodes, start=1):
@@ -238,7 +235,7 @@ class Pipeline(PayloadProcessor):
                     f"Incompatible data type for Node {node.processor.__class__.__name__} "
                     f"expected {input_type}, but received {type(result_data)}."
                 )
-        self.stop_watch.stop()
+
         self.logger.info("Pipeline execution complete.")
         self.logger.debug(
             "Pipeline execution timing report: \n\tPipeline %s\n%s",
