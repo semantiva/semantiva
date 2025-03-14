@@ -106,7 +106,7 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/v}
           echo "version = \"$VERSION\"" > version.txt
           echo "Building version: $VERSION"
-          pdm build --version $VERSION # Build the package (sdist and wheel)
+          pdm build
 
       - name: Publish to PyPI
         run: |
