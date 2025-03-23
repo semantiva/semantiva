@@ -40,6 +40,15 @@ class DataSourceNode(DataNode):
             logger,
         )
 
+    def output_data_type(self):
+        """
+        Retrieve the data type that will be produced by the processor.
+
+        Returns:
+            Type: The data type that will be produced by the processor.
+        """
+        return self.processor.output_data_type()
+
     def get_created_keys(self):
         """
         Retrieve a list of context keys that will be created by the processor.
@@ -50,7 +59,7 @@ class DataSourceNode(DataNode):
         """
         return []
 
-    def _execute_single_data_single_context(
+    def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
@@ -70,12 +79,6 @@ class DataSourceNode(DataNode):
         output_data = self.processor.process(data, **parameters)
 
         return output_data, self.observer_context
-
-    def _execute_data_collection_context_collection(self, data_collection, context):
-        raise RuntimeError("Data source nodes do not support parallel slicing.")
-
-    def _execute_data_collection_single_context(self, data_collection, context):
-        raise RuntimeError("Data source nodes do not support parallel slicing.")
 
 
 class PayloadSourceNode(DataNode):
@@ -108,6 +111,12 @@ class PayloadSourceNode(DataNode):
             logger,
         )
 
+    def output_data_type(self):
+        """
+        Retrieve the node's output data type.
+        """
+        return self.processor.output_data_type()
+
     def get_created_keys(self):
         """
         Retrieve a list of context keys that will be created by the processor.
@@ -117,7 +126,7 @@ class PayloadSourceNode(DataNode):
         """
         return []  # self.processor.get_created_keys()
 
-    def _execute_single_data_single_context(
+    def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
@@ -142,12 +151,6 @@ class PayloadSourceNode(DataNode):
                 raise KeyError(f"Key '{key}' already exists in the context.")
             context.set_value(key, value)
         return loaded_data, context
-
-    def _execute_data_collection_context_collection(self, data_collection, context):
-        raise RuntimeError("Payload source nodes do not support parallel slicing.")
-
-    def _execute_data_collection_single_context(self, data_collection, context):
-        raise RuntimeError("Payload source nodes do not support parallel slicing.")
 
 
 class DataSinkNode(DataNode):
@@ -180,6 +183,24 @@ class DataSinkNode(DataNode):
             logger,
         )
 
+    def input_data_type(self):
+        """
+        Retrieve the data type that will be produced by the processor.
+
+        Returns:
+            Type: The data type that will be produced by the processor.
+        """
+        return self.processor.input_data_type()
+
+    def output_data_type(self):
+        """
+        Retrieve the data type that will be produced by the processor.
+
+        Returns:
+            Type: The data type that will be produced by the processor.
+        """
+        return self.processor.output_data_type()
+
     def get_created_keys(self):
         """
         Retrieve a list of context keys that will be created by the processor.
@@ -189,7 +210,7 @@ class DataSinkNode(DataNode):
         """
         return []
 
-    def _execute_single_data_single_context(
+    def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
@@ -209,12 +230,6 @@ class DataSinkNode(DataNode):
         output_data = self.processor.process(data, **parameters)
 
         return output_data, self.observer_context
-
-    def _execute_data_collection_context_collection(self, data_collection, context):
-        raise RuntimeError("Data sink nodes do not support parallel slicing.")
-
-    def _execute_data_collection_single_context(self, data_collection, context):
-        raise RuntimeError("Data sink nodes do not support parallel slicing.")
 
 
 class PayloadSinkNode(DataNode):
@@ -256,7 +271,13 @@ class PayloadSinkNode(DataNode):
         """
         return []
 
-    def _execute_single_data_single_context(
+    def output_data_type(self):
+        """
+        Retrieve this node's output data type. Payload sink nodes act as data passthough.
+        """
+        return self.input_data_type()
+
+    def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
@@ -276,9 +297,3 @@ class PayloadSinkNode(DataNode):
         output_data = self.processor.process(data, **parameters)
 
         return output_data, self.observer_context
-
-    def _execute_data_collection_context_collection(self, data_collection, context):
-        raise RuntimeError("Payload sink nodes do not support parallel slicing.")
-
-    def _execute_data_collection_single_context(self, data_collection, context):
-        raise RuntimeError("Payload sink nodes do not support parallel slicing.")

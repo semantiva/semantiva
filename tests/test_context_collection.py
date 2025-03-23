@@ -34,7 +34,7 @@ def test_collection_with_global_context():
     global_context = {"global_key": "global_value"}
     item_context = ContextType({"item_key": "item_value"})
     collection = ContextCollectionType(
-        collection_context=global_context, context_list=[item_context]
+        global_context=global_context, context_list=[item_context]
     )
 
     merged = collection[0]
@@ -48,7 +48,7 @@ def test_overlapping_keys_raise_error():
     global_context = {"overlap": "global_value"}
     item_context = ContextType({"overlap": "item_value", "other": "value"})
     collection = ContextCollectionType(
-        collection_context=global_context, context_list=[item_context]
+        global_context=global_context, context_list=[item_context]
     )
 
     with pytest.raises(ValueError):
@@ -83,7 +83,7 @@ def test_get_value_demonstration():
     )
 
     collection = ContextCollectionType(
-        collection_context=global_context, context_list=[measurement1, measurement2]
+        global_context=global_context, context_list=[measurement1, measurement2]
     )
 
     # a. Retrieving keys defined only in the global context returns single values.
@@ -112,7 +112,7 @@ def test_set_value_demonstration():
     measurement2 = ContextType({"local_info": 100, "precision": 0.02})
 
     collection = ContextCollectionType(
-        collection_context=global_context, context_list=[measurement1, measurement2]
+        global_context=global_context, context_list=[measurement1, measurement2]
     )
 
     # a. Update the global key in the collection.

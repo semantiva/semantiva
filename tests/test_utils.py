@@ -65,7 +65,7 @@ class FloatCollectionMergeOperation(DataOperation):
 
 
 # Concrete implementation of DataProbe
-class Float(DataProbe):
+class FloatProbe(DataProbe):
     """A probe specialized for processing FloatDataType data."""
 
     @staticmethod
@@ -87,7 +87,7 @@ class FloatCollectionSumOperation(FloatCollectionMergeOperation):
         return FloatDataType(sum(item.data for item in data.data))
 
 
-class FloatCollectValueProbe(Float):
+class FloatCollectValueProbe(FloatProbe):
     """A probe specialized for collecting the value of IntDataType data."""
 
     def _process_logic(self, data, *args, **kwargs):

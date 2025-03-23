@@ -14,6 +14,7 @@ from .test_utils import (
     FloatMockDataSink,
 )
 from .test_string_specialization import HelloOperation
+from semantiva.data_processors.data_slicer_factory import Slicer
 
 
 # Start test
@@ -101,14 +102,14 @@ def test_pipeline_execution_with_single_context(float_data_collection, empty_con
     # Define node configurations
     node_configurations = [
         {
-            "processor": FloatCollectValueProbe,
+            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
             "context_keyword": "mock_keyword",
         },
         {
-            "processor": FloatCollectValueProbe,
+            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
         },
         {
-            "processor": FloatMultiplyOperation,
+            "processor": Slicer(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
     ]
@@ -126,7 +127,9 @@ def test_pipeline_execution_with_single_context(float_data_collection, empty_con
     assert data.data[2].data == 6
     assert isinstance(context, ContextType)
     assert context.get_value("mock_keyword") == [1.0, 2.0, 3.0]
-    assert pipeline.get_probe_results()["Node 2/FloatCollectValueProbe"][0] == [
+    assert pipeline.get_probe_results()["Node 2/SlicerForFloatCollectValueProbe"][
+        0
+    ] == [
         1.0,
         2.0,
         3.0,
@@ -143,14 +146,14 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
     # Define node configurations
     node_configurations = [
         {
-            "processor": FloatMultiplyOperation,
+            "processor": Slicer(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
         {
-            "processor": FloatCollectValueProbe,
+            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
         },
         {
-            "processor": FloatCollectValueProbe,
+            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
             "context_keyword": "mock_keyword",
         },
         {
@@ -172,7 +175,9 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
     assert isinstance(context, ContextType)
     assert "final_keyword" in context.keys()
     assert context.get_value("final_keyword") == [2.0, 4.0, 6.0]
-    assert pipeline.get_probe_results()["Node 2/FloatCollectValueProbe"][0] == [
+    assert pipeline.get_probe_results()["Node 2/SlicerForFloatCollectValueProbe"][
+        0
+    ] == [
         2.0,
         4.0,
         6.0,
@@ -189,15 +194,15 @@ def test_pipeline_slicing_with_context_collection(
     # Define node configurations
     node_configurations = [
         {
-            "processor": FloatMultiplyOperation,
+            "processor": Slicer(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
         {
-            "processor": FloatCollectValueProbe,
+            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
             "context_keyword": "mock_keyword",
         },
         {
-            "processor": FloatCollectValueProbe,
+            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
         },
     ]
 
@@ -213,11 +218,10 @@ def test_pipeline_slicing_with_context_collection(
     assert data.data[2].data == 6.0
     expected_context_values = [2.0, 4.0, 6.0]
     for i, context in enumerate(context):
-        assert "mock_keyword" in context.keys()
         assert context.get_value("mock_keyword") == expected_context_values[i]
 
     assert (
-        pipeline.get_probe_results()["Node 3/FloatCollectValueProbe"][0]
+        pipeline.get_probe_results()["Node 3/SlicerForFloatCollectValueProbe"][0]
         == expected_context_values
     )
 

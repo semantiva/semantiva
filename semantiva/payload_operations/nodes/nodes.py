@@ -11,6 +11,7 @@ from ...context_processors.context_types import ContextType, ContextCollectionTy
 from ...data_types.data_types import BaseDataType, DataCollectionType
 from ...logger import Logger
 from ..payload_processors import PayloadProcessor
+from semantiva.context_processors.context_observer import ContextObserver
 
 
 class PipelineNode(PayloadProcessor):
@@ -68,6 +69,21 @@ class DataNode(PipelineNode):
         )
         self.stop_watch = StopWatch()
         self.processor_config = {} if processor_config is None else processor_config
+
+    def input_data_type(self):
+        """
+        Retrieve the expected input data type for the data processor.
+
+        Returns:
+            Type: The expected input data type for the data processor.
+        """
+        return self.processor.input_data_type()
+
+    @abstractmethod
+    def output_data_type(self):
+        """
+        Retrieve the output data type of the node.
+        """
 
     def _get_processor_parameters(self, context: ContextType) -> dict:
         """
@@ -129,6 +145,21 @@ class DataNode(PipelineNode):
                        as a result of execution.
         """
 
+    @abstractmethod
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item with its corresponding context.
+
+        Args:
+            data (BaseDataType): A data instance.
+            context (ContextType): The corresponding context.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+        """
+
     def _process(
         self, data: BaseDataType, context: ContextType
     ) -> tuple[BaseDataType, ContextType]:
@@ -158,133 +189,12 @@ class DataNode(PipelineNode):
         input_type = self.processor.input_data_type()
 
         if issubclass(type(result_data), input_type):
-            return self._execute_single_data_single_context(result_data, result_context)
-        elif (
-            isinstance(result_data, DataCollectionType)
-            and input_type == result_data.collection_base_type()
-        ):
-            return self._slicing_strategy(result_data, result_context)
-        elif not isinstance(result_data, DataCollectionType) and isinstance(
-            context, ContextCollectionType
-        ):
-            return self._execute_single_data_context_collection(result_data, context)
+            return self._process_single_item_with_context(result_data, result_context)
         else:
             raise TypeError(
                 f"Incompatible data type for Node {self.processor.__class__.__name__} "
                 f"expected {input_type}, but received {type(result_data)}."
             )
-
-    def _slicing_strategy(
-        self, data_collection: DataCollectionType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a collection of data items element-wise, applying slicing if necessary.
-
-        If the context is a ContextCollectionType, data items and their corresponding context
-        elements are processed in parallel. If the context is a single ContextType, it is reused
-        for each data item.
-
-        Args:
-            data_collection (DataCollectionType): The collection of data items to process.
-            context (ContextType): The context or collection of contexts for processing.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]:
-                - A new DataCollectionType with the processed data items.
-                - Either a new ContextCollectionType (if parallel slicing was applied) or the updated ContextType.
-
-        Raises:
-            ValueError: If the data collection and context collection lengths do not match.
-        """
-        if isinstance(context, ContextCollectionType):
-            return self._execute_data_collection_context_collection(
-                data_collection, context
-            )
-
-        else:
-            return self._execute_data_collection_single_context(
-                data_collection, context
-            )
-
-    @abstractmethod
-    def _execute_single_data_single_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a **single data item** with a **single context**.
-
-        No slicing is required since both data and context are individual objects.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding single context.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and updated context.
-        """
-        pass
-
-    def _execute_single_data_context_collection(
-        self, data: BaseDataType, context: ContextCollectionType
-    ) -> Tuple[BaseDataType, ContextCollectionType]:
-        """
-        Process a **single data item** with a **collection of contexts**.
-
-        This case is invalid since a single data object **cannot** be paired with multiple
-        independent contexts. An exception should be raised.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextCollectionType): A collection of contexts.
-
-        Raises:
-            ValueError: If this invalid case is encountered.
-
-        Returns:
-            Never returns since an exception is raised.
-        """
-        raise ValueError("Single data object cannot be paired with multiple contexts.")
-
-    @abstractmethod
-    def _execute_data_collection_single_context(
-        self, data_collection: DataCollectionType, context: ContextType
-    ) -> Tuple[DataCollectionType, ContextType]:
-        """
-        Process a **collection of data items** using a **single context**.
-
-        Each data slice is processed using the **same** context. Any new context elements
-        created during processing must be **stored as a list** under the context keyword.
-
-        Args:
-            data (DataCollectionType): A collection of data instances.
-            context (ContextType): A single context instance.
-
-        Returns:
-            Tuple[DataCollectionType, ContextType]: The processed data collection and updated context.
-        """
-        pass
-
-    @abstractmethod
-    def _execute_data_collection_context_collection(
-        self, data_collection: DataCollectionType, context: ContextCollectionType
-    ) -> Tuple[DataCollectionType, ContextCollectionType]:
-        """
-        Process a **collection of data items** using a **collection of contexts**.
-
-        This case requires a **one-to-one mapping** between data slices and context slices.
-        Each data item is paired with its respective context element.
-
-        Args:
-            data (DataCollectionType): A collection of data instances.
-            context (ContextCollectionType): A collection of contexts of equal size.
-
-        Raises:
-            ValueError: If the number of data elements and context elements do not match.
-
-        Returns:
-            Tuple[DataCollectionType, ContextCollectionType]: The processed data collection and corresponding context collection.
-        """
-        pass
 
 
 class ContextNode(PipelineNode):
@@ -402,6 +312,15 @@ class OperationNode(DataNode):
         )
         super().__init__(processor, processor_parameters, logger)
 
+    def output_data_type(self):
+        """
+        Retrieve the node's output data type. The request is delegated to the node's data processor.
+
+        Returns:
+            Type: The node output data type.
+        """
+        return self.processor.output_data_type()
+
     def get_created_keys(self):
         """
         Retrieve a list of context keys that will be created by the processor.
@@ -412,7 +331,7 @@ class OperationNode(DataNode):
         """
         return self.processor.get_created_keys()
 
-    def _execute_single_data_single_context(
+    def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
@@ -433,86 +352,20 @@ class OperationNode(DataNode):
 
         return output_data, self.observer_context
 
-    def _execute_data_collection_single_context(
-        self, data_collection: DataCollectionType, context: ContextType
-    ) -> Tuple[DataCollectionType, ContextType]:
-        """
-        Process a collection of data items using a single context.
-
-        Each item is processed sequentially and the context is updated accordingly.
-        For any keys created by the processor, their values are aggregated into lists.
-
-        Args:
-            data_collection (DataCollectionType): A collection of data instances.
-            context (ContextType): A single context instance used for all items.
-
-        Returns:
-            Tuple[DataCollectionType, ContextType]: The processed data collection and updated context.
-        """
-        processed_data_collection = type(data_collection)()
-        current_context = context
-        for d_item in data_collection:
-            out_data, current_context = self._execute_single_data_single_context(
-                d_item, current_context
-            )
-            processed_data_collection.append(out_data)
-            for key in self.get_created_keys():
-                new_value = current_context.get_value(key)
-                if new_value is None:
-                    raise ValueError(
-                        f"Missing context element for key '{key}' after processing node call."
-                    )
-                # Initialize aggregation list if needed and append the new value
-                if not isinstance(current_context.get_value(key), list):
-                    aggregation = current_context.get_value(key)
-                    aggregation = [] if aggregation is None else [aggregation]
-                    current_context.set_value(key, aggregation)
-                aggregated = current_context.get_value(key)
-                aggregated.append(new_value)
-                current_context.set_value(key, aggregated)
-
-        return processed_data_collection, current_context
-
-    def _execute_data_collection_context_collection(
-        self, data_collection: DataCollectionType, context: ContextCollectionType
-    ) -> Tuple[DataCollectionType, ContextCollectionType]:
-        """
-        Process a collection of data items with a corresponding collection of contexts.
-
-        The data and context collections must be of the same length. Each data item is paired
-        with its corresponding context and processed accordingly.
-
-        Args:
-            data_collection (DataCollectionType): A collection of data items.
-            context (ContextCollectionType): A collection of contexts.
-
-        Returns:
-            Tuple[DataCollectionType, ContextCollectionType]: The processed data collection and updated contexts.
-
-        Raises:
-            ValueError: If the lengths of data_collection and context do not match.
-        """
-        processed_data_collection = type(data_collection)()
-        if len(data_collection) != len(context):
-            raise ValueError(
-                "DataCollectionType and ContextCollectionType must have the same length for parallel slicing."
-            )
-        processed_context_collection = ContextCollectionType()
-        for d_item, c_item in zip(data_collection, context):
-            out_data, out_context = self._execute_single_data_single_context(
-                d_item, c_item
-            )
-            processed_data_collection.append(out_data)
-            processed_context_collection.append(out_context)
-        return processed_data_collection, processed_context_collection
-
 
 class ProbeNode(DataNode):
     """
     A specialized DataNode for probing data.
     """
 
-    pass
+    def output_data_type(self):
+        """
+        Retrieve the node's output data type. The output data type is the same as the input data type for probe nodes.
+
+        Returns:
+            Type: The node's output data type.
+        """
+        return self.input_data_type()
 
 
 class ProbeContextInjectorNode(ProbeNode):
@@ -577,7 +430,7 @@ class ProbeContextInjectorNode(ProbeNode):
             f")"
         )
 
-    def _execute_single_data_single_context(
+    def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
@@ -593,67 +446,15 @@ class ProbeContextInjectorNode(ProbeNode):
 
         parameters = self._get_processor_parameters(context)
         probe_result = self.processor.process(data, **parameters)
-        context.set_value(self.context_keyword, probe_result)
+        if isinstance(context, ContextCollectionType):
+            for index, p_item in enumerate(probe_result):
+                ContextObserver.update_context(
+                    context, self.context_keyword, p_item, index=index
+                )
+        else:
+            ContextObserver.update_context(context, self.context_keyword, probe_result)
 
         return data, context
-
-    def _execute_data_collection_single_context(
-        self, data_collection: DataCollectionType, context: ContextType
-    ) -> Tuple[DataCollectionType, ContextType]:
-        """
-        Process a collection of data items with a single context by processing data via the probe.
-
-        The probe results for each item are aggregated into a list and injected into the context.
-
-        Args:
-            data_collection (DataCollectionType): A collection of data items.
-            context (ContextType): The shared context for all data items.
-
-        Returns:
-            Tuple[DataCollectionType, ContextType]: The processed data collection and updated context.
-        """
-        processed_data_collection = type(data_collection)()
-        probed_results: List[Any] = []
-        for d_item in data_collection:
-            out_data, context = self._process(d_item, context)
-            processed_data_collection.append(out_data)
-            # Retrieve the injected probe result for the current item.
-            probe_result = context.get_value(self.context_keyword)
-            probed_results.append(probe_result)
-        # Inject the aggregated list of probe results into the context.
-        context.set_value(self.context_keyword, probed_results)
-        return processed_data_collection, context
-
-    def _execute_data_collection_context_collection(
-        self, data_collection: DataCollectionType, context: ContextCollectionType
-    ) -> Tuple[DataCollectionType, ContextCollectionType]:
-        """
-        Process a collection of data items with a one-to-one mapping to a collection of contexts.
-
-        For each pair, the probe is executed and the result is injected into the context.
-        Both the processed data collection and the updated context collection are returned.
-
-        Args:
-            data_collection (DataCollectionType): A collection of data items.
-            context (ContextCollectionType): A collection of contexts.
-
-        Returns:
-            Tuple[DataCollectionType, ContextCollectionType]: The processed data collection and updated context collection.
-
-        Raises:
-            ValueError: If the lengths of data_collection and context do not match.
-        """
-        processed_data_collection = type(data_collection)()
-        if len(data_collection) != len(context):
-            raise ValueError(
-                "DataCollectionType and ContextCollectionType must have the same length for parallel slicing."
-            )
-        processed_context_collection = ContextCollectionType()
-        for d_item, c_item in zip(data_collection, context):
-            out_data, out_context = self._process(d_item, c_item)
-            processed_data_collection.append(out_data)
-            processed_context_collection.append(out_context)
-        return processed_data_collection, processed_context_collection
 
 
 class ProbeResultCollectorNode(ProbeNode):
@@ -714,7 +515,7 @@ class ProbeResultCollectorNode(ProbeNode):
 
         return []
 
-    def _execute_single_data_single_context(
+    def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
@@ -731,56 +532,3 @@ class ProbeResultCollectorNode(ProbeNode):
         probe_result = self.processor.process(data, **parameters)
         self.collect(probe_result)
         return data, context
-
-    def _execute_data_collection_single_context(
-        self, data_collection: DataCollectionType, context: ContextType
-    ) -> Tuple[DataCollectionType, ContextType]:
-        """
-        Process a collection of data items with a single context using the probe.
-
-        The probe results for each item are aggregated and collected.
-
-        Args:
-            data_collection (DataCollectionType): A collection of data items.
-            context (ContextType): The shared context for all items.
-
-        Returns:
-            Tuple[DataCollectionType, ContextType]: The original data collection and unchanged context.
-        """
-        probed_results: List[Any] = []
-        parameters = self._get_processor_parameters(context)
-        for data_item in data_collection:
-            probe_result = self.processor.process(data_item, **parameters)
-            probed_results.append(probe_result)
-        self.collect(probed_results)
-        return data_collection, context
-
-    def _execute_data_collection_context_collection(
-        self, data_collection: DataCollectionType, context: ContextCollectionType
-    ) -> Tuple[DataCollectionType, ContextCollectionType]:
-        """
-        Process a collection of data items with a corresponding collection of contexts using the probe.
-
-        The probe results are collected across all items.
-
-        Args:
-            data_collection (DataCollectionType): A collection of data items.
-            context (ContextCollectionType): A collection of contexts.
-
-        Returns:
-            Tuple[DataCollectionType, ContextCollectionType]: The original data collection and unchanged context collection.
-
-        Raises:
-            ValueError: If the lengths of data_collection and context do not match.
-        """
-        probed_results: List[Any] = []
-        if len(data_collection) != len(context):
-            raise ValueError(
-                "DataCollectionType and ContextCollectionType must have the same length for parallel slicing."
-            )
-        for data_item, context_item in zip(data_collection, context):
-            parameters = self._get_processor_parameters(context_item)
-            probe_result = self.processor.process(data_item, **parameters)
-            probed_results.append(probe_result)
-        self.collect(probed_results)
-        return data_collection, context
