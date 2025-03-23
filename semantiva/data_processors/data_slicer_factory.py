@@ -1,6 +1,10 @@
 from typing import Type
 from semantiva.data_types.data_types import DataCollectionType
-from semantiva.data_processors.data_processors import DataOperation, DataProbe
+from semantiva.data_processors.data_processors import (
+    BaseDataProcessor,
+    DataOperation,
+    DataProbe,
+)
 
 
 class SlicingDataProcessorFactory:
@@ -10,7 +14,8 @@ class SlicingDataProcessorFactory:
 
     @staticmethod
     def create(
-        processor_class: Type, input_data_collection_type: Type[DataCollectionType]
+        processor_class: Type[BaseDataProcessor],
+        input_data_collection_type: Type[DataCollectionType],
     ):
         """
         Creates a new processor class that slices data and manages context.
@@ -31,7 +36,7 @@ class SlicingDataProcessorFactory:
                 processor_class.input_data_type() == processor_class.output_data_type()
             ), "Data slicing supported only for processors matching input and output data types."
 
-            class SlicingDataOperator(processor_class):
+            class SlicingDataOperator(processor_class):  # type: ignore[valid-type, misc]
                 """
                 Wraps a data operator to handle data slicing.
                 """
@@ -68,7 +73,7 @@ class SlicingDataProcessorFactory:
 
         elif issubclass(processor_class, DataProbe):
 
-            class SlicingDataProbe(processor_class):
+            class SlicingDataProbe(processor_class):  # type: ignore[valid-type, misc]
                 """
                 Wraps a data probe to handle data slicing.
                 """
