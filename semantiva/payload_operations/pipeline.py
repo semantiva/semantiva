@@ -1,13 +1,8 @@
-<<<<<<< HEAD
 from typing import Any, Dict, List, Optional, Tuple
-=======
-from typing import Any, Dict, List, Optional, Tuple, Type
 from semantiva.exceptions.pipeline import (
     PipelineConfigurationError,
     PipelineTopologyError,
 )
-from .stop_watch import StopWatch
->>>>>>> 9ff7272 (Fixed bug in pipeline inspection. Added key supression and custom exceptions for pipeline)
 from .payload_processors import PayloadProcessor
 from .nodes.nodes import (
     PipelineNode,
@@ -220,9 +215,6 @@ class Pipeline(PayloadProcessor):
             # Get the expected input type for the node's operation
             input_type = node.processor.input_data_type()
 
-<<<<<<< HEAD
-            if issubclass(type(result_data), input_type):
-=======
             if (
                 isinstance(result_data, input_type)
                 or (
@@ -231,7 +223,6 @@ class Pipeline(PayloadProcessor):
                 )
                 or (issubclass(type(result_data), input_type))
             ):
->>>>>>> 9ff7272 (Fixed bug in pipeline inspection. Added key supression and custom exceptions for pipeline)
                 result_data, result_context = node.process(result_data, result_context)
 
             # Case 2: Incompatible data type
