@@ -72,10 +72,10 @@ class MemoryTracker:
         """Set the pooling interval for memory checks."""
         self._pooling_interval = pooling_interval
 
-    def peak_memory(self):
+    def get_peak_memory(self):
         """Return the peak memory usage."""
         return self._peak_memory
 
-    def peak_memory_mb(self):
+    def get_peak_memory_mb(self):
         """Return the peak memory usage in megabytes (MiB)."""
         return self._peak_memory / (1024 * 1024)
