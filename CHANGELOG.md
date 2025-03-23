@@ -8,6 +8,32 @@ Here is the updated changelog with the missing items included and the requested 
 
 ---
 
+## [Unreleased]
+
+### Changed
+- **Centralized context management in `ContextObserver`**
+  - Consolidated context updates for `ContextType`, `ContextCollectionType`, and `ChainMap` to ensure consistency.
+  - Updated `ContextCollectionType` to improve structured dictionary representations and ensure better debugging.
+
+- **Refactored Data Slicing to Processor Level**
+  - Introduced `SlicingDataProcessorFactory` to **remove slicing logic from nodes**.
+  - Ensured **all slicing logic now resides at the processor level**, making data slicing transparent.
+  - Refactored nodes (`nodes.py`, `io_nodes.py`) to act **only as mediators** without handling slicing directly.
+
+- **Simplified Nodes and Pipelines**
+  - Updated `Pipeline` execution logic to **strictly enforce type consistency** between nodes.
+
+### Added
+
+- **Expanded Unit Tests for Data Slicing & Context Injection**
+  - Introduced comprehensive tests for:
+    - Probe result injection scenarios (`test_slicer_node_factory.py`)
+    - Correct pipeline execution with automatic slicing (`test_pipeline_and_slicing.py`)
+    - Context update correctness for single and collection contexts (`test_context_management.py`)
+
+### Removed
+- **Deprecated `DataCollectionProbe` and `FeatureExtractorProbeWrapper`**
+
 ## [v0.3.0] - 2025-03-11
 
 ### Fixed
