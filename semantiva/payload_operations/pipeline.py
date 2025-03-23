@@ -121,71 +121,10 @@ class Pipeline(PayloadProcessor):
         super().__init__(logger)
         self.nodes: List[DataNode] = []
         self.pipeline_configuration: List[Dict] = pipeline_configuration
-        self.nodes = self._initialize_nodes(pipeline_configuration)
+        self.nodes = self._initialize_nodes()
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
             self.logger.debug("%s", self.inspect())
-
-    def _add_node(self, node: DataNode):
-        """
-        Adds a node to the pipeline while ensuring compatibility between consecutive operations.
-
-        This method enforces that the output type of the last `OperationNode` is compatible
-        with the input type of the new node. Probe nodes do not modify data, so their output
-        type is ignored for validation purposes.
-
-        If the first node in the pipeline is a probe node, it is added without validation.
-
-        Args:
-            node (Node): The node to be added to the pipeline.
-
-        Raises:
-            AssertionError: If the input type of the new node is not compatible with the
-                            output type of the last `OperationNode`.
-        """
-
-        def _get_base_type(
-            data_type: type[BaseDataType] | type[DataCollectionType],
-        ) -> type[BaseDataType]:
-            """Returns the base type if data_type is a DataCollectionType, else returns data_type."""
-            if isinstance(data_type, type) and issubclass(
-                data_type, DataCollectionType
-            ):
-                return data_type.collection_base_type()
-            return data_type
-
-        # Find the last node that constrains the data type (i.e., last OperationNode)
-        last_type_constraining_node: OperationNode | None = None
-        for previous_node in reversed(self.nodes):
-            if isinstance(previous_node, OperationNode):
-                last_type_constraining_node = previous_node
-                break
-
-        # If no OperationNode exists yet, allow the first node to be added unconditionally
-        if last_type_constraining_node is None or issubclass(type(node), ContextNode):
-            self.nodes.append(node)
-            return
-
-        # Get the output type of the last type-constraining node and the input type of the new node
-        assert isinstance(last_type_constraining_node.processor, DataOperation)
-        # Get the base type of the output and input data types if they are DataCollectionType
-        output_type = _get_base_type(
-            last_type_constraining_node.processor.output_data_type()
-        )
-        input_type = _get_base_type(node.processor.input_data_type())
-        # Enforce strict type matching otherwise
-        if not (
-            issubclass(output_type, input_type) or issubclass(input_type, output_type)
-        ):
-            raise PipelineTopologyError(
-                f" Output of "
-                f"{last_type_constraining_node.processor.__class__.__name__} "
-                f"({output_type}) not compatible with "
-                f"{node.processor.__class__.__name__} ({input_type})."
-            )
-
-        # Add the node if it passes validation
-        self.nodes.append(node)
 
     def _process(
         self, data: BaseDataType, context: ContextType
@@ -416,7 +355,7 @@ class Pipeline(PayloadProcessor):
         # Return the dictionary of probe results
         return probe_results
 
-    def _initialize_nodes(self, node_configs: List[Dict[str, Any]]):
+    def _initialize_nodes(self):
         """
         Initialize all nodes in the pipeline.
 
@@ -439,12 +378,13 @@ class Pipeline(PayloadProcessor):
             input_type = node.input_data_type()
             # Enforce strict type matching otherwise
             if prev_output_type and input_type:
-                assert prev_output_type == input_type, (
-                    f"Invalid pipeline topology: Output of "
-                    f"{prev_output_type.__class__.__name__} "
-                    f"({prev_output_type}) not compatible with "
-                    f"{node.processor.__class__.__name__} ({input_type})."
-                )
+                if prev_output_type != input_type:
+                    raise PipelineTopologyError(
+                        f"Output of "
+                        f"{prev_output_type.__class__.__name__} ({prev_output_type}) "
+                        f"not compatible with "
+                        f"{node.processor.__class__.__name__} ({input_type})."
+                    )
 
             # if prev_output_type and input_type and prev_output_type != input_type:
             #    raise TypeError(
