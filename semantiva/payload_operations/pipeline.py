@@ -97,9 +97,9 @@ class Pipeline(PayloadProcessor):
 
         self.logger.info("Pipeline execution complete.")
         self.logger.debug(
-            "Pipeline execution timing report: \n\tPipeline %s\n%s",
+            "Pipeline execution report: \n\tPipeline %s\n%s",
             str(self.stop_watch),
-            self.get_timers(),
+            self.tracker_summary(),
         )
         return result_data, result_context
 
@@ -242,6 +242,18 @@ class Pipeline(PayloadProcessor):
             f"\t\tNode {i + 1}: {type(node.processor).__name__}; "
             f"\tElapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
             f"\tElapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s"
+            for i, node in enumerate(self.nodes)
+        ]
+        return "\n".join(timer_info)
+
+    def tracker_summary(self) -> str:
+        """
+        Retrieve time and memory tracking information for each node's execution"""
+        timer_info = [
+            f"\t\tNode {i + 1}: {type(node.processor).__name__}; "
+            f"\tElapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
+            f"\tElapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s; "
+            f"\tPeak Memory: {node.memory_tracker.peak_memory_mb():.6f} MB"
             for i, node in enumerate(self.nodes)
         ]
         return "\n".join(timer_info)
