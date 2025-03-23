@@ -1,13 +1,17 @@
 from typing import Any
 from .context_types import ContextType
 
+from collections import ChainMap
+from typing import Any, Optional, Union
+from semantiva.context_processors.context_types import (
+    ContextType,
+    ContextCollectionType,
+)
+
 
 class ContextObserver:
     """
-    Class for managing and observing context updates within the semantic framework.
-
-    This class facilitates the tracking and updating of contextual information
-    that may influence the behavior of data processors.
+    Centralized manager for context slicing, merging, and updates
     """
 
     def __init__(self):
@@ -19,21 +23,37 @@ class ContextObserver:
         """
         self.observer_context = ContextType
 
-    def update_context(self, key: str, value: Any):
+    @staticmethod
+    def update_context(
+        context: Union[ContextType, ContextCollectionType, ChainMap],
+        key: str,
+        value: Any,
+        index: Optional[int] = None,
+    ):
         """
-        Update the context with a new key-value pair or modify an existing one.
+        Updates a context value in either a single or collection context.
+
+        - If `context` is a `ChainMap`, writes must be done on the **local context** (first mapping).
+        - If `context` is `ContextCollectionType`, updates are applied globally or to a slice.
 
         Args:
-            key (str): The key associated with the context value.
-            value (any): The value to be stored in the context.
-        """
-        self.observer_context.set_value(key, value)
+            context (Union[ContextType, ContextCollectionType, ChainMap]): The context to update.
+            key (str): The key to update.
+            value (Any): The value to set.
+            index (Optional[int]): The index of the slice to update (if context is a collection).
 
-    def __str__(self):
-        """
-        Provide a string representation of the current context.
+        Raises:
+            ValueError: If attempting to update a collection without specifying an index.
 
-        Returns:
-            str: A string representation of the context dictionary.
+
         """
-        return str(self.observer_context)
+        if isinstance(context, ContextCollectionType):
+            if index is None:
+                context.set_value(key, value)
+            else:
+                context.set_item_value(index, key, value)
+        elif isinstance(context, ChainMap):
+            # ChainMap writes the first mapping (local context)
+            context.maps[0][key] = value
+        else:
+            context.set_value(key, value)

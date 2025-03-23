@@ -1,5 +1,6 @@
 from typing import Any, List, Optional, Iterator, Union, Dict, Tuple
 from ..logger import Logger
+from collections import ChainMap
 
 
 class ContextType:
@@ -101,6 +102,12 @@ class ContextType:
         """
         return list(self._context_container.items())
 
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert the context to a dictionary.
+        """
+        return dict(self._context_container)
+
     def __str__(self) -> str:
         return f"{self.__class__.__name__}(context={self._context_container})"
 
@@ -121,7 +128,7 @@ class ContextCollectionType(ContextType):
 
     def __init__(
         self,
-        collection_context: Optional[Union[ContextType, Dict]] = None,
+        global_context: Optional[Union[ContextType, Dict]] = None,
         context_list: Optional[List[ContextType]] = None,
         logger: Optional[Logger] = None,
     ):
@@ -133,13 +140,13 @@ class ContextCollectionType(ContextType):
         - The individual context list (_context_list) holds multiple ContextType instances, allowing
             for parallel storage and iteration of separate contexts.
 
-        The collection_context parameter can be provided in two forms:
+        The global_context parameter can be provided in two forms:
         • As a dictionary, which will be used directly.
         • As a ContextType, in which case its internal _context_container is extracted.
-        If collection_context is None, an empty dictionary will be used.
+        If global_context is None, an empty dictionary will be used.
 
         Args:
-            collection_context (Optional[Union[ContextType, Dict]]): Global context data, either as a
+            global_context (Optional[Union[ContextType, Dict]]): Global context data, either as a
                 ContextType instance or a dictionary. Defaults to None.
             context_list (Optional[List[ContextType]]): A list of individual ContextType instances.
                 If None, an empty list is initialized.
@@ -147,20 +154,20 @@ class ContextCollectionType(ContextType):
                 If None, a default Logger is instantiated.
         """
         # Determine the base context container:
-        # - If no collection_context is provided, initialize with an empty dict.
-        # - If collection_context is a dict, use it as-is.
+        # - If no global_context is provided, initialize with an empty dict.
+        # - If global_context is a dict, use it as-is.
         # - If it's a ContextType, extract its _context_container.
-        collection_context_ = (
+        global_context_ = (
             {}
-            if collection_context is None
+            if global_context is None
             else (
-                collection_context
-                if isinstance(collection_context, dict)
-                else collection_context._context_container
+                global_context
+                if isinstance(global_context, dict)
+                else global_context._context_container
             )
         )
         # Initialize the base ContextType with the determined context container and logger.
-        super().__init__(context_dict=collection_context_, logger=logger)
+        super().__init__(context_dict=global_context_, logger=logger)
         # Initialize the list to hold individual ContextType instances.
         self._context_list: List[ContextType] = (
             context_list if context_list is not None else []
@@ -201,8 +208,6 @@ class ContextCollectionType(ContextType):
     def __getitem__(self, index: int) -> ContextType:
         return self.get_item(index)
 
-    ###################### Overriden ContextType methods tailored for collections  ######################
-
     def __str__(self) -> str:
         """
         Return a string representation of the collection, showing its length,
@@ -216,6 +221,20 @@ class ContextCollectionType(ContextType):
             f"individual_contexts={[str(ctx) for ctx in self._context_list]}"
         )
         return f"{self.__class__.__name__}(length={len(self._context_list)}, {global_str}, {individual_str})"
+
+    def get_slice_context(self, index: int) -> ChainMap:
+        """
+        Retrieves a dynamically combined context for a specific slice.
+
+        Args:
+            index (int): The index of the slice.
+
+        Returns:
+            ChainMap: The combined local and global contexts.
+        """
+        return ChainMap(
+            self._context_list[index]._context_container, self._context_container
+        )
 
     def get_item(self, index: int) -> ContextType:
         """
@@ -465,3 +484,18 @@ class ContextCollectionType(ContextType):
                                 where the key is defined.
         """
         return [(key, self.get_value(key)) for key in self.keys()]
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Returns a structured dictionary representation of the context collection.
+
+        - Global context stored under "global".
+        - Local contexts stored under "locals".
+
+        Returns:
+            Dict[str, Any]: The structured dictionary representation.
+        """
+        return {
+            "global": dict(self._context_container),
+            "locals": [ctx.to_dict() for ctx in self._context_list],
+        }

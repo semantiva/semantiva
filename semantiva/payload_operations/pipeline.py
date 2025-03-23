@@ -116,7 +116,7 @@ class Pipeline(PayloadProcessor):
         super().__init__(logger)
         self.nodes: List[DataNode] = []
         self.pipeline_configuration: List[Dict] = pipeline_configuration
-        self._initialize_nodes()
+        self.nodes = self._initialize_nodes(pipeline_configuration)
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
             self.logger.debug("%s", self.inspect())
@@ -187,16 +187,6 @@ class Pipeline(PayloadProcessor):
         """
         Executes the pipeline by processing data and context sequentially through each node.
 
-        Processing follows these rules:
-            1. If the node's expected input type matches the current data type exactly,
-            the node processes the entire dataset in a single call.
-            2. If the current data is a `DataCollectionType` and the node expects its base type,
-            data is processed **element-wise** using `_slicing_strategy`.
-            3. If neither condition applies, an error is raised (invalid pipeline topology).
-
-        The pipeline supports both `ContextType` and `ContextCollectionType`:
-            - When slicing data, if the context is a `ContextCollectionType`, it is sliced in parallel.
-            - If the context is a single `ContextType`, it is **reused** for each data item.
 
         Args:
             data (BaseDataType): The initial input data for the pipeline.
@@ -219,14 +209,7 @@ class Pipeline(PayloadProcessor):
             # Get the expected input type for the node's operation
             input_type = node.processor.input_data_type()
 
-            if (
-                (type(result_data) == input_type)
-                or (
-                    isinstance(result_data, DataCollectionType)
-                    and input_type == result_data.collection_base_type()
-                )
-                or (issubclass(type(result_data), input_type))
-            ):
+            if issubclass(type(result_data), input_type):
                 result_data, result_context = node.process(result_data, result_context)
 
             # Case 2: Incompatible data type
@@ -361,15 +344,43 @@ class Pipeline(PayloadProcessor):
         # Return the dictionary of probe results
         return probe_results
 
-    def _initialize_nodes(self):
+    def _initialize_nodes(self, node_configs: List[Dict[str, Any]]):
         """
         Initialize all nodes in the pipeline.
 
         This method uses the `node_factory` function to create nodes from the provided
         pipeline configuration. Each node is then added to the pipeline.
         """
+        nodes = []
+        prev_output_type = None
 
         for index, node_config in enumerate(self.pipeline_configuration, start=1):
             node = node_factory(node_config, self.logger)
             self.logger.info(f"Initialized Node {index}: {type(node).__name__}")
-            self._add_node(node)
+            nodes.append(node)
+
+            # Skip type consistency check for `ContextNode`
+            if isinstance(node, ContextNode):
+                continue
+
+            # Perform type consistency check
+            input_type = node.input_data_type()
+            # Enforce strict type matching otherwise
+            if prev_output_type and input_type:
+                assert prev_output_type == input_type, (
+                    f"Invalid pipeline topology: Output of "
+                    f"{prev_output_type.__class__.__name__} "
+                    f"({prev_output_type}) not compatible with "
+                    f"{node.processor.__class__.__name__} ({input_type})."
+                )
+
+            # if prev_output_type and input_type and prev_output_type != input_type:
+            #    raise TypeError(
+            #        f"Type mismatch: Expected {prev_output_type} → {input_type} in pipeline."
+            #    )
+
+            # Update previous output type for next iteration
+            prev_output_type = node.output_data_type()
+
+        print("Nodes: ", nodes)
+        return nodes
