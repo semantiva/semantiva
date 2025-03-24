@@ -154,14 +154,7 @@ class Pipeline(PayloadProcessor):
             # Get the expected input type for the node's operation
             input_type = node.processor.input_data_type()
 
-            if (
-                isinstance(result_data, input_type)
-                or (
-                    isinstance(result_data, DataCollectionType)
-                    and input_type == result_data.collection_base_type()
-                )
-                or (issubclass(type(result_data), input_type))
-            ):
+            if issubclass(type(result_data), input_type):
                 result_data, result_context = node.process(result_data, result_context)
 
             # Case 2: Incompatible data type
