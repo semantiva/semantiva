@@ -107,6 +107,9 @@ class SlicingDataProcessorFactory:
             return SlicingDataProbe
 
 
-def Slicer(processor_cls: Type, input_data_collection_type: Type[DataCollectionType]):
+def Slicer(
+    processor_cls: Type[BaseDataProcessor],
+    input_data_collection_type: Type[DataCollectionType],
+):
     """Convenient user API for creating slicer nodes with explicit types."""
     return SlicingDataProcessorFactory.create(processor_cls, input_data_collection_type)
