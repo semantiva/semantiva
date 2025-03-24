@@ -82,6 +82,7 @@ class SlicingDataProcessorFactory:
 
                 @classmethod
                 def input_data_type(cls):
+                    """Returns the input data type."""
                     return cls.input_data_type_override
 
                 def process(
@@ -95,7 +96,7 @@ class SlicingDataProcessorFactory:
                     """
 
                     probed_results = []
-                    for idx, data_item in enumerate(data):
+                    for data_item in data:
                         probed_results.append(
                             super().process(data_item, *args, **kwargs)
                         )
