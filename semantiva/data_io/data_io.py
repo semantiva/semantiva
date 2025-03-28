@@ -1,12 +1,13 @@
-from abc import ABC, abstractmethod
-from typing import Tuple, TypeVar, Generic
+from abc import abstractmethod
+from typing import Tuple, TypeVar, Generic, List
 from semantiva.context_processors import ContextType
 from semantiva.data_types import BaseDataType
+from semantiva.core import SemantivaObject
 
 T = TypeVar("T", bound=BaseDataType)
 
 
-class DataSource(ABC):
+class DataSource(SemantivaObject):
     """
     Abstract base class for data sources within the framework.
 
@@ -46,9 +47,29 @@ class DataSource(ABC):
         """
         return self._get_data(*args, **kwargs)
 
-    @staticmethod
+    @classmethod
+    def _define_metadata(cls):
+
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._get_data, excluded_parameters
+            )
+        ]
+
+        component_metadata = {
+            "component_type": "DataSource",
+            "output_data_type": cls.output_data_type().__name__,
+            "input_parameters": annotated_parameter_list or "None",
+        }
+
+        return component_metadata
+
+    @classmethod
     @abstractmethod
-    def output_data_type():
+    def output_data_type(cls):
         """
         Define the type of data provided by this source.
 
@@ -62,7 +83,7 @@ class DataSource(ABC):
         return f"{cls.__name__}"
 
 
-class PayloadSource(ABC):
+class PayloadSource(SemantivaObject):
     """
     Abstract base class for payload sources within the framework.
 
@@ -74,6 +95,27 @@ class PayloadSource(ABC):
         get_payload: Public method to fetch payloads by invoking `_get_payload`.
         output_data_type: Abstract method to define the type of payload provided.
     """
+
+    @classmethod
+    def _define_metadata(cls):
+
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._get_payload, excluded_parameters
+            )
+        ]
+
+        component_metadata = {
+            "component_type": "PayloadSource",
+            "output_data_type": cls.output_data_type().__name__,
+            "input_parameters": annotated_parameter_list or "None",
+            "injected_context_keys": cls.injected_context_keys() or "None",
+        }
+
+        return component_metadata
 
     @abstractmethod
     def _get_payload(self, *args, **kwargs) -> Tuple[BaseDataType, ContextType]:
@@ -102,9 +144,29 @@ class PayloadSource(ABC):
         """
         return self._get_payload(*args, **kwargs)
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def output_data_type() -> BaseDataType:
+    def _injected_context_keys(self) -> List[str]:
+        """
+        Return the keys of the context that are injected by the source.
+
+        Returns:
+            List[str]: The keys of the context injected by the source.
+        """
+
+    @classmethod
+    def injected_context_keys(cls) -> List[str]:
+        """
+        Return the keys of the context that are injected by the source.
+
+        Returns:
+            List[str]: The keys of the context injected by the source.
+        """
+        return cls._injected_context_keys()
+
+    @classmethod
+    @abstractmethod
+    def output_data_type(cls) -> BaseDataType:
         """
         Define the type of payload provided by this source.
 
@@ -118,7 +180,7 @@ class PayloadSource(ABC):
         return f"{cls.__name__}"
 
 
-class DataSink(ABC, Generic[T]):
+class DataSink(SemantivaObject, Generic[T]):
     """
     Abstract base class for data sinks within the framework.
 
@@ -145,6 +207,26 @@ class DataSink(ABC, Generic[T]):
         """
         ...
 
+    @classmethod
+    def _define_metadata(cls):
+
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._send_data, excluded_parameters
+            )
+        ]
+
+        component_metadata = {
+            "component_type": "DataSink",
+            "input_data_type": cls.input_data_type().__name__,
+            "input_parameters": annotated_parameter_list or "None",
+        }
+
+        return component_metadata
+
     def send_data(self, data: T, *args, **kwargs):
         """
         Send data by invoking the `_send_data` method.
@@ -158,9 +240,9 @@ class DataSink(ABC, Generic[T]):
         """
         return self._send_data(data, *args, **kwargs)
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def input_data_type() -> BaseDataType[T]:
+    def input_data_type(cls) -> BaseDataType[T]:
         """
         Define the type of data consumed by this sink.
 
@@ -173,7 +255,7 @@ class DataSink(ABC, Generic[T]):
         return f"{cls.__name__}"
 
 
-class PayloadSink(ABC, Generic[T]):
+class PayloadSink(SemantivaObject, Generic[T]):
     """
     Abstract base class for payload sinks within the framework.
 
@@ -216,9 +298,28 @@ class PayloadSink(ABC, Generic[T]):
         """
         self._send_payload(data, context, *args, **kwargs)
 
-    @staticmethod
+    @classmethod
+    def _define_metadata(cls):
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._send_payload, excluded_parameters
+            )
+        ]
+
+        component_metadata = {
+            "component_type": "PayloadSink",
+            "input_data_type": cls.input_data_type().__name__,
+            "input_parameters": annotated_parameter_list or "None",
+        }
+
+        return component_metadata
+
+    @classmethod
     @abstractmethod
-    def input_data_type() -> BaseDataType[T]:
+    def input_data_type(cls) -> BaseDataType[T]:
         """
         Define the type of data consumed by this sink.
 

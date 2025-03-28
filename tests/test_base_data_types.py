@@ -31,7 +31,7 @@ def test_data_collection_type():
     assert list(collection) == [float_data1, float_data2]
 
     with pytest.raises(TypeError):
-        collection.append("not an IntDataType")
+        collection.append("not an FloatDataType")
 
     collection_from_list = FloatDataCollection.from_list([float_data1, float_data2])
     assert len(collection_from_list) == 2

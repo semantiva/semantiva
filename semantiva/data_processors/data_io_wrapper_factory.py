@@ -1,12 +1,9 @@
 import inspect
 from typing import Type, List
-from ..data_types.data_types import BaseDataType, NoDataType
-from ..context_processors.context_types import ContextType
-from ..data_io import DataSource, PayloadSource, DataSink, PayloadSink
-from ..data_processors.data_processors import (
-    DataOperation,
-)
-from ..logger import Logger
+from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
+from semantiva.data_processors.data_processors import DataOperation
+from semantiva.data_types import BaseDataType, NoDataType
+from semantiva.logger import Logger
 
 
 class DataIOWrapperFactory:
@@ -40,11 +37,11 @@ class DataIOWrapperFactory:
             def get_no_data_type():
                 return NoDataType
 
-            def input_data_type_method() -> BaseDataType:
+            def input_data_type_method(cls) -> BaseDataType:
                 return get_no_data_type()
 
-            def output_data_type_method() -> BaseDataType:
-                return data_io_class.output_data_type()
+            def output_data_type_method(cls) -> BaseDataType:
+                return cls.processor.output_data_type()
 
             if issubclass(data_io_class, DataSource):
 
@@ -111,11 +108,11 @@ class DataIOWrapperFactory:
 
         elif issubclass(data_io_class, (DataSink, PayloadSink)):
 
-            def input_data_type_method() -> BaseDataType:
-                return data_io_class().input_data_type()
+            def input_data_type_method(cls) -> BaseDataType:
+                return data_io_class.input_data_type()
 
-            def output_data_type_method() -> BaseDataType:
-                return data_io_class().input_data_type()
+            def output_data_type_method(cls) -> BaseDataType:
+                return data_io_class.input_data_type()
 
             if issubclass(data_io_class, DataSink):
 
@@ -151,8 +148,8 @@ class DataIOWrapperFactory:
             raise ValueError(f"Invalid data IO class: {data_io_class}.")
 
         methods["_process_logic"] = _process_logic_method
-        methods["input_data_type"] = staticmethod(input_data_type_method)
-        methods["output_data_type"] = staticmethod(output_data_type_method)
+        methods["input_data_type"] = classmethod(input_data_type_method)
+        methods["output_data_type"] = classmethod(output_data_type_method)
         methods["get_processing_parameter_names"] = classmethod(
             get_processing_parameter_names
         )
@@ -161,5 +158,5 @@ class DataIOWrapperFactory:
         class_name = f"{data_io_class.__name__}"
         generated_class = type(class_name, (DataOperation,), methods)
         assert issubclass(generated_class, DataOperation)
-        print(generated_class.signature_string())
+        # print(generated_class.signature_string())
         return generated_class

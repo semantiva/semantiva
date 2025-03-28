@@ -3,20 +3,16 @@ from semantiva.exceptions.pipeline import (
     PipelineConfigurationError,
     PipelineTopologyError,
 )
+from semantiva.context_processors.context_types import ContextType
+from semantiva.data_types import BaseDataType
+from semantiva.logger import Logger
 from .payload_processors import PayloadProcessor
+from .nodes.node_factory import node_factory
 from .nodes.nodes import (
     PipelineNode,
     DataNode,
-    OperationNode,
     ContextNode,
-    ProbeResultCollectorNode,
-    ProbeContextInjectorNode,
 )
-from ..logger import Logger
-from ..data_types.data_types import BaseDataType, DataCollectionType
-from ..data_processors.data_processors import DataOperation
-from ..context_processors.context_types import ContextType
-from .nodes.node_factory import node_factory
 
 
 class Pipeline(PayloadProcessor):
@@ -241,7 +237,9 @@ class Pipeline(PayloadProcessor):
         injected_or_created_keywords.update(created_keys)
 
         # If the node is a ProbeContextInjectorNode, add the context keyword to the set
-        if isinstance(node, ProbeContextInjectorNode):
+        ## TODO: use new interface to identify added context keys
+        if node.get_metadata().get("component_type") == "ProbeContextInjectorNode":
+            assert hasattr(node, "context_keyword")
             injected_or_created_keywords.add(node.context_keyword)
 
         # Validate if the node requires keys previously deleted
@@ -338,9 +336,10 @@ class Pipeline(PayloadProcessor):
 
         # Iterate over all nodes in the pipeline
         for i, node in enumerate(self.nodes):
-            # Check if the node is a ProbeResultCollectorNode
-            if isinstance(node, ProbeResultCollectorNode):
+
+            if node.get_metadata().get("component_type") == "ProbeResultCollectorNode":
                 # Add the collected data from the node to the results dictionary
+                assert hasattr(node, "get_collected_data")
                 probe_results[f"Node {i + 1}/{type(node.processor).__name__}"] = (
                     node.get_collected_data()
                 )
@@ -379,13 +378,16 @@ class Pipeline(PayloadProcessor):
                         f"{node.processor.__class__.__name__} ({input_type})."
                     )
 
-            # if prev_output_type and input_type and prev_output_type != input_type:
-            #    raise TypeError(
-            #        f"Type mismatch: Expected {prev_output_type} → {input_type} in pipeline."
-            #    )
-
             # Update previous output type for next iteration
             prev_output_type = node.output_data_type()
 
-        print("Nodes: ", nodes)
         return nodes
+
+    @classmethod
+    def _define_metadata(cls):
+
+        # Define the metadata for the Pipeline class
+        component_metadata = {
+            "component_type": "Pipeline",
+        }
+        return component_metadata

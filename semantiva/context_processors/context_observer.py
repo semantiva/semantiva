@@ -1,12 +1,7 @@
-from typing import Any
-from .context_types import ContextType
-
-from collections import ChainMap
 from typing import Any, Optional, Union
-from semantiva.context_processors.context_types import (
-    ContextType,
-    ContextCollectionType,
-)
+from collections import ChainMap
+from typing import Any
+from .context_types import ContextType, ContextCollectionType
 
 
 class ContextObserver:

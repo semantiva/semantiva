@@ -1,6 +1,6 @@
 from typing import Any, List, Optional, Iterator, Union, Dict, Tuple
-from ..logger import Logger
 from collections import ChainMap
+from semantiva.logger import Logger
 
 
 class ContextType:

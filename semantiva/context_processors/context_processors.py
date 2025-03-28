@@ -1,9 +1,9 @@
-from typing import List, Optional, Union
 from abc import ABC, abstractmethod
+from typing import List, Optional, Union
 from semantiva.context_processors.context_types import ContextType
+from semantiva.workflows.fitting_model import FittingModel
 from semantiva.data_types.data_types import BaseDataType
 from semantiva.logger import Logger
-from semantiva.workflows.fitting_model import FittingModel
 
 
 class ContextProcessor(ABC):
@@ -34,8 +34,8 @@ class ContextProcessor(ABC):
             ContextType: The modified (or unchanged) context after the operation.
         """
 
-    @staticmethod
-    def input_data_type():
+    @classmethod
+    def input_data_type(cls):
         return BaseDataType
 
     def get_processing_parameter_names(self) -> List[str]:
