@@ -41,7 +41,7 @@ class DataIOWrapperFactory:
                 return get_no_data_type()
 
             def output_data_type_method(cls) -> BaseDataType:
-                return cls.processor.output_data_type()
+                return data_io_class.output_data_type()
 
             if issubclass(data_io_class, DataSource):
 
@@ -158,5 +158,4 @@ class DataIOWrapperFactory:
         class_name = f"{data_io_class.__name__}"
         generated_class = type(class_name, (DataOperation,), methods)
         assert issubclass(generated_class, DataOperation)
-        # print(generated_class.signature_string())
         return generated_class

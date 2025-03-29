@@ -19,78 +19,13 @@ class Pipeline(PayloadProcessor):
     """
     Represents a pipeline for orchestrating multiple payload operations.
 
-    A pipeline is a structured collection of nodes or operations designed to process
-    `BaseDataType` data and context in a systematic manner. It enables the execution
-    of complex workflows by chaining multiple `Node` instances together.
-
-    Node Configuration:
-    Each node in the pipeline is defined using a dictionary with the following keys:
-
-    - `processor` (required): The operation to perform, either a `DataOperation (DataOperation` or `DataProbe`) or a `ContextProcessor`.
-    - `parameters` (optional, default=`{}`): A dictionary of parameters for the operation.
-      If an operation parameter is **not explicitly defined** in the pipeline configuration,
-      it is extracted from the **context**, using the parameter name as the context keyword.
-      Parameters explicitly defined in the pipeline configuration take precedence over those
-      obtained from the context.
-
-    ### Node Types:
-
-    1. **OperationNode**:
-       - Configured when a `DataOperation` is given as the `processor`.
-       - Example:
-         ```python
-         {
-             "processor": SomeDataOperation,
-             "parameters": {"param1": value1, "param2": value2}
-         }
-         ```
-       - Defaults:
-         - `parameters` defaults to an empty dictionary `{}`.
-
-    2. **ProbeContextInjectorNode**:
-       - Configured when a `DataProbe` is used as the `processor`, and `context_keyword` is **not** provided.
-       - This node collects probe results. No changes in data or context information.
-       - Example:
-         ```python
-         {
-             "processor": SomeDataProbe
-         }
-         ```
-       - Defaults:
-         - `parameters` defaults to `{}`.
-
-    3. **ProbeResultCollectorNode**:
-       - Configured when a `DataProbe` is used as the `processor`, and `context_keyword` **is** provided.
-       - Stores collected probe results in the context container under the specified keyword.
-       - Example:
-         ```python
-         {
-             "processor": SomeDataProbe,
-             "context_keyword": "some_probe_keyword"
-         }
-         ```
-       - Defaults:
-         - `parameters` defaults to `{}`.
-
-    ### Data Processing and Slicing:
-
-    The pipeline processes data and context sequentially through its nodes. Processing follows these rules:
-        1. If the node's expected input type matches the current data type exactly,
-           the node processes the entire data object in a single call. This is the nominal operation.
-        2. If the current data is a `DataCollectionType` and the node process its base type,
-           data is processed **element-wise** using a slicing stratgy.
-        3. If neither condition applies, an error is raised (invalid pipeline topology).
-
-    The pipeline supports both `ContextType` and `ContextCollectionType`:
-        - When slicing data, if the context is a `ContextCollectionType`, it is sliced in parallel.
-        - If the context is a single `ContextType`, it is **reused** for each data item and the result
-          of the context operation is not passed to the next node.
+    Processes data and context through a series of operations, applying parameters
+    from the pipeline configuration or the context. Data slicing occurs when
+    needed. If the required data type is incompatible, an error is raised.
 
     Attributes:
-        pipeline_configuration (List[Dict]): A list of dictionaries defining the configuration
-                                             for each node in the pipeline.
-        nodes (List[Node]): The list of nodes that make up the pipeline.
-        stop_watch (StopWatch): Tracks the execution time of nodes in the pipeline.
+        pipeline_configuration (List[Dict]): Configuration details for each operation.
+        nodes (List[Node]): The list of processing nodes in this pipeline.
     """
 
     pipeline_configuration: List[Dict]
@@ -237,7 +172,6 @@ class Pipeline(PayloadProcessor):
         injected_or_created_keywords.update(created_keys)
 
         # If the node is a ProbeContextInjectorNode, add the context keyword to the set
-        ## TODO: use new interface to identify added context keys
         if node.get_metadata().get("component_type") == "ProbeContextInjectorNode":
             assert hasattr(node, "context_keyword")
             injected_or_created_keywords.add(node.context_keyword)

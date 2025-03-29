@@ -509,6 +509,14 @@ class NodeFactory:
                 super().__init__(self.processor, processor_parameters, logger)
 
             @classmethod
+            def input_data_type(cls):
+                """
+                Retrieve input data type of the data processor.
+
+                """
+                return cls.processor.input_data_type()
+
+            @classmethod
             def output_data_type(cls):
                 """
                 Retrieve the node's output data type. The request is delegated to the node's data processor.
@@ -611,6 +619,23 @@ class NodeFactory:
                     ValueError: If `context_keyword` is not provided or is not a non-empty string.
                 """
                 super().__init__(self.processor, processor_parameters, logger)
+
+            @classmethod
+            def input_data_type(cls):
+                """
+                Retrieve the expected input data type for the data processor.
+
+                Returns:
+                    Type: The expected input data type for the data processor.
+                """
+                return cls.processor.input_data_type()
+
+            @classmethod
+            def output_data_type(cls):
+                """
+                Retrieve the output data type of the node, which is the same as the input data type for probe nodes.
+                """
+                return cls.processor.input_data_type()
 
             @classmethod
             def get_created_keys(cls):
@@ -717,6 +742,23 @@ class NodeFactory:
                 """
                 super().__init__(self.processor, processor_parameters, logger)
                 self._probed_data: List[Any] = []
+
+            @classmethod
+            def input_data_type(cls):
+                """
+                Retrieve the expected input data type for the data processor.
+
+                Returns:
+                    Type: The expected input data type for the data processor.
+                """
+                return cls.processor.input_data_type()
+
+            @classmethod
+            def output_data_type(cls):
+                """
+                Retrieve the output data type of the node, which is the same as the input data type for probe nodes.
+                """
+                return cls.processor.input_data_type()
 
             def collect(self, data: Any) -> None:
                 """

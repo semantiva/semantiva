@@ -20,8 +20,9 @@ class DataSource(SemantivaObject):
         output_data_type: Abstract method to define the type of data provided.
     """
 
+    @classmethod
     @abstractmethod
-    def _get_data(self, *args, **kwargs):
+    def _get_data(cls, *args, **kwargs):
         """
         Abstract method to implement data retrieval logic.
 
@@ -32,9 +33,9 @@ class DataSource(SemantivaObject):
         Returns:
             Any: The retrieved data.
         """
-        ...
 
-    def get_data(self, *args, **kwargs):
+    @classmethod
+    def get_data(cls, *args, **kwargs):
         """
         Retrieve data by invoking the `_get_data` method.
 
@@ -45,7 +46,7 @@ class DataSource(SemantivaObject):
         Returns:
             Any: The retrieved data.
         """
-        return self._get_data(*args, **kwargs)
+        return cls._get_data(*args, **kwargs)
 
     @classmethod
     def _define_metadata(cls):

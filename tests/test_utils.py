@@ -100,7 +100,8 @@ class FloatCollectValueProbe(FloatProbe):
 class FloatMockDataSource(DataSource):
     """Concrete implementation of DataSource providing FloatDataType data."""
 
-    def _get_data(self, *args, **kwargs) -> FloatDataType:
+    @classmethod
+    def _get_data(cls, *args, **kwargs) -> FloatDataType:
         return FloatDataType(123.0)
 
     @classmethod
@@ -138,7 +139,8 @@ class FloatDataSource(DataSource):
     providing FloatDataType data.
     """
 
-    def _get_data(self, *args, **kwargs) -> FloatDataType:
+    @classmethod
+    def _get_data(cls, *args, **kwargs) -> FloatDataType:
         # Return a fixed FloatDataType for testing
         return FloatDataType(123.0)
 

@@ -1,10 +1,11 @@
 from typing import Any, Optional, Union
 from collections import ChainMap
 from typing import Any
+from semantiva.core import SemantivaObject
 from .context_types import ContextType, ContextCollectionType
 
 
-class ContextObserver:
+class ContextObserver(SemantivaObject):
     """
     Centralized manager for context slicing, merging, and updates
     """

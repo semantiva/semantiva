@@ -65,10 +65,10 @@ class DataNode(PipelineNode):
             if issubclass(processor, DataOperation)
             else processor(logger=self.logger)
         )
-        self.stop_watch = StopWatch()
         self.processor_config = {} if processor_config is None else processor_config
 
     @classmethod
+    @abstractmethod
     def input_data_type(cls):
         """
         Retrieve the expected input data type for the data processor.
@@ -76,10 +76,10 @@ class DataNode(PipelineNode):
         Returns:
             Type: The expected input data type for the data processor.
         """
-        return cls.processor.input_data_type()
 
+    @classmethod
     @abstractmethod
-    def output_data_type(self):
+    def output_data_type(cls):
         """
         Retrieve the output data type of the node.
         """
@@ -237,7 +237,6 @@ class ContextNode(PipelineNode):
             else processor(logger=logger)
         )
         self.processor_config = processor_config
-        self.stop_watch = StopWatch()
 
     def __str__(self) -> str:
         """
@@ -298,11 +297,12 @@ class ProbeNode(DataNode):
     A specialized DataNode for probing data.
     """
 
-    def output_data_type(self):
+    @classmethod
+    def output_data_type(cls):
         """
         Retrieve the node's output data type. The output data type is the same as the input data type for probe nodes.
 
         Returns:
             Type: The node's output data type.
         """
-        return self.input_data_type()
+        return cls.input_data_type()

@@ -3,11 +3,10 @@ from typing import Any, Optional
 from semantiva.context_processors import ContextType, ContextObserver
 from semantiva.data_types import BaseDataType, NoDataType
 from semantiva.payload_operations.stop_watch import StopWatch
-from semantiva.core import SemantivaObject
 from semantiva.logger import Logger
 
 
-class PayloadProcessor(ContextObserver, SemantivaObject):
+class PayloadProcessor(ContextObserver):
     """
     Base class for operations involving payloads in the semantic framework.
 
