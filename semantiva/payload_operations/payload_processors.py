@@ -1,13 +1,12 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any, Optional
-from ..context_processors.context_types import ContextType
-from ..context_processors.context_observer import ContextObserver
-from ..data_types.data_types import BaseDataType, NoDataType
-from ..logger import Logger
-from ..payload_operations.stop_watch import StopWatch
+from semantiva.context_processors import ContextType, ContextObserver
+from semantiva.data_types import BaseDataType, NoDataType
+from semantiva.payload_operations.stop_watch import StopWatch
+from semantiva.logger import Logger
 
 
-class PayloadProcessor(ContextObserver, ABC):
+class PayloadProcessor(ContextObserver):
     """
     Base class for operations involving payloads in the semantic framework.
 

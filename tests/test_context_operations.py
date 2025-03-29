@@ -1,12 +1,9 @@
 import pytest
 from typing import List
-from semantiva.context_processors.context_processors import (
-    ContextProcessor,
-    ModelFittingContextProcessor,
-)
+from semantiva.context_processors import ContextProcessor, ModelFittingContextProcessor
 from semantiva.context_processors.context_types import ContextType
-from semantiva.logger import Logger
 from semantiva.workflows.fitting_model import FittingModel
+from semantiva.logger import Logger
 
 
 class MockFittingModel(FittingModel):
@@ -22,7 +19,8 @@ class MockContextProcessor(ContextProcessor):
     def get_required_keys(self) -> List[str]:
         return ["required_key"]
 
-    def get_created_keys(self) -> List[str]:
+    @classmethod
+    def get_created_keys(cls) -> List[str]:
         return ["operation_result"]
 
     def get_suppressed_keys(self) -> List[str]:

@@ -1,12 +1,15 @@
-from .payload_processors import PayloadProcessor
-from .nodes.nodes import (
-    DataNode,
-    OperationNode,
-    ProbeNode,
-    ProbeContextInjectorNode,
-    ProbeResultCollectorNode,
-    DataProbe,
-)
-
 from .nodes.node_factory import node_factory
+from .payload_processors import PayloadProcessor
 from .pipeline import Pipeline
+from .nodes.nodes import DataNode, ProbeNode, PipelineNode, ContextNode
+
+__all__ = [
+    "node_factory",
+    "PayloadProcessor",
+    "Pipeline",
+    "DataNode",
+    "ProbeNode",
+    "StopWatch",
+    "PipelineNode",
+    "ContextNode",
+]

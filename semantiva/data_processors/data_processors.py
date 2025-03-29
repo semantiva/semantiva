@@ -1,17 +1,15 @@
 import inspect
-from typing import Any, List, Optional, Type, TypeVar, Generic, Union, Tuple
+from typing import Any, List, Optional, Type, TypeVar, Generic
+from abc import abstractmethod
+from semantiva.context_processors import ContextObserver
+from semantiva.core import SemantivaObject
+from semantiva.data_types import BaseDataType
+from semantiva.logger import Logger
 
-from abc import ABC, abstractmethod
-
-from ..context_processors.context_observer import ContextObserver
-from ..data_types.data_types import BaseDataType, DataCollectionType
-from ..logger import Logger
-
-# -- Type Variables --
 T = TypeVar("T", bound=BaseDataType)
 
 
-class BaseDataProcessor(ABC, Generic[T]):
+class BaseDataProcessor(SemantivaObject, Generic[T]):
     """
     Abstract base class for all data processors in Semantiva.
 
@@ -28,9 +26,9 @@ class BaseDataProcessor(ABC, Generic[T]):
         else:
             self.logger = Logger()
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def input_data_type() -> Type[BaseDataType]:
+    def input_data_type(cls) -> Type[BaseDataType]:
         """
         Define the expected type of input data for processing.
 
@@ -38,8 +36,9 @@ class BaseDataProcessor(ABC, Generic[T]):
             Type[BaseDataType]: The required input data type.
         """
 
+    @classmethod
     @abstractmethod
-    def get_created_keys(self) -> List[str]:
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieves a list of context keys generated during processing.
 
@@ -117,30 +116,6 @@ class BaseDataProcessor(ABC, Generic[T]):
     def __str__(cls) -> str:
         return f"{cls.__name__}"
 
-    @classmethod
-    def get_processing_parameters_with_types(cls) -> List[Tuple[str, str]]:
-        """
-        Retrieve the names and type hints of parameters required by the `_process_logic` method.
-
-        Returns:
-            List[Tuple[str, str]]: A list of tuples (param_name, param_type).
-        """
-        signature = inspect.signature(cls._process_logic)
-        return [
-            (
-                param.name,
-                (
-                    param.annotation.__name__
-                    if param.annotation != param.empty
-                    else "Unknown"
-                ),
-            )
-            for param in signature.parameters.values()
-            if param.name not in {"self", "data"}  # Exclude `self` and `data`
-            and param.kind
-            not in {inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD}
-        ]
-
 
 class DataOperation(BaseDataProcessor):
     """
@@ -158,6 +133,29 @@ class DataOperation(BaseDataProcessor):
     """
 
     context_observer: Optional[ContextObserver]
+
+    @classmethod
+    def _define_metadata(cls):
+        # Retrieve the parameter signatures for the _process_logic method
+        # and exclude the 'self' and 'data' parameters from the metadata
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._process_logic, excluded_parameters
+            )
+        ]
+
+        # Define the metadata for the DataOperation
+        component_metadata = {
+            "component_type": "DataOperation",
+            "input_data_type": cls.input_data_type().__name__,
+            "output_data_type": cls.output_data_type().__name__,
+            "input_parameters": annotated_parameter_list or "None",
+        }
+
+        return component_metadata
 
     def _notify_context_update(self, key: str, value: Any) -> None:
         """
@@ -194,7 +192,8 @@ class DataOperation(BaseDataProcessor):
         super().__init__(logger)
         self.context_observer = context_observer
 
-    def context_keys(self) -> List[str]:
+    @classmethod
+    def context_keys(cls) -> List[str]:
         """
         Retrieve the list of valid context keys for the data operation.
 
@@ -207,14 +206,15 @@ class DataOperation(BaseDataProcessor):
         """
         return []
 
-    def get_created_keys(self) -> List[str]:
+    @classmethod
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys created by the data operation.
 
         Returns:
             List[str]: A list of context keys created or modified by the operation.
         """
-        return self.context_keys()
+        return cls.context_keys()
 
     @classmethod
     def signature_string(cls) -> str:
@@ -232,7 +232,9 @@ class DataOperation(BaseDataProcessor):
         """
         input_type = cls.input_data_type().__name__
         output_type = cls.output_data_type().__name__
-        param_names_with_types = cls.get_processing_parameters_with_types()
+        param_names_with_types = cls._retrieve_parameter_signatures(
+            cls._process_logic, ["self", "data"]
+        )
 
         params_section = (
             "\n\t    - "
@@ -245,9 +247,9 @@ class DataOperation(BaseDataProcessor):
 
         return f"""{cls.__name__} (DataOperation)\n\tInput Type:  {input_type}\n\tOutput Type: {output_type}\n\tParameters:{params_section}\n"""
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def output_data_type() -> Type[BaseDataType]:
+    def output_data_type(cls) -> Type[BaseDataType]:
         """
         Define the type of output data produced by this operation.
 
@@ -287,14 +289,14 @@ class OperationTopologyFactory:
 
         methods: dict = {}
 
-        def input_data_type_method() -> Type[BaseDataType]:
+        def input_data_type_method(cls):
             return input_type
 
-        def output_data_type_method() -> Type[BaseDataType]:
+        def output_data_type_method(cls):
             return output_type
 
-        methods["input_data_type"] = staticmethod(input_data_type_method)
-        methods["output_data_type"] = staticmethod(output_data_type_method)
+        methods["input_data_type"] = classmethod(input_data_type_method)
+        methods["output_data_type"] = classmethod(output_data_type_method)
 
         # Create a new type that extends DataOperation
         generated_class = type(class_name, (DataOperation,), methods)
@@ -311,9 +313,32 @@ class DataProbe(BaseDataProcessor):
     def __init__(self, logger=None):
         super().__init__(logger)
 
-    def get_created_keys(self) -> List[str]:
+    @classmethod
+    def get_created_keys(cls) -> List[str]:
         """ """
         return []
+
+    @classmethod
+    def _define_metadata(cls):
+        # Retrieve the parameter signatures for the _process_logic method
+        # and exclude the 'self' and 'data' parameters from the metadata
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._process_logic, excluded_parameters
+            )
+        ]
+
+        # Define the metadata for the DataProbe
+        component_metadata = {
+            "component_type": "DataProbe",
+            "input_data_type": cls.input_data_type().__name__,
+            "input_parameters": annotated_parameter_list or "None",
+        }
+
+        return component_metadata
 
     @classmethod
     def signature_string(cls) -> str:
@@ -328,7 +353,9 @@ class DataProbe(BaseDataProcessor):
             str: A formatted multi-line signature string.
         """
         input_type = cls.input_data_type().__name__
-        param_names_with_types = cls.get_processing_parameters_with_types()
+        param_names_with_types = cls._retrieve_parameter_signatures(
+            cls._process_logic, ["self", "data"]
+        )
 
         params_section = (
             "\n\t    - "

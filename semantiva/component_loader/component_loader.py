@@ -1,13 +1,13 @@
-import re
-import importlib.util
 from importlib import import_module
 from typing import List, Set
 from pathlib import Path
+import importlib.util
+import re
+from semantiva.logger import Logger
 from semantiva.context_processors.context_processors import (
     ContextProcessor,
     ContextType,
 )
-from semantiva.logger import Logger
 
 
 def context_renamer_factory(original_key: str, destination_key: str):
@@ -66,7 +66,7 @@ def context_renamer_factory(original_key: str, destination_key: str):
     class_attrs = {
         "_process_logic": _process_logic,
         "get_required_keys": get_required_keys,
-        "get_created_keys": get_created_keys,
+        "get_created_keys": classmethod(get_created_keys),
         "get_suppressed_keys": get_suppressed_keys,
     }
 
@@ -128,7 +128,7 @@ def context_deleter_factory(key: str):
     class_attrs = {
         "_process_logic": _process_logic,
         "get_required_keys": get_required_keys,
-        "get_created_keys": get_created_keys,
+        "get_created_keys": classmethod(get_created_keys),
         "get_suppressed_keys": get_suppressed_keys,
     }
 

@@ -1,94 +1,13 @@
 import pytest
-from typing import Tuple
 
-from semantiva.data_types.data_types import BaseDataType, DataCollectionType
-from semantiva.context_processors import ContextType
-from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
-from .test_utils import FloatDataType
-
-
-# -----------------------------------------------------------------------------------
-# DUMMY IMPLEMENTATIONS FOR TESTING
-# -----------------------------------------------------------------------------------
-
-
-class DummyContext(ContextType):
-    """
-    Minimal stand-in for a context type.
-    """
-
-    pass
-
-
-class FloatDataSource(DataSource):
-    """
-    Concrete implementation of DataSource
-    providing IntDataType data.
-    """
-
-    def _get_data(self, *args, **kwargs) -> FloatDataType:
-        # Return a fixed IntDataType for testing
-        return FloatDataType(123.0)
-
-    @staticmethod
-    def output_data_type():
-        # Return the type of data we are providing
-        return FloatDataType
-
-
-class IntPayloadSource(PayloadSource):
-    """
-    Concrete implementation of PayloadSource
-    providing (IntDataType, DummyContext) as payload.
-    """
-
-    def _get_payload(self, *args, **kwargs) -> Tuple[FloatDataType, DummyContext]:
-        # Return a tuple of data and context
-        return (FloatDataType(456.0), DummyContext())
-
-    @staticmethod
-    def output_data_type():
-        # Return the type of data in the payload
-        return FloatDataType
-
-
-class FloatDataSink(DataSink[FloatDataType]):
-    """
-    Concrete implementation of DataSink
-    accepting IntDataType data.
-    """
-
-    def __init__(self):
-        self.last_data_sent = None
-
-    def _send_data(self, data: FloatDataType, *args, **kwargs):
-        # Keep track of the last data we received
-        self.last_data_sent = data
-
-    @staticmethod
-    def input_data_type():
-        # Return the type of data we accept
-        return FloatDataType
-
-
-class FloatPayloadSink(PayloadSink[FloatDataType]):
-    """
-    Concrete implementation of PayloadSink
-    accepting (IntDataType, DummyContext).
-    """
-
-    def __init__(self):
-        self.last_payload = None
-        self.last_context = None
-
-    def _send_payload(self, data: FloatDataType, context: ContextType, *args, **kwargs):
-        # Store the payload for inspection
-        self.last_payload = data
-        self.last_context = context
-
-    def input_data_type(self):
-        # Return the type of data we accept
-        return FloatDataType
+from .test_utils import (
+    FloatDataType,
+    FloatDataSource,
+    FloatPayloadSource,
+    FloatDataSink,
+    FloatPayloadSink,
+    DummyContext,
+)
 
 
 # -----------------------------------------------------------------------------------
@@ -100,7 +19,9 @@ def test_datasource_get_data():
     """Test the get_data method of the DataSource"""
     ds = FloatDataSource()
     data = ds.get_data()
-    assert isinstance(data, FloatDataType), "DataSource did not return an IntDataType."
+    assert isinstance(
+        data, FloatDataType
+    ), "DataSource did not return an FloatDataType."
     assert data.data == 123.0, "DataSource returned unexpected data value."
 
 
@@ -119,11 +40,11 @@ def test_datasource_output_data_type():
 
 def test_payloadsource_get_payload():
     """Test the get_payload method of the PayloadSource"""
-    ps = IntPayloadSource()
+    ps = FloatPayloadSource()
     data, context = ps.get_payload()
     assert isinstance(
         data, FloatDataType
-    ), "PayloadSource did not return an IntDataType."
+    ), "PayloadSource did not return an FloatDataType."
     assert isinstance(
         context, DummyContext
     ), "PayloadSource did not return a DummyContext."
@@ -132,7 +53,7 @@ def test_payloadsource_get_payload():
 
 def test_payloadsource_output_data_type():
     """Test the output_data_type method of the PayloadSource"""
-    ps = IntPayloadSource()
+    ps = FloatPayloadSource()
     assert (
         ps.output_data_type() is FloatDataType
     ), "PayloadSource output_data_type mismatch."
