@@ -3,98 +3,29 @@ from semantiva.exceptions.pipeline import (
     PipelineConfigurationError,
     PipelineTopologyError,
 )
+from semantiva.context_processors.context_types import ContextType
+from semantiva.data_types import BaseDataType
+from semantiva.logger import Logger
 from .payload_processors import PayloadProcessor
+from .nodes.node_factory import node_factory
 from .nodes.nodes import (
     PipelineNode,
     DataNode,
-    OperationNode,
     ContextNode,
-    ProbeResultCollectorNode,
-    ProbeContextInjectorNode,
 )
-from ..logger import Logger
-from ..data_types.data_types import BaseDataType, DataCollectionType
-from ..data_processors.data_processors import DataOperation
-from ..context_processors.context_types import ContextType
-from .nodes.node_factory import node_factory
 
 
 class Pipeline(PayloadProcessor):
     """
     Represents a pipeline for orchestrating multiple payload operations.
 
-    A pipeline is a structured collection of nodes or operations designed to process
-    `BaseDataType` data and context in a systematic manner. It enables the execution
-    of complex workflows by chaining multiple `Node` instances together.
-
-    Node Configuration:
-    Each node in the pipeline is defined using a dictionary with the following keys:
-
-    - `processor` (required): The operation to perform, either a `DataOperation (DataOperation` or `DataProbe`) or a `ContextProcessor`.
-    - `parameters` (optional, default=`{}`): A dictionary of parameters for the operation.
-      If an operation parameter is **not explicitly defined** in the pipeline configuration,
-      it is extracted from the **context**, using the parameter name as the context keyword.
-      Parameters explicitly defined in the pipeline configuration take precedence over those
-      obtained from the context.
-
-    ### Node Types:
-
-    1. **OperationNode**:
-       - Configured when a `DataOperation` is given as the `processor`.
-       - Example:
-         ```python
-         {
-             "processor": SomeDataOperation,
-             "parameters": {"param1": value1, "param2": value2}
-         }
-         ```
-       - Defaults:
-         - `parameters` defaults to an empty dictionary `{}`.
-
-    2. **ProbeContextInjectorNode**:
-       - Configured when a `DataProbe` is used as the `processor`, and `context_keyword` is **not** provided.
-       - This node collects probe results. No changes in data or context information.
-       - Example:
-         ```python
-         {
-             "processor": SomeDataProbe
-         }
-         ```
-       - Defaults:
-         - `parameters` defaults to `{}`.
-
-    3. **ProbeResultCollectorNode**:
-       - Configured when a `DataProbe` is used as the `processor`, and `context_keyword` **is** provided.
-       - Stores collected probe results in the context container under the specified keyword.
-       - Example:
-         ```python
-         {
-             "processor": SomeDataProbe,
-             "context_keyword": "some_probe_keyword"
-         }
-         ```
-       - Defaults:
-         - `parameters` defaults to `{}`.
-
-    ### Data Processing and Slicing:
-
-    The pipeline processes data and context sequentially through its nodes. Processing follows these rules:
-        1. If the node's expected input type matches the current data type exactly,
-           the node processes the entire data object in a single call. This is the nominal operation.
-        2. If the current data is a `DataCollectionType` and the node process its base type,
-           data is processed **element-wise** using a slicing stratgy.
-        3. If neither condition applies, an error is raised (invalid pipeline topology).
-
-    The pipeline supports both `ContextType` and `ContextCollectionType`:
-        - When slicing data, if the context is a `ContextCollectionType`, it is sliced in parallel.
-        - If the context is a single `ContextType`, it is **reused** for each data item and the result
-          of the context operation is not passed to the next node.
+    Processes data and context through a series of operations, applying parameters
+    from the pipeline configuration or the context. Data slicing occurs when
+    needed. If the required data type is incompatible, an error is raised.
 
     Attributes:
-        pipeline_configuration (List[Dict]): A list of dictionaries defining the configuration
-                                             for each node in the pipeline.
-        nodes (List[Node]): The list of nodes that make up the pipeline.
-        stop_watch (StopWatch): Tracks the execution time of nodes in the pipeline.
+        pipeline_configuration (List[Dict]): Configuration details for each operation.
+        nodes (List[Node]): The list of processing nodes in this pipeline.
     """
 
     pipeline_configuration: List[Dict]
@@ -241,7 +172,8 @@ class Pipeline(PayloadProcessor):
         injected_or_created_keywords.update(created_keys)
 
         # If the node is a ProbeContextInjectorNode, add the context keyword to the set
-        if isinstance(node, ProbeContextInjectorNode):
+        if node.get_metadata().get("component_type") == "ProbeContextInjectorNode":
+            assert hasattr(node, "context_keyword")
             injected_or_created_keywords.add(node.context_keyword)
 
         # Validate if the node requires keys previously deleted
@@ -338,9 +270,10 @@ class Pipeline(PayloadProcessor):
 
         # Iterate over all nodes in the pipeline
         for i, node in enumerate(self.nodes):
-            # Check if the node is a ProbeResultCollectorNode
-            if isinstance(node, ProbeResultCollectorNode):
+
+            if node.get_metadata().get("component_type") == "ProbeResultCollectorNode":
                 # Add the collected data from the node to the results dictionary
+                assert hasattr(node, "get_collected_data")
                 probe_results[f"Node {i + 1}/{type(node.processor).__name__}"] = (
                     node.get_collected_data()
                 )
@@ -379,13 +312,16 @@ class Pipeline(PayloadProcessor):
                         f"{node.processor.__class__.__name__} ({input_type})."
                     )
 
-            # if prev_output_type and input_type and prev_output_type != input_type:
-            #    raise TypeError(
-            #        f"Type mismatch: Expected {prev_output_type} → {input_type} in pipeline."
-            #    )
-
             # Update previous output type for next iteration
             prev_output_type = node.output_data_type()
 
-        print("Nodes: ", nodes)
         return nodes
+
+    @classmethod
+    def _define_metadata(cls):
+
+        # Define the metadata for the Pipeline class
+        component_metadata = {
+            "component_type": "Pipeline",
+        }
+        return component_metadata

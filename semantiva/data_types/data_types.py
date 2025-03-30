@@ -1,10 +1,11 @@
-from typing import Type, TypeVar, Generic, Iterator, get_args, Optional
 from abc import ABC, abstractmethod
+from typing import Type, TypeVar, Generic, Iterator, get_args, Optional
+from semantiva.core import SemantivaObject
 
 T = TypeVar("T")
 
 
-class BaseDataType(ABC, Generic[T]):
+class BaseDataType(SemantivaObject, Generic[T]):
     """
     Abstract generic base class for all data types in the semantic framework.
 
@@ -47,6 +48,16 @@ class BaseDataType(ABC, Generic[T]):
             bool: True if the data is valid, False otherwise.
         """
 
+    @classmethod
+    def _define_metadata(cls):
+
+        # Define the metadata for the BaseDataType
+        component_metadata = {
+            "component_type": "BaseDataType",
+        }
+
+        return component_metadata
+
 
 E = TypeVar("E", bound=BaseDataType)
 S = TypeVar("S")  # The preferred storage format for the collection
@@ -71,6 +82,17 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
         if data is None:
             data = self._initialize_empty()
         super().__init__(data)
+
+    @classmethod
+    def _define_metadata(cls):
+
+        # Define the metadata for the DataCollectionType
+        component_metadata = {
+            "component_type": "DataCollectionType",
+            "element_type": f"{cls.collection_base_type().__name__}<{cls.collection_base_type().get_metadata().get('component_type')}>",
+        }
+
+        return component_metadata
 
     @classmethod
     @abstractmethod

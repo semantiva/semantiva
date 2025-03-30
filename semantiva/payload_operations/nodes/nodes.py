@@ -1,17 +1,15 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import abstractmethod
 from ..stop_watch import StopWatch
-from ...context_processors.context_processors import ContextProcessor
-from ...data_processors.data_processors import (
+from semantiva.context_processors import ContextProcessor
+from semantiva.data_processors import (
     BaseDataProcessor,
     DataOperation,
-    DataProbe,
 )
-from ...context_processors.context_types import ContextType, ContextCollectionType
-from ...data_types.data_types import BaseDataType, DataCollectionType
-from ...logger import Logger
+from semantiva.context_processors.context_types import ContextType
+from semantiva.data_types import BaseDataType
+from semantiva.logger import Logger
 from ..payload_processors import PayloadProcessor
-from semantiva.context_processors.context_observer import ContextObserver
 
 
 class PipelineNode(PayloadProcessor):
@@ -67,20 +65,21 @@ class DataNode(PipelineNode):
             if issubclass(processor, DataOperation)
             else processor(logger=self.logger)
         )
-        self.stop_watch = StopWatch()
         self.processor_config = {} if processor_config is None else processor_config
 
-    def input_data_type(self):
+    @classmethod
+    @abstractmethod
+    def input_data_type(cls):
         """
         Retrieve the expected input data type for the data processor.
 
         Returns:
             Type: The expected input data type for the data processor.
         """
-        return self.processor.input_data_type()
 
+    @classmethod
     @abstractmethod
-    def output_data_type(self):
+    def output_data_type(cls):
         """
         Retrieve the output data type of the node.
         """
@@ -238,7 +237,6 @@ class ContextNode(PipelineNode):
             else processor(logger=logger)
         )
         self.processor_config = processor_config
-        self.stop_watch = StopWatch()
 
     def __str__(self) -> str:
         """
@@ -284,73 +282,14 @@ class ContextNode(PipelineNode):
 
         return data, updated_context
 
+    @classmethod
+    def _define_metadata(cls):
 
-class OperationNode(DataNode):
-    """
-    Node that applies an data operation, potentially modifying it.
-
-    Handles slicing rules to ensure correct association of data with context.
-    It interacts with `ContextObserver` to update the context.
-    """
-
-    def __init__(
-        self,
-        processor: Type[DataOperation],
-        processor_parameters: Optional[Dict] = None,
-        logger: Optional[Logger] = None,
-    ):
-        """
-        Initialize an OperationNode with the specified data algorithm.
-
-        Args:
-            processor (Type[DataOperation]): The data algorithm for this node.
-            processor_parameters (Optional[Dict]): Initial configuration for processor parameters. Defaults to None.
-            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
-        """
-        processor_parameters = (
-            {} if processor_parameters is None else processor_parameters
-        )
-        super().__init__(processor, processor_parameters, logger)
-
-    def output_data_type(self):
-        """
-        Retrieve the node's output data type. The request is delegated to the node's data processor.
-
-        Returns:
-            Type: The node output data type.
-        """
-        return self.processor.output_data_type()
-
-    def get_created_keys(self):
-        """
-        Retrieve a list of context keys that will be created by the processor.
-
-        Returns:
-            List[str]: A list of context keys that the processor will add or create
-                       as a result of execution.
-        """
-        return self.processor.get_created_keys()
-
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a single data item with its corresponding single context.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding context.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and the updated context.
-        """
-
-        # Save the current context to be used by the processor
-        self.observer_context = context
-        parameters = self._get_processor_parameters(self.observer_context)
-        output_data = self.processor.process(data, **parameters)
-
-        return output_data, self.observer_context
+        # Define the metadata for the ContextNode
+        component_metadata = {
+            "component_type": "ContextNode",
+        }
+        return component_metadata
 
 
 class ProbeNode(DataNode):
@@ -358,177 +297,12 @@ class ProbeNode(DataNode):
     A specialized DataNode for probing data.
     """
 
-    def output_data_type(self):
+    @classmethod
+    def output_data_type(cls):
         """
         Retrieve the node's output data type. The output data type is the same as the input data type for probe nodes.
 
         Returns:
             Type: The node's output data type.
         """
-        return self.input_data_type()
-
-
-class ProbeContextInjectorNode(ProbeNode):
-    """
-    A node that injects probe results into the execution context.
-
-    This node uses a data probe to extract information from the input data
-    and then injects the result into the context under a specified keyword.
-
-    Attributes:
-        context_keyword (str): The key under which the probe result is stored in the context.
-    """
-
-    def __init__(
-        self,
-        processor: Type[BaseDataProcessor],
-        context_keyword: str,
-        processor_parameters: Optional[Dict] = None,
-        logger: Optional[Logger] = None,
-    ):
-        """
-        Initialize a ProbeContextInjectorNode with the specified data processor and context keyword.
-
-        Args:
-            processor (Type[BaseDataProcessor]): The data probe class for this node.
-            context_keyword (str): The keyword used to inject the probe result into the context.
-            processor_parameters (Optional[Dict]): Operation configuration parameters. Defaults to None.
-            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
-
-        Raises:
-            ValueError: If `context_keyword` is not provided or is not a non-empty string.
-        """
-        super().__init__(processor, processor_parameters, logger)
-        if not context_keyword or not isinstance(context_keyword, str):
-            raise ValueError("context_keyword must be a non-empty string.")
-        self.context_keyword = context_keyword
-
-    def get_created_keys(self):
-        """
-        Retrieve a list of context keys that will be created by the processor.
-
-        Returns:
-            List[str]: A list of context keys that the processor will add or create
-            as a result of execution.
-        """
-        return [self.context_keyword]
-
-    def __str__(self) -> str:
-        """
-        Return a string representation of the ProbeContextInjectorNode.
-
-        Returns:
-            str: A string summarizing the node's attributes and execution summary.
-        """
-        class_name = self.__class__.__name__
-        return (
-            f"{class_name}(\n"
-            f"     processor={self.processor},\n"
-            f"     context_keyword={self.context_keyword},\n"
-            f"     processor_config={self.processor_config},\n"
-            f"     execution summary: {self.stop_watch}\n"
-            f")"
-        )
-
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a single data item and inject the probe result into the context.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The context to be updated.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The unchanged data and the updated context with the probe result.
-        """
-
-        parameters = self._get_processor_parameters(context)
-        probe_result = self.processor.process(data, **parameters)
-        if isinstance(context, ContextCollectionType):
-            for index, p_item in enumerate(probe_result):
-                ContextObserver.update_context(
-                    context, self.context_keyword, p_item, index=index
-                )
-        else:
-            ContextObserver.update_context(context, self.context_keyword, probe_result)
-
-        return data, context
-
-
-class ProbeResultCollectorNode(ProbeNode):
-    """
-    A node for collecting probed data.
-
-    Attributes:
-        _probed_data (List[Any]): A list of probed data.
-    """
-
-    def __init__(
-        self,
-        processor: Type[DataProbe],
-        processor_parameters: Optional[Dict] = None,
-        logger: Optional[Logger] = None,
-    ):
-        """
-        Initialize a ProbeResultCollectorNode with the specified data probe.
-
-        Args:
-            processor (Type[DataProbe]): The data probe class for this node.
-            processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
-            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
-        """
-        super().__init__(processor, processor_parameters, logger)
-        self._probed_data: List[Any] = []
-
-    def collect(self, data: Any) -> None:
-        """
-        Collect data from the probe.
-
-        Args:
-            data (Any): The data to collect.
-        """
-        self._probed_data.append(data)
-
-    def get_collected_data(self) -> List[Any]:
-        """
-        Retrieve all collected probe data.
-
-        Returns:
-            List[Any]: The list of collected data.
-        """
-        return self._probed_data
-
-    def clear_collected_data(self) -> None:
-        """
-        Clear all collected data, useful for reuse in iterative processes.
-        """
-        self._probed_data.clear()
-
-    def get_created_keys(self):
-        """
-        Retrieve the list of created keys.
-        Returns:
-            list: An empty list indicating no keys have been created.
-        """
-
-        return []
-
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Execute the probe on a single data item, collecting the result.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The context, unchanged by this node.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The original data and unchanged context.
-        """
-        parameters = self._get_processor_parameters(context)
-        probe_result = self.processor.process(data, **parameters)
-        self.collect(probe_result)
-        return data, context
+        return cls.input_data_type()

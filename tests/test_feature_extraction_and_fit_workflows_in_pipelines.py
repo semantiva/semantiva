@@ -8,7 +8,7 @@ from semantiva.data_processors.data_slicer_factory import Slicer
 
 @pytest.fixture
 def linear_int_data_collection(num_items=5):
-    """Create a collection of IntDataType objects with linear data."""
+    """Create a collection of FloatDataType objects with linear data."""
     data_collection = FloatDataCollection()
     for i in range(num_items):
         data_collection.append(FloatDataType(float(i)))

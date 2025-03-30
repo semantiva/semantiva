@@ -1,10 +1,11 @@
 import pytest
+from semantiva.data_processors.data_slicer_factory import Slicer
 from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
 )
-from semantiva.payload_operations import Pipeline
 from semantiva.exceptions.pipeline import PipelineTopologyError
+from semantiva.payload_operations import Pipeline
 from .test_utils import (
     FloatDataType,
     FloatDataCollection,
@@ -15,7 +16,6 @@ from .test_utils import (
     FloatMockDataSink,
 )
 from .test_string_specialization import HelloOperation
-from semantiva.data_processors.data_slicer_factory import Slicer
 
 
 # Start test
@@ -42,7 +42,7 @@ def empty_context():
 @pytest.fixture
 def empty_context_collection():
     """Pytest fixture for providing an empty context collection with the
-    same size as the number of elements in IntDataCollection."""
+    same size as the number of elements in FloatDataCollection."""
 
     return ContextCollectionType(
         context_list=[ContextType(), ContextType(), ContextType()]
