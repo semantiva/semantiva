@@ -936,7 +936,7 @@ class NodeFactory:
                     "ContextProcessor": processor_.__name__,
                     "processor_docstring": processor_.get_metadata().get("docstring"),
                     "get_required_context_keys": cls.get_required_keys() or "None",
-                    "get_supressed_context_keys": cls.get_suppressed_keys() or "None",
+                    "get_suppressed_context_keys": cls.get_suppressed_keys() or "None",
                     "get_created_context_keys": cls.get_created_keys() or "None",
                 }
                 return component_metadata
