@@ -22,7 +22,6 @@ class PipelineNode(PayloadProcessor):
 
     processor: BaseDataProcessor | ContextProcessor
     processor_config: Dict
-    stop_watch: TimeTracker
     logger: Logger
 
 
@@ -35,7 +34,6 @@ class DataNode(PipelineNode):
     Attributes:
         data_processor (BaseDataProcessor): The data processor associated with the node.
         processor_config (Dict): Configuration parameters for the data processor.
-        stop_watch (TimeTracker): Tracks the execution time of the node's processing.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
