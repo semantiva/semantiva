@@ -127,7 +127,7 @@ class DataNode(PipelineNode):
             f"{class_name}(\n"
             f"     data_processor={self.processor},\n"
             f"     processor_config={self.processor_config},\n"
-            f"     execution summary: {self.stop_watch}\n"
+            f"     execution summary: {self.performance_tracker}\n"
             f")"
         )
 
@@ -203,7 +203,6 @@ class ContextNode(PipelineNode):
     Attributes:
         processor (ContextProcessor): The context processor associated with the node.
         processor_config (Dict): Configuration parameters for the context processor.
-        stop_watch (TimeTracker): Tracks the execution time of the node's processor.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
@@ -247,7 +246,7 @@ class ContextNode(PipelineNode):
             f"{class_name}(\n"
             f"     processor={self.processor},\n"
             f"     processor_config={self.processor_config},\n"
-            f"     Execution summary: {self.stop_watch}\n"
+            f"     Execution summary: {self.performance_tracker}\n"
             f")"
         )
 
