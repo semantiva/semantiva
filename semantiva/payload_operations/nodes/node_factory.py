@@ -661,7 +661,7 @@ class NodeFactory:
                     f"     processor={self.processor},\n"
                     f"     context_keyword={self.context_keyword},\n"
                     f"     processor_config={self.processor_config},\n"
-                    f"     execution summary: {self.stop_watch}\n"
+                    f"     execution summary: {self.performance_tracker}\n"
                     f")"
                 )
 

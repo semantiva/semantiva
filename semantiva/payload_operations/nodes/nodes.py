@@ -1,6 +1,5 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import abstractmethod
-from ..stop_watch import StopWatch
 from semantiva.context_processors import ContextProcessor
 from semantiva.data_processors import (
     BaseDataProcessor,
@@ -22,7 +21,6 @@ class PipelineNode(PayloadProcessor):
 
     processor: BaseDataProcessor | ContextProcessor
     processor_config: Dict
-    stop_watch: StopWatch
     logger: Logger
 
 
@@ -35,7 +33,6 @@ class DataNode(PipelineNode):
     Attributes:
         data_processor (BaseDataProcessor): The data processor associated with the node.
         processor_config (Dict): Configuration parameters for the data processor.
-        stop_watch (StopWatch): Tracks the execution time of the node's processing.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
@@ -130,7 +127,7 @@ class DataNode(PipelineNode):
             f"{class_name}(\n"
             f"     data_processor={self.processor},\n"
             f"     processor_config={self.processor_config},\n"
-            f"     execution summary: {self.stop_watch}\n"
+            f"     execution summary: {self.performance_tracker}\n"
             f")"
         )
 
@@ -206,7 +203,6 @@ class ContextNode(PipelineNode):
     Attributes:
         processor (ContextProcessor): The context processor associated with the node.
         processor_config (Dict): Configuration parameters for the context processor.
-        stop_watch (StopWatch): Tracks the execution time of the node's processor.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
@@ -250,7 +246,7 @@ class ContextNode(PipelineNode):
             f"{class_name}(\n"
             f"     processor={self.processor},\n"
             f"     processor_config={self.processor_config},\n"
-            f"     Execution summary: {self.stop_watch}\n"
+            f"     Execution summary: {self.performance_tracker}\n"
             f")"
         )
 
