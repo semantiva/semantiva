@@ -1,6 +1,5 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import abstractmethod
-from semantiva.performance_tracker.stop_watch import TimeTracker
 from semantiva.context_processors import ContextProcessor
 from semantiva.data_processors import (
     BaseDataProcessor,
