@@ -98,8 +98,8 @@ class Pipeline(PayloadProcessor):
         self.logger.info("Pipeline execution complete.")
         self.logger.debug(
             "Pipeline execution report: \n\tPipeline %s\n%s",
-            str(self.stop_watch),
-            self.tracker_summary(),
+            str(self.performance_tracker),
+            self.get_performance_summary(),
         )
         return result_data, result_context
 
@@ -230,40 +230,16 @@ class Pipeline(PayloadProcessor):
             )
         return "None"
 
-    def get_timers(self) -> str:
-        """
-        Retrieve timing information for each node's execution.
-
-        Returns:
-            str: A formatted string displaying node number, operation name,
-                elapsed CPU time, and elapsed wall time for each node.
-        """
-        timer_info = [
-            f"\t\tNode {i + 1}: {type(node.processor).__name__}; "
-            f"\tElapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
-            f"\tElapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s"
-            for i, node in enumerate(self.nodes)
-        ]
-        return "\n".join(timer_info)
-
-    def tracker_summary(self) -> str:
-        """
-        Retrieve time and memory tracking information for each node's execution"""
-        timer_info = [
-            f"\t\tNode {i + 1}: {type(node.processor).__name__}; "
-            f"\tElapsed CPU Time: {node.stop_watch.elapsed_cpu_time():.6f}s; "
-            f"\tElapsed Wall Time: {node.stop_watch.elapsed_wall_time():.6f}s; "
-            f"\tPeak Memory: {node.memory_tracker.get_peak_memory_mb():.6f} MB"
-            for i, node in enumerate(self.nodes)
-        ]
-        return "\n".join(timer_info)
-    
     def get_performance_summary(self) -> str:
         """
         Retrieve performance tracking information for each node's execution
         """
-        for i, node in enumerate(self.nodes):
-    
+        track_info = [
+            f"\t\tNode {i + 1}: {type(node.processor).__name__}; "
+            f"{str(node.performance_tracker)}"
+            for i, node in enumerate(self.nodes)
+        ]
+        return "\n".join(track_info)
 
     def get_probe_results(self) -> Dict[str, List[Any]]:
         """

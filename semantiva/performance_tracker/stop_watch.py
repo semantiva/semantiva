@@ -1,7 +1,8 @@
 import time
+from .base_tracker import BaseTracker
 
 
-class StopWatch:
+class TimeTracker(BaseTracker):
     """
     A stopwatch class to measure wall-clock and CPU execution times.
 
@@ -9,10 +10,17 @@ class StopWatch:
     time measurement across multiple start-stop operations.
     """
 
+    _start_wall_time: float
+    _start_cpu_time: float
+    _elapsed_wall_time: float
+    _elapsed_cpu_time: float
+    _running: bool
+
     def __init__(self):
         """
         Initialize the stopwatch by resetting all values.
         """
+        super().__init__()
         self.reset()
         self._start_count = (
             0  # Track the number of times the stopwatch has been started.
@@ -56,6 +64,7 @@ class StopWatch:
         self._running = False  # Ensure the stopwatch is marked as not running
         self._start_count = 0  # Reset the start count
 
+    @property
     def elapsed_wall_time(self):
         """
         Get the total elapsed wall-clock time.
@@ -70,6 +79,7 @@ class StopWatch:
             return self._elapsed_wall_time + (time.time() - self._start_wall_time)
         return self._elapsed_wall_time
 
+    @property
     def elapsed_cpu_time(self):
         """
         Get the total elapsed CPU time.
@@ -85,29 +95,4 @@ class StopWatch:
         return self._elapsed_cpu_time
 
     def __str__(self):
-        return f"Calls: {self._start_count}; Elapsed Wall Time: {self.elapsed_wall_time():.6f}s; Elapsed CPU Time: {self.elapsed_cpu_time():.6f}s"
-
-
-# Example usage:
-if __name__ == "__main__":
-    stopwatch = StopWatch()
-
-    # Start the stopwatch
-    stopwatch.start()
-    time.sleep(1)  # Simulate some task by sleeping for 1 second
-    stopwatch.stop()  # Stop the stopwatch
-
-    # Print the stopwatch's state
-    print(stopwatch)
-
-    # Start the stopwatch again for a second task
-    stopwatch.start()
-    time.sleep(2)  # Simulate another task by sleeping for 2 seconds
-    stopwatch.stop()  # Stop the stopwatch
-
-    # Print the stopwatch's state again
-    print(stopwatch)
-
-    # Reset the stopwatch
-    stopwatch.reset()
-    print(stopwatch)
+        return f"Calls: {self._start_count}; Elapsed Wall Time: {self.elapsed_wall_time:.6f}s; Elapsed CPU Time: {self.elapsed_cpu_time:.6f}s"

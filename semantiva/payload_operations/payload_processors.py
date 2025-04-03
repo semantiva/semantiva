@@ -4,9 +4,7 @@ from ..context_processors.context_types import ContextType
 from ..context_processors.context_observer import ContextObserver
 from ..data_types.data_types import BaseDataType, NoDataType
 from ..logger import Logger
-from ..payload_operations.stop_watch import StopWatch
-from ..payload_operations.memory_tracker import MemoryTracker
-from ..payload_operations.performance_tracker import PerformanceTracker
+from semantiva.performance_tracker import PerformanceTracker
 
 
 class PayloadProcessor(ContextObserver):
@@ -22,14 +20,10 @@ class PayloadProcessor(ContextObserver):
     """
 
     logger: Logger
-    stop_watch: StopWatch
-    memory_tracker: MemoryTracker
     performance_tracker: PerformanceTracker
 
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__()
-        self.stop_watch = StopWatch()
-        self.memory_tracker = MemoryTracker()
         self.performance_tracker = PerformanceTracker()
         if logger:
             # If a logger instance is provided, use it
@@ -68,11 +62,7 @@ class PayloadProcessor(ContextObserver):
         assert isinstance(
             context_, ContextType
         ), f"Context must be a dictionary of an instance of `ContextType`. Got {type(context)}"
-        self.stop_watch.start()
-        self.memory_tracker.start()
         self.performance_tracker.start()
         payload_processor_result = self._process(data, context_)
         self.performance_tracker.stop()
-        self.stop_watch.stop()
-        self.memory_tracker.stop()
         return payload_processor_result

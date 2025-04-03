@@ -1,6 +1,6 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import abstractmethod
-from ..stop_watch import StopWatch
+from semantiva.performance_tracker.stop_watch import TimeTracker
 from semantiva.context_processors import ContextProcessor
 from semantiva.data_processors import (
     BaseDataProcessor,
@@ -22,7 +22,7 @@ class PipelineNode(PayloadProcessor):
 
     processor: BaseDataProcessor | ContextProcessor
     processor_config: Dict
-    stop_watch: StopWatch
+    stop_watch: TimeTracker
     logger: Logger
 
 
@@ -35,7 +35,7 @@ class DataNode(PipelineNode):
     Attributes:
         data_processor (BaseDataProcessor): The data processor associated with the node.
         processor_config (Dict): Configuration parameters for the data processor.
-        stop_watch (StopWatch): Tracks the execution time of the node's processing.
+        stop_watch (TimeTracker): Tracks the execution time of the node's processing.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
@@ -206,7 +206,7 @@ class ContextNode(PipelineNode):
     Attributes:
         processor (ContextProcessor): The context processor associated with the node.
         processor_config (Dict): Configuration parameters for the context processor.
-        stop_watch (StopWatch): Tracks the execution time of the node's processor.
+        stop_watch (TimeTracker): Tracks the execution time of the node's processor.
         logger (Logger): Logger instance for diagnostic messages.
     """
 

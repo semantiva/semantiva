@@ -1,9 +1,10 @@
 # Description: A memory tracker class to measure peak memory usage.
 import threading
 import psutil
+from .base_tracker import BaseTracker
 
 
-class MemoryTracker:
+class MemoryTracker(BaseTracker):
     """A memory tracker class to measure peak memory usage.
     When the tracker is started, it will pool the memory usage at regular intervals
     in a separate thread."""
@@ -11,7 +12,8 @@ class MemoryTracker:
     _peak_memory: int
     _pooling_interval: float
     _running: bool
-    _thread: threading.Thread
+    _thread: threading.Thread | None
+    _lock: threading.Lock
     _stop_event: threading.Event
     _calls: int
 
@@ -22,19 +24,24 @@ class MemoryTracker:
         Args:
             pooling_interval (float): The interval in seconds between memory checks.
         """
+        super().__init__()
         self._pooling_interval = pooling_interval
         self._stop_event = threading.Event()
+        self._lock = threading.Lock()
         self.reset()
 
-    def _measure_memory(self):
+    @staticmethod
+    def _measure_memory():
         """Measure the current memory usage."""
         return psutil.Process().memory_info().rss
 
     def _pool_memory(self):
         """Pool the memory usage at regular intervals."""
-        while self._running:
+        while not self._stop_event.is_set():
             current_memory = self._measure_memory()
-            self._peak_memory = max(self._peak_memory, current_memory)
+            with self._lock:
+                # update the peak memory usage if current memory is higher
+                self._peak_memory = max(self._peak_memory, current_memory)
             # Interruptible wait instead of sleep
             self._stop_event.wait(timeout=self._pooling_interval)
 
@@ -54,8 +61,9 @@ class MemoryTracker:
         if self._running:
             # Final immediate memory check before joining
             final_memory = self._measure_memory()
-            self._peak_memory = max(self._peak_memory, final_memory)
-
+            with self._lock:
+                # update the peak memory usage if final memory is higher
+                self._peak_memory = max(self._peak_memory, final_memory)
             self._running = False
             self._stop_event.set()  # Immediately interrupt waiting
             self._thread.join()
@@ -72,10 +80,16 @@ class MemoryTracker:
         """Set the pooling interval for memory checks."""
         self._pooling_interval = pooling_interval
 
+    @property
     def get_peak_memory(self):
         """Return the peak memory usage."""
         return self._peak_memory
 
+    @property
     def get_peak_memory_mb(self):
         """Return the peak memory usage in megabytes (MiB)."""
         return self._peak_memory / (1024 * 1024)
+
+    def __str__(self):
+        """Return a string representation of the memory tracker."""
+        return f"Memory: {self.get_peak_memory_mb:6f} Mb"
