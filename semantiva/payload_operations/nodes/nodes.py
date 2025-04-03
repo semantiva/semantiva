@@ -22,7 +22,6 @@ class PipelineNode(PayloadProcessor):
 
     processor: BaseDataProcessor | ContextProcessor
     processor_config: Dict
-    stop_watch: StopWatch
     logger: Logger
 
 
@@ -194,102 +193,6 @@ class DataNode(PipelineNode):
                 f"Incompatible data type for Node {self.processor.__class__.__name__} "
                 f"expected {input_type}, but received {type(result_data)}."
             )
-
-
-class ContextNode(PipelineNode):
-    """
-    Represents a node in the semantic framework.
-
-    A ContextNode is associated with a context processor and acts as a fundamental unit
-    in processing pipelines or networks.
-
-    Attributes:
-        processor (ContextProcessor): The context processor associated with the node.
-        processor_config (Dict): Configuration parameters for the context processor.
-        stop_watch (StopWatch): Tracks the execution time of the node's processor.
-        logger (Logger): Logger instance for diagnostic messages.
-    """
-
-    processor: ContextProcessor
-
-    def __init__(
-        self,
-        processor: Type[ContextProcessor],
-        processor_config: Optional[Dict] = None,
-        logger: Optional[Logger] = None,
-    ):
-        """
-        Initialize a Node with the specified context processor, and parameters.
-
-        Args:
-            processor (Type[ContextProcessor]): The class of the context processor associated with this node.
-            processor_config (Optional[Dict]): Operation parameters. Defaults to None.
-            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
-        """
-        super().__init__(logger)
-        self.logger.debug(
-            f"Initializing {self.__class__.__name__} ({processor.__name__})"
-        )
-        processor_config = processor_config or {}
-        self.processor = (
-            processor(logger, **processor_config)
-            if issubclass(processor, (DataOperation, ContextProcessor))
-            else processor(logger=logger)
-        )
-        self.processor_config = processor_config
-
-    def __str__(self) -> str:
-        """
-        Return a string representation of the node.
-
-        Returns:
-            str: A string summarizing the node's attributes and execution summary.
-        """
-        class_name = self.__class__.__name__
-        return (
-            f"{class_name}(\n"
-            f"     processor={self.processor},\n"
-            f"     processor_config={self.processor_config},\n"
-            f"     Execution summary: {self.stop_watch}\n"
-            f")"
-        )
-
-    def get_created_keys(self) -> List[str]:
-        """
-        Retrieve a list of context keys that will be created by the processor.
-
-        Returns:
-            List[str]: A list of context keys that the processor will add or create
-                       as a result of execution.
-        """
-        return self.processor.get_created_keys()
-
-    def _process(
-        self, data: BaseDataType, context: ContextType
-    ) -> tuple[BaseDataType, ContextType]:
-        """
-        Processes the given data and context.
-
-        Args:
-            data (BaseDataType): The data to be processed.
-            context (ContextType): The context in which the data is processed.
-
-        Returns:
-            tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
-        """
-
-        updated_context = self.processor.operate_context(context)
-
-        return data, updated_context
-
-    @classmethod
-    def _define_metadata(cls):
-
-        # Define the metadata for the ContextNode
-        component_metadata = {
-            "component_type": "ContextNode",
-        }
-        return component_metadata
 
 
 class ProbeNode(DataNode):

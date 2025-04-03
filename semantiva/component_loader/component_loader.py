@@ -44,34 +44,40 @@ def context_renamer_factory(original_key: str, destination_key: str):
             self.logger.warning(f"Key '{original_key}' not found in context.")
         return context
 
-    def get_required_keys(self) -> List[str]:
+    def get_required_keys(cls) -> List[str]:
         """
         Return a list containing the original key, as it is required for renaming.
         """
         return [original_key]
 
-    def get_created_keys(self) -> List[str]:
+    def get_created_keys(cls) -> List[str]:
         """
         Return a list containing the new key, which is created as a result of renaming.
         """
         return [destination_key]
 
-    def get_suppressed_keys(self) -> List[str]:
+    def get_suppressed_keys(cls) -> List[str]:
         """
         Return a list containing the original key, since it is suppressed after renaming.
         """
         return [original_key]
 
-    # Define the class attributes and methods in a dictionary
-    class_attrs = {
-        "_process_logic": _process_logic,
-        "get_required_keys": get_required_keys,
-        "get_created_keys": classmethod(get_created_keys),
-        "get_suppressed_keys": get_suppressed_keys,
-    }
-
     # Create a dynamic class name that clearly shows the renaming transformation
     dynamic_class_name = f"Rename_{original_key}_to_{destination_key}"
+
+    # Define the class attributes and methods in a dictionary
+    class_attrs = {
+        # "__name__": dynamic_class_name,
+        "_process_logic": _process_logic,
+        "get_required_keys": classmethod(get_required_keys),
+        "get_created_keys": classmethod(get_created_keys),
+        "get_suppressed_keys": classmethod(get_suppressed_keys),
+    }
+
+    # Add docstring to the dynamically generated class
+    class_attrs["__doc__"] = (
+        f"Renames context key '{original_key}' to '{destination_key}'."
+    )
 
     # Create and return the dynamically named class that inherits from ContextProcessor.
     return type(dynamic_class_name, (ContextProcessor,), class_attrs)
@@ -106,19 +112,19 @@ def context_deleter_factory(key: str):
             self.logger.warning(f"Unable to delete non-existing '{key}' from context.")
         return context
 
-    def get_required_keys(self) -> List[str]:
+    def get_required_keys(cls) -> List[str]:
         """
         Return a list with the key to delete, indicating it is required.
         """
         return [key]
 
-    def get_created_keys(self) -> List[str]:
+    def get_created_keys(cls) -> List[str]:
         """
         This operation does not create any keys.
         """
         return []
 
-    def get_suppressed_keys(self) -> List[str]:
+    def get_suppressed_keys(cls) -> List[str]:
         """
         Return a list containing the key that is deleted.
         """
@@ -134,6 +140,9 @@ def context_deleter_factory(key: str):
 
     # Create a dynamic class name
     dynamic_class_name = f"Delete_{key}"
+
+    # Add docstring to the dynamically generated class
+    class_attrs["__doc__"] = f"Deletes context key '{key}'."
 
     # Create and return the dynamically named class that inherits from ContextProcessor.
     return type(dynamic_class_name, (ContextProcessor,), class_attrs)

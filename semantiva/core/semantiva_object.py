@@ -86,7 +86,6 @@ class SemantivaObject(ABC):
                 for item in value:
                     lines.append(f"      - {item}")
             else:
-
                 lines.append(f" - {key}: {value}")
 
         # Handle wrapped processor docstring separately if present
