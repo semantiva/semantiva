@@ -5,10 +5,6 @@ from semantiva.data_processors import DataOperation, DataProbe
 from semantiva.data_types import BaseDataType, NoDataType
 from semantiva.component_loader import ComponentLoader
 from semantiva.logger import Logger
-from .nodes import (
-    DataNode,
-    ContextNode,
-)
 from semantiva.context_processors import (
     ContextType,
     ContextCollectionType,
@@ -18,8 +14,8 @@ from semantiva.context_processors import (
 from semantiva.logger import Logger
 from .nodes import (
     DataNode,
-    ContextNode,
     ProbeNode,
+    PipelineNode,
 )
 
 
@@ -32,7 +28,7 @@ class NodeFactory:
     def create_io_node(
         node_definition: Dict,
         logger: Optional[Logger] = None,
-    ) -> DataNode | ContextNode:
+    ) -> PipelineNode:
         """
         Factory function to create an appropriate data I/O node instance based on the given definition.
 
@@ -41,7 +37,7 @@ class NodeFactory:
             logger (Optional[Logger]): Optional logger instance for diagnostic messages.
 
         Returns:
-            DataNode | ContextNode: An instance of a subclass of DataNode or ContextNode.
+            PipelineNode: A subclass of PipelineNode.
 
         Raises:
             ValueError: If the node definition is invalid or if the processor type is unsupported.
@@ -833,12 +829,129 @@ class NodeFactory:
             logger=logger,
         )
 
+    @staticmethod
+    def create_context_processor_node(logger, processor_, parameters):
+
+        context_processor_instance = processor_(logger, **parameters)
+
+        class ContextProcessorNode(PipelineNode):
+            """
+            A node that wrapps a context processor.
+            """
+
+            processor = processor_
+
+            def __init__(
+                self,
+                processor_config: Optional[Dict] = None,
+                logger: Optional[Logger] = None,
+            ):
+                """
+                Initialize a Node with the specified context processor, and parameters.
+
+                Args:
+                    processor (Type[ContextProcessor]): The class of the context processor associated with this node.
+                    processor_config (Optional[Dict]): Operation parameters. Defaults to None.
+                    logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+                """
+                super().__init__(logger)
+                self.logger.debug(
+                    f"Initializing {self.__class__.__name__} ({processor_.__name__})"
+                )
+                processor_config = processor_config or {}
+                self.processor = processor_(logger, **processor_config)
+                self.processor_config = processor_config
+
+            def __str__(self) -> str:
+                """
+                Return a string representation of the node.
+
+                Returns:
+                    str: A string summarizing the node's attributes and execution summary.
+                """
+                class_name = self.__class__.__name__
+                return (
+                    f"{class_name}(\n"
+                    f"     processor={self.processor},\n"
+                    f"     processor_config={self.processor_config},\n"
+                    f"     Execution summary: {self.stop_watch}\n"
+                    f")"
+                )
+
+            @classmethod
+            def get_created_keys(cls) -> List[str]:
+                """
+                Retrieve a list of context keys that will be created by the processor.
+
+                Returns:
+                    List[str]: A list of context keys that the processor will add or modify during its execution.
+                """
+
+                return context_processor_instance.get_created_keys()
+
+            @classmethod
+            def get_required_keys(cls) -> List[str]:
+                """
+                Retrieve a list of context keys required by the processor.
+
+                Returns:
+                    List[str]: A list of context keys.
+                """
+                return context_processor_instance.get_required_keys()
+
+            @classmethod
+            def get_suppressed_keys(cls) -> List[str]:
+                """
+                Retrieve a list of context keys that will be removed by the processor.
+
+                Returns:
+                    List[str]: A list of context keys that the processor will remove during its execution.
+                """
+                return context_processor_instance.get_suppressed_keys()
+
+            def _process(
+                self, data: BaseDataType, context: ContextType
+            ) -> tuple[BaseDataType, ContextType]:
+                """
+                Processes the given data and context.
+
+                Args:
+                    data (BaseDataType): The data to be processed.
+                    context (ContextType): The context in which the data is processed.
+
+                Returns:
+                    tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
+                """
+
+                updated_context = self.processor.operate_context(context)
+
+                return data, updated_context
+
+            @classmethod
+            def _define_metadata(cls):
+
+                # Define the metadata for the ContextProcessorNode
+                component_metadata = {
+                    "component_type": "ContextProcessorNode",
+                    "ContextProcessor": processor_.__name__,
+                    "processor_docstring": processor_.get_metadata().get("docstring"),
+                    "get_required_context_keys": cls.get_required_keys() or "None",
+                    "get_suppressed_context_keys": cls.get_suppressed_keys() or "None",
+                    "get_created_context_keys": cls.get_created_keys() or "None",
+                }
+                return component_metadata
+
+        return ContextProcessorNode(
+            parameters,
+            logger=logger,
+        )
+
 
 # Main node factory function
 def node_factory(
     node_definition: Dict,
     logger: Optional[Logger] = None,
-) -> DataNode | ContextNode:
+) -> PipelineNode:
     """
     Factory function to create an appropriate node instance based on the given definition.
 
@@ -852,7 +965,7 @@ def node_factory(
         logger (Optional[Logger]): Optional logger instance for diagnostic messages.
 
     Returns:
-        DataNode | ContextNode: An instance of a subclass of DataNode or ContextNode.
+        PipelineNode: An instance of a subclass of DataNode or ContextProcessorNode.
 
     Raises:
         ValueError: If the node definition is invalid or if the processor type is unsupported.
@@ -875,7 +988,7 @@ def node_factory(
         raise ValueError("processor must be a class type or a string, not None.")
 
     if issubclass(processor, ContextProcessor):
-        return ContextNode(processor, processor_config=parameters, logger=logger)
+        return NodeFactory.create_context_processor_node(logger, processor, parameters)
 
     elif issubclass(processor, DataOperation):
         if context_keyword is not None:

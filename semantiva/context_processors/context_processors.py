@@ -3,15 +3,13 @@ from typing import List, Optional, Union
 from semantiva.context_processors.context_types import ContextType
 from semantiva.workflows.fitting_model import FittingModel
 from semantiva.data_types.data_types import BaseDataType
+from semantiva.core import SemantivaObject
 from semantiva.logger import Logger
 
 
-class ContextProcessor(ABC):
+class ContextProcessor(SemantivaObject):
     """
-    Abstract base class for defining operations on a context.
-
-    This class serves as a foundation for implementing specific operations
-    that manipulate or utilize the context in various ways.
+    Base class for performing context operations.
     """
 
     logger: Logger
@@ -95,6 +93,23 @@ class ContextProcessor(ABC):
 
     def __str__(self):
         return f"{self.__class__.__name__}"
+
+    @classmethod
+    def _define_metadata(cls):
+        excluded_parameters = ["cls", "self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._process_logic, excluded_parameters
+            )
+        ]
+
+        component_metadata = {
+            "component_type": "ContextProcessor",
+            "input_parameters": annotated_parameter_list or "None",
+        }
+        return component_metadata
 
 
 class ModelFittingContextProcessor(ContextProcessor):
