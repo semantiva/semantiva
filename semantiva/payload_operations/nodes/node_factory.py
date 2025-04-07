@@ -37,7 +37,7 @@ class NodeFactory:
             logger (Optional[Logger]): Optional logger instance for diagnostic messages.
 
         Returns:
-            PipelineNode: An instance of a subclass of DataNode or PipelineNode.
+            PipelineNode: A subclass of PipelineNode.
 
         Raises:
             ValueError: If the node definition is invalid or if the processor type is unsupported.
