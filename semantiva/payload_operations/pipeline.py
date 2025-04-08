@@ -1,12 +1,12 @@
 import inspect
 from typing import Any, Dict, List, Optional, Tuple
 from semantiva.exceptions.pipeline import (
-    PipelineConfigurationError,
     PipelineTopologyError,
 )
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import BaseDataType
 from semantiva.logger import Logger
+from .pipeline_inspector import PipelineInspector
 from .payload_processors import PayloadProcessor
 from .nodes.node_factory import node_factory
 from .nodes.nodes import (
@@ -116,120 +116,7 @@ class Pipeline(PayloadProcessor):
         Returns:
             str: A formatted report describing the pipeline composition and relevant details.
         """
-        summary_lines = ["Pipeline Structure:"]
-        # All context keys required by the pipeline
-        all_required_params: set[str] = set()
-        # Context keys injected or created by the pipeline
-        injected_or_created_keywords: set[str] = set()
-        # Context keys deleted by the pipeline
-        deleted_keys: set[str] = set()
-
-        for index, node in enumerate(self.nodes, start=1):
-            node_summary = self._build_node_summary(
-                node,
-                index,
-                deleted_keys,
-                all_required_params,
-                injected_or_created_keywords,
-            )
-            summary_lines.extend(node_summary)
-
-        # Calculate the context keys required by the pipeline
-        required_context_keys = self._calculate_required_context_keys(
-            all_required_params, injected_or_created_keywords
-        )
-        # Add the required context keys to the summary
-        summary_lines.insert(
-            1, f"\tRequired context keys: {self._format_set(required_context_keys)}"
-        )
-
-        return "\n".join(summary_lines)
-
-    # --- Extracted Helper Methods ---
-
-    def _format_set(self, values: set[str] | list[str]) -> str:
-        """Return a comma-separated string of sorted set items or 'None' if empty."""
-        return ", ".join(sorted(values)) if values else "None"
-
-    def _build_node_summary(
-        self,
-        node: PipelineNode,
-        index: int,
-        deleted_keys: set[str],
-        all_required_params: set[str],
-        injected_or_created_keywords: set[str],
-    ) -> list[str]:
-        """Build a summary for a single node, updating tracking sets."""
-        # Extract operation parameters and configuration parameters
-
-        operation_params = set(node.processor.get_processing_parameter_names())
-        config_params = set(node.processor_config.keys())
-        # context parameters are operation parameters not in the configuration
-        context_params = operation_params - config_params
-
-        all_required_params.update(context_params)
-        created_keys = node.processor.get_created_keys()
-        injected_or_created_keywords.update(created_keys)
-
-        # If the node is a ProbeContextInjectorNode, add the context keyword to the set
-        if node.get_metadata().get("component_type") == "ProbeContextInjectorNode":
-            assert hasattr(node, "context_keyword")
-            injected_or_created_keywords.add(node.context_keyword)
-
-        # Validate if the node requires keys previously deleted
-        # but not present in the configuration
-        self._validate_deleted_keys(
-            index, operation_params, config_params, deleted_keys
-        )
-
-        node_summary_lines = [
-            f"\n\t{index}. Node: {node.processor.__class__.__name__} ({node.__class__.__name__})",
-            f"\t\tParameters: {self._format_set(operation_params)}",
-            f"\t\t\tFrom pipeline configuration: {self._format_pipeline_config(node.processor_config)}",
-            f"\t\t\tFrom context: {self._format_set(context_params)}",
-            f"\t\tContext additions: {self._format_set(created_keys)}",
-        ]
-
-        # Add context suppressions if the node is a ContextProcessorNode
-        if node.get_metadata().get("component_type") == "ContextProcessorNode":
-            assert hasattr(node.processor, "get_suppressed_keys")
-            suppressed_keys = node.processor.get_suppressed_keys()
-            deleted_keys.update(suppressed_keys)
-            node_summary_lines.append(
-                f"\t\tContext suppressions: {self._format_set(suppressed_keys)}"
-            )
-
-        return node_summary_lines
-
-    def _validate_deleted_keys(
-        self,
-        index: int,
-        operation_params: set[str],
-        config_params: set[str],
-        deleted_keys: set[str],
-    ) -> None:
-        """Raise error if node requires keys previously deleted."""
-        missing_deleted_keys = operation_params & deleted_keys
-        if not missing_deleted_keys.issubset(config_params):
-            raise PipelineConfigurationError(
-                f"Node {index} requires context keys previously deleted: {missing_deleted_keys}"
-            )
-
-    def _calculate_required_context_keys(
-        self,
-        all_required_params: set[str],
-        injected_or_created_keywords: set[str],
-    ) -> set[str]:
-        """Calculate which context keys are ultimately needed."""
-        return all_required_params - injected_or_created_keywords
-
-    def _format_pipeline_config(self, processor_config: dict[str, Any]) -> str:
-        """Format parameters explicitly set in pipeline config."""
-        if processor_config:
-            return ", ".join(
-                f"{key}={value}" for key, value in processor_config.items()
-            )
-        return "None"
+        return PipelineInspector.inspect(self.nodes)
 
     def get_timers(self) -> str:
         """
