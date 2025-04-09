@@ -189,7 +189,9 @@ class PipelineInspector:
         return "None"
 
     @staticmethod
-    def _format_context_params(context_params: set[str], key_origin: dict[str, int]) -> str:
+    def _format_context_params(
+        context_params: set[str], key_origin: dict[str, int]
+    ) -> str:
         """
         Produce a string describing which context params a node requires, optionally including
         the node of origin if the parameter was created earlier in the pipeline.
