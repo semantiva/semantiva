@@ -1,5 +1,5 @@
 from typing import List, Any
-from .nodes import PipelineNode, ContextNode
+from .nodes import PipelineNode
 from semantiva.exceptions.pipeline import PipelineConfigurationError
 
 
@@ -93,9 +93,9 @@ class PipelineInspector:
         created_keys = node.processor.get_created_keys()
         injected_or_created_keywords.update(created_keys)
 
-        # Special handling for ProbeContextInjectorNode
+        # If the node is a ProbeContextInjectorNode, add the context keyword to the set
         if node.get_metadata().get("component_type") == "ProbeContextInjectorNode":
-            # The node is guaranteed to have a 'context_keyword' attribute
+            assert hasattr(node, "context_keyword")
             injected_or_created_keywords.add(node.context_keyword)
             created_keys.append(node.context_keyword)
             key_origin[node.context_keyword] = index
@@ -117,8 +117,9 @@ class PipelineInspector:
             f"\t\tContext additions: {cls._format_set(created_keys)}",
         ]
 
-        # Add context suppressions if the node is a ContextNode
-        if isinstance(node, ContextNode):
+        # Add context suppressions if the node is a ContextProcessorNode
+        if node.get_metadata().get("component_type") == "ContextProcessorNode":
+            assert hasattr(node.processor, "get_suppressed_keys")
             suppressed_keys = node.processor.get_suppressed_keys()
             deleted_keys.update(suppressed_keys)
             node_summary_lines.append(

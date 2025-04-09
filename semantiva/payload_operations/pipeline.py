@@ -29,7 +29,7 @@ class Pipeline(PayloadProcessor):
     """
 
     pipeline_configuration: List[Dict]
-    nodes: List[DataNode]
+    nodes: List[PipelineNode]
 
     def __init__(
         self, pipeline_configuration: List[Dict], logger: Optional[Logger] = None
@@ -50,7 +50,7 @@ class Pipeline(PayloadProcessor):
             ]
         """
         super().__init__(logger)
-        self.nodes: List[DataNode] = []
+        self.nodes: List[PipelineNode] = []
         self.pipeline_configuration: List[Dict] = pipeline_configuration
         self.nodes = self._initialize_nodes()
         if self.logger:
