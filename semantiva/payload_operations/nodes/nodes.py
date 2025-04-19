@@ -1,13 +1,15 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
 from abc import abstractmethod
-from ..stop_watch import StopWatch
-from semantiva.context_processors import ContextProcessor
+from semantiva.context_processors import ContextProcessor, ContextObserver
 from semantiva.data_processors import (
     BaseDataProcessor,
     DataOperation,
 )
-from semantiva.context_processors.context_types import ContextType
-from semantiva.data_types import BaseDataType
+from semantiva.context_processors.context_types import (
+    ContextType,
+    ContextCollectionType,
+)
+from semantiva.data_types import BaseDataType, NoDataType
 from semantiva.logger import Logger
 from ..payload_processors import PayloadProcessor
 
@@ -133,8 +135,9 @@ class DataNode(PipelineNode):
             f")"
         )
 
+    @classmethod
     @abstractmethod
-    def get_created_keys(self) -> List[str]:
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys created or updated by the data processor.
 
@@ -155,7 +158,7 @@ class DataNode(PipelineNode):
             context (ContextType): The corresponding context.
 
         Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+            Tuple[BaseDataType, ContextT
         """
 
     def _process(
@@ -179,7 +182,7 @@ class DataNode(PipelineNode):
         Raises:
             ValueError:
             If a single payload is paired with a collection context.
-            TypeError:
+            TypeError
             If the payload type is incompatible with the expected input type for the data processor.
         """
 
@@ -193,6 +196,390 @@ class DataNode(PipelineNode):
                 f"Incompatible data type for Node {self.processor.__class__.__name__} "
                 f"expected {input_type}, but received {type(result_data)}."
             )
+
+
+class PayloadSourceNode(DataNode):
+    """
+    A node that loads data from a payload source.
+
+    This node wraps a PayloadSource to load data and inject it into the pipeline.
+
+    Attributes:
+        payload_source (PayloadSource): The payload source instance used to load data.
+    """
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a PayloadSourceNode with the specified payload source.
+
+        Args:
+            processor (Type[PayloadSource]): The payload source class for this node.
+            processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        super().__init__(
+            processor,
+            processor_parameters,
+            logger,
+        )
+
+    @classmethod
+    def output_data_type(cls):
+        """
+        Retrieve the node's output data type.
+        """
+        return cls.processor.output_data_type()
+
+    @classmethod
+    def get_created_keys(cls):
+        """
+        Retrieve a list of context keys that will be created by the processor.
+
+        Returns:
+            List[str]: An empty list indicating that no keys will be created.
+        """
+        cls.processor.get_created_keys()
+
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item with its corresponding single context.
+
+        Args:
+            data (BaseDataType): A single data instance.
+            context (ContextType): The corresponding single context.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+        """
+
+        # Save the current context to be used by the processor
+        self.observer_context = context
+        parameters = self._get_processor_parameters(self.observer_context)
+        loaded_data, loaded_context = self.processor.process(data, **parameters)
+
+        # Merge context and loaded_context
+        for key, value in loaded_context.items():
+            if key in context.keys():
+                raise KeyError(f"Key '{key}' already exists in the context.")
+            context.set_value(key, value)
+        return loaded_data, context
+
+
+class PayloadSinkNode(DataNode):
+    """
+    A node that saves data using a payload sink.
+
+    This node wraps a PayloadSink to save data at the end of a pipeline.
+
+    Attributes:
+        payload_sink (PayloadSink): The payload sink instance used to save data.
+    """
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a PayloadSinkNode with the specified payload sink.
+
+        Args:
+            processor (Type[PayloadSink]): The payload sink class for this node.
+            processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        super().__init__(
+            processor,
+            processor_parameters,
+            logger,
+        )
+
+    @classmethod
+    def get_created_keys(cls):
+        """
+        Retrieve a list of context keys that will be created by the processor.
+
+        Returns:
+            List[str]: An empty list indicating that no keys will be created.
+        """
+        return []
+
+    @classmethod
+    def output_data_type(cls):
+        """
+        Retrieve this node's output data type. Payload sink nodes act as data passthough.
+        """
+        return cls.input_data_type()
+
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item with its corresponding single context.
+
+        Args:
+            data (BaseDataType): A single data instance.
+            context (ContextType): The corresponding single context.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+        """
+
+        # Save the current context to be used by the processor
+        self.observer_context = context
+        parameters = self._get_processor_parameters(self.observer_context)
+        output_data = self.processor.process(data, **parameters)
+
+        return output_data, self.observer_context
+
+
+class DataSinkNode(DataNode):
+    """
+    A node that saves data using a data sink.
+
+    This node wraps a DataSink to save data at the end of a pipeline.
+
+    Attributes:
+        data_sink (DataSink): The data sink instance used to save data.
+    """
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a DataSinkNode with the specified data sink.
+
+        Args:
+            processor (Type[BaseDataProcessor]): The base data processor for the DataSinkNode.
+            processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        super().__init__(
+            processor,
+            processor_parameters,
+            logger,
+        )
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Retrieve the data type that will be produced by the processor.
+
+        Returns:
+            Type: The data type that will be produced by the processor.
+        """
+        return cls.processor.input_data_type()
+
+    @classmethod
+    def output_data_type(cls):
+        """
+        Retrieve the data type that will be produced by the processor.
+
+        Returns:
+            Type: The data type that will be produced by the processor.
+        """
+        return cls.input_data_type()
+
+    @classmethod
+    def get_created_keys(cls):
+        """
+        Retrieve a list of context keys that will be created by the processor.
+
+        Returns:
+            List[str]: An empty list indicating that no keys will be created.
+        """
+        return []
+
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item with its corresponding single context.
+
+        Args:
+            data (BaseDataType): A single data instance.
+            context (ContextType): The corresponding single context.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+        """
+
+        # Save the current context to be used by the processor
+        self.observer_context = context
+        parameters = self._get_processor_parameters(self.observer_context)
+        output_data = self.processor.process(data, **parameters)
+
+        return output_data, self.observer_context
+
+
+class DataSourceNode(DataNode):
+    """
+    A node that loads data from a data source.
+
+    This node wraps a DataSource to load data and inject it into the pipeline.
+
+    Attributes:
+        data_source (DataSource): The data source instance used to load data.
+    """
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a DataSourceNode with the specified data source.
+
+        Args:
+            processor (Type[BaseDataProcessor]): The BaseDataProcessor for the DataSourceNode.
+            processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        super().__init__(
+            processor,
+            processor_parameters,
+            logger,
+        )
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Retrieve the data type that will be consumed by the processor.
+
+        Returns:
+            Type: The data type that will be consumed by the processor.
+        """
+        return NoDataType
+
+    @classmethod
+    def output_data_type(cls):
+        """
+        Retrieve the data type that will be produced by the processor.
+
+        Returns:
+            Type: The data type that will be produced by the processor.
+        """
+        return cls.processor.output_data_type()
+
+    @classmethod
+    def get_created_keys(cls):
+        """
+        Retrieve a list of context keys that will be created by the processor.
+
+        Returns:
+            List[str]: A list of context keys that the processor will add or create
+                    as a result of execution.
+        """
+        return []
+
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item with its corresponding single context.
+
+        Args:
+            data (BaseDataType): A single data instance.
+            context (ContextType): The corresponding single context.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+        """
+
+        # Save the current context to be used by the processor
+        self.observer_context = context
+        parameters = self._get_processor_parameters(self.observer_context)
+        output_data = self.processor.process(data, **parameters)
+
+        return output_data, self.observer_context
+
+
+class OperationNode(DataNode):
+    """
+    Node that applies an data operation, potentially modifying it.
+    It interacts with `ContextObserver` to update the context.
+    """
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize an OperationNode with the specified data algorithm.
+
+        Args:
+            processor (Type[BaseDataProcessor]): The base data processor for this node.
+            processor_parameters (Optional[Dict]): Initial configuration for processor parameters. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        processor_parameters = (
+            {} if processor_parameters is None else processor_parameters
+        )
+        super().__init__(processor, processor_parameters, logger)
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Retrieve input data type of the data processor.
+
+        """
+        return cls.processor.input_data_type()
+
+    @classmethod
+    def output_data_type(cls):
+        """
+        Retrieve the node's output data type. The request is delegated to the node's data processor.
+
+        Returns:
+            Type: The node output data type.
+        """
+        return cls.processor.output_data_type()
+
+    @classmethod
+    def get_created_keys(cls):
+        """
+        Retrieve a list of context keys that will be created by the processor.
+
+        Returns:
+            List[str]: A list of context keys that the processor will add or create
+                    as a result of execution.
+        """
+        return cls.processor.get_created_keys()
+
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item with its corresponding single context.
+
+        Args:
+            data (BaseDataType): A single data instance.
+            context (ContextType): The corresponding context.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The processed data and the updated context.
+        """
+
+        # Save the current context to be used by the processor
+        self.observer_context = context
+        parameters = self._get_processor_parameters(self.observer_context)
+        output_data = self.processor.process(data, **parameters)
+
+        return output_data, self.observer_context
 
 
 class ProbeNode(DataNode):
@@ -209,3 +596,314 @@ class ProbeNode(DataNode):
             Type: The node's output data type.
         """
         return cls.input_data_type()
+
+
+class ProbeContextInjectorNode(ProbeNode):
+    """
+    A node that injects probe results into the execution context.
+
+    This node uses a data probe to extract information from the input data
+    and then injects the result into the context under a specified keyword.
+
+    Attributes:
+        context_keyword (str): The key under which the probe result is stored in the context.
+    """
+
+    context_keyword: str
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        context_keyword: str,
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a ProbeContextInjectorNode with the specified data processor and context keyword.
+
+        Args:
+            processor (Type[BaseDataProcessor]): The data probe class for this node.
+            context_keyword (str): The keyword used to inject the probe result into the context.
+            processor_parameters (Optional[Dict]): Operation configuration parameters. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+
+        Raises:
+            ValueError: If `context_keyword` is not provided or is not a non-empty string.
+        """
+        self.context_keyword = context_keyword
+        super().__init__(processor, processor_parameters, logger)
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Retrieve the expected input data type for the data processor.
+
+        Returns:
+            Type: The expected input data type for the data processor.
+        """
+        return cls.processor.input_data_type()
+
+    @classmethod
+    def output_data_type(cls):
+        """
+        Retrieve the output data type of the node, which is the same as the input data type for probe nodes.
+        """
+        return cls.processor.input_data_type()
+
+    @classmethod
+    def get_created_keys(cls):
+        """
+        Retrieve a list of context keys that will be created by the processor.
+
+        Returns:
+            List[str]: A list of context keys that the processor will add or create
+            as a result of execution.
+        """
+        return [cls.context_keyword]
+
+    def __str__(self) -> str:
+        """
+        Return a string representation of the ProbeContextInjectorNode.
+
+        Returns:
+            str: A string summarizing the node's attributes and execution summary.
+        """
+        class_name = self.__class__.__name__
+        return (
+            f"{class_name}(\n"
+            f"     processor={self.processor},\n"
+            f"     context_keyword={self.context_keyword},\n"
+            f"     processor_config={self.processor_config},\n"
+            f"     execution summary: {self.stop_watch}\n"
+            f")"
+        )
+
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item and inject the probe result into the context.
+
+        Args:
+            data (BaseDataType): A single data instance.
+            context (ContextType): The context to be updated.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The unchanged data and the updated context with the probe result.
+        """
+
+        parameters = self._get_processor_parameters(context)
+        probe_result = self.processor.process(data, **parameters)
+        if isinstance(context, ContextCollectionType):
+            for index, p_item in enumerate(probe_result):
+                ContextObserver.update_context(
+                    context, self.context_keyword, p_item, index=index
+                )
+        else:
+            ContextObserver.update_context(context, self.context_keyword, probe_result)
+
+        return data, context
+
+
+class ProbeResultCollectorNode(ProbeNode):
+    """
+    A node for collecting probed data.
+
+    Attributes:
+        _probed_data (List[Any]): A list of probed data.
+    """
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a ProbeResultCollectorNode with the specified data probe.
+
+        Args:
+            processor (Type[DataProbe]): The data probe class for this node.
+            processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        super().__init__(processor, processor_parameters, logger)
+        self._probed_data: List[Any] = []
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Retrieve the expected input data type for the data processor.
+
+        Returns:
+            Type: The expected input data type for the data processor.
+        """
+        return cls.processor.input_data_type()
+
+    @classmethod
+    def output_data_type(cls):
+        """
+        Retrieve the output data type of the node, which is the same as the input data type for probe nodes.
+        """
+        return cls.processor.input_data_type()
+
+    def collect(self, data: Any) -> None:
+        """
+        Collect data from the probe.
+
+        Args:
+            data (Any): The data to collect.
+        """
+        self._probed_data.append(data)
+
+    def get_collected_data(self) -> List[Any]:
+        """
+        Retrieve all collected probe data.
+
+        Returns:
+            List[Any]: The list of collected data.
+        """
+        return self._probed_data
+
+    def clear_collected_data(self) -> None:
+        """
+        Clear all collected data, useful for reuse in iterative processes.
+        """
+        self._probed_data.clear()
+
+    @classmethod
+    def get_created_keys(cls):
+        """
+        Retrieve the list of created keys.
+        Returns:
+            list: An empty list indicating no keys have been created.
+        """
+
+        return []
+
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Execute the probe on a single data item, collecting the result.
+
+        Args:
+            data (BaseDataType): A single data instance.
+            context (ContextType): The context, unchanged by this node.
+
+        Returns:
+            Tuple[BaseDataType, ContextType]: The original data and unchanged context.
+        """
+        parameters = self._get_processor_parameters(context)
+        probe_result = self.processor.process(data, **parameters)
+        self.collect(probe_result)
+        return data, context
+
+    @classmethod
+    def _define_metadata(cls):
+
+        # Define the metadata for the ProbeResultCollectorNode
+        component_metadata = {
+            "component_type": "ProbeResultCollectorNode",
+            "processor": cls.processor.__name__,
+            "processor_docstring": cls.processor.get_metadata().get("docstring"),
+            "input_data_type": cls.input_data_type().__name__,
+            "output_data_type": cls.input_data_type().__name__,  # Probe nodes have the same input and output data types
+            "injected_context_keys": cls.get_created_keys() or "None",
+        }
+        return component_metadata
+
+
+class ContextProcessorNode(PipelineNode):
+    """
+    A node that wrapps a context processor.
+    """
+
+    processor: ContextProcessor
+
+    def __init__(
+        self,
+        processor: Type[ContextProcessor],
+        processor_config: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize a Node with the specified context processor, and parameters.
+
+        Args:
+            processor (Type[ContextProcessor]): The class of the context processor associated with this node.
+            processor_config (Optional[Dict]): Operation parameters. Defaults to None.
+            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+        """
+        super().__init__(logger)
+        self.logger.debug(
+            f"Initializing {self.__class__.__name__} ({processor.__name__})"
+        )
+        processor_config = processor_config or {}
+        self.processor = processor(logger, **processor_config)
+        self.processor_config = processor_config
+
+    def __str__(self) -> str:
+        """
+        Return a string representation of the node.
+
+        Returns:
+            str: A string summarizing the node's attributes and execution summary.
+        """
+        class_name = self.__class__.__name__
+        return (
+            f"{class_name}(\n"
+            f"     processor={self.processor},\n"
+            f"     processor_config={self.processor_config},\n"
+            f"     Execution summary: {self.stop_watch}\n"
+            f")"
+        )
+
+    @classmethod
+    def get_created_keys(cls) -> List[str]:
+        """
+        Retrieve a list of context keys that will be created by the processor.
+
+        Returns:
+            List[str]: A list of context keys that the processor will add or modify during its execution.
+        """
+
+        return cls.processor.get_created_keys()
+
+    @classmethod
+    def get_required_keys(cls) -> List[str]:
+        """
+        Retrieve a list of context keys required by the processor.
+
+        Returns:
+            List[str]: A list of context keys.
+        """
+        return cls.processor.get_required_keys()
+
+    @classmethod
+    def get_suppressed_keys(cls) -> List[str]:
+        """
+        Retrieve a list of context keys that will be removed by the processor.
+
+        Returns:
+            List[str]: A list of context keys that the processor will remove during its execution.
+        """
+        return cls.processor.get_suppressed_keys()
+
+    def _process(
+        self, data: BaseDataType, context: ContextType
+    ) -> tuple[BaseDataType, ContextType]:
+        """
+        Processes the given data and context.
+
+        Args:
+            data (BaseDataType): The data to be processed.
+            context (ContextType): The context in which the data is processed.
+
+        Returns:
+            tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
+        """
+
+        updated_context = self.processor.operate_context(context)
+
+        return data, updated_context

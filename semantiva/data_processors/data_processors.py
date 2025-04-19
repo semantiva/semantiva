@@ -315,7 +315,13 @@ class DataProbe(BaseDataProcessor):
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
-        """ """
+        """
+        Retrieve a list of context keys created by the data probe.
+
+        Returns:
+            List[str]: A list of context keys created or modified by the data probe.
+        """
+
         return []
 
     @classmethod
