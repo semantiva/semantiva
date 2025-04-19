@@ -19,7 +19,7 @@ class DataIOWrapperFactory:
         data_io_class: (
             Type[DataSource] | Type[PayloadSource] | Type[DataSink] | Type[PayloadSink]
         ),
-    ):
+    ) -> Type[DataOperation]:
         """
         Dynamically creates a subclass of DataOperation that wraps a data IO class.
 
@@ -60,7 +60,6 @@ class DataIOWrapperFactory:
                         List[str]: A list of parameter names (excluding `self` and `data`).
                     """
                     my_class = data_io_class()
-                    print(data_io_class.__dict__)
                     signature = inspect.signature(data_io_class._get_data)
                     return [
                         param.name
@@ -93,7 +92,6 @@ class DataIOWrapperFactory:
                         List[str]: A list of parameter names (excluding `self` and `data`).
                     """
                     my_class = data_io_class()
-                    print(data_io_class.__dict__)
                     signature = inspect.signature(data_io_class._get_payload)
                     return [
                         param.name

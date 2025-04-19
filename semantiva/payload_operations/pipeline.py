@@ -11,7 +11,8 @@ from .payload_processors import PayloadProcessor
 from .nodes.node_factory import node_factory
 from .nodes.nodes import (
     PipelineNode,
-    DataNode,
+    ContextProcessorNode,
+    ProbeResultCollectorNode,
 )
 
 
@@ -159,7 +160,7 @@ class Pipeline(PayloadProcessor):
         # Iterate over all nodes in the pipeline
         for i, node in enumerate(self.nodes):
 
-            if node.get_metadata().get("component_type") == "ProbeResultCollectorNode":
+            if isinstance(node, ProbeResultCollectorNode):
                 # Add the collected data from the node to the results dictionary
                 assert hasattr(node, "get_collected_data")
                 probe_results[f"Node {i + 1}/{type(node.processor).__name__}"] = (
@@ -185,7 +186,7 @@ class Pipeline(PayloadProcessor):
             nodes.append(node)
 
             # Skip type consistency check for `ContextProcessorNode`
-            if node.get_metadata().get("component_type") == "ContextProcessorNode":
+            if isinstance(node, ContextProcessorNode):
                 continue
 
             # Perform type consistency check
