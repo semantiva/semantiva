@@ -1,4 +1,5 @@
 from typing import List, Any, Dict, Optional, Type, Tuple
+from typing_extensions import override
 from abc import abstractmethod
 from semantiva.context_processors import ContextProcessor, ContextObserver
 from semantiva.data_processors import (
@@ -36,7 +37,6 @@ class DataNode(PipelineNode):
     Attributes:
         data_processor (BaseDataProcessor): The data processor associated with the node.
         processor_config (Dict): Configuration parameters for the data processor.
-        stop_watch (StopWatch): Tracks the execution time of the node's processing.
         logger (Logger): Logger instance for diagnostic messages.
     """
 
@@ -57,7 +57,6 @@ class DataNode(PipelineNode):
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
         super().__init__(logger)
-        print("processor", processor)
         self.logger.debug(
             f"Initializing {self.__class__.__name__} ({processor.__name__})"
         )
@@ -146,20 +145,26 @@ class DataNode(PipelineNode):
                        as a result of execution.
         """
 
-    @abstractmethod
     def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
         """
-        Process a single data item with its corresponding context.
+        Process a single data item with its corresponding single context.
 
         Args:
-            data (BaseDataType): A data instance.
+            data (BaseDataType): A single data instance.
             context (ContextType): The corresponding context.
 
         Returns:
-            Tuple[BaseDataType, ContextT
+            Tuple[BaseDataType, ContextType]: The processed data and the updated context.
         """
+
+        # Save the current context to be used by the processor
+        self.observer_context = context
+        parameters = self._get_processor_parameters(self.observer_context)
+        output_data = self.processor.process(data, **parameters)
+
+        return output_data, self.observer_context
 
     def _process(
         self, data: BaseDataType, context: ContextType
@@ -243,8 +248,9 @@ class PayloadSourceNode(DataNode):
         Returns:
             List[str]: An empty list indicating that no keys will be created.
         """
-        cls.processor.get_created_keys()
+        return cls.processor.get_created_keys()
 
+    @override
     def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
@@ -319,27 +325,6 @@ class PayloadSinkNode(DataNode):
         """
         return cls.input_data_type()
 
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a single data item with its corresponding single context.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding single context.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and updated context.
-        """
-
-        # Save the current context to be used by the processor
-        self.observer_context = context
-        parameters = self._get_processor_parameters(self.observer_context)
-        output_data = self.processor.process(data, **parameters)
-
-        return output_data, self.observer_context
-
 
 class DataSinkNode(DataNode):
     """
@@ -400,27 +385,6 @@ class DataSinkNode(DataNode):
             List[str]: An empty list indicating that no keys will be created.
         """
         return []
-
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a single data item with its corresponding single context.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding single context.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and updated context.
-        """
-
-        # Save the current context to be used by the processor
-        self.observer_context = context
-        parameters = self._get_processor_parameters(self.observer_context)
-        output_data = self.processor.process(data, **parameters)
-
-        return output_data, self.observer_context
 
 
 class DataSourceNode(DataNode):
@@ -484,27 +448,6 @@ class DataSourceNode(DataNode):
         """
         return []
 
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a single data item with its corresponding single context.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding single context.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and updated context.
-        """
-
-        # Save the current context to be used by the processor
-        self.observer_context = context
-        parameters = self._get_processor_parameters(self.observer_context)
-        output_data = self.processor.process(data, **parameters)
-
-        return output_data, self.observer_context
-
 
 class OperationNode(DataNode):
     """
@@ -559,27 +502,6 @@ class OperationNode(DataNode):
                     as a result of execution.
         """
         return cls.processor.get_created_keys()
-
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Process a single data item with its corresponding single context.
-
-        Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding context.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and the updated context.
-        """
-
-        # Save the current context to be used by the processor
-        self.observer_context = context
-        parameters = self._get_processor_parameters(self.observer_context)
-        output_data = self.processor.process(data, **parameters)
-
-        return output_data, self.observer_context
 
 
 class ProbeNode(DataNode):
@@ -798,20 +720,6 @@ class ProbeResultCollectorNode(ProbeNode):
         probe_result = self.processor.process(data, **parameters)
         self.collect(probe_result)
         return data, context
-
-    @classmethod
-    def _define_metadata(cls):
-
-        # Define the metadata for the ProbeResultCollectorNode
-        component_metadata = {
-            "component_type": "ProbeResultCollectorNode",
-            "processor": cls.processor.__name__,
-            "processor_docstring": cls.processor.get_metadata().get("docstring"),
-            "input_data_type": cls.input_data_type().__name__,
-            "output_data_type": cls.input_data_type().__name__,  # Probe nodes have the same input and output data types
-            "injected_context_keys": cls.get_created_keys() or "None",
-        }
-        return component_metadata
 
 
 class ContextProcessorNode(PipelineNode):

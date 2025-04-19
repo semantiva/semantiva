@@ -122,7 +122,7 @@ class NodeFactory:
             }
 
         node_class = NodeFactory._create_class(
-            name=f"PayloadSourceNodeWrapping{data_io_class.__name__}",
+            name="PayloadSourceNode",
             base_cls=PayloadSourceNode,
             _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
@@ -161,7 +161,7 @@ class NodeFactory:
             return component_metadata
 
         node_class = NodeFactory._create_class(
-            name=f"PayloadSinkNodeWrapping{data_io_class.__name__}",
+            name=f"{data_io_class.__name__}PayloadSinkNode",
             base_cls=PayloadSinkNode,
             _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
@@ -206,7 +206,7 @@ class NodeFactory:
             return component_metadata
 
         node_class = NodeFactory._create_class(
-            name=f"DataSinkNodeWrapping{data_io_class.__name__}",
+            name=f"{data_io_class.__name__}DataSinkNode",
             base_cls=DataSinkNode,
             _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
@@ -247,7 +247,7 @@ class NodeFactory:
             return component_metadata
 
         node_class = NodeFactory._create_class(
-            name=f"DataSourceNodeWrapping{data_io_class.__name__}",
+            name="DataSourceNode",
             base_cls=DataSourceNode,
             _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
@@ -289,7 +289,7 @@ class NodeFactory:
             return component_metadata
 
         node_class = NodeFactory._create_class(
-            name=f"DataOperationNodeWrapping{processor_class.__name__}",
+            name=f"{processor_class.__name__}DataOperationNode",
             base_cls=OperationNode,
             _define_metadata=classmethod(_define_metadata),
             processor=processor_class,
@@ -335,7 +335,7 @@ class NodeFactory:
             return component_metadata
 
         node_class = NodeFactory._create_class(
-            name=f"ProbeContextInjectorNodeWrapping{processor_class.__name__}",
+            name=f"{processor_class.__name__}ProbeContextInjectorNode",
             base_cls=ProbeContextInjectorNode,
             _define_metadata=classmethod(_define_metadata),
             processor=processor_class,
@@ -370,7 +370,7 @@ class NodeFactory:
             return component_metadata
 
         node_class = NodeFactory._create_class(
-            name=f"ProbeResultCollectorNodeWrapping{processor_class.__name__}",
+            name=f"{processor_class.__name__}ProbeResultCollectorNode",
             base_cls=ProbeResultCollectorNode,
             _define_metadata=classmethod(_define_metadata),
             processor=processor_class,
@@ -416,7 +416,7 @@ class NodeFactory:
             return component_metadata
 
         node_class = NodeFactory._create_class(
-            name=f"ContextProcessorNodeWrapping{processor_class.__name__}",
+            name=f"{processor_class.__name__}ContextProcessorNode",
             base_cls=ContextProcessorNode,
             _define_metadata=classmethod(_define_metadata),
             processor=context_processor_instance,
