@@ -109,7 +109,7 @@ class PipelineInspector:
 
         # Build human-readable lines describing this node
         node_summary_lines = [
-            f"\n\t{index}. Node: {node.processor.__class__.__name__} ({node.__class__.__name__})",
+            f"\n\t{index}. Node: {node.processor.__class__.__name__} ({node.get_metadata().get('component_type', 'Unknown')})",
             f"\t\tParameters: {cls._format_set(operation_params)}",
             f"\t\t\tFrom pipeline configuration: {cls._format_pipeline_config(node.processor_config)}",
             f"\t\t\tFrom context: {cls._format_context_params(context_params, key_origin)}",
