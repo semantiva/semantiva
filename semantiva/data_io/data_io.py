@@ -8,17 +8,7 @@ T = TypeVar("T", bound=BaseDataType)
 
 
 class DataSource(SemantivaObject):
-    """
-    Abstract base class for data sources within the framework.
-
-    A `DataSource` represents an entity that provides data to be consumed
-    by other components in the framework.
-
-    Methods:
-        _get_data: Abstract method to implement the logic for retrieving data.
-        get_data: Public method to fetch data by invoking `_get_data`.
-        output_data_type: Abstract method to define the type of data provided.
-    """
+    """Abstract base class representing a data source in Semantiva."""
 
     @classmethod
     @abstractmethod
@@ -90,17 +80,7 @@ class DataSource(SemantivaObject):
 
 
 class PayloadSource(SemantivaObject):
-    """
-    Abstract base class for payload sources within the framework.
-
-    A `PayloadSource` provides structured payloads for processing within
-    the framework.
-
-    Methods:
-        _get_payload: Abstract method to implement the logic for retrieving payloads.
-        get_payload: Public method to fetch payloads by invoking `_get_payload`.
-        output_data_type: Abstract method to define the type of payload provided.
-    """
+    """Abstract base class for providing structured payloads (data and context) in Semantiva."""
 
     @classmethod
     def _define_metadata(cls):
@@ -192,17 +172,7 @@ class PayloadSource(SemantivaObject):
 
 
 class DataSink(SemantivaObject, Generic[T]):
-    """
-    Abstract base class for data sinks within the framework.
-
-    A `DataSink` represents an entity responsible for consuming and storing
-    data provided by other components in the framework.
-
-    Methods:
-        _send_data: Abstract method to implement the logic for sending data.
-        send_data: Public method to send data by invoking `_send_data`.
-        input_data_type: Abstract method to define the type of data consumed.
-    """
+    """Abstract base class for data sinks that consume and store data."""
 
     @abstractmethod
     def _send_data(self, data: T, *args, **kwargs):
@@ -272,16 +242,7 @@ class DataSink(SemantivaObject, Generic[T]):
 
 
 class PayloadSink(SemantivaObject, Generic[T]):
-    """
-    Abstract base class for payload sinks within the framework.
-
-    A `PayloadSink` represents an entity responsible for consuming and storing
-    both data and its associated context provided by other components in the framework.
-
-    Methods:
-        _send_payload: Abstract method to implement the logic for consuming data and context.
-        send_payload: Public method to consume data and context by invoking `_send_payload`.
-    """
+    """Abstract base class for payload sinks that consume and store data along with its associated context."""
 
     @abstractmethod
     def _send_payload(self, data: T, context: ContextType, *args, **kwargs):

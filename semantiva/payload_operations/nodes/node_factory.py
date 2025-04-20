@@ -108,9 +108,10 @@ class NodeFactory:
             PayloadSourceNode: An instance of a dynamically created subclass of PayloadSourceNode.
         """
 
+        # Wrap the data IO class in a DataOperation subclass
         processor = DataIOWrapperFactory.create_data_operation(data_io_class)
 
-        def _define_metadata(cls):  # IMPROVE
+        def _define_metadata(cls):
             return {
                 "component_type": "PayloadSourceNode",
                 "payload_source": data_io_class.__name__,
@@ -147,7 +148,7 @@ class NodeFactory:
 
         processor = DataIOWrapperFactory.create_data_operation(data_io_class)
 
-        def _define_metadata(cls):  # IMPROVE
+        def _define_metadata(cls):
 
             # Define the metadata for the PayloadSinkNode
             component_metadata = {

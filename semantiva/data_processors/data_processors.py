@@ -10,13 +10,7 @@ T = TypeVar("T", bound=BaseDataType)
 
 
 class BaseDataProcessor(SemantivaObject, Generic[T]):
-    """
-    Abstract base class for all data processors in Semantiva.
-
-    This class defines a standardized structure for implementing data
-    processing tasks, ensuring consistency and extensibility across different
-    types of data transformations and analyses.
-    """
+    """Abstract base class for data processing algorithms in Semantiva."""
 
     logger: Optional[Logger]
 
@@ -144,19 +138,7 @@ class BaseDataProcessor(SemantivaObject, Generic[T]):
 
 
 class DataOperation(BaseDataProcessor):
-    """
-    A data processing component within Semantiva that modifies input data.
-
-    `DataOperation` extends `BaseDataProcessor` to provide transformation
-    capabilities while integrating with a `ContextObserver` for managing
-    context updates. Unlike `DataProbe`, which analyzes data without
-    modification, `DataOperation` applies computational transformations to
-    produce a modified output.
-
-    Attributes:
-        context_observer (Optional[ContextObserver]): An optional observer for tracking
-            and managing context updates during processing.
-    """
+    """A data processor that applies computational transformations to input data while managing context updates."""
 
     context_observer: Optional[ContextObserver]
 
@@ -337,11 +319,7 @@ class OperationTopologyFactory:
 
 
 class DataProbe(BaseDataProcessor):
-    """
-    Represents a probe operation for monitoring or inspecting data.
-
-    This class can be extended to implement specific probing functionalities.
-    """
+    """DataProbe analyzes input data without modifying it."""
 
     def __init__(self, logger=None):
         super().__init__(logger)

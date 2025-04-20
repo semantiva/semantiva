@@ -7,16 +7,7 @@ from semantiva.logger import Logger
 
 
 class PayloadProcessor(ContextObserver):
-    """
-    Base class for operations involving payloads in the semantic framework.
-
-    This class extends ContextObserver to incorporate context management capabilities
-    into payload-related operations.
-
-    Attributes:
-        context (dict): Inherited from ContextObserver, stores context key-value pairs.
-        data (BaseDataType): An instance of a class derived from BaseDataType.
-    """
+    """Base class for payload processing operations with integrated data and context management."""
 
     logger: Logger
     stop_watch: StopWatch

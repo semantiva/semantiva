@@ -64,12 +64,7 @@ S = TypeVar("S")  # The preferred storage format for the collection
 
 
 class DataCollectionType(BaseDataType[S], Generic[E, S]):
-    """
-    Abstract base class for collection-based data types.
-
-    This class extends BaseDataType to handle data that comprises multiple
-    elements and provides a foundation for collection-specific operations.
-    """
+    """Abstract base class for data collections, handling multiple elements of the same BaseDataType."""
 
     def __init__(self, data: Optional[S] = None):
         """

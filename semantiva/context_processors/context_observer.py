@@ -6,9 +6,7 @@ from .context_types import ContextType, ContextCollectionType
 
 
 class ContextObserver(SemantivaObject):
-    """
-    Centralized manager for context slicing, merging, and updates
-    """
+    """Base class for all nodes in semantiva pipelines responsible for context propagation and updates."""
 
     def __init__(self):
         """

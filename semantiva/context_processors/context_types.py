@@ -1,19 +1,11 @@
 from typing import Any, List, Optional, Iterator, Union, Dict, Tuple
 from collections import ChainMap
 from semantiva.logger import Logger
+from semantiva.core import SemantivaObject
 
 
-class ContextType:
-    """
-    Represents a generic context within the framework.
-
-    This class serves as a container for storing and managing context-specific
-    information, facilitating access and updates to context data.
-
-    Attributes:
-        _context_container (dict): A dictionary that stores key-value pairs representing
-                                   the context data.
-    """
+class ContextType(SemantivaObject):
+    """A generic container for managing context in Semantiva via specific key-value pairs."""
 
     def __init__(
         self, context_dict: Optional[Dict] = None, logger: Optional[Logger] = None
@@ -116,15 +108,29 @@ class ContextType:
             return False
         return self._context_container == other._context_container
 
+    @classmethod
+    def _define_metadata(cls):
+
+        # Define the metadata for the ContextType
+        component_metadata = {
+            "component_type": "ContextType",
+        }
+
+        return component_metadata
+
 
 class ContextCollectionType(ContextType):
-    """
-    A specialized context type that stores and manages multiple `ContextType` instances.
+    """A ContextType extension that manages a global context and multiple individual ContextType instances."""
 
-    This class extends `ContextType` but internally keeps a list of separate contexts.
-    Each item in the collection is a `ContextType`, enabling parallel iteration with
-    DataC subclasses that contain multiple data items.
-    """
+    @classmethod
+    def _define_metadata(cls):
+
+        # Define the metadata for the ContextCollectionType
+        component_metadata = {
+            "component_type": "ContextType",
+        }
+
+        return component_metadata
 
     def __init__(
         self,

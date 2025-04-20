@@ -17,27 +17,30 @@ from ..payload_processors import PayloadProcessor
 
 class PipelineNode(PayloadProcessor):
     """
-    Represents a node in a processing pipeline that encapsulates a single payload process.
-
-    This class is designed to be a building block in a larger processing pipeline. Each
-    instance of this node executes a specific process on the payload.
+    Base node class for wraping data or context processors.
     """
 
     processor: BaseDataProcessor | ContextProcessor
     processor_config: Dict
     logger: Logger
 
+    @abstractmethod
+    def _process_single_item_with_context(
+        self, data: BaseDataType, context: ContextType
+    ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Process a single data item with its corresponding context.
+        Args:
+            data (BaseDataType): A data instance.
+            context (ContextType): The corresponding context.
+        Returns:
+            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+        """
+
 
 class DataNode(PipelineNode):
     """
-    Represents a node responsible for processing data within a processing pipeline.
-
-    A DataNode is associated with a processor and acts as the fundamental unit in the pipeline.
-
-    Attributes:
-        data_processor (BaseDataProcessor): The data processor associated with the node.
-        processor_config (Dict): Configuration parameters for the data processor.
-        logger (Logger): Logger instance for diagnostic messages.
+    A node that wraps a data processor.
     """
 
     processor: BaseDataProcessor
@@ -205,12 +208,7 @@ class DataNode(PipelineNode):
 
 class PayloadSourceNode(DataNode):
     """
-    A node that loads data from a payload source.
-
-    This node wraps a PayloadSource to load data and inject it into the pipeline.
-
-    Attributes:
-        payload_source (PayloadSource): The payload source instance used to load data.
+    A node that wraps a PayloadSource.
     """
 
     def __init__(
@@ -280,12 +278,7 @@ class PayloadSourceNode(DataNode):
 
 class PayloadSinkNode(DataNode):
     """
-    A node that saves data using a payload sink.
-
-    This node wraps a PayloadSink to save data at the end of a pipeline.
-
-    Attributes:
-        payload_sink (PayloadSink): The payload sink instance used to save data.
+    A node that wraps a PayloadSink.
     """
 
     def __init__(
@@ -328,12 +321,7 @@ class PayloadSinkNode(DataNode):
 
 class DataSinkNode(DataNode):
     """
-    A node that saves data using a data sink.
-
-    This node wraps a DataSink to save data at the end of a pipeline.
-
-    Attributes:
-        data_sink (DataSink): The data sink instance used to save data.
+    A node that wraps a DataSink.
     """
 
     def __init__(
@@ -389,12 +377,7 @@ class DataSinkNode(DataNode):
 
 class DataSourceNode(DataNode):
     """
-    A node that loads data from a data source.
-
-    This node wraps a DataSource to load data and inject it into the pipeline.
-
-    Attributes:
-        data_source (DataSource): The data source instance used to load data.
+    A node that wraps a DataSource.
     """
 
     def __init__(
@@ -451,8 +434,7 @@ class DataSourceNode(DataNode):
 
 class OperationNode(DataNode):
     """
-    Node that applies an data operation, potentially modifying it.
-    It interacts with `ContextObserver` to update the context.
+    A node that wraps a DataOperation.
     """
 
     def __init__(
@@ -506,7 +488,7 @@ class OperationNode(DataNode):
 
 class ProbeNode(DataNode):
     """
-    A specialized DataNode for probing data.
+    A node that wraps a DataProbe.
     """
 
     @classmethod
@@ -522,13 +504,7 @@ class ProbeNode(DataNode):
 
 class ProbeContextInjectorNode(ProbeNode):
     """
-    A node that injects probe results into the execution context.
-
-    This node uses a data probe to extract information from the input data
-    and then injects the result into the context under a specified keyword.
-
-    Attributes:
-        context_keyword (str): The key under which the probe result is stored in the context.
+    A node that wraps a DataProbe and injects the probe result into the context with the specified keyword.
     """
 
     context_keyword: str
@@ -600,6 +576,7 @@ class ProbeContextInjectorNode(ProbeNode):
             f")"
         )
 
+    @override
     def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
@@ -629,10 +606,7 @@ class ProbeContextInjectorNode(ProbeNode):
 
 class ProbeResultCollectorNode(ProbeNode):
     """
-    A node for collecting probed data.
-
-    Attributes:
-        _probed_data (List[Any]): A list of probed data.
+    A node that wraps a DataProbe and collects probe results.
     """
 
     def __init__(
@@ -703,6 +677,7 @@ class ProbeResultCollectorNode(ProbeNode):
 
         return []
 
+    @override
     def _process_single_item_with_context(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
@@ -724,7 +699,7 @@ class ProbeResultCollectorNode(ProbeNode):
 
 class ContextProcessorNode(PipelineNode):
     """
-    A node that wrapps a context processor.
+    A node that wraps a context processor.
     """
 
     processor: ContextProcessor
