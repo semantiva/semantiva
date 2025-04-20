@@ -19,6 +19,19 @@ class ContextObserver(SemantivaObject):
         """
         self.observer_context = ContextType
 
+    @classmethod
+    def _define_metadata(cls):
+        """
+        Define metadata for the ContextObserver class.
+
+        Returns:
+            dict: Metadata dictionary containing component type and context type.
+        """
+        component_metadata = {
+            "component_type": "ContextObserver",
+        }
+        return component_metadata
+
     @staticmethod
     def update_context(
         context: Union[ContextType, ContextCollectionType, ChainMap],

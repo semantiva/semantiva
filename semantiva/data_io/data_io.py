@@ -62,9 +62,14 @@ class DataSource(SemantivaObject):
 
         component_metadata = {
             "component_type": "DataSource",
-            "output_data_type": cls.output_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["output_data_type"] = "unknown"
 
         return component_metadata
 
@@ -111,10 +116,15 @@ class PayloadSource(SemantivaObject):
 
         component_metadata = {
             "component_type": "PayloadSource",
-            "output_data_type": cls.output_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
             "injected_context_keys": cls.injected_context_keys() or "None",
         }
+
+        try:
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["output_data_type"] = "unknown"
 
         return component_metadata
 
@@ -222,9 +232,14 @@ class DataSink(SemantivaObject, Generic[T]):
 
         component_metadata = {
             "component_type": "DataSink",
-            "input_data_type": cls.input_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["input_data_type"] = "unknown"
 
         return component_metadata
 
@@ -312,9 +327,14 @@ class PayloadSink(SemantivaObject, Generic[T]):
 
         component_metadata = {
             "component_type": "PayloadSink",
-            "input_data_type": cls.input_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["input_data_type"] = "unknown"
 
         return component_metadata
 

@@ -1,10 +1,50 @@
-import inspect
+from typing import Dict, Any, Callable, List, Tuple, Type, get_origin, get_args
+from abc import abstractmethod
 import textwrap
-from typing import Dict, Any, Callable, List, Tuple
-from abc import ABC, abstractmethod
+import threading
+import inspect
+import types
+import typing
 
 
-class SemantivaObject(ABC):
+# A thread‑safe registry mapping category names to component classes
+_COMPONENT_REGISTRY: Dict[str, List[Type["SemantivaObject"]]] = {}
+_REGISTRY_LOCK = threading.Lock()
+
+
+def get_component_registry():
+    """
+    Returns the global component registry, which maps component categories to their respective classes.
+    """
+    return _COMPONENT_REGISTRY
+
+
+class SemantivaObjectMeta(type):
+    """
+    Metaclass for SemantivaObject, responsible for registering subclasses in a global registry.
+    This allows for dynamic discovery of components based on their semantic metadata.
+    """
+
+    def __init__(
+        cls: type, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]
+    ) -> None:
+        super().__init__(name, bases, attrs)  # type: ignore
+
+        if not any(b is SemantivaObject for b in bases) and hasattr(
+            cls, "get_metadata"
+        ):
+            # grab the class’s own metadata
+            try:
+                meta = cls.get_metadata()
+                cat = meta.get("component_type")
+            except Exception:
+                return
+            if cat:
+                with _REGISTRY_LOCK:
+                    _COMPONENT_REGISTRY.setdefault(cat, []).append(cls)
+
+
+class SemantivaObject(metaclass=SemantivaObjectMeta):
     """
     The foundational base class for Semantiva components, providing a unified metadata interface.
 
@@ -123,19 +163,28 @@ class SemantivaObject(ABC):
         """
 
         signature = inspect.signature(class_attribute)
-        param_type_list = [
-            (
-                param.name,
-                (
-                    param.annotation.__name__
-                    if param.annotation != param.empty
-                    else "Unknown"
-                ),
-            )
-            for param in signature.parameters.values()
-            if param.name not in excluded_parameters
-            and param.kind
-            not in {inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD}
-        ]
+        param_type_list = []
+        for param in signature.parameters.values():
+            if param.name in excluded_parameters or param.kind in {
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            }:
+                continue
+            ann = param.annotation
+            if ann is inspect._empty:
+                type_name = "Unknown"
+            else:
+                origin = get_origin(ann)
+                if origin is types.UnionType or origin is typing.Union:
+                    args = get_args(ann)
+                    names = []
+                    for arg in args:
+                        names.append(
+                            arg.__name__ if hasattr(arg, "__name__") else str(arg)
+                        )
+                    type_name = "|".join(names)
+                else:
+                    type_name = ann.__name__ if hasattr(ann, "__name__") else str(ann)
+            param_type_list.append((param.name, type_name))
 
         return param_type_list

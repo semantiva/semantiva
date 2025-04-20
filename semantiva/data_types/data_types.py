@@ -89,8 +89,23 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
         # Define the metadata for the DataCollectionType
         component_metadata = {
             "component_type": "DataCollectionType",
-            "element_type": f"{cls.collection_base_type().__name__}<{cls.collection_base_type().get_metadata().get('component_type')}>",
         }
+        # try to resolve the element type, but fail gracefully
+        try:
+            element_cls = cls.collection_base_type()
+            if hasattr(element_cls, "get_metadata"):
+                elem_meta = element_cls.get_metadata().get(
+                    "component_type", element_cls.__name__
+                )
+                component_metadata["element_type"] = (
+                    f"{element_cls.__name__}<{elem_meta}>"
+                )
+            else:
+                # element_cls is not a SemantivaObject subclass (e.g. still a TypeVar)
+                component_metadata["element_type"] = element_cls.__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["element_type"] = "Unknown"
 
         return component_metadata
 

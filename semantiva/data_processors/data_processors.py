@@ -116,6 +116,32 @@ class BaseDataProcessor(SemantivaObject, Generic[T]):
     def __str__(cls) -> str:
         return f"{cls.__name__}"
 
+    @classmethod
+    def _define_metadata(cls):
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._process_logic, excluded_parameters
+            )
+        ]
+
+        component_metadata = {
+            "component_type": "BaseDataProcessor",
+            "input_parameters": annotated_parameter_list or "None",
+        }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["input_data_type"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+
+        return component_metadata
+
 
 class DataOperation(BaseDataProcessor):
     """
@@ -147,13 +173,20 @@ class DataOperation(BaseDataProcessor):
             )
         ]
 
-        # Define the metadata for the DataOperation
         component_metadata = {
             "component_type": "DataOperation",
-            "input_data_type": cls.input_data_type().__name__,
-            "output_data_type": cls.output_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["input_data_type"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+
+        # Define the metadata for the DataOperation
 
         return component_metadata
 
@@ -340,9 +373,14 @@ class DataProbe(BaseDataProcessor):
         # Define the metadata for the DataProbe
         component_metadata = {
             "component_type": "DataProbe",
-            "input_data_type": cls.input_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["input_data_type"] = "unknown"
 
         return component_metadata
 
