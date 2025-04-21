@@ -100,7 +100,7 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
                 component_metadata["collection_element_type"] = element_cls.__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["collection_element_type"] = "Unknown"
+            pass
 
         return component_metadata
 

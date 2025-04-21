@@ -2,7 +2,6 @@
 """
 Export the Semantiva component taxonomy and metadata to RDF/Turtle using live framework metadata.
 Sample usage:
-    python semantiva/tools/export_ontology.py -o semantiva_ontology.ttl -p semantiva
     python semantiva/tools/export_ontology.py -o semantiva_ontology.ttl -p semantiva,semantiva_imaging
 """
 import sys
@@ -20,76 +19,86 @@ def discover_and_import(package_name: str):
     """
     pkg = importlib.import_module(package_name)
     prefix = pkg.__name__ + "."
-    for finder, modname, is_pkg in pkgutil.walk_packages(pkg.__path__, prefix):
-        try:
-            importlib.import_module(modname)
-        except Exception:
-            # skip modules with import errors
-            continue
+    if hasattr(pkg, "__path__"):
+        for _, modname, _ in pkgutil.walk_packages(pkg.__path__, prefix):
+            try:
+                importlib.import_module(modname)
+            except Exception:
+                pass
 
 
 def collect_components(packages):
     """
     Collect all SemantivaObject subclasses from the specified packages.
     """
-    components = []
+    duplicates = []
     for pkg in packages:
         discover_and_import(pkg)
-    # Now every module under those roots is loaded
-    for pkg in packages:
-        pkg_mod = importlib.import_module(pkg)
-        for module in list(sys.modules.values()):
-            if not getattr(module, "__file__", ""):
-                continue
-            # Only consider modules in our roots
-            if any(module.__name__.startswith(root + ".") for root in packages):
-                for _, obj in inspect.getmembers(module, inspect.isclass):
-                    if issubclass(obj, SemantivaObject) and obj is not SemantivaObject:
-                        components.append(obj)
-    return list({c: None for c in components}.keys())  # dedupe
+    for module in list(sys.modules.values()):
+        path = getattr(module, "__file__", "")
+        if not path:
+            continue
+        if any(module.__name__.startswith(root + ".") for root in packages):
+            for _, cls in inspect.getmembers(module, inspect.isclass):
+                if issubclass(cls, SemantivaObject) and cls is not SemantivaObject:
+                    duplicates.append(cls)
+    # Deduplicate preserving order
+    seen = set()
+    components = []
+    for cls in duplicates:
+        if cls not in seen:
+            seen.add(cls)
+            components.append(cls)
+    return components
 
 
 def export_framework_ontology(output_path: str, packages: list[str]) -> None:
     """
     Export the Semantiva component ontology to a Turtle file with metadata.
     """
-    # Create a new RDF graph
     g = Graph()
-    g.bind("smtv", SMTV)  # Bind the semantic namespace
+    g.bind("smtv", SMTV)
 
-    # Iterate through all packages
+    g.add((SMTV.hasCategory, RDF.type, OWL.ObjectProperty))
+    g.add((SMTV.hasCategory, RDFS.label, Literal("has category")))
+
     for cls in collect_components(packages):
-        # Get class-level semantic metadata
-        package = cls.__module__.split(".")[0]
-        if hasattr(cls, "get_metadata"):
-            metadata = cls.get_metadata()
-            uri = SMTV[metadata["class_name"]]
+        if not hasattr(cls, "get_metadata"):
+            continue
+        metadata = cls.get_metadata()
+        class_name = metadata.get("class_name", cls.__name__)
+        uri = SMTV[class_name]
 
-            # Declare the class as OWL class
-            g.add((uri, RDF.type, OWL.Class))
-            # g.add((uri, RDFS.label, Literal(package)))
-            g.add((uri, RDFS.label, Literal(cls.__name__)))
+        # Declare as OWL class
+        g.add((uri, RDF.type, OWL.Class))
+        g.add((uri, RDFS.label, Literal(class_name)))
 
-            # if category != cls.__name__:
-            g.add((uri, RDFS.subClassOf, SMTV[cls.__bases__[0].__name__]))
+        # Subclass relationship for first base class
+        base = cls.__bases__[0]
+        if base is not object and hasattr(base, "__name__"):
+            g.add((uri, RDFS.subClassOf, SMTV[base.__name__]))
 
-            # Add semantic metadata triples
-            for key in metadata.keys():
-                if key not in PREDICATE_MAP:
-                    if key not in ("class_name",):
-                        print(
-                            f"Warning: No predicate found for key '{key}' in {cls.__name__}"
-                        )
-            for key, predicate in PREDICATE_MAP.items():
-                value = metadata.get(key)
-                if not value:
-                    continue
-                # Normalize list or single
-                if isinstance(value, (list, tuple)):
-                    for item in value:
-                        g.add((uri, predicate, Literal(str(item))))
-                else:
-                    g.add((uri, predicate, Literal(str(value))))
+        # Emit metadata triples
+        for key in metadata.keys():
+            if key not in PREDICATE_MAP and key != "class_name":
+                print(f"Warning: No predicate for '{key}' in {class_name}")
+        for key, predicate in PREDICATE_MAP.items():
+            value = metadata.get(key)
+            if not value:
+                continue
+            if isinstance(value, (list, tuple)):
+                for item in value:
+                    g.add((uri, predicate, Literal(str(item))))
+            else:
+                g.add((uri, predicate, Literal(str(value))))
+
+                # Group component under its category by adding an additional rdf:type
+        category = metadata.get("component_type")
+        if category:
+            smtv_category = (
+                SMTV[category] if category != class_name else SMTV[base.__name__]
+            )
+            g.add((uri, RDF.type, smtv_category))
 
     # Serialize to Turtle
     g.serialize(destination=output_path, format="turtle")
@@ -100,7 +109,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Export Semantiva component ontology to TTL with metadata"
+        description="Export Semantiva component ontology to TTL with category grouping"
     )
     parser.add_argument(
         "--output",
@@ -108,12 +117,8 @@ if __name__ == "__main__":
         default="semantiva_components.ttl",
         help="Destination TTL file",
     )
-
     parser.add_argument(
-        "--packages",
-        "-p",
-        default="semantiva",
-        help="Comma-separated list of packages to scan for components",
+        "--packages", "-p", default="semantiva", help="Comma-separated list of packages"
     )
     args = parser.parse_args()
     package_list = args.packages.split(",") if args.packages else []

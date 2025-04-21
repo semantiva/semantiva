@@ -131,8 +131,7 @@ class BaseDataProcessor(SemantivaObject, Generic[T]):
             component_metadata["output_data_type"] = cls.output_data_type().__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["input_data_type"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
+            pass
 
         return component_metadata
 
@@ -165,8 +164,7 @@ class DataOperation(BaseDataProcessor):
             component_metadata["output_data_type"] = cls.output_data_type().__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["input_data_type"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
+            pass
 
         # Define the metadata for the DataOperation
 
@@ -358,7 +356,7 @@ class DataProbe(BaseDataProcessor):
             component_metadata["input_data_type"] = cls.input_data_type().__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["input_data_type"] = "unknown"
+            pass
 
         return component_metadata
 

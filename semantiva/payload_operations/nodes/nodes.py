@@ -251,11 +251,7 @@ class PayloadSourceNode(DataNode):
             )
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["input_parameters"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     @classmethod
@@ -350,12 +346,7 @@ class PayloadSinkNode(DataNode):
             )
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["input_parameters"] = "unknown"
-            component_metadata["input_data_type"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     @classmethod
@@ -430,12 +421,7 @@ class DataSinkNode(DataNode):
             )
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["input_parameters"] = "unknown"
-            component_metadata["input_data_type"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     @classmethod
@@ -521,11 +507,7 @@ class DataSourceNode(DataNode):
             )
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["input_parameters"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     @classmethod
@@ -560,7 +542,7 @@ class DataSourceNode(DataNode):
         return []
 
 
-class OperationNode(DataNode):
+class DataOperationNode(DataNode):
     """
     A node that wraps a DataOperation.
     """
@@ -572,7 +554,7 @@ class OperationNode(DataNode):
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize an OperationNode with the specified data algorithm.
+        Initialize an DataOperationNode with the specified data algorithm.
 
         Args:
             processor (Type[BaseDataProcessor]): The base data processor for this node.
@@ -611,12 +593,7 @@ class OperationNode(DataNode):
             )
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["input_parameters"] = "unknown"
-            component_metadata["input_data_type"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     @classmethod
@@ -722,12 +699,7 @@ class ProbeContextInjectorNode(ProbeNode):
             )
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["input_parameters"] = "unknown"
-            component_metadata["input_data_type"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     @classmethod
@@ -853,12 +825,7 @@ class ProbeResultCollectorNode(ProbeNode):
             )
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["input_parameters"] = "unknown"
-            component_metadata["input_data_type"] = "unknown"
-            component_metadata["output_data_type"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     @classmethod
@@ -991,11 +958,7 @@ class ContextProcessorNode(PipelineNode):
 
         except Exception:
             # no binding available at this abstract level
-            component_metadata["wraped_component"] = "unknown"
-            component_metadata["wraped_component_docstring"] = "unknown"
-            component_metadata["required_context_keys"] = "unknown"
-            component_metadata["suppressed_context_keys"] = "unknown"
-            component_metadata["injected_context_keys"] = "unknown"
+            pass
         return component_metadata
 
     def __str__(self) -> str:

@@ -14,7 +14,7 @@ from .nodes import (
     PayloadSinkNode,
     DataSinkNode,
     DataSourceNode,
-    OperationNode,
+    DataOperationNode,
     ProbeContextInjectorNode,
     ProbeResultCollectorNode,
     ContextProcessorNode,
@@ -201,9 +201,9 @@ class NodeFactory:
         processor_class: Type[BaseDataProcessor],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> OperationNode:
-        """Factory function to create an extended OperationNode.
-        This function dynamically creates a subclass of OperationNode
+    ) -> DataOperationNode:
+        """Factory function to create an extended DataOperationNode.
+        This function dynamically creates a subclass of DataOperationNode
         with a specific data source class.
         Args:
             processor_class (Type[BaseDataProcessor]): The class of the data operation to be used.
@@ -215,7 +215,7 @@ class NodeFactory:
 
         node_class = NodeFactory._create_class(
             name=f"{processor_class.__name__}DataOperationNode",
-            base_cls=OperationNode,
+            base_cls=DataOperationNode,
             processor=processor_class,
         )
 

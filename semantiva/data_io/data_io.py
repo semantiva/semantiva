@@ -59,7 +59,7 @@ class DataSource(SemantivaObject):
             component_metadata["output_data_type"] = cls.output_data_type().__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["output_data_type"] = "unknown"
+            pass
 
         return component_metadata
 
@@ -104,7 +104,7 @@ class PayloadSource(SemantivaObject):
             component_metadata["output_data_type"] = cls.output_data_type().__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["output_data_type"] = "unknown"
+            pass
 
         return component_metadata
 
@@ -209,7 +209,7 @@ class DataSink(SemantivaObject, Generic[T]):
             component_metadata["input_data_type"] = cls.input_data_type().__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["input_data_type"] = "unknown"
+            pass
 
         return component_metadata
 
@@ -295,7 +295,7 @@ class PayloadSink(SemantivaObject, Generic[T]):
             component_metadata["input_data_type"] = cls.input_data_type().__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["input_data_type"] = "unknown"
+            pass
 
         return component_metadata
 
