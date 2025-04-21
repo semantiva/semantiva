@@ -232,6 +232,33 @@ class PayloadSourceNode(DataNode):
         )
 
     @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "PayloadSourceNode",
+            "wraps_component_type": "PayloadSource",
+            "input_data_type": "NoDataType",
+        }
+
+        try:
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["input_parameters"] = (
+                cls.processor.get_input_parameters()
+            )
+            component_metadata["output_data_type"] = (cls.output_data_type().__name__,)
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["input_parameters"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
+
+    @classmethod
     def output_data_type(cls):
         """
         Retrieve the node's output data type.
@@ -302,6 +329,36 @@ class PayloadSinkNode(DataNode):
         )
 
     @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "PayloadSinkNode",
+            "wraps_component_type": "PayloadSink",
+        }
+
+        try:
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["input_parameters"] = (
+                cls.processor.get_input_parameters()
+            )
+            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["output_data_type"] = (
+                cls.input_data_type().__name__,
+            )  # Same as input
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["input_parameters"] = "unknown"
+            component_metadata["input_data_type"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
+
+    @classmethod
     def get_created_keys(cls):
         """
         Retrieve a list of context keys that will be created by the processor.
@@ -343,6 +400,43 @@ class DataSinkNode(DataNode):
             processor_parameters,
             logger,
         )
+
+    @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "DataSinkNode",
+            "wraps_component_type": "DataSink",
+        }
+
+        try:
+            excluded_parameters = ["self", "data"]
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor._send_data, excluded_parameters
+                )
+            ]
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["input_parameters"] = (
+                annotated_parameter_list or "None",
+            )
+            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["output_data_type"] = (
+                cls.input_data_type().__name__,
+            )  # Same as input
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["input_parameters"] = "unknown"
+            component_metadata["input_data_type"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
 
     @classmethod
     def input_data_type(cls):
@@ -401,6 +495,40 @@ class DataSourceNode(DataNode):
         )
 
     @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "DataSourceNode",
+            "wraps_component_type": "DataSource",
+            "input_data_type": "NoDataType",
+        }
+
+        try:
+            excluded_parameters = ["self", "data"]
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor._send_data, excluded_parameters
+                )
+            ]
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["input_parameters"] = (
+                annotated_parameter_list or "None",
+            )
+            component_metadata["output_data_type"] = (cls.output_data_type().__name__,)
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["input_parameters"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
+
+    @classmethod
     def input_data_type(cls):
         """
         Retrieve the data type that will be consumed by the processor.
@@ -455,6 +583,41 @@ class OperationNode(DataNode):
             {} if processor_parameters is None else processor_parameters
         )
         super().__init__(processor, processor_parameters, logger)
+
+    @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "DataOperationNode",
+            "wraps_component_type": "DataOperation",
+        }
+
+        try:
+            excluded_parameters = ["self", "data"]
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor._send_data, excluded_parameters
+                )
+            ]
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["input_parameters"] = (
+                annotated_parameter_list or "None",
+            )
+            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["output_data_type"] = (cls.output_data_type().__name__,)
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["input_parameters"] = "unknown"
+            component_metadata["input_data_type"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
 
     @classmethod
     def input_data_type(cls):
@@ -530,6 +693,42 @@ class ProbeContextInjectorNode(ProbeNode):
         """
         self.context_keyword = context_keyword
         super().__init__(processor, processor_parameters, logger)
+
+    @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "ProbeContextInjectorNode",
+            "wraps_component_type": "DataProbe",
+        }
+
+        try:
+            excluded_parameters = ["self", "data"]
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor._send_data, excluded_parameters
+                )
+            ]
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["input_parameters"] = (
+                annotated_parameter_list or "None",
+            )
+            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            # The output data type is the same as the input data type for probe nodes
+            component_metadata["output_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["input_parameters"] = "unknown"
+            component_metadata["input_data_type"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
 
     @classmethod
     def input_data_type(cls):
@@ -625,6 +824,42 @@ class ProbeResultCollectorNode(ProbeNode):
         """
         super().__init__(processor, processor_parameters, logger)
         self._probed_data: List[Any] = []
+
+    @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "ProbeResultCollectorNode",
+            "wraps_component_type": "DataProbe",
+        }
+
+        try:
+            excluded_parameters = ["self", "data"]
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor._send_data, excluded_parameters
+                )
+            ]
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["input_parameters"] = (
+                annotated_parameter_list or "None",
+            )
+            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            # The output data type is the same as the input data type for probe nodes
+            component_metadata["output_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["input_parameters"] = "unknown"
+            component_metadata["input_data_type"] = "unknown"
+            component_metadata["output_data_type"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
 
     @classmethod
     def input_data_type(cls):
@@ -725,6 +960,43 @@ class ContextProcessorNode(PipelineNode):
         processor_config = processor_config or {}
         self.processor = processor(logger, **processor_config)
         self.processor_config = processor_config
+
+    @classmethod
+    def _define_metadata(cls):
+        component_metadata = {
+            "component_type": "ContextProcessorNode",
+            "wraps_component_type": "ContextProcessor",
+        }
+
+        try:
+            excluded_parameters = ["self", "data"]
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor._send_data, excluded_parameters
+                )
+            ]
+            component_metadata["wraped_component"] = cls.processor.__name__
+            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["required_context_keys"] = (
+                cls.get_required_keys() or "None",
+            )
+            component_metadata["suppressed_context_keys"] = (
+                cls.get_suppressed_keys() or "None"
+            )
+            # The output data type is the same as the input data type for probe nodes
+            component_metadata["injected_context_keys"] = (
+                cls.get_created_keys() or "None"
+            )
+
+        except Exception:
+            # no binding available at this abstract level
+            component_metadata["wraped_component"] = "unknown"
+            component_metadata["wraped_component_docstring"] = "unknown"
+            component_metadata["required_context_keys"] = "unknown"
+            component_metadata["suppressed_context_keys"] = "unknown"
+            component_metadata["injected_context_keys"] = "unknown"
+        return component_metadata
 
     def __str__(self) -> str:
         """

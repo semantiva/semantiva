@@ -92,15 +92,15 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
                 elem_meta = element_cls.get_metadata().get(
                     "component_type", element_cls.__name__
                 )
-                component_metadata["element_type"] = (
+                component_metadata["collection_element_type"] = (
                     f"{element_cls.__name__}<{elem_meta}>"
                 )
             else:
                 # element_cls is not a SemantivaObject subclass (e.g. still a TypeVar)
-                component_metadata["element_type"] = element_cls.__name__
+                component_metadata["collection_element_type"] = element_cls.__name__
         except Exception:
             # no binding available at this abstract level
-            component_metadata["element_type"] = "Unknown"
+            component_metadata["collection_element_type"] = "Unknown"
 
         return component_metadata
 

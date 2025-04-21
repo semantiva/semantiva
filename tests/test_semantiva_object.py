@@ -8,10 +8,13 @@ This module verifies that:
 """
 
 import pytest
+from pprint import pprint
+import inspect
 from semantiva.core.semantiva_object import (
     SemantivaObject,
     get_component_registry,
 )
+from semantiva.tools.export_ontology import collect_components
 
 
 # Dummy base to allow registration in subclasses (avoids direct SemantivaObject inheritance)
@@ -82,3 +85,81 @@ def test_semantic_id_format():
             assert (
                 str(metadata[key]) in semantic_id
             ), f"Metadata key '{key}' should appear in semantic_id."
+
+
+@pytest.mark.parametrize(
+    "component_cls,expected_metadata",
+    [
+        (
+            ValidComponent,
+            {
+                "class_name": "ValidComponent",
+                "docstring": inspect.getdoc(ValidComponent)
+                or "No documentation available.",
+                "component_type": "Test",
+                "some_key": "value",
+            },
+        ),
+        (
+            InvalidComponent,
+            None,  # This one is expected to raise TypeError, tested separately
+        ),
+        (
+            DummyBase,
+            {
+                "class_name": "DummyBase",
+                "docstring": inspect.getdoc(DummyBase) or "No documentation available.",
+            },
+        ),
+    ],
+)
+def test_get_metadata_values(component_cls, expected_metadata):
+    """
+    For every component that defines _define_metadata, test that get_metadata returns the correct values.
+    """
+    if expected_metadata is None:
+        with pytest.raises(TypeError):
+            component_cls.get_metadata()
+    else:
+        metadata = component_cls.get_metadata()
+        for key, value in expected_metadata.items():
+            assert (
+                metadata[key] == value
+            ), f"Metadata key '{key}' mismatch for {component_cls.__name__}"
+
+
+def test_semantic_id_metadata_consistency():
+    """
+    For every registered component, ensure that all get_metadata keys (except docstring, processor_docstring, class_name)
+    appear in the semantic_id output.
+    """
+    collect_components(["semantiva"])
+    registry = get_component_registry()
+    for category, classes in registry.items():
+        for cls in classes:
+            metadata = cls.get_metadata()
+            semantic_id = cls.semantic_id()
+            assert (
+                "component_type" in metadata
+            ), f"Component type not found in metadata for {cls.__name__}"
+            print(f"Testing {cls.__name__} for metadata consistency in metadata:")
+            pprint(metadata)
+            print(f"     semantic_id: {semantic_id}")
+            print("--------------------------")
+            for key, value in metadata.items():
+                if key not in (
+                    "docstring",
+                    "wraped_component_docstring",
+                    # "class_name",
+                ):
+                    print(f"     Checking key '{key}', {value} in semantic_id")
+                    if isinstance(value, list):
+                        for item in value:
+                            print(f"         Checking item '{item}' in semantic_id")
+                            assert (
+                                str(item) in semantic_id
+                            ), f"List item '{item}' for key '{key}' not found in semantic_id for {cls.__name__}"
+                    else:
+                        assert (
+                            str(value) in semantic_id
+                        ), f"Value for key '{key}' ({value}) not found in semantic_id for {cls.__name__}"

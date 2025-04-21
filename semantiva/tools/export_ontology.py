@@ -9,32 +9,9 @@ import sys
 import pkgutil
 import inspect
 import importlib
-from rdflib import Graph, Namespace, RDF, RDFS, OWL, Literal
-from semantiva.core.semantiva_object import SemantivaObject, get_component_registry
-
-# Define our semantic namespace    get_component_registry,
-
-SMTV = Namespace("http://semantiva.org/semantiva#")
-
-# Component metadata keys to predicate map
-# These are the keys that will be used to extract metadata from the component classes
-# and map them to the corresponding RDF predicates in the ontology.
-# The keys in this dictionary should match the keys used in the component classes' metadata
-PREDICATE_MAP = {
-    "component_type": SMTV.componentType,
-    "docstring": SMTV.docString,
-    "input_parameters": SMTV.inputParameter,
-    "created_keys": SMTV.createdKey,
-    "suppressed_keys": SMTV.suppressedKey,
-    "input_data_type": SMTV.inputDataType,
-    "output_data_type": SMTV.outputDataType,
-    "injected_context_keys": SMTV.injectedContextKey,
-    "payload_source": SMTV.payloadSource,
-    "payload_sink": SMTV.payloadSink,
-    "processor": SMTV.processor,
-    "processor_docstring": SMTV.processorDocString,
-    "context_processor": SMTV.contextProcessor,
-}
+from rdflib import Graph, RDF, RDFS, OWL, Literal
+from semantiva.core.semantiva_object import SemantivaObject
+from semantiva.core.semantiva_predicate_map import SMTV, PREDICATE_MAP
 
 
 def discover_and_import(package_name: str):
@@ -86,7 +63,7 @@ def export_framework_ontology(output_path: str, packages: list[str]) -> None:
         package = cls.__module__.split(".")[0]
         if hasattr(cls, "get_metadata"):
             metadata = cls.get_metadata()
-            uri = SMTV[cls.__name__]
+            uri = SMTV[metadata["class_name"]]
 
             # Declare the class as OWL class
             g.add((uri, RDF.type, OWL.Class))
@@ -97,6 +74,12 @@ def export_framework_ontology(output_path: str, packages: list[str]) -> None:
             g.add((uri, RDFS.subClassOf, SMTV[cls.__bases__[0].__name__]))
 
             # Add semantic metadata triples
+            for key in metadata.keys():
+                if key not in PREDICATE_MAP:
+                    if key not in ("class_name",):
+                        print(
+                            f"Warning: No predicate found for key '{key}' in {cls.__name__}"
+                        )
             for key, predicate in PREDICATE_MAP.items():
                 value = metadata.get(key)
                 if not value:
