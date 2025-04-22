@@ -14,6 +14,14 @@ from .nodes.nodes import (
     ContextProcessorNode,
     ProbeResultCollectorNode,
 )
+from semantiva.execution_tools.transport.transport import (
+    SemantivaTransport,
+    InMemorySemantivaTransport,
+)
+from semantiva.execution_tools.orchestrator.orchestrator import (
+    SemantivaOrchestrator,
+    LocalSemantivaOrchestrator,
+)
 
 
 class Pipeline(PayloadProcessor):
@@ -23,27 +31,17 @@ class Pipeline(PayloadProcessor):
     nodes: List[PipelineNode]
 
     def __init__(
-        self, pipeline_configuration: List[Dict], logger: Optional[Logger] = None
+        self,
+        pipeline_configuration: List[Dict],
+        logger: Logger | None = None,
+        transport: SemantivaTransport | None = None,
+        orchestrator: SemantivaOrchestrator | None = None,
     ):
-        """
-        Initialize a pipeline based on the provided configuration.
-
-        Args:
-            pipeline_configuration (List[Dict]): A list of dictionaries where each dictionary
-                                                 specifies the configuration for a node in the
-                                                 pipeline.
-            logger (Optional[Logger]): An optional logger instance for logging pipeline activities.
-
-        Example:
-            pipeline_configuration = [
-                {"processor": SomeDataOperation, "parameters": {"param1": value1}},
-                {"processor": SomeDataProbe, "context_keyword": "collected_data"}
-            ]
-        """
         super().__init__(logger)
-        self.nodes: List[PipelineNode] = []
-        self.pipeline_configuration: List[Dict] = pipeline_configuration
-        self.nodes = self._initialize_nodes()
+        self.pipeline_configuration = pipeline_configuration
+        self.transport = transport or InMemorySemantivaTransport()
+        self.orchestrator = orchestrator or LocalSemantivaOrchestrator()
+        self.nodes = self._initialize_nodes()  # existing initialization logic
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
             self.logger.debug("%s", self.inspect())
@@ -51,41 +49,18 @@ class Pipeline(PayloadProcessor):
     def _process(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
-        """
-        Executes the pipeline by processing data and context sequentially through each node.
-
-
-        Args:
-            data (BaseDataType): The initial input data for the pipeline.
-            context (ContextType): The initial context, which may be updated during processing.
-
-        Returns:
-            Tuple[BaseDataType, ContextType]: The final processed data and context.
-
-        Raises:
-            TypeError: If the node's expected input type does not match the current data type.
-        """
-
-        result_data, result_context = data, context
         self.logger.info("Start processing pipeline")
-        for index, node in enumerate(self.nodes, start=1):
-            self.logger.debug(
-                f"Processing node {index}: {type(node.processor).__name__} ({type(node).__name__})"
-            )
-            self.logger.debug(f"    Data: {result_data}, Context: {result_context}")
-            # Get the expected input type for the node's operation
-            input_type = node.processor.input_data_type()
+        self.stop_watch.start()  # existing pipeline timer start
 
-            if issubclass(type(result_data), input_type):
-                result_data, result_context = node.process(result_data, result_context)
+        result_data, result_context = self.orchestrator.execute(
+            nodes=self.nodes,
+            data=data,
+            context=context,
+            transport=self.transport,
+            logger=self.logger,
+        )
 
-            # Case 2: Incompatible data type
-            else:
-                raise TypeError(
-                    f"Incompatible data type for Node {node.processor.__class__.__name__} "
-                    f"expected {input_type}, but received {type(result_data)}."
-                )
-
+        self.stop_watch.stop()  # existing pipeline timer stop
         self.logger.info("Pipeline execution complete.")
         self.logger.debug(
             "Pipeline execution timing report: \n\tPipeline %s\n%s",
