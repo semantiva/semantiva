@@ -4,8 +4,8 @@ import pytest
 from semantiva.execution_tools.orchestrator.orchestrator import (
     LocalSemantivaOrchestrator,
 )
-from semantiva.execution_tools.transport.transport import InMemorySemantivaTransport
-from semantiva.execution_tools.executor.executor import SequentialSemantivaExecutor
+from semantiva.execution_tools.transport import InMemorySemantivaTransport
+from semantiva.execution_tools.executor import SequentialSemantivaExecutor
 from semantiva.payload_operations.pipeline import Pipeline
 from semantiva.context_processors.context_types import ContextType
 from tests.test_utils import FloatDataType, FloatMultiplyOperation
