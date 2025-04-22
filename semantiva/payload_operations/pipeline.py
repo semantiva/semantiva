@@ -14,7 +14,7 @@ from .nodes.nodes import (
     ContextProcessorNode,
     ProbeResultCollectorNode,
 )
-from semantiva.execution_tools.transport.transport import (
+from semantiva.execution_tools.transport import (
     SemantivaTransport,
     InMemorySemantivaTransport,
 )

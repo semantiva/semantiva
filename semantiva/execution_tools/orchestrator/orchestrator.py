@@ -4,7 +4,7 @@ from semantiva.data_types import BaseDataType
 from semantiva.context_processors.context_types import ContextType
 from semantiva.execution_tools.executor.executor import SemantivaExecutor
 from semantiva.execution_tools.executor.executor import SequentialSemantivaExecutor
-from semantiva.execution_tools.transport.transport import SemantivaTransport
+from semantiva.execution_tools.transport import SemantivaTransport
 from semantiva.payload_operations.nodes.nodes import PipelineNode
 from semantiva.logger import Logger
 

@@ -1,7 +1,8 @@
 import yaml
+from typing import List, Dict
 
 
-def load_pipeline_from_yaml(yaml_file: str) -> dict:
+def load_pipeline_from_yaml(yaml_file: str) -> List[Dict]:
     """
     Loads a pipeline configuration from a YAML file.
 
