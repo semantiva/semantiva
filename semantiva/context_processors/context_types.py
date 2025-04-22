@@ -109,7 +109,7 @@ class ContextType(SemantivaObject):
         return self._context_container == other._context_container
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the ContextType
         component_metadata = {
@@ -123,7 +123,7 @@ class ContextCollectionType(ContextType):
     """A ContextType extension that manages a global context and multiple individual ContextType instances."""
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the ContextCollectionType
         component_metadata = {

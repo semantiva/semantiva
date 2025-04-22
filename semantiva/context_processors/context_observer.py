@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Dict, Any, Optional, Union
 from collections import ChainMap
 from typing import Any
 from semantiva.core import SemantivaObject
@@ -18,7 +18,7 @@ class ContextObserver(SemantivaObject):
         self.observer_context = ContextType
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         """
         Define metadata for the ContextObserver class.
 

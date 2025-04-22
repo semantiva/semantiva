@@ -197,7 +197,7 @@ class NodeFactory:
         )
 
     @staticmethod
-    def create_operation_node(
+    def create_data_operation_node(
         processor_class: Type[BaseDataProcessor],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
@@ -358,7 +358,7 @@ def node_factory(
             raise ValueError(
                 "context_keyword must not be defined for DataOperation nodes."
             )
-        return NodeFactory.create_operation_node(processor, parameters, logger)
+        return NodeFactory.create_data_operation_node(processor, parameters, logger)
     if issubclass(processor, DataProbe):
         if context_keyword is not None:
             return NodeFactory.create_probe_context_injector(

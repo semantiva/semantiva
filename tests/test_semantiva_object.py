@@ -10,6 +10,7 @@ This module verifies that:
 import pytest
 from pprint import pprint
 import inspect
+from typing import Dict, Any
 from semantiva.core.semantiva_object import (
     SemantivaObject,
     get_component_registry,
@@ -20,7 +21,7 @@ from semantiva.tools.export_ontology import collect_components
 # Dummy base to allow registration in subclasses (avoids direct SemantivaObject inheritance)
 class DummyBase(SemantivaObject):
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         # Return an empty dict so that DummyBase itself doesn't register (no component_type)
         return {}
 
@@ -28,7 +29,7 @@ class DummyBase(SemantivaObject):
 # Valid component should be automatically registered in the global registry
 class ValidComponent(DummyBase):
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         return {"component_type": "Test", "some_key": "value"}
 
 

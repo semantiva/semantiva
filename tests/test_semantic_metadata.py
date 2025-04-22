@@ -32,7 +32,7 @@ def test_payloadsource_semantic_metadata():
     print_metadata(FloatPayloadSource)
 
     assert FloatPayloadSource.get_metadata()["output_data_type"] == "FloatDataType"
-    assert FloatPayloadSource.get_metadata()["injected_context_keys"] == "None"
+    assert FloatPayloadSource.get_metadata()["injected_context_keys"] == []
 
 
 def test_datasink_semantic_metadata():

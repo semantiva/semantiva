@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Type, TypeVar, Generic, Iterator, get_args, Optional
+from typing import Dict, Any, Type, TypeVar, Generic, Iterator, get_args, Optional
 from semantiva.core import SemantivaObject
 
 T = TypeVar("T")
@@ -49,7 +49,7 @@ class BaseDataType(SemantivaObject, Generic[T]):
         """
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the BaseDataType
         component_metadata = {
@@ -79,7 +79,7 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
         super().__init__(data)
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the DataCollectionType
         component_metadata = {
@@ -97,7 +97,7 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
                 )
             else:
                 # element_cls is not a SemantivaObject subclass (e.g. still a TypeVar)
-                component_metadata["collection_element_type"] = element_cls.__name__
+                component_metadata["collection_element_type"] = BaseDataType.__name__
         except Exception:
             # no binding available at this abstract level
             pass

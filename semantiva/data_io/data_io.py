@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Tuple, TypeVar, Generic, List
+from typing import Dict, Any, Tuple, TypeVar, Generic, List
 from semantiva.context_processors import ContextType
 from semantiva.data_types import BaseDataType
 from semantiva.core import SemantivaObject
@@ -39,7 +39,7 @@ class DataSource(SemantivaObject):
         return cls._get_data(*args, **kwargs)
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         excluded_parameters = ["self", "data"]
 
@@ -83,7 +83,7 @@ class PayloadSource(SemantivaObject):
     """Abstract base class for providing structured payloads (data and context) in Semantiva."""
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         excluded_parameters = ["self", "data"]
 
@@ -96,12 +96,15 @@ class PayloadSource(SemantivaObject):
 
         component_metadata = {
             "component_type": "PayloadSource",
-            "input_parameters": annotated_parameter_list or "None",
-            "injected_context_keys": cls.injected_context_keys() or "None",
+            "input_parameters": annotated_parameter_list,
+            "injected_context_keys": cls.injected_context_keys(),
         }
 
         try:
-            component_metadata["output_data_type"] = cls.output_data_type().__name__
+            output_type = cls.output_data_type()
+            component_metadata["output_data_type"] = getattr(
+                output_type, "__name__", str(output_type)
+            )
         except Exception:
             # no binding available at this abstract level
             pass
@@ -189,7 +192,7 @@ class DataSink(SemantivaObject, Generic[T]):
         ...
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         excluded_parameters = ["self", "data"]
 
@@ -206,7 +209,10 @@ class DataSink(SemantivaObject, Generic[T]):
         }
 
         try:
-            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            input_type = cls.input_data_type()
+            component_metadata["input_data_type"] = getattr(
+                input_type, "__name__", str(input_type)
+            )
         except Exception:
             # no binding available at this abstract level
             pass
@@ -276,7 +282,7 @@ class PayloadSink(SemantivaObject, Generic[T]):
         self._send_payload(data, context, *args, **kwargs)
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         excluded_parameters = ["self", "data"]
 
         annotated_parameter_list = [
@@ -292,7 +298,10 @@ class PayloadSink(SemantivaObject, Generic[T]):
         }
 
         try:
-            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            input_type = cls.input_data_type()
+            component_metadata["input_data_type"] = getattr(
+                input_type, "__name__", str(input_type)
+            )
         except Exception:
             # no binding available at this abstract level
             pass

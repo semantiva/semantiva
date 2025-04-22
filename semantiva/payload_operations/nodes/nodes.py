@@ -232,25 +232,27 @@ class PayloadSourceNode(DataNode):
         )
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "PayloadSourceNode",
             "wraps_component_type": "PayloadSource",
             "input_data_type": "NoDataType",
         }
 
         try:
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
+            )
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
+            )
+            assert hasattr(cls.processor, "get_input_parameters")
             component_metadata["input_parameters"] = (
                 cls.processor.get_input_parameters()
             )
-            component_metadata["output_data_type"] = (cls.output_data_type().__name__,)
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
-            )
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
-            # no binding available at this abstract level
             pass
         return component_metadata
 
@@ -262,7 +264,7 @@ class PayloadSourceNode(DataNode):
         return cls.processor.output_data_type()
 
     @classmethod
-    def get_created_keys(cls):
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys that will be created by the processor.
 
@@ -325,32 +327,35 @@ class PayloadSinkNode(DataNode):
         )
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "PayloadSinkNode",
             "wraps_component_type": "PayloadSink",
         }
 
         try:
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
+            )
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
+            )
+            assert hasattr(cls.processor, "get_input_parameters")
             component_metadata["input_parameters"] = (
                 cls.processor.get_input_parameters()
             )
-            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
             component_metadata["output_data_type"] = (
-                cls.input_data_type().__name__,
+                cls.input_data_type().__name__
             )  # Same as input
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
-            )
+
         except Exception:
             # no binding available at this abstract level
             pass
         return component_metadata
 
     @classmethod
-    def get_created_keys(cls):
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys that will be created by the processor.
 
@@ -393,32 +398,33 @@ class DataSinkNode(DataNode):
         )
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "DataSinkNode",
             "wraps_component_type": "DataSink",
         }
 
         try:
             excluded_parameters = ["self", "data"]
+            assert hasattr(cls.processor, "_send_data")
             annotated_parameter_list = [
                 f"{param_name}: {param_type}"
                 for param_name, param_type in cls._retrieve_parameter_signatures(
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
-            component_metadata["input_parameters"] = (
-                annotated_parameter_list or "None",
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
+            )
+            component_metadata["input_parameters"] = annotated_parameter_list
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
             component_metadata["output_data_type"] = (
-                cls.input_data_type().__name__,
+                cls.input_data_type().__name__
             )  # Same as input
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
-            )
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
             # no binding available at this abstract level
             pass
@@ -445,7 +451,7 @@ class DataSinkNode(DataNode):
         return cls.input_data_type()
 
     @classmethod
-    def get_created_keys(cls):
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys that will be created by the processor.
 
@@ -481,8 +487,8 @@ class DataSourceNode(DataNode):
         )
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "DataSourceNode",
             "wraps_component_type": "DataSource",
             "input_data_type": "NoDataType",
@@ -490,21 +496,22 @@ class DataSourceNode(DataNode):
 
         try:
             excluded_parameters = ["self", "data"]
+            assert hasattr(cls.processor, "_send_data")
             annotated_parameter_list = [
                 f"{param_name}: {param_type}"
                 for param_name, param_type in cls._retrieve_parameter_signatures(
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
-            component_metadata["input_parameters"] = (
-                annotated_parameter_list or "None",
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["output_data_type"] = (cls.output_data_type().__name__,)
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
             )
+            component_metadata["input_parameters"] = annotated_parameter_list or "None"
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
             # no binding available at this abstract level
             pass
@@ -531,7 +538,7 @@ class DataSourceNode(DataNode):
         return cls.processor.output_data_type()
 
     @classmethod
-    def get_created_keys(cls):
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys that will be created by the processor.
 
@@ -567,30 +574,31 @@ class DataOperationNode(DataNode):
         super().__init__(processor, processor_parameters, logger)
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "DataOperationNode",
             "wraps_component_type": "DataOperation",
         }
 
         try:
             excluded_parameters = ["self", "data"]
+            assert hasattr(cls.processor, "_send_data")
             annotated_parameter_list = [
                 f"{param_name}: {param_type}"
                 for param_name, param_type in cls._retrieve_parameter_signatures(
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
-            component_metadata["input_parameters"] = (
-                annotated_parameter_list or "None",
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
-            component_metadata["output_data_type"] = (cls.output_data_type().__name__,)
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
             )
+            component_metadata["input_parameters"] = annotated_parameter_list
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
             # no binding available at this abstract level
             pass
@@ -615,7 +623,7 @@ class DataOperationNode(DataNode):
         return cls.processor.output_data_type()
 
     @classmethod
-    def get_created_keys(cls):
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys that will be created by the processor.
 
@@ -672,31 +680,32 @@ class ProbeContextInjectorNode(ProbeNode):
         super().__init__(processor, processor_parameters, logger)
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "ProbeContextInjectorNode",
             "wraps_component_type": "DataProbe",
         }
 
         try:
             excluded_parameters = ["self", "data"]
+            assert hasattr(cls.processor, "_send_data")
             annotated_parameter_list = [
                 f"{param_name}: {param_type}"
                 for param_name, param_type in cls._retrieve_parameter_signatures(
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
-            component_metadata["input_parameters"] = (
-                annotated_parameter_list or "None",
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
+            )
+            component_metadata["input_parameters"] = annotated_parameter_list
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
             # The output data type is the same as the input data type for probe nodes
-            component_metadata["output_data_type"] = (cls.input_data_type().__name__,)
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
-            )
+            component_metadata["output_data_type"] = cls.input_data_type().__name__
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
             # no binding available at this abstract level
             pass
@@ -720,7 +729,7 @@ class ProbeContextInjectorNode(ProbeNode):
         return cls.processor.input_data_type()
 
     @classmethod
-    def get_created_keys(cls):
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve a list of context keys that will be created by the processor.
 
@@ -798,31 +807,32 @@ class ProbeResultCollectorNode(ProbeNode):
         self._probed_data: List[Any] = []
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "ProbeResultCollectorNode",
             "wraps_component_type": "DataProbe",
         }
 
         try:
             excluded_parameters = ["self", "data"]
+            assert hasattr(cls.processor, "_send_data")
             annotated_parameter_list = [
                 f"{param_name}: {param_type}"
                 for param_name, param_type in cls._retrieve_parameter_signatures(
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
-            component_metadata["input_parameters"] = (
-                annotated_parameter_list or "None",
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["input_data_type"] = (cls.input_data_type().__name__,)
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
+            )
+            component_metadata["input_parameters"] = annotated_parameter_list
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
             # The output data type is the same as the input data type for probe nodes
-            component_metadata["output_data_type"] = (cls.input_data_type().__name__,)
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
-            )
+            component_metadata["output_data_type"] = cls.input_data_type().__name__
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
             # no binding available at this abstract level
             pass
@@ -870,7 +880,7 @@ class ProbeResultCollectorNode(ProbeNode):
         self._probed_data.clear()
 
     @classmethod
-    def get_created_keys(cls):
+    def get_created_keys(cls) -> List[str]:
         """
         Retrieve the list of created keys.
         Returns:
@@ -929,32 +939,23 @@ class ContextProcessorNode(PipelineNode):
         self.processor_config = processor_config
 
     @classmethod
-    def _define_metadata(cls):
-        component_metadata = {
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
             "component_type": "ContextProcessorNode",
             "wraps_component_type": "ContextProcessor",
         }
 
         try:
-            excluded_parameters = ["self", "data"]
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
-            component_metadata["wraped_component"] = cls.processor.__name__
-            component_metadata["wraped_component_docstring"] = cls.processor.__doc__
-            component_metadata["required_context_keys"] = (
-                cls.get_required_keys() or "None",
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["suppressed_context_keys"] = (
-                cls.get_suppressed_keys() or "None"
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
             )
+            component_metadata["required_context_keys"] = cls.get_required_keys()
+            component_metadata["suppressed_context_keys"] = cls.get_suppressed_keys()
             # The output data type is the same as the input data type for probe nodes
-            component_metadata["injected_context_keys"] = (
-                cls.get_created_keys() or "None"
-            )
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
 
         except Exception:
             # no binding available at this abstract level

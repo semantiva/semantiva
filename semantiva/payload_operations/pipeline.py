@@ -197,7 +197,7 @@ class Pipeline(PayloadProcessor):
         return nodes
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the Pipeline class
         component_metadata = {

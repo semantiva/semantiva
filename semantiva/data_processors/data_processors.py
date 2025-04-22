@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, List, Optional, Type, TypeVar, Generic
+from typing import Dict, Any, List, Optional, Type, TypeVar, Generic
 from abc import abstractmethod
 from semantiva.context_processors import ContextObserver
 from semantiva.core import SemantivaObject
@@ -111,7 +111,7 @@ class BaseDataProcessor(SemantivaObject, Generic[T]):
         return f"{cls.__name__}"
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         excluded_parameters = ["self", "data"]
 
         annotated_parameter_list = [
@@ -128,7 +128,8 @@ class BaseDataProcessor(SemantivaObject, Generic[T]):
 
         try:
             component_metadata["input_data_type"] = cls.input_data_type().__name__
-            component_metadata["output_data_type"] = cls.output_data_type().__name__
+            if hasattr(cls, "output_data_type"):
+                component_metadata["output_data_type"] = cls.output_data_type().__name__
         except Exception:
             # no binding available at this abstract level
             pass
@@ -142,7 +143,7 @@ class DataOperation(BaseDataProcessor):
     context_observer: Optional[ContextObserver]
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         # Retrieve the parameter signatures for the _process_logic method
         # and exclude the 'self' and 'data' parameters from the metadata
         excluded_parameters = ["self", "data"]
@@ -334,7 +335,7 @@ class DataProbe(BaseDataProcessor):
         return []
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         # Retrieve the parameter signatures for the _process_logic method
         # and exclude the 'self' and 'data' parameters from the metadata
         excluded_parameters = ["self", "data"]
