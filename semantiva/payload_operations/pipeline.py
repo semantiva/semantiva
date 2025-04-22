@@ -17,17 +17,7 @@ from .nodes.nodes import (
 
 
 class Pipeline(PayloadProcessor):
-    """
-    Represents a pipeline for orchestrating multiple payload operations.
-
-    Processes data and context through a series of operations, applying parameters
-    from the pipeline configuration or the context. Data slicing occurs when
-    needed. If the required data type is incompatible, an error is raised.
-
-    Attributes:
-        pipeline_configuration (List[Dict]): Configuration details for each operation.
-        nodes (List[Node]): The list of processing nodes in this pipeline.
-    """
+    """A class for orchestrating multiple payload operations by sequentially processing data and context."""
 
     pipeline_configuration: List[Dict]
     nodes: List[PipelineNode]
@@ -207,7 +197,7 @@ class Pipeline(PayloadProcessor):
         return nodes
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the Pipeline class
         component_metadata = {

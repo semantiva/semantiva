@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, List, Optional, Type, TypeVar, Generic
+from typing import Dict, Any, List, Optional, Type, TypeVar, Generic
 from abc import abstractmethod
 from semantiva.context_processors import ContextObserver
 from semantiva.core import SemantivaObject
@@ -10,13 +10,7 @@ T = TypeVar("T", bound=BaseDataType)
 
 
 class BaseDataProcessor(SemantivaObject, Generic[T]):
-    """
-    Abstract base class for all data processors in Semantiva.
-
-    This class defines a standardized structure for implementing data
-    processing tasks, ensuring consistency and extensibility across different
-    types of data transformations and analyses.
-    """
+    """Abstract base class for data processing algorithms in Semantiva."""
 
     logger: Optional[Logger]
 
@@ -116,26 +110,40 @@ class BaseDataProcessor(SemantivaObject, Generic[T]):
     def __str__(cls) -> str:
         return f"{cls.__name__}"
 
+    @classmethod
+    def _define_metadata(cls) -> Dict[str, Any]:
+        excluded_parameters = ["self", "data"]
+
+        annotated_parameter_list = [
+            f"{param_name}: {param_type}"
+            for param_name, param_type in cls._retrieve_parameter_signatures(
+                cls._process_logic, excluded_parameters
+            )
+        ]
+
+        component_metadata = {
+            "component_type": "BaseDataProcessor",
+            "input_parameters": annotated_parameter_list or "None",
+        }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            if hasattr(cls, "output_data_type"):
+                component_metadata["output_data_type"] = cls.output_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            pass
+
+        return component_metadata
+
 
 class DataOperation(BaseDataProcessor):
-    """
-    A data processing component within Semantiva that modifies input data.
-
-    `DataOperation` extends `BaseDataProcessor` to provide transformation
-    capabilities while integrating with a `ContextObserver` for managing
-    context updates. Unlike `DataProbe`, which analyzes data without
-    modification, `DataOperation` applies computational transformations to
-    produce a modified output.
-
-    Attributes:
-        context_observer (Optional[ContextObserver]): An optional observer for tracking
-            and managing context updates during processing.
-    """
+    """A data processor that applies computational transformations to input data while managing context updates."""
 
     context_observer: Optional[ContextObserver]
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         # Retrieve the parameter signatures for the _process_logic method
         # and exclude the 'self' and 'data' parameters from the metadata
         excluded_parameters = ["self", "data"]
@@ -147,13 +155,19 @@ class DataOperation(BaseDataProcessor):
             )
         ]
 
-        # Define the metadata for the DataOperation
         component_metadata = {
             "component_type": "DataOperation",
-            "input_data_type": cls.input_data_type().__name__,
-            "output_data_type": cls.output_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            pass
+
+        # Define the metadata for the DataOperation
 
         return component_metadata
 
@@ -304,11 +318,7 @@ class OperationTopologyFactory:
 
 
 class DataProbe(BaseDataProcessor):
-    """
-    Represents a probe operation for monitoring or inspecting data.
-
-    This class can be extended to implement specific probing functionalities.
-    """
+    """DataProbe analyzes input data without modifying it."""
 
     def __init__(self, logger=None):
         super().__init__(logger)
@@ -325,7 +335,7 @@ class DataProbe(BaseDataProcessor):
         return []
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         # Retrieve the parameter signatures for the _process_logic method
         # and exclude the 'self' and 'data' parameters from the metadata
         excluded_parameters = ["self", "data"]
@@ -340,9 +350,14 @@ class DataProbe(BaseDataProcessor):
         # Define the metadata for the DataProbe
         component_metadata = {
             "component_type": "DataProbe",
-            "input_data_type": cls.input_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            pass
 
         return component_metadata
 

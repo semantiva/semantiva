@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Dict, Any, Optional, Union
 from collections import ChainMap
 from typing import Any
 from semantiva.core import SemantivaObject
@@ -6,9 +6,7 @@ from .context_types import ContextType, ContextCollectionType
 
 
 class ContextObserver(SemantivaObject):
-    """
-    Centralized manager for context slicing, merging, and updates
-    """
+    """Base class for all nodes in semantiva pipelines responsible for context propagation and updates."""
 
     def __init__(self):
         """
@@ -18,6 +16,19 @@ class ContextObserver(SemantivaObject):
             context (dict): A dictionary to store contextual key-value pairs.
         """
         self.observer_context = ContextType
+
+    @classmethod
+    def _define_metadata(cls) -> Dict[str, Any]:
+        """
+        Define metadata for the ContextObserver class.
+
+        Returns:
+            dict: Metadata dictionary containing component type and context type.
+        """
+        component_metadata = {
+            "component_type": "ContextObserver",
+        }
+        return component_metadata
 
     @staticmethod
     def update_context(

@@ -14,6 +14,7 @@ dependencies = [
     "pyyaml",
     "types-PyYAML",
     "coverage",
+    "rdflib",
 ]
 distribution = true
 

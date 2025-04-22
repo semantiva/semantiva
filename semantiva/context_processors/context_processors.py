@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import List, Optional, Union
+from abc import abstractmethod
+from typing import Dict, Any, List, Optional, Union
 from semantiva.context_processors.context_types import ContextType
 from semantiva.workflows.fitting_model import FittingModel
 from semantiva.data_types.data_types import BaseDataType
@@ -95,7 +95,7 @@ class ContextProcessor(SemantivaObject):
         return f"{self.__class__.__name__}"
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         excluded_parameters = ["cls", "self", "data"]
 
         annotated_parameter_list = [

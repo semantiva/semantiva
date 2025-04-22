@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Tuple, TypeVar, Generic, List
+from typing import Dict, Any, Tuple, TypeVar, Generic, List
 from semantiva.context_processors import ContextType
 from semantiva.data_types import BaseDataType
 from semantiva.core import SemantivaObject
@@ -8,17 +8,7 @@ T = TypeVar("T", bound=BaseDataType)
 
 
 class DataSource(SemantivaObject):
-    """
-    Abstract base class for data sources within the framework.
-
-    A `DataSource` represents an entity that provides data to be consumed
-    by other components in the framework.
-
-    Methods:
-        _get_data: Abstract method to implement the logic for retrieving data.
-        get_data: Public method to fetch data by invoking `_get_data`.
-        output_data_type: Abstract method to define the type of data provided.
-    """
+    """Abstract base class representing a data source in Semantiva."""
 
     @classmethod
     @abstractmethod
@@ -49,7 +39,7 @@ class DataSource(SemantivaObject):
         return cls._get_data(*args, **kwargs)
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         excluded_parameters = ["self", "data"]
 
@@ -62,9 +52,14 @@ class DataSource(SemantivaObject):
 
         component_metadata = {
             "component_type": "DataSource",
-            "output_data_type": cls.output_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+        except Exception:
+            # no binding available at this abstract level
+            pass
 
         return component_metadata
 
@@ -85,20 +80,10 @@ class DataSource(SemantivaObject):
 
 
 class PayloadSource(SemantivaObject):
-    """
-    Abstract base class for payload sources within the framework.
-
-    A `PayloadSource` provides structured payloads for processing within
-    the framework.
-
-    Methods:
-        _get_payload: Abstract method to implement the logic for retrieving payloads.
-        get_payload: Public method to fetch payloads by invoking `_get_payload`.
-        output_data_type: Abstract method to define the type of payload provided.
-    """
+    """Abstract base class for providing structured payloads (data and context) in Semantiva."""
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         excluded_parameters = ["self", "data"]
 
@@ -111,10 +96,18 @@ class PayloadSource(SemantivaObject):
 
         component_metadata = {
             "component_type": "PayloadSource",
-            "output_data_type": cls.output_data_type().__name__,
-            "input_parameters": annotated_parameter_list or "None",
-            "injected_context_keys": cls.injected_context_keys() or "None",
+            "input_parameters": annotated_parameter_list,
+            "injected_context_keys": cls.injected_context_keys(),
         }
+
+        try:
+            output_type = cls.output_data_type()
+            component_metadata["output_data_type"] = getattr(
+                output_type, "__name__", str(output_type)
+            )
+        except Exception:
+            # no binding available at this abstract level
+            pass
 
         return component_metadata
 
@@ -182,17 +175,7 @@ class PayloadSource(SemantivaObject):
 
 
 class DataSink(SemantivaObject, Generic[T]):
-    """
-    Abstract base class for data sinks within the framework.
-
-    A `DataSink` represents an entity responsible for consuming and storing
-    data provided by other components in the framework.
-
-    Methods:
-        _send_data: Abstract method to implement the logic for sending data.
-        send_data: Public method to send data by invoking `_send_data`.
-        input_data_type: Abstract method to define the type of data consumed.
-    """
+    """Abstract base class for data sinks that consume and store data."""
 
     @abstractmethod
     def _send_data(self, data: T, *args, **kwargs):
@@ -209,7 +192,7 @@ class DataSink(SemantivaObject, Generic[T]):
         ...
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         excluded_parameters = ["self", "data"]
 
@@ -222,9 +205,17 @@ class DataSink(SemantivaObject, Generic[T]):
 
         component_metadata = {
             "component_type": "DataSink",
-            "input_data_type": cls.input_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            input_type = cls.input_data_type()
+            component_metadata["input_data_type"] = getattr(
+                input_type, "__name__", str(input_type)
+            )
+        except Exception:
+            # no binding available at this abstract level
+            pass
 
         return component_metadata
 
@@ -257,16 +248,7 @@ class DataSink(SemantivaObject, Generic[T]):
 
 
 class PayloadSink(SemantivaObject, Generic[T]):
-    """
-    Abstract base class for payload sinks within the framework.
-
-    A `PayloadSink` represents an entity responsible for consuming and storing
-    both data and its associated context provided by other components in the framework.
-
-    Methods:
-        _send_payload: Abstract method to implement the logic for consuming data and context.
-        send_payload: Public method to consume data and context by invoking `_send_payload`.
-    """
+    """Abstract base class for payload sinks that consume and store data along with its associated context."""
 
     @abstractmethod
     def _send_payload(self, data: T, context: ContextType, *args, **kwargs):
@@ -300,7 +282,7 @@ class PayloadSink(SemantivaObject, Generic[T]):
         self._send_payload(data, context, *args, **kwargs)
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
         excluded_parameters = ["self", "data"]
 
         annotated_parameter_list = [
@@ -312,9 +294,17 @@ class PayloadSink(SemantivaObject, Generic[T]):
 
         component_metadata = {
             "component_type": "PayloadSink",
-            "input_data_type": cls.input_data_type().__name__,
             "input_parameters": annotated_parameter_list or "None",
         }
+
+        try:
+            input_type = cls.input_data_type()
+            component_metadata["input_data_type"] = getattr(
+                input_type, "__name__", str(input_type)
+            )
+        except Exception:
+            # no binding available at this abstract level
+            pass
 
         return component_metadata
 

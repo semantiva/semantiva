@@ -14,7 +14,7 @@ from .nodes import (
     PayloadSinkNode,
     DataSinkNode,
     DataSourceNode,
-    OperationNode,
+    DataOperationNode,
     ProbeContextInjectorNode,
     ProbeResultCollectorNode,
     ContextProcessorNode,
@@ -108,23 +108,12 @@ class NodeFactory:
             PayloadSourceNode: An instance of a dynamically created subclass of PayloadSourceNode.
         """
 
+        # Wrap the data IO class in a DataOperation subclass
         processor = DataIOWrapperFactory.create_data_operation(data_io_class)
-
-        def _define_metadata(cls):  # IMPROVE
-            return {
-                "component_type": "PayloadSourceNode",
-                "payload_source": data_io_class.__name__,
-                "payload_source_doc": data_io_class.__doc__,
-                "input_data_type": "NoDataType",
-                "output_data_type": cls.output_data_type().__name__,
-                "injected_context_keys": cls.get_created_keys() or "None",
-                "parameters_schema": data_io_class.get_input_parameters(),
-            }
 
         node_class = NodeFactory._create_class(
             name="PayloadSourceNode",
             base_cls=PayloadSourceNode,
-            _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
         )
         return node_class(
@@ -147,23 +136,9 @@ class NodeFactory:
 
         processor = DataIOWrapperFactory.create_data_operation(data_io_class)
 
-        def _define_metadata(cls):  # IMPROVE
-
-            # Define the metadata for the PayloadSinkNode
-            component_metadata = {
-                "component_type": "PayloadSinkNode",
-                "payload_source": cls.data_io_class.__name__,
-                "input_parameters": cls.data_io_class.get_input_parameters(),
-                "input_data_type": cls.input_data_type(),
-                "output_data_type": cls.input_data_type(),  # DataSinkNodes act as data passthrough
-                "injected_context_keys": cls.get_created_keys() or "None",
-            }
-            return component_metadata
-
         node_class = NodeFactory._create_class(
             name=f"{data_io_class.__name__}PayloadSinkNode",
             base_cls=PayloadSinkNode,
-            _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
         )
         return node_class(processor=processor, processor_parameters=parameters)
@@ -184,31 +159,9 @@ class NodeFactory:
 
         processor = DataIOWrapperFactory.create_data_operation(data_io_class)
 
-        def _define_metadata(cls):
-            excluded_parameters = ["self", "data"]
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
-
-            # Define the metadata for the DataSinkNode
-            component_metadata = {
-                "component_type": "DataSinkNode",
-                "processor": cls.processor.__name__,
-                "processor_docstring": cls.processor.get_metadata().get("docstring"),
-                "input_parameters": annotated_parameter_list or "None",
-                "input_data_type": cls.input_data_type().__name__,
-                "output_data_type": cls.input_data_type().__name__,  # DataSinkNodes act as data passthrough
-                "injected_context_keys": cls.get_created_keys() or "None",
-            }
-            return component_metadata
-
         node_class = NodeFactory._create_class(
             name=f"{data_io_class.__name__}DataSinkNode",
             base_cls=DataSinkNode,
-            _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
         )
 
@@ -233,23 +186,9 @@ class NodeFactory:
 
         processor = DataIOWrapperFactory.create_data_operation(data_io_class)
 
-        def _define_metadata(cls) -> Dict:
-
-            # Define the metadata for the DataSourceNode
-            component_metadata = {
-                "component_type": "DataSourceNode",
-                "processor": cls.processor.__name__,
-                "processor_docstring": cls.processor.get_metadata().get("docstring"),
-                "input_data_type": "NoDataType",
-                "output_data_type": cls.output_data_type().__name__,
-                "injected_context_keys": cls.get_created_keys() or "None",
-            }
-            return component_metadata
-
         node_class = NodeFactory._create_class(
             name="DataSourceNode",
             base_cls=DataSourceNode,
-            _define_metadata=classmethod(_define_metadata),
             processor=data_io_class,
         )
 
@@ -258,13 +197,13 @@ class NodeFactory:
         )
 
     @staticmethod
-    def create_operation_node(
+    def create_data_operation_node(
         processor_class: Type[BaseDataProcessor],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> OperationNode:
-        """Factory function to create an extended OperationNode.
-        This function dynamically creates a subclass of OperationNode
+    ) -> DataOperationNode:
+        """Factory function to create an extended DataOperationNode.
+        This function dynamically creates a subclass of DataOperationNode
         with a specific data source class.
         Args:
             processor_class (Type[BaseDataProcessor]): The class of the data operation to be used.
@@ -274,24 +213,9 @@ class NodeFactory:
             DataOperationNode: An instance of a dynamically created subclass of DataSourceNode.
         """
 
-        def _define_metadata(cls) -> Dict:
-            # Define the metadata for the DataOperationNode
-            component_metadata = {
-                "component_type": "DataOperationNode",
-                "processor": cls.processor.__name__,
-                "processor_docstring": cls.processor.get_metadata().get("docstring"),
-                "input_parameters": cls.processor.get_processing_parameter_names(),
-                "input_data_type": cls.input_data_type().__name__,
-                "output_data_type": cls.output_data_type().__name__,
-                "injected_context_keys": cls.get_created_keys() or "None",
-            }
-
-            return component_metadata
-
         node_class = NodeFactory._create_class(
             name=f"{processor_class.__name__}DataOperationNode",
-            base_cls=OperationNode,
-            _define_metadata=classmethod(_define_metadata),
+            base_cls=DataOperationNode,
             processor=processor_class,
         )
 
@@ -321,23 +245,9 @@ class NodeFactory:
         if not context_keyword or not isinstance(context_keyword, str):
             raise ValueError("context_keyword must be a non-empty string.")
 
-        def _define_metadata(cls):
-
-            # Define the metadata for the ProbeContextInjectorNode
-            component_metadata = {
-                "component_type": "ProbeContextInjectorNode",
-                "processor": cls.processor.__name__,
-                "processor_docstring": cls.processor.get_metadata().get("docstring"),
-                "input_data_type": cls.input_data_type().__name__,
-                "output_data_type": cls.input_data_type().__name__,  # Probe nodes have the same input and output data types
-                "injected_context_keys": cls.get_created_keys() or "None",
-            }
-            return component_metadata
-
         node_class = NodeFactory._create_class(
             name=f"{processor_class.__name__}ProbeContextInjectorNode",
             base_cls=ProbeContextInjectorNode,
-            _define_metadata=classmethod(_define_metadata),
             processor=processor_class,
             context_keyword=context_keyword,
         )
@@ -356,23 +266,9 @@ class NodeFactory:
             ProbeResultCollectorNode: An instance of a dynamically created subclass of ProbeNode.
         """
 
-        def _define_metadata(cls):
-
-            # Define the metadata for the ProbeResultCollectorNode
-            component_metadata = {
-                "component_type": "ProbeResultCollectorNode",
-                "processor": cls.processor.__name__,
-                "processor_docstring": cls.processor.get_metadata().get("docstring"),
-                "input_data_type": cls.input_data_type().__name__,
-                "output_data_type": cls.input_data_type().__name__,  # Probe nodes have the same input and output data types
-                "injected_context_keys": cls.get_created_keys() or "None",
-            }
-            return component_metadata
-
         node_class = NodeFactory._create_class(
             name=f"{processor_class.__name__}ProbeResultCollectorNode",
             base_cls=ProbeResultCollectorNode,
-            _define_metadata=classmethod(_define_metadata),
             processor=processor_class,
         )
         return node_class(
@@ -402,23 +298,9 @@ class NodeFactory:
         parameters = parameters or {}
         context_processor_instance = processor_class(logger, **parameters)
 
-        def _define_metadata(cls):
-
-            # Define the metadata for the ContextProcessorNode
-            component_metadata = {
-                "component_type": "ContextProcessorNode",
-                "ContextProcessor": processor_class.__name__,
-                "processor_docstring": processor_class.get_metadata().get("docstring"),
-                "get_required_context_keys": cls.get_required_keys() or "None",
-                "get_suppressed_context_keys": cls.get_suppressed_keys() or "None",
-                "get_created_context_keys": cls.get_created_keys() or "None",
-            }
-            return component_metadata
-
         node_class = NodeFactory._create_class(
             name=f"{processor_class.__name__}ContextProcessorNode",
             base_cls=ContextProcessorNode,
-            _define_metadata=classmethod(_define_metadata),
             processor=context_processor_instance,
         )
         return node_class(
@@ -476,7 +358,7 @@ def node_factory(
             raise ValueError(
                 "context_keyword must not be defined for DataOperation nodes."
             )
-        return NodeFactory.create_operation_node(processor, parameters, logger)
+        return NodeFactory.create_data_operation_node(processor, parameters, logger)
     if issubclass(processor, DataProbe):
         if context_keyword is not None:
             return NodeFactory.create_probe_context_injector(

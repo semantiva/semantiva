@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Type, TypeVar, Generic, Iterator, get_args, Optional
+from typing import Dict, Any, Type, TypeVar, Generic, Iterator, get_args, Optional
 from semantiva.core import SemantivaObject
 
 T = TypeVar("T")
@@ -49,7 +49,7 @@ class BaseDataType(SemantivaObject, Generic[T]):
         """
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the BaseDataType
         component_metadata = {
@@ -64,12 +64,7 @@ S = TypeVar("S")  # The preferred storage format for the collection
 
 
 class DataCollectionType(BaseDataType[S], Generic[E, S]):
-    """
-    Abstract base class for collection-based data types.
-
-    This class extends BaseDataType to handle data that comprises multiple
-    elements and provides a foundation for collection-specific operations.
-    """
+    """Abstract base class for data collections, handling multiple elements of the same BaseDataType."""
 
     def __init__(self, data: Optional[S] = None):
         """
@@ -84,13 +79,28 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
         super().__init__(data)
 
     @classmethod
-    def _define_metadata(cls):
+    def _define_metadata(cls) -> Dict[str, Any]:
 
         # Define the metadata for the DataCollectionType
         component_metadata = {
             "component_type": "DataCollectionType",
-            "element_type": f"{cls.collection_base_type().__name__}<{cls.collection_base_type().get_metadata().get('component_type')}>",
         }
+        # try to resolve the element type, but fail gracefully
+        try:
+            element_cls = cls.collection_base_type()
+            if hasattr(element_cls, "get_metadata"):
+                elem_meta = element_cls.get_metadata().get(
+                    "component_type", element_cls.__name__
+                )
+                component_metadata["collection_element_type"] = (
+                    f"{element_cls.__name__}<{elem_meta}>"
+                )
+            else:
+                # element_cls is not a SemantivaObject subclass (e.g. still a TypeVar)
+                component_metadata["collection_element_type"] = BaseDataType.__name__
+        except Exception:
+            # no binding available at this abstract level
+            pass
 
         return component_metadata
 
