@@ -16,6 +16,7 @@ def _setup_log(role: str, level: str = "INFO") -> Logger:
     # Check if the logger already has handlers to avoid duplicate logs
     if not logger.handlers:
         # Create a file handler
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         file_handler = logging.FileHandler(filename)
         file_handler.setLevel(level)
 
