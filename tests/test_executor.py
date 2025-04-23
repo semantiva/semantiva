@@ -1,25 +1,47 @@
+"""
+Unit tests for SequentialSemantivaExecutor, the default synchronous executor
+in Semantiva's processing runtime. This executor runs each task immediately
+in the calling thread and returns a completed Future, enabling uniform
+handling of both sync and async executors in the orchestration code.
+
+Key behaviors under test:
+  - submit(fn, *args, **kwargs) returns a Future whose result() yields fn's return value.
+  - Exceptions raised by fn propagate out of submit() immediately, since execution is synchronous.
+"""
+
 import pytest
 from semantiva.execution_tools.executor import SequentialSemantivaExecutor
 from concurrent.futures import Future
 
 
 def test_submit_returns_future_and_result():
+    """
+    Verify that submit() returns a Future and that Future.result()
+    contains the correct return value of the provided function.
+    """
     executor = SequentialSemantivaExecutor()
-    # Simple add
+
+    # Submit a simple addition lambda
     fut = executor.submit(lambda a, b: a + b, 2, 3)
-    # Should be a Future
+
+    # The returned object must be a Future
     assert isinstance(fut, Future)
-    # result() should return 5
+
+    # Since execution is immediate, result() should be available and equal to 5
     assert fut.result() == 5
 
 
 def test_submit_captures_exceptions():
+    """
+    Verify that exceptions raised by the submitted function propagate
+    immediately from submit(), because SequentialSemantivaExecutor executes
+    synchronously rather than deferring into a worker thread.
+    """
     executor = SequentialSemantivaExecutor()
 
     def explode():
         raise RuntimeError("boom")
 
-    # Because SequentialSemantivaExecutor.submit calls fn synchronously,
-    # exceptions propagate immediately (i.e. submit() itself raises).
+    # Because submit() calls fn() directly, a RuntimeError should be thrown here
     with pytest.raises(RuntimeError):
         executor.submit(explode)
