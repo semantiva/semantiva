@@ -1,5 +1,9 @@
 import pytest
-from .test_utils import FloatDataCollection, FloatDataType, FloatCollectValueProbe
+from semantiva.examples.test_utils import (
+    FloatDataCollection,
+    FloatDataType,
+    FloatCollectValueProbe,
+)
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
 from semantiva.payload_operations.pipeline import Pipeline

@@ -1,7 +1,7 @@
 import pytest
 from pprint import pprint
 
-from .test_utils import (
+from semantiva.examples.test_utils import (
     FloatDataSource,
     FloatPayloadSource,
     FloatDataSink,

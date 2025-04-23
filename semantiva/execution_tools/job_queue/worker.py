@@ -1,6 +1,12 @@
+"""
+Defines the `worker_loop` function, which continuously listens for new pipeline jobs
+via a SemantivaTransport, executes them using a SemantivaExecutor, and publishes results.
+"""
+
 import time
 from threading import Event
 from typing import Any, Dict, List, Union
+
 from semantiva.execution_tools.transport.base import SemantivaTransport, Message
 from semantiva.data_types import NoDataType
 from semantiva.context_processors.context_processors import ContextType
@@ -21,59 +27,86 @@ def worker_loop(
     poll_interval: float = 0.1,
 ):
     """
-    Worker:
-      - loops while not stop_event.is_set()
-      - subscribes to 'jobs.*.cfg', processes messages, sleeps if none
-      - exits when stop_event is set
+    Main worker loop for processing Semantiva pipeline jobs.
+
+    Args:
+        worker_id: Unique identifier for this worker instance.
+        transport: A SemantivaTransport implementation for pub/sub.
+        executor: A SemantivaExecutor to run pipeline tasks.
+        stop_event: Threading Event used to signal shutdown.
+        logger: Optional Logger instance; if None, one is created via _setup_log.
+        poll_interval: Seconds to sleep when no job is found.
+
+    Behavior:
+      1. Connects to the transport.
+      2. Repeatedly:
+         a. Subscribes to 'jobs.*.cfg' to receive new job payloads.
+         b. For each Message:
+            - Extract job_id, pipeline config, initial data, and context.
+            - Instantiate a Pipeline object (from dict, YAML, or direct instance).
+            - Call pipeline.process(data, context) to execute.
+            - Publish the result to 'jobs.<job_id>.status'.
+            - Acknowledge the incoming message if supported.
+         c. Closes the subscription.
+         d. If no messages were processed, sleeps for `poll_interval`.
+      3. Exits when stop_event.is_set(), closes transport, logs shutdown.
+
+    This allows multiple workers to run in parallel, distributing jobs across processes
+    or containers while decoupling job submission (by the orchestrator) from execution.
     """
+    # Initialize or reuse the logger for this worker
     worker_logger: semantiva.logger.logger.Logger = logger or _setup_log(
         f"worker_{worker_id}"
     )
-    assert logger, "Logger must be provided or created"
+    assert worker_logger, "Logger must be provided or created"
     worker_logger.info(f"Worker_{worker_id} starting…")
+
+    # Establish transport connection (no-op for in-memory, real for NATS/Kafka, etc.)
     transport.connect()
 
     try:
+        # Continue looping until an external shutdown signal is received
         while not stop_event.is_set():
+            # Subscribe to job configuration messages (pattern supports wildcards)
             sub = transport.subscribe("jobs.*.cfg")
             got_message = False
 
+            # Process each incoming job message
             for msg in sub:
                 got_message = True
                 job_id = msg.context.get("job_id", "<unknown>")
                 worker_logger.info(f"Picked up job {job_id}")
 
                 payload = msg.data
-                logger.debug(f"Worker {job_id} received message: {msg}")
+                # Optional debug output of the raw Message
+                worker_logger.debug(f"Worker {job_id} received message: {msg}")
+
                 try:
-                    # Unpack: pipeline config, data, context
+                    # 1) Unpack the payload dictionary
+                    #    - payload["pipeline"] may embed a nested "pipeline" key per orchestrator format
                     pcfg = payload["pipeline"]["pipeline"]
                     data = payload.get("data", NoDataType())
                     context = payload.get("context", ContextType())
 
-                    logger.debug(
-                        f"Worker {job_id} received job with data: {data}, context: {context}, pcfg: {pcfg}"
+                    worker_logger.debug(
+                        f"Worker {job_id} has data={data}, context={context}, pcfg={pcfg}"
                     )
 
-                    # Instantiate pipeline
-                    if isinstance(pcfg, Pipeline):
-                        pipeline = pcfg
-                    elif isinstance(pcfg, list):
+                    # 2) Instantiate the Pipeline object
+                    if isinstance(pcfg, list):
                         pipeline = Pipeline(pcfg, logger=worker_logger)
-                    elif isinstance(pcfg, str):
-                        nodes = load_pipeline_from_yaml(pcfg)
-                        pipeline = Pipeline(nodes)
                     else:
                         raise TypeError(f"Unsupported pipeline config: {type(pcfg)}")
 
-                    # Execute
+                    # 3) Execute the pipeline with provided executor
                     result_data, result_ctx = pipeline.process(
                         data=data, context=context
                     )
-                    result_ctx.set_value(
-                        "job_id", job_id
-                    )  # Set job_id in context for tracking
-                    # Publish result
+
+                    # 4) Annotate context with job_id for master correlation
+                    result_ctx.set_value("job_id", job_id)
+
+                    # 5) Publish the result to status channel
                     transport.publish(
                         f"jobs.{job_id}.status",
                         data=result_data,
@@ -81,17 +114,24 @@ def worker_loop(
                         require_ack=False,
                     )
                     worker_logger.info(f"Completed job {job_id}")
+
+                    # 6) Acknowledge the incoming message if transport supports it
                     msg.ack()
                 except Exception as e:
+                    # Log any error during processing without crashing the loop
                     worker_logger.exception(f"Worker failed job {job_id}: {e}")
 
-                # Let other work in same subscription pass through before closing
+            # Close this subscription before the next polling iteration
             sub.close()
 
+            # If no messages arrived, sleep briefly to avoid busy-looping
             if not got_message:
                 time.sleep(poll_interval)
+
     except Exception as e:
+        # Catch-all: ensure unexpected exceptions are logged
         worker_logger.exception(f"Worker loop exception: {e}")
     finally:
+        # Clean up transport connection and log shutdown
         transport.close()
         worker_logger.info("Worker shutting down.")

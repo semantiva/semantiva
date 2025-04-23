@@ -2,6 +2,10 @@ import sys
 import logging
 from typing import Optional
 
+DEFALT_FORMATTER = logging.Formatter(
+    "%(asctime)s - %(levelname)-8s - %(message)s (%(module)s)"
+)
+
 
 class Logger:
     """
@@ -29,9 +33,6 @@ class Logger:
         "ERROR": logging.ERROR,
         "CRITICAL": logging.CRITICAL,
     }
-    formatter = logging.Formatter(
-        "%(asctime)s - %(levelname)-8s - %(message)s (%(module)s)"
-    )
 
     _initialized = False
 
@@ -41,6 +42,7 @@ class Logger:
         console_output: Optional[bool] = None,
         logger: Optional[logging.Logger] = None,
         name: Optional[str] = "Semantiva",
+        formatter: Optional[logging.Formatter] = None,
     ):
         """
         Initialize the logger with specified configurations.
@@ -57,6 +59,8 @@ class Logger:
         :param logger: An existing logging.Logger instance to use instead of creating a new one.
         :param name: The name for the logger instance, defaults to "Semantiva".
         """
+
+        self.formatter = formatter or DEFALT_FORMATTER
         if logger is None:
             self.logger = logging.getLogger(name)
         else:
@@ -64,7 +68,7 @@ class Logger:
 
         # If the Logger class has not been initialized yet, set default values.
         # This ensures that the default log level and console output are only set once.
-        if not self._initialized:
+        if not logger and not self._initialized:
             if level is None:
                 level = "INFO"  # Default log level is INFO if not specified
             if console_output is None:

@@ -8,7 +8,7 @@ from semantiva.execution_tools.transport import InMemorySemantivaTransport
 from semantiva.execution_tools.executor import SequentialSemantivaExecutor
 from semantiva.payload_operations.pipeline import Pipeline
 from semantiva.context_processors.context_types import ContextType
-from tests.test_utils import FloatDataType, FloatMultiplyOperation
+from semantiva.examples.test_utils import FloatDataType, FloatMultiplyOperation
 from semantiva.logger import Logger
 
 
