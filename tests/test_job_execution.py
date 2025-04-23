@@ -1,4 +1,21 @@
+"""
+End-to-end integration test for Semantiva's Queue-Enabled Orchestrator and Worker.
+
+This test validates the full cycle of:
+  1. Enqueueing multiple pipeline jobs via QueueSemantivaOrchestrator.
+  2. Distributing work to `worker_loop` instances running in parallel threads.
+  3. Processing each pipeline step (FloatMultiply, FloatCollectValueProbe, renaming, deletion).
+  4. Publishing results back to the orchestrator over InMemorySemantivaTransport.
+  5. Resolving Future objects so callers can retrieve final (data, context).
+  6. Graceful shutdown of master and workers via threading.Event.
+
+Semantiva's transport layer (InMemorySemantivaTransport) and executor (SequentialSemantivaExecutor)
+are used here for simplicity; in production you'd swap in NATS, Ray, etc.
+"""
+
 import pytest
+import threading
+import time
 
 from semantiva.execution_tools.transport.in_memory import InMemorySemantivaTransport
 from semantiva.execution_tools.executor.executor import SequentialSemantivaExecutor
@@ -7,8 +24,6 @@ from semantiva.execution_tools.job_queue.queue_orchestrator import (
 )
 from semantiva.execution_tools.job_queue.logging_setup import _setup_log
 from semantiva.execution_tools.job_queue.worker import worker_loop
-import threading
-import time
 from semantiva.examples.test_utils import (
     FloatMultiplyOperation,
     FloatCollectValueProbe,
@@ -17,21 +32,34 @@ from semantiva.examples.test_utils import (
 
 
 def test_job_execution():
-    """Test the execution of a pipeline with multiple nodes."""
+    """
+    Tests the execution of a multi-node pipeline through the master/worker queue:
+      - Creates an in-memory transport and sequential executor.
+      - Starts the QueueSemantivaOrchestrator in a background thread.
+      - Launches two worker threads running worker_loop(...).
+      - Enqueues two identical jobs, each multiplying and probing float data.
+      - Blocks on Future.result() for each job to ensure correct outputs.
+      - Shuts down the orchestrator and signals workers to exit cleanly.
+    """
 
+    # 1) Set up transport and master orchestrator
     transport = InMemorySemantivaTransport()
-
+    master_logger = _setup_log("test_master", level="DEBUG")
     orchestrator = QueueSemantivaOrchestrator(
-        transport=transport, logger=_setup_log("master", level="DEBUG")
+        transport=transport,
+        stop_event=None,  # we'll stop manually later
+        logger=master_logger,
     )
 
+    # 2) Start the master loop in a daemon thread
     master_thread = threading.Thread(target=orchestrator.run_forever, daemon=True)
     master_thread.start()
 
+    # 3) Prepare workers with a shared stop_event for graceful shutdown
     stop_event = threading.Event()
     worker_threads = []
     for worker_id in range(2):
-        worker_logger = _setup_log(f"worker_{worker_id}", level="DEBUG")
+        worker_logger = _setup_log(f"test_worker_{worker_id}", level="DEBUG")
         worker_executor = SequentialSemantivaExecutor()
         t = threading.Thread(
             target=worker_loop,
@@ -40,8 +68,8 @@ def test_job_execution():
         )
         t.start()
         worker_threads.append(t)
-    # Enqueue example jobs
 
+    # 4) Define a multi-node pipeline configuration as a list of processor specs
     node_configurations = [
         {
             "processor": FloatMultiplyOperation,
@@ -69,17 +97,14 @@ def test_job_execution():
             "processor": "delete:dummy_keyword",
         },
     ]
+    example_job_cfg = {"pipeline": node_configurations}
 
-    example_job_cfg = {"pipeline": node_configurations}  # Simplified example config
+    # 5) Enqueue two jobs with initial data from FloatMockDataSource
+    input_data = FloatMockDataSource().get_data()
+    future1 = orchestrator.enqueue(example_job_cfg, return_future=True, data=input_data)
+    future2 = orchestrator.enqueue(example_job_cfg, return_future=True, data=input_data)
 
-    future1 = orchestrator.enqueue(
-        example_job_cfg, return_future=True, data=FloatMockDataSource().get_data()
-    )
-    future2 = orchestrator.enqueue(
-        example_job_cfg, return_future=True, data=FloatMockDataSource().get_data()
-    )
-
-    # Wait for results
+    # 6) Wait for each job's Future to complete and verify outputs
     print("Waiting for job 1 result...")
     result1, context1 = future1.result(timeout=10)
     print(f"Job 1 completed with result: {result1}, context: {context1}")
@@ -88,13 +113,17 @@ def test_job_execution():
     result2, context2 = future2.result(timeout=10)
     print(f"Job 2 completed with result: {result2}, context: {context2}")
 
-    # Graceful shutdown
+    # 7) Clean up: stop orchestrator and signal workers to exit
     print("Shutting down orchestrator...")
     orchestrator.stop()
+
     print("Shutting down workers...")
     stop_event.set()
+
+    # Allow threads to finish
     time.sleep(0.1)
 
 
 if __name__ == "__main__":
+    # Allow standalone execution of this integration test
     test_job_execution()
