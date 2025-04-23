@@ -6,7 +6,7 @@ from semantiva.context_processors.context_types import (
 )
 from semantiva.exceptions.pipeline import PipelineTopologyError
 from semantiva.payload_operations import Pipeline
-from .test_utils import (
+from semantiva.examples.test_utils import (
     FloatDataType,
     FloatDataCollection,
     FloatMultiplyOperation,

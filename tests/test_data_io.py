@@ -1,6 +1,6 @@
 import pytest
 
-from .test_utils import (
+from semantiva.examples.test_utils import (
     FloatDataType,
     FloatDataSource,
     FloatPayloadSource,

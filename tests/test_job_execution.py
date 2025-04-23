@@ -9,7 +9,7 @@ from semantiva.execution_tools.job_queue.logging_setup import _setup_log
 from semantiva.execution_tools.job_queue.worker import worker_loop
 import threading
 import time
-from .test_utils import (
+from semantiva.examples.test_utils import (
     FloatMultiplyOperation,
     FloatCollectValueProbe,
     FloatMockDataSource,

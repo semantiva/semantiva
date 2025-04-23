@@ -1,7 +1,7 @@
 import pytest
 from semantiva.payload_operations.pipeline import Pipeline
 from semantiva.payload_operations.pipeline_inspector import PipelineInspector
-from .test_utils import FloatMultiplyOperation, FloatCollectValueProbe
+from semantiva.examples.test_utils import FloatMultiplyOperation, FloatCollectValueProbe
 
 
 @pytest.fixture

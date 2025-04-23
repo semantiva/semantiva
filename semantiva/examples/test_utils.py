@@ -102,7 +102,7 @@ class FloatMockDataSource(DataSource):
 
     @classmethod
     def _get_data(cls, *args, **kwargs) -> FloatDataType:
-        return FloatDataType(123.0)
+        return FloatDataType(42.0)
 
     @classmethod
     def output_data_type(cls):

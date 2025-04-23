@@ -1,5 +1,5 @@
 import pytest
-from .test_utils import FloatDataType, FloatDataCollection
+from semantiva.examples.test_utils import FloatDataType, FloatDataCollection
 
 
 # Tests for BaseDataType
