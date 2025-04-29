@@ -74,7 +74,7 @@ def worker_loop(
             # Process each incoming job message
             for msg in sub:
                 got_message = True
-                job_id = msg.context.get("job_id", "<unknown>")
+                job_id = msg.metadata.get("job_id") or "<unknown>"
                 worker_logger.info(f"Picked up job {job_id}")
 
                 payload = msg.data
@@ -83,10 +83,17 @@ def worker_loop(
 
                 try:
                     # 1) Unpack the payload dictionary
-                    #    - payload["pipeline"] may embed a nested "pipeline" key per orchestrator format
-                    pcfg = payload["pipeline"]["pipeline"]
-                    data = payload.get("data", NoDataType())
-                    context = payload.get("context", ContextType())
+                    pcfg = msg.metadata.get("pipeline")
+                    if not isinstance(pcfg, list) or not all(
+                        isinstance(step, dict) for step in pcfg
+                    ):
+                        worker_logger.error(
+                            f"Invalid pipeline configuration received for job {job_id}: {pcfg}"
+                        )
+                        msg.ack()  # acknowledge to remove the message if applicable
+                        continue  # skip processing this message
+                    data = msg.data or NoDataType()
+                    context = msg.context or ContextType()
 
                     worker_logger.debug(
                         f"Worker {job_id} has data={data}, context={context}, pcfg={pcfg}"
@@ -99,9 +106,11 @@ def worker_loop(
                         raise TypeError(f"Unsupported pipeline config: {type(pcfg)}")
 
                     # 3) Execute the pipeline with provided executor
-                    result_data, result_ctx = pipeline.process(
-                        data=data, context=context
+
+                    pipeline_output = executor.submit(
+                        pipeline.process, data=data, context=context
                     )
+                    result_data, result_ctx = pipeline_output.result()
 
                     # 4) Annotate context with job_id for master correlation
                     result_ctx.set_value("job_id", job_id)

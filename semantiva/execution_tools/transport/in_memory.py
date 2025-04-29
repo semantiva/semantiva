@@ -14,6 +14,7 @@ from collections import defaultdict, deque
 from typing import Any, Dict, Optional, Callable
 from concurrent.futures import Future
 from fnmatch import fnmatch
+from semantiva.context_processors import ContextType
 
 from .base import SemantivaTransport, Subscription, Message
 
@@ -116,7 +117,7 @@ class InMemorySemantivaTransport(SemantivaTransport):
         self,
         channel: str,
         data: Any,
-        context: Dict[str, Any],
+        context: ContextType,
         metadata: Optional[Dict[str, Any]] = None,
         require_ack: bool = False,
     ) -> Optional[Future]:

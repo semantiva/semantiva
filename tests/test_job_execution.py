@@ -97,12 +97,15 @@ def test_job_execution():
             "processor": "delete:dummy_keyword",
         },
     ]
-    example_job_cfg = {"pipeline": node_configurations}
 
     # 5) Enqueue two jobs with initial data from FloatMockDataSource
     input_data = FloatMockDataSource().get_data()
-    future1 = orchestrator.enqueue(example_job_cfg, return_future=True, data=input_data)
-    future2 = orchestrator.enqueue(example_job_cfg, return_future=True, data=input_data)
+    future1 = orchestrator.enqueue(
+        node_configurations, return_future=True, data=input_data
+    )
+    future2 = orchestrator.enqueue(
+        node_configurations, return_future=True, data=input_data
+    )
 
     # 6) Wait for each job's Future to complete and verify outputs
     print("Waiting for job 1 result...")

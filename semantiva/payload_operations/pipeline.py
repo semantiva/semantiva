@@ -37,6 +37,22 @@ class Pipeline(PayloadProcessor):
         transport: SemantivaTransport | None = None,
         orchestrator: SemantivaOrchestrator | None = None,
     ):
+        """
+        Initializes the pipeline with the given configuration, logger, transport, and orchestrator.
+        Args:
+            pipeline_configuration (List[Dict]): A list of dictionaries containing the pipeline configuration.
+            logger (Logger | None, optional): An optional logger instance for logging information. Defaults to None.
+            transport (SemantivaTransport | None, optional): An optional transport mechanism for the pipeline.
+                If not provided, an InMemorySemantivaTransport instance will be used. Defaults to None.
+            orchestrator (SemantivaOrchestrator | None, optional): An optional orchestrator for managing pipeline execution.
+                If not provided, a LocalSemantivaOrchestrator instance will be used. Defaults to None.
+        Attributes:
+            pipeline_configuration (List[Dict]): Stores the pipeline configuration.
+            transport (SemantivaTransport): The transport mechanism used by the pipeline.
+            orchestrator (SemantivaOrchestrator): The orchestrator managing the pipeline execution.
+            nodes (List): The initialized nodes of the pipeline.
+        """
+
         super().__init__(logger)
         self.pipeline_configuration = pipeline_configuration
         self.transport = transport or InMemorySemantivaTransport()
@@ -49,6 +65,20 @@ class Pipeline(PayloadProcessor):
     def _process(
         self, data: BaseDataType, context: ContextType
     ) -> Tuple[BaseDataType, ContextType]:
+        """
+        Processes the pipeline by executing the orchestrator with the provided data and context.
+        This method starts a stopwatch timer to measure the execution time of the pipeline,
+        logs the start and completion of the pipeline processing, and provides a detailed
+        timing report upon completion.
+        Args:
+            data (BaseDataType): The input data to be processed by the pipeline.
+            context (ContextType): The context information required for processing.
+        Returns:
+            Tuple[BaseDataType, ContextType]: A tuple containing the processed data and the updated context.
+        Logs:
+            - Info: Logs the start and completion of the pipeline processing.
+            - Debug: Logs a detailed timing report of the pipeline execution.
+        """
         self.logger.info("Start processing pipeline")
         self.stop_watch.start()  # existing pipeline timer start
 
