@@ -12,6 +12,7 @@ Key concepts:
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Callable, Iterator, AsyncIterator, NamedTuple
 from concurrent.futures import Future
+from semantiva.context_processors import ContextType
 
 
 class Message(NamedTuple):
@@ -26,7 +27,7 @@ class Message(NamedTuple):
     """
 
     data: Any
-    context: Dict[str, Any]
+    context: ContextType
     metadata: Dict[str, Any]
     ack: Callable[[], None]  # call to acknowledge receipt
 
@@ -99,7 +100,7 @@ class SemantivaTransport(ABC):
         self,
         channel: str,
         data: Any,
-        context,
+        context: ContextType,
         metadata: Optional[Dict[str, Any]] = None,
         require_ack: bool = False,
     ) -> Optional[Future]:

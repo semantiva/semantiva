@@ -1,7 +1,8 @@
 """
 Provides a helper to configure role-specific loggers for both master and worker
 components in Semantiva's job-queue system. Each logger writes to a unique file
-under the `logs/` directory, incorporating process ID and timestamp in the filename.
+under the `logs/` directory (or a custom directory), incorporating process ID
+and timestamp in the filename.
 """
 
 import os
@@ -10,44 +11,61 @@ from datetime import datetime
 from semantiva.logger.logger import Logger
 
 
-def _setup_log(role: str, level: str = "INFO", console_output: bool = True) -> Logger:
+def _setup_log(
+    role: str,
+    level: str = "INFO",
+    console_output: bool = True,
+    logs_dir: str | None = None,
+) -> Logger:
     """
     Initialize and return a role-specific Logger that writes to a timestamped file.
 
     Args:
-        role:   Identifier for the component (e.g., "master", "worker_1").
-        level:  Logging level as a string (e.g., "DEBUG", "INFO").
+        role:          Identifier for the component (e.g., "master", "worker_1").
+        level:         Logging level as a string (e.g., "DEBUG", "INFO").
+        console_output: Whether to also send logs to the console.
+        logs_dir:      Optional base directory for log files. If None, will default to "./logs".
 
     Returns:
         A semantiva.logger.Logger wrapping a standard Python logger configured
-        to emit messages to `logs/{role}_{pid}_{timestamp}.log`.
+        to emit messages to "{base}/{role}_{pid}_{timestamp}.log".
     """
     # Determine process ID and current timestamp for unique log filenames
     pid = os.getpid()
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"logs/{role}_{pid}_{ts}.log"
+
+    # Resolve base logs directory
+    base_dir = logs_dir or os.path.join(os.getcwd(), "logs")
+
+    # Ensure the directory exists
+    os.makedirs(base_dir, exist_ok=True)
+
+    # Construct full filename
+    filename = os.path.join(base_dir, f"{role}_{pid}_{ts}.log")
+    # Create a formatter for file output
+    formatter = logging.Formatter(
+        f"%(asctime)s - {role} - %(levelname)s - %(message)s (%(module)s)"
+    )
 
     # Retrieve or create a standard Python logger by name
     logger = logging.getLogger(role)
     logger.setLevel(level)
 
-    # Only add a handler if one does not already exist (to prevent duplicates)
-    if not logger.handlers:
-        # Ensure the logs directory exists
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-
-        # Create a file handler that writes to the designated logfile
+    # Only add a file handler if none exist yet (avoid duplicates)
+    if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
         file_handler = logging.FileHandler(filename)
         file_handler.setLevel(level)
-
-        # Define a log message format including timestamp, role, level, and message
-        formatter = logging.Formatter(
-            f"%(asctime)s - {role.upper()} - %(levelname)s - %(message)s"
-        )
         file_handler.setFormatter(formatter)
-
-        # Attach the handler to the logger
         logger.addHandler(file_handler)
 
-    # Wrap the Python logger in Semantiva’s Logger abstraction
-    return Logger(logger=logger, console_output=True, formatter=formatter)
+    # Optionally add a console handler
+    if console_output and not any(
+        isinstance(h, logging.StreamHandler) for h in logger.handlers
+    ):
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(level)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+    # Wrap and return the Semantiva Logger
+    return Logger(logger=logger, console_output=console_output, formatter=formatter)

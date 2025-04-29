@@ -94,20 +94,15 @@ class QueueSemantivaOrchestrator:
         # 1) Generate a unique job identifier
         job_id: str = str(uuid.uuid4())
 
-        # 2) Bundle the pipeline config, data, and context into one payload
-        job_payload: Dict = {
-            "pipeline": pipeline_cfg,
-            "data": data,
-            "context": context or ContextType(),
-        }
-
-        # 3) Optionally create a Future to track this job’s completion
+        # 2) Optionally create a Future to track this job’s completion
         fut: Future | None = Future() if return_future else None
         if fut:
             self.pending_futures[job_id] = fut
 
-        # 4) Place the job on the internal FIFO queue
-        self.job_queue.put((job_id, job_payload))
+        # 3) Place the job on the internal FIFO queue
+        self.job_queue.put(
+            (job_id, pipeline_cfg, data, context or ContextType())
+        )  # Enqueue a tuple with (job_id, pipeline_cfg, data, context)
         self.logger.info(f"Enqueued job {job_id}")
 
         return fut
@@ -127,17 +122,17 @@ class QueueSemantivaOrchestrator:
         while self.running:
             # -- Publish phase --
             try:
-                job_id, payload = self.job_queue.get(timeout=0.2)
+                job_id, pipeline_cfg, data, context = self.job_queue.get(timeout=0.2)
             except queue.Empty:
-                payload = None
+                job_id = None
 
-            if payload is not None:
+            if job_id is not None:
                 self.logger.info(f"Publishing jobs.{job_id}.cfg")
                 self.transport.publish(
                     f"jobs.{job_id}.cfg",
-                    data=payload,
-                    context={"job_id": job_id},
-                    metadata=None,
+                    data=data,
+                    context=context,
+                    metadata={"job_id": job_id, "pipeline": pipeline_cfg},
                     require_ack=False,
                 )
 

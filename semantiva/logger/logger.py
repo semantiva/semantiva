@@ -2,7 +2,7 @@ import sys
 import logging
 from typing import Optional
 
-DEFALT_FORMATTER = logging.Formatter(
+DEFAULT_FORMATTER = logging.Formatter(
     "%(asctime)s - %(levelname)-8s - %(message)s (%(module)s)"
 )
 
@@ -16,13 +16,25 @@ class Logger:
     built-in logging module to offer a simplified interface for common logging tasks.
 
     Attributes:
-    logger (logging.Logger): The underlying logger instance.
-    formatter (logging.Formatter): The formatter for log messages.
+        logger (logging.Logger): The underlying logger instance.
+        formatter (logging.Formatter): The formatter for log messages.
 
     Methods:
-    set_verbose_level(verbosity_level: str): Sets the verbosity level of the logger.
-    set_console_output(enable: bool): Configures the logger to output to the console.
-    set_file_output(file_path: str): Configures the logger to output to a specified file.
+        set_verbose_level(verbosity_level: str): Sets the verbosity level of the logger.
+        set_console_output(enable: bool): Configures the logger to output to the console.
+        set_file_output(file_path: str): Configures the logger to output to a specified file.
+
+    Pickling Support:
+        The Logger class supports pickling (serialization) and unpickling (deserialization).
+        Since Python's logging.Logger instances are not picklable, the Logger class implements
+        custom __getstate__ and __setstate__ methods. When pickled, the logger instance is
+        excluded from the serialized state. Upon unpickling, the logger is restored using the
+        logger name (defaulting to "Semantiva" if not present). This ensures that Logger
+        instances can be safely serialized and deserialized, for example when using multiprocessing
+        or saving objects to disk.
+
+        - __getstate__ removes the logger from the state before pickling.
+        - __setstate__ restores the logger after unpickling using the stored name.
     """
 
     logger: logging.Logger
@@ -54,13 +66,17 @@ class Logger:
         of where in the code this instance is created, the default logger's log level is changed
         to the new value, affecting all components that use the "Semantiva" logger.
 
+        Note on Pickling:
+            The logger instance itself is not pickled. When a Logger object is unpickled,
+            the logger is restored using the stored name (or "Semantiva" by default).
+
         :param level: The logging level for the logger (e.g., "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL").
         :param console_output: Whether to enable console output for log messages.
         :param logger: An existing logging.Logger instance to use instead of creating a new one.
         :param name: The name for the logger instance, defaults to "Semantiva".
         """
 
-        self.formatter = formatter or DEFALT_FORMATTER
+        self.formatter = formatter or DEFAULT_FORMATTER
         if logger is None:
             self.logger = logging.getLogger(name)
         else:
@@ -155,7 +171,33 @@ class Logger:
             self.logger.error("Failed to set file output: %s", e)
 
     def __getattr__(self, name):
+        # Use __dict__ directly to avoid recursion
+        logger = self.__dict__.get("logger", None)
+        if logger is None:
+            # Use __dict__ to get name, fallback to "Semantiva"
+            logger_name = self.__dict__.get("name", "Semantiva")
+            logger = logging.getLogger(logger_name)
+            self.__dict__["logger"] = logger
+        return getattr(logger, name)
+
+    def __getstate__(self):
         """
-        Delegate attribute access to the underlying logger instance.
+        Prepare the Logger instance for pickling.
+
+        The logger instance is excluded from the pickled state, as logging.Logger objects
+        are not picklable. The logger will be restored after unpickling using the logger name.
         """
-        return getattr(self.logger, name)
+        state = self.__dict__.copy()
+        state["logger"] = None
+        return state
+
+    def __setstate__(self, state):
+        """
+        Restore the Logger instance after unpickling.
+
+        The logger is recreated using the stored name (or "Semantiva" by default).
+        """
+        self.__dict__.update(state)
+        # Use __dict__ to get name, fallback to "Semantiva"
+        logger_name = self.__dict__.get("name", "Semantiva")
+        self.__dict__["logger"] = logging.getLogger(logger_name)
