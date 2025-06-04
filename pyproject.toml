@@ -2,8 +2,8 @@
 name = "semantiva"
 dynamic = ["version"]
 description = "Semantiva: An HPC-ready, domain-driven, type-oriented framework that delivers semantic transparency to advanced scientific computing."
-license = "MIT" 
-readme = "README.md" 
+license = "Apache-2.0"
+readme = "README.md"
 requires-python = ">=3.10.12"
 dependencies = [
     "black >=24.10.0",
@@ -47,3 +47,6 @@ cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
 [tool.pdm.version]
 source = "scm"
 fallback_version = "0.1.0-dev0+gUNKNOWN"
+
+[tool.setuptools]
+include = ["NOTICE", "LICENSE", "README.md"]
