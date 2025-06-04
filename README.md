@@ -86,8 +86,7 @@ These resources offer a practical roadmap to mastering the framework and leverag
 ---
 
 ## License
-
-Semantiva is released under the [MIT License](./LICENSE), promoting collaborative development and broad adoption.
+Semantiva is released under the [Apache License 2.0](./LICENSE), promoting collaborative development and broad adoption.
 
 ---
 
