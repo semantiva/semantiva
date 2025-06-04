@@ -8,31 +8,64 @@ Here is the updated changelog with the missing items included and the requested 
 
 ---
 
-## [Unreleased]
 
-### Changed
-- **Centralized context management in `ContextObserver`**
-  - Consolidated context updates for `ContextType`, `ContextCollectionType`, and `ChainMap` to ensure consistency.
-  - Updated `ContextCollectionType` to improve structured dictionary representations and ensure better debugging.
+---
 
-- **Refactored Data Slicing to Processor Level**
-  - Introduced `SlicingDataProcessorFactory` to **remove slicing logic from nodes**.
-  - Ensured **all slicing logic now resides at the processor level**, making data slicing transparent.
-  - Refactored nodes (`nodes.py`, `io_nodes.py`) to act **only as mediators** without handling slicing directly.
-
-- **Simplified Nodes and Pipelines**
-  - Updated `Pipeline` execution logic to **strictly enforce type consistency** between nodes.
+## [v0.4.0] - 2025-06-04
 
 ### Added
+- **Message-driven, pluggable execution (PR #78):**  
+  - **SemantivaTransport**  
+    - Defines `SemantivaTransport` (abstract) and `InMemorySemantivaTransport` for FIFO message passing between pipeline nodes.  
+  - **SemantivaExecutor**  
+    - Defines `SemantivaExecutor` (abstract) and `SequentialSemantivaExecutor` for synchronous task execution with `Future` compatibility.  
+  - **SemantivaOrchestrator**  
+    - Defines `SemantivaOrchestrator` (abstract) and `LocalSemantivaOrchestrator`, which drives a list of `PipelineNode` instances through an injected `SemantivaExecutor` and publishes every step to the chosen transport.  
+  - **Pipeline refactor**  
+    - `semantiva/payload_operations/pipeline.Pipeline` now accepts optional `transport` and `orchestrator` arguments.  
+    - Delegates its internal `_process()` loop to `SemantivaOrchestrator.execute`, while still respecting existing timers, probes, and inspection APIs (no public API change).  
+  - **Job-queue orchestration**  
+    - Introduced `QueueSemantivaOrchestrator` in `semantiva/execution_tools/job_queue/queue_orchestrator.py` for FIFO job enqueue, UUID tracking, and `Future`–based result handling.  
+    - Added `worker_loop()` in `semantiva/execution_tools/job_queue/worker.py` to continuously pull `jobs.*.cfg`, instantiate pipelines, process them, and publish status.  
+    - Added `_setup_log()` helper in `semantiva/execution_tools/job_queue/logging_setup.py` for master/worker log files.  
+- **PipelineInspector** helper class: Introduced `semantiva.tools.pipeline_inspector.PipelineInspector` to surface context parameters and semantic IDs for each node in a pipeline.  
+- **ContextProcessor & Metadata refactor** (#73):  
+  - Replaced `ContextNode` with dynamically generated `ContextProcessorNode` via `NodeFactory` for improved encapsulation.  
+  - Made `ContextProcessor` classmethods define required keys and created keys for cleaner introspection.  
+  - Injected auto-generated docstrings in `context_renamer_factory` and `context_deleter_factory`.  
+  - Refactored `data_slicer_factory` to append wrapped processor docstrings to dynamically generated slicer classes.  
+  - Updated `Pipeline` to support extended introspection (`extended_inspection` and `_print_nodes_semantic_ids`).  
+- **SemantivaObject** as metadata foundation (#72):  
+  - Added `semantiva/core/semantiva_object.py` containing the `SemantivaObject` base class for unified semantic ID and metadata handling.  
+  - Refactored all relevant classes to inherit from `SemantivaObject`.  
+- **Component metadata & ontology export** (#77):  
+  - Introduced `SemantivaObjectMeta` and a thread-safe `_COMPONENT_REGISTRY` to register all subclasses based on their `get_metadata()`.  
+  - Overrode `_define_metadata()` in `ContextObserver`, `DataSlicerFactory`, and others to ensure consistent `component_type`, I/O types, and key lists.  
+  - Added `semantiva/tools/export_ontology.py`, which reads all registered component metadata and exports a complete RDF/Turtle ontology.  
+  - Standardized component docstring style to one-line summaries.  
+- **SlicingDataProcessorFactory** (#71):  
+  - Centralized data slicing at the processor level via a new `SlicingDataProcessorFactory`.  
+  - Consolidated context handling within `ContextObserver` to manage single contexts, `ContextCollectionType`, and `ChainMap` views.  
+  - Enhanced `ContextCollectionType` for structured dictionary representations and dynamic slice contexts.  
 
-- **Expanded Unit Tests for Data Slicing & Context Injection**
-  - Introduced comprehensive tests for:
-    - Probe result injection scenarios (`test_slicer_node_factory.py`)
-    - Correct pipeline execution with automatic slicing (`test_pipeline_and_slicing.py`)
-    - Context update correctness for single and collection contexts (`test_context_management.py`)
+### Changed
+- **Changed license from MIT to Apache-2.0.**  
+  - Updated `LICENSE` file to reflect the new license terms.  
+  - Added `NOTICE` file with attribution and license information.
+
+### Fixed
+- **Log directory creation**: Ensured that the log directory is created before attaching a file handler in `semantiva/logger/logger.py`.  
 
 ### Removed
-- **Deprecated `DataCollectionProbe` and `FeatureExtractorProbeWrapper`**
+- **Data slicing in nodes**: All slicing logic was removed from `semantiva/payload_operations/nodes`; data slicing is now exclusively managed by `SlicingDataProcessorFactory`.  
+- **Deprecated probe classes**: Removed `DataCollectionProbe` and `FeatureExtractorProbeWrapper` from `semantiva/payload_operations/nodes`.  
+- **Obsolete tests**: Deleted `tests/test_slicer_node_factory.py`.  
+
+### Breaking Changes
+- **Slicing behavior**:  
+  > **BREAKING CHANGE**: Nodes no longer directly handle slicing logic; any pipeline that previously relied on node-level slicing must now be refactored to use `SlicingDataProcessorFactory`.  
+- **ContextProcessor signature**: Some `ContextProcessor` subclasses now define classmethods (`get_required_keys`, `get_created_keys`), which may require updates if you extended them in custom code.  
+- **Dynamic node generation**: The old `Node` factory API that returned anonymous classes without explicit metadata is gone; new consumers should use the updated `NodeFactory` methods and rely on `SemantivaObjectMeta` for registration.
 
 ## [v0.3.0] - 2025-03-11
 
