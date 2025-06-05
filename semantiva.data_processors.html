@@ -51,9 +51,12 @@
 <li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.core.html">semantiva.core package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.data_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.examples.html">semantiva.examples package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.exceptions.html">semantiva.exceptions package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
@@ -131,11 +134,8 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.BaseDataProcessor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">BaseDataProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<p>Abstract base class for all data processors in Semantiva.</p>
-<p>This class defines a standardized structure for implementing data
-processing tasks, ensuring consistency and extensibility across different
-types of data transformations and analyses.</p>
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Abstract base class for data processing algorithms in Semantiva.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
@@ -143,7 +143,7 @@ types of data transformations and analyses.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.BaseDataProcessor.get_created_keys">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.BaseDataProcessor.get_created_keys" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.BaseDataProcessor.get_created_keys" title="Link to this definition"></a></dt>
 <dd><p>Retrieves a list of context keys generated during processing.</p>
 <p>This method should be implemented by subclasses to return a list of
 context keys that are produced or modified during execution.</p>
@@ -172,22 +172,8 @@ context keys that are produced or modified during execution.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.BaseDataProcessor.get_processing_parameters_with_types">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_processing_parameters_with_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.BaseDataProcessor.get_processing_parameters_with_types" title="Link to this definition"></a></dt>
-<dd><p>Retrieve the names and type hints of parameters required by the <cite>_process_logic</cite> method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A list of tuples (param_name, param_type).</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>List[Tuple[str, str]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.BaseDataProcessor.input_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.BaseDataProcessor.input_data_type" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.BaseDataProcessor.input_data_type" title="Link to this definition"></a></dt>
 <dd><p>Define the expected type of input data for processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -233,54 +219,10 @@ context keys that are produced or modified during execution.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataCollectionProbe">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataCollectionProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataCollectionProbe" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="semantiva.data_processors.data_processors.BaseDataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataProcessor</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseType</span></code>]</p>
-<p>A probe for inspecting or monitoring data collections.</p>
-<p>This class extends <cite>BaseDataProcessor</cite> to define operations that accept
-<cite>DataCollectionType</cite>, allowing the extraction of observables.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataCollectionProbe.input_data_type">
-<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataCollectionProbe.input_data_type" title="Link to this definition"></a></dt>
-<dd><p>Returns the expected input data type (<cite>DataCollectionType</cite>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Type</em>[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><em>DataCollectionType</em></a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
-<dd><p>Specifies the input data type for the probe.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The expected input data type.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Type[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType">DataCollectionType</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="semantiva.data_processors.data_processors.BaseDataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataProcessor</span></code></a></p>
-<p>A data processing component within Semantiva that modifies input data.</p>
-<p><cite>DataOperation</cite> extends <cite>BaseDataProcessor</cite> to provide transformation
-capabilities while integrating with a <cite>ContextObserver</cite> for managing
-context updates. Unlike <cite>DataProbe</cite>, which analyzes data without
-modification, <cite>DataOperation</cite> applies computational transformations to
-produce a modified output.</p>
+<p>A data processor that applies computational transformations to input data while managing context updates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -289,21 +231,9 @@ produce a modified output.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.context_observer">
-<span class="sig-name descname"><span class="pre">context_observer</span></span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_observer" title="Link to this definition"></a></dt>
-<dd><p>An optional observer for tracking
-and managing context updates during processing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[<a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver" title="semantiva.context_processors.context_observer.ContextObserver">ContextObserver</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.context_keys">
-<span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_keys" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_keys" title="Link to this definition"></a></dt>
 <dd><p>Retrieve the list of valid context keys for the data operation.</p>
 <p>This method defines the context keys that the data operation can update
 during its execution. Subclasses need to implement this method to provide
@@ -319,13 +249,13 @@ a list of keys that are relevant to their specific functionality.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">context_observer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver" title="semantiva.context_processors.context_observer.ContextObserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextObserver</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.context_observer">
+<span class="sig-name descname"><span class="pre">context_observer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver" title="semantiva.context_processors.context_observer.ContextObserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextObserver</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_observer" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.get_created_keys">
-<span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.get_created_keys" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.get_created_keys" title="Link to this definition"></a></dt>
 <dd><p>Retrieve a list of context keys created by the data operation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -339,7 +269,7 @@ a list of keys that are relevant to their specific functionality.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.output_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.output_data_type" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.output_data_type" title="Link to this definition"></a></dt>
 <dd><p>Define the type of output data produced by this operation.</p>
 <p>Subclasses must implement this method to specify the expected
 output type after processing.</p>
@@ -378,8 +308,7 @@ output type after processing.</p>
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="semantiva.data_processors.data_processors.BaseDataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataProcessor</span></code></a></p>
-<p>Represents a probe operation for monitoring or inspecting data.</p>
-<p>This class can be extended to implement specific probing functionalities.</p>
+<p>DataProbe analyzes input data without modifying it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
@@ -387,13 +316,22 @@ output type after processing.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe.get_created_keys">
-<span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.get_created_keys" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.get_created_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of context keys created by the data probe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of context keys created or modified by the data probe.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe.signature_string">
@@ -411,29 +349,6 @@ output type after processing.</p>
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.FeatureExtractorProbeWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">FeatureExtractorProbeWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_probe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.FeatureExtractorProbeWrapper" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.data_processors.data_processors.DataProbe" title="semantiva.data_processors.data_processors.DataProbe"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProbe</span></code></a></p>
-<p>A wrapper probe that extracts only the required parameter(s) from a dictionary-based probe.</p>
-<p>This allows using a probe that returns a full dictionary but only passing the required values
-to the next stage of processing (e.g., fitting a model).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>feature_probe</strong> (<em>Type</em><em>[</em><a class="reference internal" href="#semantiva.data_processors.data_processors.DataProbe" title="semantiva.data_processors.data_processors.DataProbe"><em>DataProbe</em></a><em>]</em>)</p></li>
-<li><p><strong>param_key</strong> (<em>str</em><em> | </em><em>Tuple</em><em>[</em><em>str</em><em>, </em><em>...</em><em>]</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.FeatureExtractorProbeWrapper.input_data_type">
-<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_processors.FeatureExtractorProbeWrapper.input_data_type" title="Link to this definition"></a></dt>
-<dd><p>Returns the input data type required by the wrapped probe.</p>
 </dd></dl>
 
 </dd></dl>
@@ -468,8 +383,319 @@ as input and produces <cite>output_type</cite> as output.</p>
 </dd></dl>
 
 </section>
+<section id="module-semantiva.data_processors.data_slicer_factory">
+<span id="semantiva-data-processors-data-slicer-factory-module"></span><h2>semantiva.data_processors.data_slicer_factory module<a class="headerlink" href="#module-semantiva.data_processors.data_slicer_factory" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="semantiva.data_processors.data_slicer_factory.Slicer">
+<span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_slicer_factory.</span></span><span class="sig-name descname"><span class="pre">Slicer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_collection_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_slicer_factory.Slicer" title="Link to this definition"></a></dt>
+<dd><p>Convenient user API for creating slicer nodes with explicit types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor_cls</strong> (<em>Type</em><em>[</em><a class="reference internal" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="semantiva.data_processors.data_processors.BaseDataProcessor"><em>BaseDataProcessor</em></a><em>]</em>)</p></li>
+<li><p><strong>input_data_collection_type</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><em>DataCollectionType</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_processors.data_slicer_factory.SlicingDataProcessorFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_slicer_factory.</span></span><span class="sig-name descname"><span class="pre">SlicingDataProcessorFactory</span></span><a class="headerlink" href="#semantiva.data_processors.data_slicer_factory.SlicingDataProcessorFactory" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Factory that dynamically creates data slicer processors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.data_slicer_factory.SlicingDataProcessorFactory.create">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_collection_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.data_slicer_factory.SlicingDataProcessorFactory.create" title="Link to this definition"></a></dt>
+<dd><p>Creates a new processor class that slices data and manages context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor_class</strong> (<em>Type</em>) – Base processor class.</p></li>
+<li><p><strong>input_data_collection_type</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><em>DataCollectionType</em></a><em>]</em>) – Expected input collection type.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new processor class with slicing enabled.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-semantiva.data_processors">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.data_processors" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_processors.BaseDataProcessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.</span></span><span class="sig-name descname"><span class="pre">BaseDataProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.BaseDataProcessor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Abstract base class for data processing algorithms in Semantiva.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.BaseDataProcessor.get_created_keys">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.BaseDataProcessor.get_created_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a list of context keys generated during processing.</p>
+<p>This method should be implemented by subclasses to return a list of
+context keys that are produced or modified during execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of generated context keys.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.BaseDataProcessor.get_processing_parameter_names">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_processing_parameter_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.BaseDataProcessor.get_processing_parameter_names" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the names of parameters required by the <cite>_process_logic</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of parameter names (excluding <cite>self</cite> and <cite>data</cite>).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.BaseDataProcessor.input_data_type">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.BaseDataProcessor.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Define the expected type of input data for processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The required input data type.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType">BaseDataType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_processors.BaseDataProcessor.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.data_processors.BaseDataProcessor.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.BaseDataProcessor.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.BaseDataProcessor.process" title="Link to this definition"></a></dt>
+<dd><p>Execute the processing logic on the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>T</em>) – The input data for processing.</p></li>
+<li><p><strong>*args</strong> – Additional positional arguments.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The processed output.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.BaseDataProcessor.run">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.BaseDataProcessor.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataOperation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataOperation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="semantiva.data_processors.data_processors.BaseDataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataProcessor</span></code></a></p>
+<p>A data processor that applies computational transformations to input data while managing context updates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context_observer</strong> (<a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver" title="semantiva.context_processors.context_observer.ContextObserver"><em>ContextObserver</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataOperation.context_keys">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataOperation.context_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the list of valid context keys for the data operation.</p>
+<p>This method defines the context keys that the data operation can update
+during its execution. Subclasses need to implement this method to provide
+a list of keys that are relevant to their specific functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of context keys that an operation can update.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataOperation.context_observer">
+<span class="sig-name descname"><span class="pre">context_observer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_observer.ContextObserver" title="semantiva.context_processors.context_observer.ContextObserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextObserver</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.data_processors.DataOperation.context_observer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataOperation.get_created_keys">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataOperation.get_created_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of context keys created by the data operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of context keys created or modified by the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataOperation.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.data_processors.DataOperation.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataOperation.output_data_type">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataOperation.output_data_type" title="Link to this definition"></a></dt>
+<dd><p>Define the type of output data produced by this operation.</p>
+<p>Subclasses must implement this method to specify the expected
+output type after processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The output data type produced by the operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType">BaseDataType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataOperation.signature_string">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataOperation.signature_string" title="Link to this definition"></a></dt>
+<dd><p>Generate a structured summary of the data operation signature.</p>
+<p>This includes:
+- Class Name
+- Input Data Type
+- Output Data Type
+- Processing Parameters with Type Hints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A formatted multi-line string representing the operation signature.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="semantiva.data_processors.data_processors.BaseDataProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataProcessor</span></code></a></p>
+<p>DataProbe analyzes input data without modifying it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataProbe.get_created_keys">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataProbe.get_created_keys" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of context keys created by the data probe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of context keys created or modified by the data probe.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataProbe.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.data_processors.DataProbe.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.DataProbe.signature_string">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.DataProbe.signature_string" title="Link to this definition"></a></dt>
+<dd><p>Returns a structured multi-line string with the data operation signature, showing:
+- Class Name
+- Input Data Type
+- Output Data Type
+- Operation Parameter Names with Type Hints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A formatted multi-line signature string.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_processors.OperationTopologyFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.</span></span><span class="sig-name descname"><span class="pre">OperationTopologyFactory</span></span><a class="headerlink" href="#semantiva.data_processors.OperationTopologyFactory" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A factory that creates data operation classes for specific (input, output) data-type pairs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_processors.OperationTopologyFactory.create_data_operation">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_data_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GeneratedOperation'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.OperationTopologyFactory.create_data_operation" title="Link to this definition"></a></dt>
+<dd><p>Dynamically creates a subclass of DataOperation that expects <cite>input_type</cite>
+as input and produces <cite>output_type</cite> as output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_type</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a><em>]</em>) – The expected input data type (subclass of BaseDataType).</p></li>
+<li><p><strong>output_type</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a><em>]</em>) – The output data type (subclass of BaseDataType).</p></li>
+<li><p><strong>class_name</strong> (<em>str</em>) – The name to give the generated class.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new subclass of DataOperation with the specified I/O data types.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Type[<a class="reference internal" href="#semantiva.data_processors.DataOperation" title="semantiva.data_processors.DataOperation">DataOperation</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="semantiva.data_processors.Slicer">
+<span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.</span></span><span class="sig-name descname"><span class="pre">Slicer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_collection_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_processors.Slicer" title="Link to this definition"></a></dt>
+<dd><p>Convenient user API for creating slicer nodes with explicit types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor_cls</strong> (<em>Type</em><em>[</em><a class="reference internal" href="#semantiva.data_processors.data_processors.BaseDataProcessor" title="semantiva.data_processors.data_processors.BaseDataProcessor"><em>BaseDataProcessor</em></a><em>]</em>)</p></li>
+<li><p><strong>input_data_collection_type</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><em>DataCollectionType</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 

@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="semantiva.logger package" href="semantiva.logger.html" />
-    <link rel="prev" title="semantiva.data_types package" href="semantiva.data_types.html" /> 
+    <link rel="next" title="semantiva.execution_tools.executor package" href="semantiva.execution_tools.executor.html" />
+    <link rel="prev" title="semantiva.exceptions package" href="semantiva.exceptions.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,9 +51,12 @@
 <li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.core.html">semantiva.core package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.examples.html">semantiva.examples package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.exceptions.html">semantiva.exceptions package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
@@ -95,155 +98,113 @@
              
   <section id="semantiva-execution-tools-package">
 <h1>semantiva.execution_tools package<a class="headerlink" href="#semantiva-execution-tools-package" title="Link to this heading"></a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-</section>
-<section id="module-semantiva.execution_tools.tasks">
-<span id="semantiva-execution-tools-tasks-module"></span><h2>semantiva.execution_tools.tasks module<a class="headerlink" href="#module-semantiva.execution_tools.tasks" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.ComputingTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution_tools.tasks.</span></span><span class="sig-name descname"><span class="pre">ComputingTask</span></span><a class="headerlink" href="#semantiva.execution_tools.tasks.ComputingTask" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Abstract base class for a computing task.</p>
-<p>Subclasses must implement the <cite>_run</cite> method to define the specific computation logic.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.ComputingTask.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.execution_tools.tasks.ComputingTask.run" title="Link to this definition"></a></dt>
-<dd><p>Run the computing task by invoking the <cite>_run</cite> method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*args</strong> – Positional arguments for the task.</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments for the task.</p></li>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.execution_tools.executor.html">semantiva.execution_tools.executor package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.executor.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.executor.html#module-semantiva.execution_tools.executor.executor">semantiva.execution_tools.executor.executor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.executor.html#semantiva.execution_tools.executor.executor.SemantivaExecutor"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.executor.html#semantiva.execution_tools.executor.executor.SemantivaExecutor.submit"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.submit()</span></code></a></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The result of the <cite>_run</cite> method.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.PayloadOperationTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution_tools.tasks.</span></span><span class="sig-name descname"><span class="pre">PayloadOperationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload_source_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload_source_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload_operation_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload_operation_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload_sink_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload_sink_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.execution_tools.tasks.PayloadOperationTask" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.execution_tools.tasks.ComputingTask" title="semantiva.execution_tools.tasks.ComputingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">ComputingTask</span></code></a></p>
-<p>Task for processing payloads using a data source, a payload operation, and a data sink.</p>
-<p>This class encapsulates the logic for:
-- Retrieving data and context from a data source.
-- Applying a payload operation to the data and context.
-- Sending the processed data and context to a data sink.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>payload_source_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><em>PayloadSource</em></a><em>]</em>)</p></li>
-<li><p><strong>payload_source_parameters</strong> (<em>Dict</em>)</p></li>
-<li><p><strong>payload_operation_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor" title="semantiva.payload_operations.payload_processors.PayloadProcessor"><em>PayloadProcessor</em></a><em>]</em>)</p></li>
-<li><p><strong>payload_operation_config</strong> (<em>Dict</em>)</p></li>
-<li><p><strong>payload_sink_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink"><em>PayloadSink</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>payload_sink_parameters</strong> (<em>Dict</em><em> | </em><em>None</em>)</p></li>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.executor.html#semantiva.execution_tools.executor.executor.SequentialSemantivaExecutor"><code class="docutils literal notranslate"><span class="pre">SequentialSemantivaExecutor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.executor.html#semantiva.execution_tools.executor.executor.SequentialSemantivaExecutor.submit"><code class="docutils literal notranslate"><span class="pre">SequentialSemantivaExecutor.submit()</span></code></a></li>
 </ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.PayloadOperationTask.payload_source_class">
-<span class="sig-name descname"><span class="pre">payload_source_class</span></span><a class="headerlink" href="#semantiva.execution_tools.tasks.PayloadOperationTask.payload_source_class" title="Link to this definition"></a></dt>
-<dd><p>Class responsible for providing the data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Type[<a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.DataSource" title="semantiva.data_io.data_io.DataSource">DataSource</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.PayloadOperationTask.payload_source_parameters">
-<span class="sig-name descname"><span class="pre">payload_source_parameters</span></span><a class="headerlink" href="#semantiva.execution_tools.tasks.PayloadOperationTask.payload_source_parameters" title="Link to this definition"></a></dt>
-<dd><p>Parameters for initializing the payload source.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.PayloadOperationTask.payload_operation_class">
-<span class="sig-name descname"><span class="pre">payload_operation_class</span></span><a class="headerlink" href="#semantiva.execution_tools.tasks.PayloadOperationTask.payload_operation_class" title="Link to this definition"></a></dt>
-<dd><p>Class responsible for the payload operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Type[PayloadOperation]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.PayloadOperationTask.payload_operation_config">
-<span class="sig-name descname"><span class="pre">payload_operation_config</span></span><a class="headerlink" href="#semantiva.execution_tools.tasks.PayloadOperationTask.payload_operation_config" title="Link to this definition"></a></dt>
-<dd><p>Configuration for the payload operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.PayloadOperationTask.payload_sink_class">
-<span class="sig-name descname"><span class="pre">payload_sink_class</span></span><a class="headerlink" href="#semantiva.execution_tools.tasks.PayloadOperationTask.payload_sink_class" title="Link to this definition"></a></dt>
-<dd><p>Class responsible for consuming the processed data and context.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Type[<a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink">PayloadSink</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution_tools.tasks.PayloadOperationTask.payload_sink_parameters">
-<span class="sig-name descname"><span class="pre">payload_sink_parameters</span></span><a class="headerlink" href="#semantiva.execution_tools.tasks.PayloadOperationTask.payload_sink_parameters" title="Link to this definition"></a></dt>
-<dd><p>Parameters for initializing the payload sink.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">payload_operation_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.payload_processors.PayloadProcessor" title="semantiva.payload_operations.payload_processors.PayloadProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadProcessor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">payload_operation_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">payload_sink_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSink" title="semantiva.data_io.data_io.PayloadSink"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSink</span></code></a><span class="pre">]]</span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">payload_sink_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">payload_source_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">PayloadSource</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">payload_source_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.executor.html#module-semantiva.execution_tools.executor">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.execution_tools.job_queue.html">semantiva.execution_tools.job_queue package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#module-semantiva.execution_tools.job_queue.logging_setup">semantiva.execution_tools.job_queue.logging_setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#module-semantiva.execution_tools.job_queue.queue_orchestrator">semantiva.execution_tools.job_queue.queue_orchestrator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.transport"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.transport</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.job_queue"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.job_queue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.pending_futures"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.pending_futures</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.logger"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.running"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.running</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.stop_event"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.stop_event</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.enqueue"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.enqueue()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.run_forever"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.run_forever()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.stop"><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.stop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#module-semantiva.execution_tools.job_queue.worker">semantiva.execution_tools.job_queue.worker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#semantiva.execution_tools.job_queue.worker.worker_loop"><code class="docutils literal notranslate"><span class="pre">worker_loop()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.job_queue.html#module-semantiva.execution_tools.job_queue">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html">semantiva.execution_tools.orchestrator package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html#module-semantiva.execution_tools.orchestrator.orchestrator">semantiva.execution_tools.orchestrator.orchestrator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html#semantiva.execution_tools.orchestrator.orchestrator.LocalSemantivaOrchestrator"><code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html#semantiva.execution_tools.orchestrator.orchestrator.LocalSemantivaOrchestrator.execute"><code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html#semantiva.execution_tools.orchestrator.orchestrator.SemantivaOrchestrator"><code class="docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html#semantiva.execution_tools.orchestrator.orchestrator.SemantivaOrchestrator.execute"><code class="docutils literal notranslate"><span class="pre">SemantivaOrchestrator.execute()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.orchestrator.html#module-semantiva.execution_tools.orchestrator">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="semantiva.execution_tools.transport.html">semantiva.execution_tools.transport package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.transport.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.transport.html#module-semantiva.execution_tools.transport.base">semantiva.execution_tools.transport.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.Message.data"><code class="docutils literal notranslate"><span class="pre">Message.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.Message.context"><code class="docutils literal notranslate"><span class="pre">Message.context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.Message.metadata"><code class="docutils literal notranslate"><span class="pre">Message.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.Message.ack"><code class="docutils literal notranslate"><span class="pre">Message.ack</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#id0"><code class="docutils literal notranslate"><span class="pre">Message.ack</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#id1"><code class="docutils literal notranslate"><span class="pre">Message.context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#id2"><code class="docutils literal notranslate"><span class="pre">Message.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#id3"><code class="docutils literal notranslate"><span class="pre">Message.metadata</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.SemantivaTransport"><code class="docutils literal notranslate"><span class="pre">SemantivaTransport</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.SemantivaTransport.close"><code class="docutils literal notranslate"><span class="pre">SemantivaTransport.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.SemantivaTransport.connect"><code class="docutils literal notranslate"><span class="pre">SemantivaTransport.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.SemantivaTransport.publish"><code class="docutils literal notranslate"><span class="pre">SemantivaTransport.publish()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.SemantivaTransport.subscribe"><code class="docutils literal notranslate"><span class="pre">SemantivaTransport.subscribe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.Subscription"><code class="docutils literal notranslate"><span class="pre">Subscription</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.Subscription.close"><code class="docutils literal notranslate"><span class="pre">Subscription.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.transport.html#module-semantiva.execution_tools.transport.in_memory">semantiva.execution_tools.transport.in_memory module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.in_memory.InMemorySemantivaTransport"><code class="docutils literal notranslate"><span class="pre">InMemorySemantivaTransport</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.in_memory.InMemorySemantivaTransport.close"><code class="docutils literal notranslate"><span class="pre">InMemorySemantivaTransport.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.in_memory.InMemorySemantivaTransport.connect"><code class="docutils literal notranslate"><span class="pre">InMemorySemantivaTransport.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.in_memory.InMemorySemantivaTransport.publish"><code class="docutils literal notranslate"><span class="pre">InMemorySemantivaTransport.publish()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.in_memory.InMemorySemantivaTransport.subscribe"><code class="docutils literal notranslate"><span class="pre">InMemorySemantivaTransport.subscribe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.in_memory.InMemorySubscription"><code class="docutils literal notranslate"><span class="pre">InMemorySubscription</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.in_memory.InMemorySubscription.close"><code class="docutils literal notranslate"><span class="pre">InMemorySubscription.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="semantiva.execution_tools.transport.html#module-semantiva.execution_tools.transport">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 <section id="module-semantiva.execution_tools">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.execution_tools" title="Link to this heading"></a></h2>
@@ -254,8 +215,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="semantiva.data_types.html" class="btn btn-neutral float-left" title="semantiva.data_types package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="semantiva.logger.html" class="btn btn-neutral float-right" title="semantiva.logger package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="semantiva.exceptions.html" class="btn btn-neutral float-left" title="semantiva.exceptions package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.execution_tools.executor.html" class="btn btn-neutral float-right" title="semantiva.execution_tools.executor package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

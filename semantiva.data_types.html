@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="semantiva.execution_tools package" href="semantiva.execution_tools.html" />
+    <link rel="next" title="semantiva.examples package" href="semantiva.examples.html" />
     <link rel="prev" title="semantiva.data_processors package" href="semantiva.data_processors.html" /> 
 </head>
 
@@ -51,9 +51,12 @@
 <li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.core.html">semantiva.core package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.examples.html">semantiva.examples package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.exceptions.html">semantiva.exceptions package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
@@ -103,7 +106,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_types.data_types.BaseDataType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.data_types.</span></span><span class="sig-name descname"><span class="pre">BaseDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.data_types.BaseDataType" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <p>Abstract generic base class for all data types in the semantic framework.</p>
 <p>This class provides a foundation for creating and managing various data types,
 ensuring consistency and extensibility across the framework.</p>
@@ -153,9 +156,7 @@ validation rules for the data type.</p>
 <dt class="sig sig-object py" id="semantiva.data_types.data_types.DataCollectionType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.data_types.</span></span><span class="sig-name descname"><span class="pre">DataCollectionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.data_types.DataCollectionType" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">S</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">E</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">S</span></code>]</p>
-<p>Abstract base class for collection-based data types.</p>
-<p>This class extends BaseDataType to handle data that comprises multiple
-elements and provides a foundation for collection-specific operations.</p>
+<p>Abstract base class for data collections, handling multiple elements of the same BaseDataType.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>S</em><em> | </em><em>None</em>)</p>
@@ -249,6 +250,150 @@ validation rules for the data type.</p>
 </section>
 <section id="module-semantiva.data_types">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.data_types" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_types.BaseDataType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.</span></span><span class="sig-name descname"><span class="pre">BaseDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.BaseDataType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Abstract generic base class for all data types in the semantic framework.</p>
+<p>This class provides a foundation for creating and managing various data types,
+ensuring consistency and extensibility across the framework.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>T</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.data_types.BaseDataType._data">
+<span class="sig-name descname"><span class="pre">_data</span></span><a class="headerlink" href="#semantiva.data_types.BaseDataType._data" title="Link to this definition"></a></dt>
+<dd><p>The underlying data encapsulated by the data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="semantiva.data_types.BaseDataType.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">T</span></em><a class="headerlink" href="#semantiva.data_types.BaseDataType.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_types.BaseDataType.validate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.BaseDataType.validate" title="Link to this definition"></a></dt>
+<dd><p>Abstract method to validate the encapsulated data.</p>
+<p>This method must be implemented by subclasses to define specific
+validation rules for the data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the data is valid, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>T</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_types.DataCollectionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.</span></span><span class="sig-name descname"><span class="pre">DataCollectionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.DataCollectionType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">S</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">E</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">S</span></code>]</p>
+<p>Abstract base class for data collections, handling multiple elements of the same BaseDataType.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>S</em><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_types.DataCollectionType.append">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.DataCollectionType.append" title="Link to this definition"></a></dt>
+<dd><p>Appends an element of type E to the data collection.</p>
+<p>Subclasses should implement how elements are added to the underlying
+storage format while ensuring consistency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> (<em>E</em>) – The element to append to the collection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the item type does not match the expected element type.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_types.DataCollectionType.collection_base_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">collection_base_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.DataCollectionType.collection_base_type" title="Link to this definition"></a></dt>
+<dd><p>Returns the base type of elements in the collection.</p>
+<p>This method provides the expected data type for elements in the collection
+based on the class definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The expected type of elements in the collection.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[E]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_types.DataCollectionType.from_list">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.DataCollectionType.from_list" title="Link to this definition"></a></dt>
+<dd><p>Creates a DataCollectionType object from a list of BaseDataType objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>items</strong> (<em>list</em><em>[</em><em>E</em><em>]</em>) – A list of BaseDataType objects to initialize the collection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new instance of DataCollectionType with the items.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#semantiva.data_types.DataCollectionType" title="semantiva.data_types.DataCollectionType">DataCollectionType</a>[E, S]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.data_types.NoDataType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.</span></span><span class="sig-name descname"><span class="pre">NoDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.NoDataType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<p>A data type representing the absence of data in Semantiva.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_types.NoDataType.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_types.NoDataType.validate" title="Link to this definition"></a></dt>
+<dd><p>Abstract method to validate the encapsulated data.</p>
+<p>This method must be implemented by subclasses to define specific
+validation rules for the data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the data is valid, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>None</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -257,7 +402,7 @@ validation rules for the data type.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="semantiva.data_processors.html" class="btn btn-neutral float-left" title="semantiva.data_processors package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="semantiva.execution_tools.html" class="btn btn-neutral float-right" title="semantiva.execution_tools package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="semantiva.examples.html" class="btn btn-neutral float-right" title="semantiva.examples package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

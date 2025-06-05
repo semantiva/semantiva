@@ -10,9 +10,12 @@ Subpackages
    semantiva.component_loader
    semantiva.configurations
    semantiva.context_processors
+   semantiva.core
    semantiva.data_io
    semantiva.data_processors
    semantiva.data_types
+   semantiva.examples
+   semantiva.exceptions
    semantiva.execution_tools
    semantiva.logger
    semantiva.payload_operations

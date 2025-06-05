@@ -20,6 +20,14 @@ semantiva.data\_processors.data\_processors module
    :undoc-members:
    :show-inheritance:
 
+semantiva.data\_processors.data\_slicer\_factory module
+-------------------------------------------------------
+
+.. automodule:: semantiva.data_processors.data_slicer_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

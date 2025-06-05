@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="semantiva.data_processors package" href="semantiva.data_processors.html" />
-    <link rel="prev" title="semantiva.context_processors package" href="semantiva.context_processors.html" /> 
+    <link rel="prev" title="semantiva.core package" href="semantiva.core.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,9 +51,12 @@
 <li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.core.html">semantiva.core package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.data_io package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.examples.html">semantiva.examples package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.exceptions.html">semantiva.exceptions package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
@@ -103,41 +106,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">DataSink</span></span><a class="headerlink" href="#semantiva.data_io.data_io.DataSink" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<p>Abstract base class for data sinks within the framework.</p>
-<p>A <cite>DataSink</cite> represents an entity responsible for consuming and storing
-data provided by other components in the framework.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink._send_data">
-<span class="sig-name descname"><span class="pre">_send_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSink._send_data" title="Link to this definition"></a></dt>
-<dd><p>Abstract method to implement the logic for sending data.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink.send_data">
-<span class="sig-name descname"><span class="pre">send_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSink.send_data" title="Link to this definition"></a></dt>
-<dd><p>Public method to send data by invoking <cite>_send_data</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>T</em>)</p>
-</dd>
-</dl>
-</dd></dl>
-
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Abstract base class for data sinks that consume and store data.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink.input_data_type">
-<span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSink.input_data_type" title="Link to this definition"></a></dt>
-<dd><p>Abstract method to define the type of data consumed.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a>[<em>T</em>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSink.input_data_type" title="Link to this definition"></a></dt>
 <dd><p>Define the type of data consumed by this sink.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -150,8 +123,8 @@ data provided by other components in the framework.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">send_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink.send_data">
+<span class="sig-name descname"><span class="pre">send_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSink.send_data" title="Link to this definition"></a></dt>
 <dd><p>Send data by invoking the <cite>_send_data</cite> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -172,31 +145,11 @@ data provided by other components in the framework.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">DataSource</span></span><a class="headerlink" href="#semantiva.data_io.data_io.DataSource" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Abstract base class for data sources within the framework.</p>
-<p>A <cite>DataSource</cite> represents an entity that provides data to be consumed
-by other components in the framework.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource._get_data">
-<span class="sig-name descname"><span class="pre">_get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSource._get_data" title="Link to this definition"></a></dt>
-<dd><p>Abstract method to implement the logic for retrieving data.</p>
-</dd></dl>
-
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a></p>
+<p>Abstract base class representing a data source in Semantiva.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource.get_data">
-<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSource.get_data" title="Link to this definition"></a></dt>
-<dd><p>Public method to fetch data by invoking <cite>_get_data</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource.output_data_type">
-<span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSource.output_data_type" title="Link to this definition"></a></dt>
-<dd><p>Abstract method to define the type of data provided.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSource.get_data" title="Link to this definition"></a></dt>
 <dd><p>Retrieve data by invoking the <cite>_get_data</cite> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -215,8 +168,8 @@ by other components in the framework.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id3">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource.output_data_type">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.DataSource.output_data_type" title="Link to this definition"></a></dt>
 <dd><p>Define the type of data provided by this source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -233,33 +186,11 @@ by other components in the framework.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">PayloadSink</span></span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<p>Abstract base class for payload sinks within the framework.</p>
-<p>A <cite>PayloadSink</cite> represents an entity responsible for consuming and storing
-both data and its associated context provided by other components in the framework.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink._send_payload">
-<span class="sig-name descname"><span class="pre">_send_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink._send_payload" title="Link to this definition"></a></dt>
-<dd><p>Abstract method to implement the logic for consuming data and context.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink.send_payload">
-<span class="sig-name descname"><span class="pre">send_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.send_payload" title="Link to this definition"></a></dt>
-<dd><p>Public method to consume data and context by invoking <cite>_send_payload</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>T</em>)</p></li>
-<li><p><strong>context</strong> (<a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType"><em>ContextType</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Abstract base class for payload sinks that consume and store data along with its associated context.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink.input_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.input_data_type" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.input_data_type" title="Link to this definition"></a></dt>
 <dd><p>Define the type of data consumed by this sink.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -272,8 +203,8 @@ both data and its associated context provided by other components in the framewo
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">send_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink.send_payload">
+<span class="sig-name descname"><span class="pre">send_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.send_payload" title="Link to this definition"></a></dt>
 <dd><p>Consume the provided data and context by invoking the <cite>_send_payload</cite> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -295,41 +226,11 @@ both data and its associated context provided by other components in the framewo
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">PayloadSource</span></span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Abstract base class for payload sources within the framework.</p>
-<p>A <cite>PayloadSource</cite> provides structured payloads for processing within
-the framework.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource._get_payload">
-<span class="sig-name descname"><span class="pre">_get_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource._get_payload" title="Link to this definition"></a></dt>
-<dd><p>Abstract method to implement the logic for retrieving payloads.</p>
-</dd></dl>
-
+<dd><p>Bases: <a class="reference internal" href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject" title="semantiva.core.semantiva_object.SemantivaObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaObject</span></code></a></p>
+<p>Abstract base class for providing structured payloads (data and context) in Semantiva.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource.get_payload">
-<span class="sig-name descname"><span class="pre">get_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.get_payload" title="Link to this definition"></a></dt>
-<dd><p>Public method to fetch payloads by invoking <cite>_get_payload</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Tuple</em>[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a>, <a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType"><em>ContextType</em></a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource.output_data_type">
-<span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.output_data_type" title="Link to this definition"></a></dt>
-<dd><p>Abstract method to define the type of payload provided.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><em>BaseDataType</em></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">get_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.get_payload" title="Link to this definition"></a></dt>
 <dd><p>Retrieve a payload by invoking the <cite>_get_payload</cite> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -348,8 +249,22 @@ the framework.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id6">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource.injected_context_keys">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">injected_context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.injected_context_keys" title="Link to this definition"></a></dt>
+<dd><p>Return the keys of the context that are injected by the source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The keys of the context injected by the source.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource.output_data_type">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.output_data_type" title="Link to this definition"></a></dt>
 <dd><p>Define the type of payload provided by this source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -373,7 +288,7 @@ the framework.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="semantiva.context_processors.html" class="btn btn-neutral float-left" title="semantiva.context_processors package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.core.html" class="btn btn-neutral float-left" title="semantiva.core package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="semantiva.data_processors.html" class="btn btn-neutral float-right" title="semantiva.data_processors package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

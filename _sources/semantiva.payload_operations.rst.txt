@@ -1,6 +1,14 @@
 semantiva.payload\_operations package
 =====================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   semantiva.payload_operations.nodes
+
 Submodules
 ----------
 
@@ -16,6 +24,14 @@ semantiva.payload\_operations.pipeline module
 ---------------------------------------------
 
 .. automodule:: semantiva.payload_operations.pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+semantiva.payload\_operations.pipeline\_inspector module
+--------------------------------------------------------
+
+.. automodule:: semantiva.payload_operations.pipeline_inspector
    :members:
    :undoc-members:
    :show-inheritance:

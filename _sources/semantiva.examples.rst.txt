@@ -1,0 +1,29 @@
+semantiva.examples package
+==========================
+
+Submodules
+----------
+
+semantiva.examples.job\_demo module
+-----------------------------------
+
+.. automodule:: semantiva.examples.job_demo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+semantiva.examples.test\_utils module
+-------------------------------------
+
+.. automodule:: semantiva.examples.test_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: semantiva.examples
+   :members:
+   :undoc-members:
+   :show-inheritance:

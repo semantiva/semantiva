@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>semantiva.execution_tools.job_queue package &mdash; Semantiva 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=7205999f" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="semantiva.execution_tools.orchestrator package" href="semantiva.execution_tools.orchestrator.html" />
+    <link rel="prev" title="semantiva.execution_tools.executor package" href="semantiva.execution_tools.executor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Semantiva
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">semantiva</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="semantiva.html">semantiva package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="semantiva.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="semantiva.component_loader.html">semantiva.component_loader package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.configurations.html">semantiva.configurations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.context_processors.html">semantiva.context_processors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.core.html">semantiva.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_io.html">semantiva.data_io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_processors.html">semantiva.data_processors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.data_types.html">semantiva.data_types package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.examples.html">semantiva.examples package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.exceptions.html">semantiva.exceptions package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.payload_operations.html">semantiva.payload_operations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.html">semantiva.specializations package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="semantiva.html#module-semantiva">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Semantiva</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">semantiva</a></li>
+          <li class="breadcrumb-item"><a href="semantiva.html">semantiva package</a></li>
+          <li class="breadcrumb-item"><a href="semantiva.execution_tools.html">semantiva.execution_tools package</a></li>
+      <li class="breadcrumb-item active">semantiva.execution_tools.job_queue package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/semantiva.execution_tools.job_queue.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="semantiva-execution-tools-job-queue-package">
+<h1>semantiva.execution_tools.job_queue package<a class="headerlink" href="#semantiva-execution-tools-job-queue-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-semantiva.execution_tools.job_queue.logging_setup">
+<span id="semantiva-execution-tools-job-queue-logging-setup-module"></span><h2>semantiva.execution_tools.job_queue.logging_setup module<a class="headerlink" href="#module-semantiva.execution_tools.job_queue.logging_setup" title="Link to this heading"></a></h2>
+<p>Provides a helper to configure role-specific loggers for both master and worker
+components in Semantiva’s job-queue system. Each logger writes to a unique file
+under the <cite>logs/</cite> directory (or a custom directory), incorporating process ID
+and timestamp in the filename.</p>
+</section>
+<section id="module-semantiva.execution_tools.job_queue.queue_orchestrator">
+<span id="semantiva-execution-tools-job-queue-queue-orchestrator-module"></span><h2>semantiva.execution_tools.job_queue.queue_orchestrator module<a class="headerlink" href="#module-semantiva.execution_tools.job_queue.queue_orchestrator" title="Link to this heading"></a></h2>
+<p>Defines QueueSemantivaOrchestrator, the “master” component in Semantiva’s distributed
+job-execution framework. This orchestrator:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Accepts pipeline jobs (config + optional data/context) via enqueue().</p></li>
+<li><p>Maintains a FIFO in-memory queue of pending jobs.</p></li>
+<li><p>Fans out each job by publishing a <cite>jobs.&lt;id&gt;.cfg</cite> message over a SemantivaTransport.</p></li>
+<li><p>Listens for <cite>jobs.&lt;id&gt;.status</cite> messages to resolve per-job Future objects.</p></li>
+<li><p>Supports clean shutdown via a threading.Event signal or the stop() method.</p></li>
+</ul>
+</div></blockquote>
+<p>This design decouples job submission, transport, and result collection, allowing
+plugging in different transport and executor implementations without changing core logic.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution_tools.job_queue.queue_orchestrator.</span></span><span class="sig-name descname"><span class="pre">QueueSemantivaOrchestrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Master orchestrator that enqueues and broadcasts independent Semantiva pipeline jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transport</strong> (<a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.SemantivaTransport" title="semantiva.execution_tools.transport.base.SemantivaTransport"><em>SemantivaTransport</em></a>)</p></li>
+<li><p><strong>stop_event</strong> (<em>Event</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><em>Logger</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.transport">
+<span class="sig-name descname"><span class="pre">transport</span></span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.transport" title="Link to this definition"></a></dt>
+<dd><p>Pluggable SemantivaTransport for pub/sub of jobs and statuses.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.job_queue">
+<span class="sig-name descname"><span class="pre">job_queue</span></span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.job_queue" title="Link to this definition"></a></dt>
+<dd><p>In-memory FIFO queue of (job_id, payload) tuples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.pending_futures">
+<span class="sig-name descname"><span class="pre">pending_futures</span></span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.pending_futures" title="Link to this definition"></a></dt>
+<dd><p>Maps job_id → Future for callers awaiting results.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.logger" title="Link to this definition"></a></dt>
+<dd><p>Role-specific Logger for master metadata and timing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.running">
+<span class="sig-name descname"><span class="pre">running</span></span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.running" title="Link to this definition"></a></dt>
+<dd><p>Flag controlling the main publish-listen loop.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.stop_event">
+<span class="sig-name descname"><span class="pre">stop_event</span></span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.stop_event" title="Link to this definition"></a></dt>
+<dd><p>Optional threading.Event that triggers graceful shutdown.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.enqueue">
+<span class="sig-name descname"><span class="pre">enqueue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_cfg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_future</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.enqueue" title="Link to this definition"></a></dt>
+<dd><p>Enqueue a new pipeline job for asynchronous execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pipeline_cfg</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline" title="semantiva.payload_operations.pipeline.Pipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Pipeline node-list dicts.</p></li>
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="semantiva.data_types.html#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>]</span>) – Optional initial data.</p></li>
+<li><p><strong>context</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextType" title="semantiva.context_processors.context_types.ContextType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextType</span></code></a>]</span>) – Optional initial context.</p></li>
+<li><p><strong>return_future</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, returns a Future whose result() yields (data, context).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Future if return_future=True; otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.run_forever">
+<span class="sig-name descname"><span class="pre">run_forever</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.run_forever" title="Link to this definition"></a></dt>
+<dd><p>Main event loop:</p>
+<ol class="arabic simple">
+<li><p>Dequeue and publish any newly enqueued jobs.</p></li>
+<li><p>Subscribe to ‘jobs.*.status’ channel and resolve matching Futures.</p></li>
+<li><p>Repeat until stop_event is set or stop() is called.</p></li>
+</ol>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.execution_tools.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.stop" title="Link to this definition"></a></dt>
+<dd><p>Signal the orchestrator to exit its run loop and close the transport.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-semantiva.execution_tools.job_queue.worker">
+<span id="semantiva-execution-tools-job-queue-worker-module"></span><h2>semantiva.execution_tools.job_queue.worker module<a class="headerlink" href="#module-semantiva.execution_tools.job_queue.worker" title="Link to this heading"></a></h2>
+<p>Defines the <cite>worker_loop</cite> function, which continuously listens for new pipeline jobs
+via a SemantivaTransport, executes them using a SemantivaExecutor, and publishes results.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="semantiva.execution_tools.job_queue.worker.worker_loop">
+<span class="sig-prename descclassname"><span class="pre">semantiva.execution_tools.job_queue.worker.</span></span><span class="sig-name descname"><span class="pre">worker_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.execution_tools.job_queue.worker.worker_loop" title="Link to this definition"></a></dt>
+<dd><p>Main worker loop for processing Semantiva pipeline jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>worker_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Unique identifier for this worker instance.</p></li>
+<li><p><strong>transport</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="semantiva.execution_tools.transport.html#semantiva.execution_tools.transport.base.SemantivaTransport" title="semantiva.execution_tools.transport.base.SemantivaTransport"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaTransport</span></code></a></span>) – A SemantivaTransport implementation for pub/sub.</p></li>
+<li><p><strong>executor</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="semantiva.execution_tools.executor.html#semantiva.execution_tools.executor.executor.SemantivaExecutor" title="semantiva.execution_tools.executor.executor.SemantivaExecutor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaExecutor</span></code></a></span>) – A SemantivaExecutor to run pipeline tasks.</p></li>
+<li><p><strong>stop_event</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></span>) – Threading Event used to signal shutdown.</p></li>
+<li><p><strong>logger</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="semantiva.logger.html#semantiva.logger.logger.Logger" title="semantiva.logger.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a>]</span>) – Optional Logger instance; if None, one is created via _setup_log.</p></li>
+<li><p><strong>poll_interval</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Seconds to sleep when no job is found.</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Behavior:</dt><dd><ol class="arabic">
+<li><p>Connects to the transport.</p></li>
+<li><p>Repeatedly:
+a. Subscribes to ‘jobs.*.cfg’ to receive new job payloads.
+b. For each Message:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Extract job_id, pipeline config, initial data, and context.</p></li>
+<li><p>Instantiate a Pipeline object (from dict, YAML, or direct instance).</p></li>
+<li><p>Call pipeline.process(data, context) to execute.</p></li>
+<li><p>Publish the result to ‘jobs.&lt;job_id&gt;.status’.</p></li>
+<li><p>Acknowledge the incoming message if supported.</p></li>
+</ul>
+</div></blockquote>
+<ol class="loweralpha simple" start="3">
+<li><p>Closes the subscription.</p></li>
+<li><p>If no messages were processed, sleeps for <cite>poll_interval</cite>.</p></li>
+</ol>
+</li>
+<li><p>Exits when stop_event.is_set(), closes transport, logs shutdown.</p></li>
+</ol>
+</dd>
+</dl>
+<p>This allows multiple workers to run in parallel, distributing jobs across processes
+or containers while decoupling job submission (by the orchestrator) from execution.</p>
+</dd></dl>
+
+</section>
+<section id="module-semantiva.execution_tools.job_queue">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-semantiva.execution_tools.job_queue" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="semantiva.execution_tools.executor.html" class="btn btn-neutral float-left" title="semantiva.execution_tools.executor package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="semantiva.execution_tools.orchestrator.html" class="btn btn-neutral float-right" title="semantiva.execution_tools.orchestrator package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Rafael Pezzi, Marcos Deros.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
