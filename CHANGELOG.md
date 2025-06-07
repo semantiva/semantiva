@@ -50,8 +50,9 @@ Here is the updated changelog with the missing items included and the requested 
 
 ### Changed
 - **Changed license from MIT to Apache-2.0.**  
-  - Updated `LICENSE` file to reflect the new license terms.  
+  - Updated `LICENSE` file to reflect the new license terms.
   - Added `NOTICE` file with attribution and license information.
+- Refactored pipeline inspection logic to improve code clarity and maintainability.
 
 ### Fixed
 - **Log directory creation**: Ensured that the log directory is created before attaching a file handler in `semantiva/logger/logger.py`.  
