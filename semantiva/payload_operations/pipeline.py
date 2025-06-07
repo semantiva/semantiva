@@ -13,14 +13,13 @@
 # limitations under the License.
 
 import inspect
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 from semantiva.exceptions.pipeline import (
     PipelineTopologyError,
 )
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import BaseDataType
 from semantiva.logger import Logger
-from .pipeline_inspector import PipelineInspector
 from .payload_processors import PayloadProcessor
 from .nodes.node_factory import node_factory
 from .nodes.nodes import (
@@ -74,7 +73,6 @@ class Pipeline(PayloadProcessor):
         self.nodes = self._initialize_nodes()  # existing initialization logic
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
-            self.logger.debug("%s", self.inspect())
 
     def _process(
         self, data: BaseDataType, context: ContextType
@@ -112,21 +110,6 @@ class Pipeline(PayloadProcessor):
             self.get_timers(),
         )
         return result_data, result_context
-
-    def inspect(self) -> str:
-        """
-        Return a comprehensive summary of the pipeline's structure.
-        The summary covers:
-            • Node details: The class names of the nodes and their operations.
-            • Parameters: Which parameters come from the pipeline configuration versus the
-                        context.
-            • Context updates: The keywords that each node creates or modifies in the context.
-            • Required context keys: The set of context parameters necessary for the pipeline.
-            • Execution time: The pipeline's cumulative execution time, tracked by the StopWatch.
-        Returns:
-            str: A formatted report describing the pipeline composition and relevant details.
-        """
-        return PipelineInspector.inspect(self.nodes)
 
     def get_timers(self) -> str:
         """
@@ -223,105 +206,3 @@ class Pipeline(PayloadProcessor):
             "component_type": "Pipeline",
         }
         return component_metadata
-
-    def _print_nodes_semantic_ids(self):
-        """
-        Print the semantic ID of each node in the pipeline.
-
-        This method is used for debugging purposes to print the semantic ID of each node
-        in the pipeline.
-        """
-
-        print("Pipeline inspection:")
-        print(self.inspect())
-        print()
-        for index, node in enumerate(self.nodes, start=1):
-            print(f"\nNode {index}")
-            print(node.semantic_id())
-
-    def extended_inspection(self) -> str:
-        """
-        Provides a highly verbose and detailed pipeline inspection, suitable for advanced
-        debugging and LLM-based introspection. Each node includes detailed descriptions,
-        docstrings (provided as footnotes), parameter sources, and context operations.
-
-        Returns:
-            str: An extended inspection report of the pipeline.
-        """
-        summary_lines = ["Extended Pipeline Inspection:"]
-        footnotes: Dict[str, str] = {}
-
-        for index, node in enumerate(self.nodes, start=1):
-            injected_keys = set()
-            required_context_keys: set[str] = set()
-            created_context_keys: set[str] = set()
-            metadata = node.get_metadata()
-            processor = node.processor
-            node_class_name = node.__class__.__name__
-            processor_class_name = processor.__class__.__name__
-
-            required_keys = set()
-            if hasattr(processor, "get_required_context_keys"):
-                required_keys = set(processor.get_required_context_keys())
-            required_context_keys.update(required_keys)
-
-            if hasattr(processor, "get_required_keys"):
-                required_keys = set(processor.get_required_keys())
-                required_context_keys.update(required_keys)
-
-            suppressed_keys = set()
-            if hasattr(processor, "get_suppressed_keys"):
-                suppressed_keys = set(processor.get_suppressed_keys())
-
-            created_keys = set()
-            if hasattr(processor, "get_created_keys"):
-                created_keys = set(processor.get_created_keys())
-                created_context_keys.update(created_keys)
-
-            if metadata.get("component_type") == "ProbeContextInjectorNode":
-                injected_key = getattr(node, "context_keyword", None)
-                if injected_key:
-                    injected_keys = {injected_key}
-                    created_context_keys.add(injected_key)
-
-            processor_config = node.processor_config
-            config_params_str = (
-                ", ".join(f"{k}={v}" for k, v in processor_config.items())
-                if processor_config
-                else "None"
-            )
-
-            # Prepare detailed node summary
-            summary_lines.extend(
-                [
-                    f"\nNode {index}: {processor_class_name} ({node_class_name})",
-                    f"    - Component type: {metadata.get('component_type')}",
-                    f"    - Input data type: {node.input_data_type().__name__ if hasattr(node, 'input_data_type') else 'None'}",
-                    f"    - Output data type: {node.output_data_type().__name__ if hasattr(node, 'output_data_type') else 'None'}",
-                    f"    - Parameters from pipeline configuration: {config_params_str}",
-                    f"    - Parameters from context: {', '.join(required_keys) if required_keys else 'None'}",
-                    f"    - Context additions: {', '.join(created_keys | injected_keys ) or 'None'}",
-                    f"    - Context suppressions: {', '.join(suppressed_keys) if suppressed_keys else 'None'}",
-                ]
-            )
-
-            # Add detailed descriptions to footnotes
-            footnote_key = f"{processor_class_name}"
-            if footnote_key not in footnotes:
-                processor_doc = (
-                    inspect.getdoc(processor.__class__) or "No description provided."
-                )
-                footnotes[footnote_key] = processor_doc
-
-        required_final_keys = required_context_keys - created_context_keys
-        summary_lines.insert(
-            1,
-            f"    Required context keys: {', '.join(sorted(required_final_keys)) or 'None'}",
-        )
-
-        # Append footnotes
-        summary_lines.append("\nFootnotes:")
-        for name, doc in footnotes.items():
-            summary_lines.extend([f"[{name}]", f"{doc}", ""])
-
-        return "\n".join(summary_lines)
