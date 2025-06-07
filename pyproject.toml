@@ -45,8 +45,8 @@ build-backend = "pdm.backend"
 cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
 
 [tool.pdm.version]
-source = "scm"
-fallback_version = "0.1.0-dev0+gUNKNOWN"
+source = "file"
+path = "version.txt"
 
 [tool.setuptools]
 include = ["NOTICE", "LICENSE", "README.md"]
