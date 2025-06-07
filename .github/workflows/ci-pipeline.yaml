@@ -104,7 +104,7 @@ jobs:
       - name: Build the package
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          echo $VERSION > version.txt
+          echo "__version__ = \"$VERSION\"" > version.txt
           echo "Building version: $VERSION"
           pdm build  # Build the package (sdist and wheel)
 
