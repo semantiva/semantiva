@@ -20,6 +20,7 @@ Subpackages
    semantiva.logger
    semantiva.payload_operations
    semantiva.specializations
+   semantiva.tools
 
 Module contents
 ---------------

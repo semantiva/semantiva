@@ -28,14 +28,6 @@ semantiva.payload\_operations.pipeline module
    :undoc-members:
    :show-inheritance:
 
-semantiva.payload\_operations.pipeline\_inspector module
---------------------------------------------------------
-
-.. automodule:: semantiva.payload_operations.pipeline_inspector
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 semantiva.payload\_operations.stop\_watch module
 ------------------------------------------------
 

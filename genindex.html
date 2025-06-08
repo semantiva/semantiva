@@ -184,6 +184,8 @@
         <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.ProbeResultCollectorNode.collect">(semantiva.payload_operations.ProbeResultCollectorNode method)</a>
 </li>
       </ul></li>
+      <li><a href="semantiva.tools.html#semantiva.tools.export_ontology.collect_components">collect_components() (in module semantiva.tools.export_ontology)</a>
+</li>
       <li><a href="semantiva.data_types.html#semantiva.data_types.data_types.DataCollectionType.collection_base_type">collection_base_type() (semantiva.data_types.data_types.DataCollectionType class method)</a>
 
       <ul>
@@ -328,14 +330,14 @@
       </ul></li>
       <li><a href="semantiva.payload_operations.nodes.html#semantiva.payload_operations.nodes.nodes.DataOperationNode">DataOperationNode (class in semantiva.payload_operations.nodes.nodes)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="semantiva.data_processors.html#semantiva.data_processors.DataProbe">DataProbe (class in semantiva.data_processors)</a>
 
       <ul>
         <li><a href="semantiva.data_processors.html#semantiva.data_processors.data_processors.DataProbe">(class in semantiva.data_processors.data_processors)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="semantiva.data_io.html#semantiva.data_io.data_io.DataSink">DataSink (class in semantiva.data_io.data_io)</a>
 </li>
       <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.DataSinkNode">DataSinkNode (class in semantiva.payload_operations)</a>
@@ -362,6 +364,8 @@
         <li><a href="semantiva.context_processors.html#semantiva.context_processors.ContextType.delete_value">(semantiva.context_processors.ContextType method)</a>
 </li>
       </ul></li>
+      <li><a href="semantiva.tools.html#semantiva.tools.export_ontology.discover_and_import">discover_and_import() (in module semantiva.tools.export_ontology)</a>
+</li>
       <li><a href="semantiva.examples.html#semantiva.examples.test_utils.DummyContext">DummyContext (class in semantiva.examples.test_utils)</a>
 </li>
   </ul></td>
@@ -384,12 +388,8 @@
         <li><a href="semantiva.execution_tools.orchestrator.html#semantiva.execution_tools.orchestrator.orchestrator.SemantivaOrchestrator.execute">(semantiva.execution_tools.orchestrator.orchestrator.SemantivaOrchestrator method)</a>
 </li>
       </ul></li>
-      <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.Pipeline.extended_inspection">extended_inspection() (semantiva.payload_operations.Pipeline method)</a>
-
-      <ul>
-        <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.extended_inspection">(semantiva.payload_operations.pipeline.Pipeline method)</a>
+      <li><a href="semantiva.tools.html#semantiva.tools.export_ontology.export_framework_ontology">export_framework_ontology() (in module semantiva.tools.export_ontology)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -510,18 +510,24 @@
       </ul></li>
       <li><a href="semantiva.data_io.html#semantiva.data_io.data_io.DataSource.get_data">get_data() (semantiva.data_io.data_io.DataSource class method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.get_item">get_item() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
       <ul>
         <li><a href="semantiva.context_processors.html#semantiva.context_processors.ContextCollectionType.get_item">(semantiva.context_processors.ContextCollectionType method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="semantiva.core.html#semantiva.core.semantiva_object.SemantivaObject.get_metadata">get_metadata() (semantiva.core.semantiva_object.SemantivaObject class method)</a>
 
       <ul>
         <li><a href="semantiva.core.html#semantiva.core.SemantivaObject.get_metadata">(semantiva.core.SemantivaObject class method)</a>
+</li>
+      </ul></li>
+      <li><a href="semantiva.tools.html#semantiva.tools.pipeline_inspector.PipelineInspector.get_nodes_semantic_ids_report">get_nodes_semantic_ids_report() (semantiva.tools.pipeline_inspector.PipelineInspector class method)</a>
+
+      <ul>
+        <li><a href="semantiva.tools.html#semantiva.tools.PipelineInspector.get_nodes_semantic_ids_report">(semantiva.tools.PipelineInspector class method)</a>
 </li>
       </ul></li>
       <li><a href="semantiva.data_io.html#semantiva.data_io.data_io.PayloadSource.get_payload">get_payload() (semantiva.data_io.data_io.PayloadSource method)</a>
@@ -662,12 +668,28 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.Pipeline.inspect">inspect() (semantiva.payload_operations.Pipeline method)</a>
+      <li><a href="semantiva.tools.html#semantiva.tools.pipeline_inspector.PipelineInspector.inspect_config">inspect_config() (semantiva.tools.pipeline_inspector.PipelineInspector class method)</a>
 
       <ul>
-        <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline.Pipeline.inspect">(semantiva.payload_operations.pipeline.Pipeline method)</a>
+        <li><a href="semantiva.tools.html#semantiva.tools.PipelineInspector.inspect_config">(semantiva.tools.PipelineInspector class method)</a>
 </li>
-        <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline_inspector.PipelineInspector.inspect">(semantiva.payload_operations.pipeline_inspector.PipelineInspector class method)</a>
+      </ul></li>
+      <li><a href="semantiva.tools.html#semantiva.tools.pipeline_inspector.PipelineInspector.inspect_config_extended">inspect_config_extended() (semantiva.tools.pipeline_inspector.PipelineInspector class method)</a>
+
+      <ul>
+        <li><a href="semantiva.tools.html#semantiva.tools.PipelineInspector.inspect_config_extended">(semantiva.tools.PipelineInspector class method)</a>
+</li>
+      </ul></li>
+      <li><a href="semantiva.tools.html#semantiva.tools.pipeline_inspector.PipelineInspector.inspect_pipeline">inspect_pipeline() (semantiva.tools.pipeline_inspector.PipelineInspector class method)</a>
+
+      <ul>
+        <li><a href="semantiva.tools.html#semantiva.tools.PipelineInspector.inspect_pipeline">(semantiva.tools.PipelineInspector class method)</a>
+</li>
+      </ul></li>
+      <li><a href="semantiva.tools.html#semantiva.tools.pipeline_inspector.PipelineInspector.inspect_pipeline_extended">inspect_pipeline_extended() (semantiva.tools.pipeline_inspector.PipelineInspector class method)</a>
+
+      <ul>
+        <li><a href="semantiva.tools.html#semantiva.tools.PipelineInspector.inspect_pipeline_extended">(semantiva.tools.PipelineInspector class method)</a>
 </li>
       </ul></li>
       <li><a href="semantiva.context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.items">items() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
@@ -910,13 +932,17 @@
 </li>
         <li><a href="semantiva.payload_operations.html#module-semantiva.payload_operations.pipeline">semantiva.payload_operations.pipeline</a>
 </li>
-        <li><a href="semantiva.payload_operations.html#module-semantiva.payload_operations.pipeline_inspector">semantiva.payload_operations.pipeline_inspector</a>
-</li>
         <li><a href="semantiva.payload_operations.html#module-semantiva.payload_operations.stop_watch">semantiva.payload_operations.stop_watch</a>
 </li>
         <li><a href="semantiva.specializations.html#module-semantiva.specializations">semantiva.specializations</a>
 </li>
         <li><a href="semantiva.specializations.html#module-semantiva.specializations.specialization_loader">semantiva.specializations.specialization_loader</a>
+</li>
+        <li><a href="semantiva.tools.html#module-semantiva.tools">semantiva.tools</a>
+</li>
+        <li><a href="semantiva.tools.html#module-semantiva.tools.export_ontology">semantiva.tools.export_ontology</a>
+</li>
+        <li><a href="semantiva.tools.html#module-semantiva.tools.pipeline_inspector">semantiva.tools.pipeline_inspector</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1067,8 +1093,12 @@
       </ul></li>
       <li><a href="semantiva.exceptions.html#semantiva.exceptions.pipeline.PipelineConfigurationError">PipelineConfigurationError</a>
 </li>
-      <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.pipeline_inspector.PipelineInspector">PipelineInspector (class in semantiva.payload_operations.pipeline_inspector)</a>
+      <li><a href="semantiva.tools.html#semantiva.tools.PipelineInspector">PipelineInspector (class in semantiva.tools)</a>
+
+      <ul>
+        <li><a href="semantiva.tools.html#semantiva.tools.pipeline_inspector.PipelineInspector">(class in semantiva.tools.pipeline_inspector)</a>
 </li>
+      </ul></li>
       <li><a href="semantiva.payload_operations.html#semantiva.payload_operations.PipelineNode">PipelineNode (class in semantiva.payload_operations)</a>
 
       <ul>
@@ -1528,8 +1558,6 @@
         <li><a href="semantiva.logger.html#module-semantiva.logger.logger">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     semantiva.payload_operations
 
@@ -1537,6 +1565,8 @@
         <li><a href="semantiva.payload_operations.html#module-semantiva.payload_operations">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     semantiva.payload_operations.nodes
 
@@ -1573,13 +1603,6 @@
 </li>
       </ul></li>
       <li>
-    semantiva.payload_operations.pipeline_inspector
-
-      <ul>
-        <li><a href="semantiva.payload_operations.html#module-semantiva.payload_operations.pipeline_inspector">module</a>
-</li>
-      </ul></li>
-      <li>
     semantiva.payload_operations.stop_watch
 
       <ul>
@@ -1598,6 +1621,27 @@
 
       <ul>
         <li><a href="semantiva.specializations.html#module-semantiva.specializations.specialization_loader">module</a>
+</li>
+      </ul></li>
+      <li>
+    semantiva.tools
+
+      <ul>
+        <li><a href="semantiva.tools.html#module-semantiva.tools">module</a>
+</li>
+      </ul></li>
+      <li>
+    semantiva.tools.export_ontology
+
+      <ul>
+        <li><a href="semantiva.tools.html#module-semantiva.tools.export_ontology">module</a>
+</li>
+      </ul></li>
+      <li>
+    semantiva.tools.pipeline_inspector
+
+      <ul>
+        <li><a href="semantiva.tools.html#module-semantiva.tools.pipeline_inspector">module</a>
 </li>
       </ul></li>
       <li><a href="semantiva.execution_tools.executor.html#semantiva.execution_tools.executor.executor.SemantivaExecutor">SemantivaExecutor (class in semantiva.execution_tools.executor.executor)</a>

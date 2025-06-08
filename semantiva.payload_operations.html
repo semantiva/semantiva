@@ -61,6 +61,7 @@
 <li class="toctree-l4"><a class="reference internal" href="semantiva.logger.html">semantiva.logger package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">semantiva.payload_operations package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="semantiva.specializations.html">semantiva.specializations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="semantiva.tools.html">semantiva.tools package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="semantiva.html#module-semantiva">Module contents</a></li>
@@ -336,22 +337,6 @@ of the <cite>_process</cite> method, which must be defined in subclasses.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.extended_inspection">
-<span class="sig-name descname"><span class="pre">extended_inspection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.extended_inspection" title="Link to this definition"></a></dt>
-<dd><p>Provides a highly verbose and detailed pipeline inspection, suitable for advanced
-debugging and LLM-based introspection. Each node includes detailed descriptions,
-docstrings (provided as footnotes), parameter sources, and context operations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>An extended inspection report of the pipeline.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.get_probe_results">
 <span class="sig-name descname"><span class="pre">get_probe_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.get_probe_results" title="Link to this definition"></a></dt>
 <dd><p>Retrieve the collected data from all probe collector nodes in the pipeline.</p>
@@ -395,34 +380,6 @@ and values are the collected data from the probe nodes.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.inspect">
-<span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.inspect" title="Link to this definition"></a></dt>
-<dd><p>Return a comprehensive summary of the pipeline’s structure.
-The summary covers:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Node details: The class names of the nodes and their operations.</p></li>
-<li><dl class="simple">
-<dt>Parameters: Which parameters come from the pipeline configuration versus the</dt><dd><p>context.</p>
-</dd>
-</dl>
-</li>
-<li><p>Context updates: The keywords that each node creates or modifies in the context.</p></li>
-<li><p>Required context keys: The set of context parameters necessary for the pipeline.</p></li>
-<li><p>Execution time: The pipeline’s cumulative execution time, tracked by the StopWatch.</p></li>
-</ul>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A formatted report describing the pipeline composition and relevant details.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.nodes">
 <span class="sig-name descname"><span class="pre">nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="semantiva.payload_operations.nodes.html#semantiva.payload_operations.nodes.nodes.PipelineNode" title="semantiva.payload_operations.nodes.nodes.PipelineNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">PipelineNode</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.nodes" title="Link to this definition"></a></dt>
@@ -432,44 +389,6 @@ The summary covers:</p>
 <dt class="sig sig-object py" id="semantiva.payload_operations.pipeline.Pipeline.pipeline_configuration">
 <span class="sig-name descname"><span class="pre">pipeline_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#semantiva.payload_operations.pipeline.Pipeline.pipeline_configuration" title="Link to this definition"></a></dt>
 <dd></dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-semantiva.payload_operations.pipeline_inspector">
-<span id="semantiva-payload-operations-pipeline-inspector-module"></span><h2>semantiva.payload_operations.pipeline_inspector module<a class="headerlink" href="#module-semantiva.payload_operations.pipeline_inspector" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline_inspector.PipelineInspector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.payload_operations.pipeline_inspector.</span></span><span class="sig-name descname"><span class="pre">PipelineInspector</span></span><a class="headerlink" href="#semantiva.payload_operations.pipeline_inspector.PipelineInspector" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A utility class that inspects a sequence of pipeline nodes, producing a
-human-readable summary of the pipeline’s structure and requirements.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.pipeline_inspector.PipelineInspector.inspect">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.pipeline_inspector.PipelineInspector.inspect" title="Link to this definition"></a></dt>
-<dd><p>Inspect a list of PipelineNode objects and return a comprehensive summary.</p>
-<dl class="simple">
-<dt>The summary covers:</dt><dd><ul class="simple">
-<li><p>Node details: The class names of the nodes and their operations.</p></li>
-<li><p>Parameters: Which parameters come from the pipeline configuration versus the context.</p></li>
-<li><p>Context updates: The keywords that each node creates, modifies, or deletes in the context.</p></li>
-<li><p>Required context keys: The set of context parameters necessary for the pipeline.</p></li>
-<li><p>Errors for invalid states, such as requiring context keys that have been deleted.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nodes</strong> (<em>List</em><em>[</em><a class="reference internal" href="#semantiva.payload_operations.PipelineNode" title="semantiva.payload_operations.PipelineNode"><em>PipelineNode</em></a><em>]</em>) – A list of pipeline nodes in execution order.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A formatted report describing the pipeline composition and relevant details.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
 
 </dd></dl>
 
@@ -1000,22 +919,6 @@ of the <cite>_process</cite> method, which must be defined in subclasses.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.Pipeline.extended_inspection">
-<span class="sig-name descname"><span class="pre">extended_inspection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.Pipeline.extended_inspection" title="Link to this definition"></a></dt>
-<dd><p>Provides a highly verbose and detailed pipeline inspection, suitable for advanced
-debugging and LLM-based introspection. Each node includes detailed descriptions,
-docstrings (provided as footnotes), parameter sources, and context operations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>An extended inspection report of the pipeline.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="semantiva.payload_operations.Pipeline.get_probe_results">
 <span class="sig-name descname"><span class="pre">get_probe_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.Pipeline.get_probe_results" title="Link to this definition"></a></dt>
 <dd><p>Retrieve the collected data from all probe collector nodes in the pipeline.</p>
@@ -1052,34 +955,6 @@ and values are the collected data from the probe nodes.</p>
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.payload_operations.Pipeline.inspect">
-<span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#semantiva.payload_operations.Pipeline.inspect" title="Link to this definition"></a></dt>
-<dd><p>Return a comprehensive summary of the pipeline’s structure.
-The summary covers:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Node details: The class names of the nodes and their operations.</p></li>
-<li><dl class="simple">
-<dt>Parameters: Which parameters come from the pipeline configuration versus the</dt><dd><p>context.</p>
-</dd>
-</dl>
-</li>
-<li><p>Context updates: The keywords that each node creates or modifies in the context.</p></li>
-<li><p>Required context keys: The set of context parameters necessary for the pipeline.</p></li>
-<li><p>Execution time: The pipeline’s cumulative execution time, tracked by the StopWatch.</p></li>
-</ul>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A formatted report describing the pipeline composition and relevant details.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
