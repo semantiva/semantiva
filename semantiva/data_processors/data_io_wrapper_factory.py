@@ -86,7 +86,7 @@ class DataIOWrapperFactory:
                         }
                     ]
 
-            if issubclass(data_io_class, PayloadSource):
+            elif issubclass(data_io_class, PayloadSource):
 
                 def _process_logic_method(
                     self, data: BaseDataType, *args, **kwargs
@@ -156,6 +156,39 @@ class DataIOWrapperFactory:
                         }
                     ]
 
+            elif issubclass(data_io_class, PayloadSink):
+
+                def _process_logic_method(
+                    self, data: BaseDataType, *args, **kwargs
+                ) -> BaseDataType:
+                    data_io_instance = data_io_class()
+                    data_io_instance._send_payload(data, *args, **kwargs)
+                    Logger().warning(
+                        f"Context sending from Wrapped PayloadSink in pipelines is not supported ({data_io_class.__name__})"
+                    )
+                    return data
+
+                def get_processing_parameter_names(cls) -> List[str]:
+                    """
+                    Retrieve the names of parameters required by the `_get_data` method.
+
+                    Returns:
+                        List[str]: A list of parameter names (excluding `self` and `data`).
+                    """
+                    my_class = data_io_class()
+
+                    signature = inspect.signature(data_io_class._send_payload)
+                    return [
+                        param.name
+                        for param in signature.parameters.values()
+                        if param.name not in {"self", "data"}
+                        and param.kind
+                        not in {
+                            inspect.Parameter.VAR_POSITIONAL,
+                            inspect.Parameter.VAR_KEYWORD,
+                        }
+                    ]
+
         else:
             raise ValueError(f"Invalid data IO class: {data_io_class}.")
 
@@ -169,5 +202,7 @@ class DataIOWrapperFactory:
         # Create a new type that extends DataOperation
         class_name = f"{data_io_class.__name__}"
         generated_class = type(class_name, (DataOperation,), methods)
+        # Propagate the wrapped class docstring for introspection tools
+        generated_class.__doc__ = getattr(data_io_class, "__doc__", None)
         assert issubclass(generated_class, DataOperation)
         return generated_class

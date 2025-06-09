@@ -77,12 +77,13 @@ class DataNode(PipelineNode):
         self.logger.debug(
             f"Initializing {self.__class__.__name__} ({processor.__name__})"
         )
+        self.processor_config = {} if processor_config is None else processor_config
+        self.logger.info(f"self = {self}, logger = {self.logger}")
         self.processor = (
             processor(self, self.logger)
             if issubclass(processor, DataOperation)
             else processor(logger=self.logger)
         )
-        self.processor_config = {} if processor_config is None else processor_config
 
     @classmethod
     @abstractmethod
