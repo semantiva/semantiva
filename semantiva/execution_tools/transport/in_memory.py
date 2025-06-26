@@ -87,7 +87,7 @@ class InMemorySubscription(Subscription):
         for msg in self:
             yield msg
 
-    def close(self):
+    def close(self) -> None:
         """
         Stop the subscription. Subsequent iterations will terminate.
         """

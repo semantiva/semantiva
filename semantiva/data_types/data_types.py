@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Dict, Any, Type, TypeVar, Generic, Iterator, get_args, Optional
 from semantiva.core import SemantivaObject
 
@@ -44,6 +44,12 @@ class BaseDataType(SemantivaObject, Generic[T]):
 
     @property
     def data(self) -> T:
+        """
+        Get the encapsulated data.
+
+        Returns:
+            T: The underlying data stored in this data type instance.
+        """
         return self._data
 
     @data.setter

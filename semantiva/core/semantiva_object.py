@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 from typing import Dict, Any, Callable, List, Tuple, Type, get_origin, get_args
 from abc import abstractmethod
 import textwrap
@@ -22,11 +23,11 @@ import typing
 
 
 # A thread‑safe registry mapping category names to component classes
-_COMPONENT_REGISTRY: Dict[str, List[Type["SemantivaObject"]]] = {}
+_COMPONENT_REGISTRY: Dict[str, List[Type[SemantivaObject]]] = {}
 _REGISTRY_LOCK = threading.Lock()
 
 
-def get_component_registry():
+def get_component_registry() -> Dict[str, List[Type[SemantivaObject]]]:
     """
     Returns the global component registry, which maps component categories to their respective classes.
     """

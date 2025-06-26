@@ -22,12 +22,13 @@ import sys
 import pkgutil
 import inspect
 import importlib
+from typing import List
 from rdflib import Graph, RDF, RDFS, OWL, Literal
 from semantiva.core.semantiva_object import SemantivaObject
 from semantiva.core.semantiva_predicate_map import SMTV, PREDICATE_MAP
 
 
-def discover_and_import(package_name: str):
+def discover_and_import(package_name: str) -> None:
     """
     Discover and import all modules in the specified package.
     """
@@ -41,7 +42,7 @@ def discover_and_import(package_name: str):
                 pass
 
 
-def collect_components(packages):
+def collect_components(packages: List[str]) -> List[type[SemantivaObject]]:
     """
     Collect all SemantivaObject subclasses from the specified packages.
     """

@@ -37,7 +37,7 @@ class PayloadProcessor(ContextObserver):
             self.logger = Logger()
 
     @abstractmethod
-    def _process(self, data: BaseDataType, context: ContextType): ...
+    def _process(self, data: BaseDataType, context: ContextType) -> Any: ...
 
     def process(
         self,

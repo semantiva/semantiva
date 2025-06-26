@@ -18,13 +18,16 @@ from pathlib import Path
 import importlib.util
 import re
 from semantiva.logger import Logger
+from semantiva.data_processors import BaseDataProcessor
 from semantiva.context_processors.context_processors import (
     ContextProcessor,
     ContextType,
 )
 
 
-def context_renamer_factory(original_key: str, destination_key: str):
+def context_renamer_factory(
+    original_key: str, destination_key: str
+) -> type[ContextProcessor]:
     """
     Factory function that creates a ContextProcessor subclass to rename context keys.
 
@@ -97,7 +100,7 @@ def context_renamer_factory(original_key: str, destination_key: str):
     return type(dynamic_class_name, (ContextProcessor,), class_attrs)
 
 
-def context_deleter_factory(key: str):
+def context_deleter_factory(key: str) -> type[ContextProcessor]:
     """
     Factory function that creates a ContextProcessor subclass to delete a context key.
 
@@ -175,7 +178,7 @@ class ComponentLoader:
         cls._registered_modules.add("semantiva.context_processors.context_processors")
 
     @classmethod
-    def register_paths(cls, paths: str | List[str]):
+    def register_paths(cls, paths: str | List[str]) -> None:
         """Register a path or a list of paths"""
         if isinstance(paths, str):
             paths = [paths]
@@ -184,7 +187,7 @@ class ComponentLoader:
             cls._registered_paths.add(Path(path))
 
     @classmethod
-    def register_modules(cls, modules: str | List[str]):
+    def register_modules(cls, modules: str | List[str]) -> None:
         """Register a module or a list of modules"""
         if isinstance(modules, str):
             modules = [modules]
@@ -203,9 +206,19 @@ class ComponentLoader:
         return cls._registered_modules
 
     @classmethod
-    def get_class(cls, class_name: str):
+    def get_class(
+        cls, class_name: str
+    ) -> type[ContextProcessor] | type[BaseDataProcessor]:
         """Lookup in registered paths and modules for the class and
-        return its type. It starts with modules and then looks in paths."""
+        return its type. It starts with modules and then looks in paths.
+
+        Args:
+            class_name (str): The class name of the context processor or base data processor.
+
+        Returns:
+            ContextProcessor | BaseDataProcessor: The type of the ContextProcessor or BaseDataProcessor.
+
+        """
         logger = Logger()
         logger.debug(f"Resolving class name {class_name}")
 
@@ -236,9 +249,20 @@ class ComponentLoader:
         )
 
     @classmethod
-    def _get_class_from_module(cls, module_name: str, class_name: str):
+    def _get_class_from_module(
+        cls, module_name: str, class_name: str
+    ) -> type[ContextProcessor] | type[BaseDataProcessor] | None:
         """Lookup in registered modules for the class and
-        return its type. If module is not found, return None."""
+        return its type. If module is not found, return None.
+
+        Args:
+            module_name (str): The name of the module for searching.
+            class_name (str): The class name of the context processor or base data processor.
+
+        Returns:
+            ContextProcessor | BaseDataProcessor | None: The type of the ContextProcessor or BaseDataProcessor. If not found, returns None.
+
+        """
 
         try:
             module = import_module(module_name)
@@ -248,8 +272,19 @@ class ComponentLoader:
             return None
 
     @classmethod
-    def _get_class_from_file(cls, file_path: Path, class_name: str):
-        """Lookup in registered paths for the class and return its type."""
+    def _get_class_from_file(
+        cls, file_path: Path, class_name: str
+    ) -> type[ContextProcessor] | type[BaseDataProcessor] | None:
+        """Lookup in registered paths for the class and return its type.
+
+        Args:
+            file_path (str): The path of the file for searching.
+            class_name (str): The class name of the context processor or base data processor.
+
+        Returns:
+            ContextProcessor | BaseDataProcessor: The type of the ContextProcessor or BaseDataProcessor. If not found, returns None.
+
+        """
 
         if not file_path.is_file():  # If path does not exist, skip it
             return None
