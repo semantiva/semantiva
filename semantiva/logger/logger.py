@@ -113,7 +113,7 @@ class Logger:
         # Mark the Logger class as initialized.
         type(self)._initialized = True
 
-    def set_verbose_level(self, verbosity_level: str):
+    def set_verbose_level(self, verbosity_level: str) -> None:
         """
         Set the verbosity level of the Logger.
 
@@ -137,7 +137,7 @@ class Logger:
             verbosity_level,
         )
 
-    def set_console_output(self, enable=True):
+    def set_console_output(self, enable=True) -> None:
         """
         Enable or disable console output.
 
@@ -167,7 +167,7 @@ class Logger:
                 )
             ]
 
-    def set_file_output(self, file_path: str):
+    def set_file_output(self, file_path: str) -> None:
         """
         Set a file output handler for the Logger.
 

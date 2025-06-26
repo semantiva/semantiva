@@ -73,7 +73,6 @@ class DataIOWrapperFactory:
                     Returns:
                         List[str]: A list of parameter names (excluding `self` and `data`).
                     """
-                    my_class = data_io_class()
                     signature = inspect.signature(data_io_class._get_data)
                     return [
                         param.name
@@ -105,7 +104,6 @@ class DataIOWrapperFactory:
                     Returns:
                         List[str]: A list of parameter names (excluding `self` and `data`).
                     """
-                    my_class = data_io_class()
                     signature = inspect.signature(data_io_class._get_payload)
                     return [
                         param.name
@@ -142,7 +140,6 @@ class DataIOWrapperFactory:
                     Returns:
                         List[str]: A list of parameter names (excluding `self` and `data`).
                     """
-                    my_class = data_io_class()
 
                     signature = inspect.signature(data_io_class._send_data)
                     return [
@@ -175,7 +172,6 @@ class DataIOWrapperFactory:
                     Returns:
                         List[str]: A list of parameter names (excluding `self` and `data`).
                     """
-                    my_class = data_io_class()
 
                     signature = inspect.signature(data_io_class._send_payload)
                     return [

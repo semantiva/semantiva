@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Type
+from typing import Type, List, Any
 from semantiva.data_types.data_types import DataCollectionType
 from semantiva.data_processors.data_processors import (
     BaseDataProcessor,
@@ -58,11 +58,11 @@ class SlicingDataProcessorFactory:
                 data_type_override = input_data_collection_type
 
                 @classmethod
-                def input_data_type(cls):
+                def input_data_type(cls) -> type[DataCollectionType]:
                     return cls.data_type_override
 
                 @classmethod
-                def output_data_type(cls):
+                def output_data_type(cls) -> type[DataCollectionType]:
                     return cls.data_type_override
 
                 def process(
@@ -70,13 +70,13 @@ class SlicingDataProcessorFactory:
                     data,
                     *args,
                     **kwargs,
-                ):
+                ) -> DataCollectionType:
                     """
                     Automatically slices input data and manages context.
                     """
 
                     processed_data = self.data_type_override.from_list([])
-                    for idx, data_item in enumerate(data):
+                    for _, data_item in enumerate(data):
                         output = super().process(data_item, *args, **kwargs)
                         processed_data.append(output)
 
@@ -98,7 +98,7 @@ class SlicingDataProcessorFactory:
                 input_data_type_override = input_data_collection_type
 
                 @classmethod
-                def input_data_type(cls):
+                def input_data_type(cls) -> type[DataCollectionType]:
                     """Returns the input data type."""
                     return cls.input_data_type_override
 
@@ -107,7 +107,7 @@ class SlicingDataProcessorFactory:
                     data,
                     *args,
                     **kwargs,
-                ):
+                ) -> List[Any]:
                     """
                     Automatically slices input data and manages context.
                     """

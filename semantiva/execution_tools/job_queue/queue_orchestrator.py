@@ -34,7 +34,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from semantiva.execution_tools.transport.base import SemantivaTransport
 from semantiva.payload_operations.pipeline import Pipeline
-from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
 
 from semantiva.data_types import BaseDataType
 from semantiva.context_processors import ContextType
@@ -121,7 +120,7 @@ class QueueSemantivaOrchestrator:
 
         return fut
 
-    def run_forever(self):
+    def run_forever(self) -> None:
         """
         Main event loop:
 
@@ -178,7 +177,7 @@ class QueueSemantivaOrchestrator:
                 self.logger.info("Master stopping due to stop event.")
                 break
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Signal the orchestrator to exit its run loop and close the transport.
         """

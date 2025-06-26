@@ -301,7 +301,7 @@ class OperationTopologyFactory:
         input_type: Type[BaseDataType],
         output_type: Type[BaseDataType],
         class_name="GeneratedOperation",
-    ):
+    ) -> type[DataOperation]:
         """
         Dynamically creates a subclass of DataOperation that expects `input_type`
         as input and produces `output_type` as output.
@@ -317,10 +317,10 @@ class OperationTopologyFactory:
 
         methods: dict = {}
 
-        def input_data_type_method(cls):
+        def input_data_type_method(cls) -> type[BaseDataType]:
             return input_type
 
-        def output_data_type_method(cls):
+        def output_data_type_method(cls) -> type[BaseDataType]:
             return output_type
 
         methods["input_data_type"] = classmethod(input_data_type_method)
@@ -333,9 +333,6 @@ class OperationTopologyFactory:
 
 class DataProbe(BaseDataProcessor):
     """DataProbe analyzes input data without modifying it."""
-
-    def __init__(self, logger=None):
-        super().__init__(logger)
 
     @classmethod
     def get_created_keys(cls) -> List[str]:

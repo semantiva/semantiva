@@ -192,7 +192,7 @@ class DataSink(SemantivaObject, Generic[T]):
     """Abstract base class for data sinks that consume and store data."""
 
     @abstractmethod
-    def _send_data(self, data: T, *args, **kwargs):
+    def _send_data(self, data: T, *args, **kwargs) -> None:
         """
         Abstract method to implement data transmission logic.
 
@@ -233,7 +233,7 @@ class DataSink(SemantivaObject, Generic[T]):
 
         return component_metadata
 
-    def send_data(self, data: T, *args, **kwargs):
+    def send_data(self, data: T, *args, **kwargs) -> None:
         """
         Send data by invoking the `_send_data` method.
 
@@ -280,7 +280,7 @@ class PayloadSink(SemantivaObject, Generic[T]):
         """
         pass
 
-    def send_payload(self, data: T, context: ContextType, *args, **kwargs):
+    def send_payload(self, data: T, context: ContextType, *args, **kwargs) -> None:
         """
         Consume the provided data and context by invoking the `_send_payload` method.
 
