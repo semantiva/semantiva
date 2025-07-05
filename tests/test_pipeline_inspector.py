@@ -14,7 +14,7 @@
 
 import pytest
 
-from semantiva.payload_operations.pipeline import Pipeline
+from semantiva import Pipeline
 from semantiva.tools.pipeline_inspector import PipelineInspector
 from semantiva.examples.test_utils import FloatMultiplyOperation, FloatCollectValueProbe
 from semantiva.exceptions.pipeline import PipelineConfigurationError

@@ -19,7 +19,7 @@ from semantiva.context_processors.context_types import (
     ContextCollectionType,
 )
 from semantiva.exceptions.pipeline import PipelineTopologyError
-from semantiva.payload_operations import Pipeline
+from semantiva.pipeline import Pipeline, Payload
 from semantiva.examples.test_utils import (
     FloatDataType,
     FloatDataCollection,
@@ -98,7 +98,8 @@ def test_pipeline_execution(float_data, empty_context):
     pipeline = Pipeline(node_configurations)
 
     # Process the data
-    data, context = pipeline.process(float_data, empty_context)
+    payload = pipeline.process(Payload(float_data, empty_context))
+    data, context = payload.data, payload.context
 
     assert "final_keyword" in context.keys()
     assert context.get_value("final_keyword") == 30
@@ -133,7 +134,8 @@ def test_pipeline_execution_with_single_context(float_data_collection, empty_con
     pipeline = Pipeline(node_configurations)
 
     # Process the data
-    data, context = pipeline.process(float_data_collection, empty_context)
+    payload = pipeline.process(Payload(float_data_collection, empty_context))
+    data, context = payload.data, payload.context
 
     assert isinstance(data, FloatDataCollection)
     assert len(data) == 3
@@ -183,7 +185,8 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
     pipeline = Pipeline(node_configurations)
 
     # Process the data
-    data, context = pipeline.process(float_data_collection, empty_context)
+    payload = pipeline.process(Payload(float_data_collection, empty_context))
+    data, context = payload.data, payload.context
 
     assert isinstance(data, FloatDataType)
     assert data.data == 12.0
@@ -224,7 +227,8 @@ def test_pipeline_slicing_with_context_collection(
     # Create a pipeline
     pipeline = Pipeline(node_configurations)
 
-    data, context = pipeline.process(float_data_collection, empty_context_collection)
+    payload = pipeline.process(Payload(float_data_collection, empty_context_collection))
+    data, context = payload.data, payload.context
     print(context)
     assert isinstance(data, FloatDataCollection)
     assert len(data) == 3
@@ -283,6 +287,7 @@ def test_data_io_node():
     pipeline = Pipeline(node_configurations)
 
     # Process the data
-    data, context = pipeline.process()
+    payload = pipeline.process()
+    data, context = payload.data, payload.context
 
     assert data.data == FloatMockDataSource().get_data().data * 2.0

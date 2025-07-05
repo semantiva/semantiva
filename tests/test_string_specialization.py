@@ -96,7 +96,7 @@ node_configurations = [
 #########################
 # Step 5: Instantiate and Use the Pipeline
 #########################
-from semantiva.payload_operations import Pipeline
+from semantiva.pipeline import Pipeline, Payload
 
 if __name__ == "__main__":
     # 1. Initialize the minimal pipeline with our node configurations
@@ -106,7 +106,8 @@ if __name__ == "__main__":
     input_data = StringLiteralDataType("World!")
 
     # 3. Run the pipeline
-    output_data, _ = pipeline.process(input_data, {})
+    payload = pipeline.process(Payload(input_data, {}))
+    output_data = payload.data
 
     # 4. Print final result
     print("Pipeline completed. Final output:", output_data.data)
@@ -120,7 +121,8 @@ def test_string_specialization():
     input_data = StringLiteralDataType("World!")
 
     # 3. Run the pipeline
-    output_data, _ = pipeline.process(input_data, {})
+    payload = pipeline.process(Payload(input_data, {}))
+    output_data = payload.data
 
     # 4. Print final result
     print("Pipeline completed. Final output:", output_data.data)

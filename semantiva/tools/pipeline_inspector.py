@@ -14,18 +14,18 @@
 
 from typing import List, Any, Dict
 import inspect
+from semantiva import Pipeline
 from semantiva.logger import Logger
 from semantiva.exceptions.pipeline import PipelineConfigurationError
-from semantiva.payload_operations.pipeline import Pipeline
-from semantiva.payload_operations.nodes.nodes import (
+from semantiva.pipeline.nodes.nodes import (
     PipelineNode,
     ProbeContextInjectorNode,
     ContextProcessorNode,
 )
-from semantiva.execution_tools.transport import (
+from semantiva.execution.transport import (
     SemantivaTransport,
 )
-from semantiva.execution_tools.orchestrator.orchestrator import (
+from semantiva.execution.orchestrator.orchestrator import (
     SemantivaOrchestrator,
 )
 

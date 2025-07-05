@@ -27,6 +27,7 @@ from semantiva.context_processors.context_types import (
 from semantiva.data_types import BaseDataType, NoDataType
 from semantiva.logger import Logger
 from ..payload_processors import PayloadProcessor
+from ..payload import Payload
 
 
 class PipelineNode(PayloadProcessor):
@@ -39,16 +40,13 @@ class PipelineNode(PayloadProcessor):
     logger: Logger
 
     @abstractmethod
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
         """
         Process a single data item with its corresponding context.
         Args:
-            data (BaseDataType): A data instance.
-            context (ContextType): The corresponding context.
+            payload (Payload): Payload containing data and context.
         Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+            Payload: The processed data and updated context.
         """
 
 
@@ -163,30 +161,27 @@ class DataNode(PipelineNode):
                        as a result of execution.
         """
 
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
         """
         Process a single data item with its corresponding single context.
 
         Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding context.
+            payload (Payload): The input payload.
 
         Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and the updated context.
+            Payload: The processed data and the updated context.
         """
 
+        data = payload.data
+        context = payload.context
         # Save the current context to be used by the processor
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         output_data = self.processor.process(data, **parameters)
 
-        return output_data, self.observer_context
+        return Payload(output_data, self.observer_context)
 
-    def _process(
-        self, data: BaseDataType, context: ContextType
-    ) -> tuple[BaseDataType, ContextType]:
+    def _process(self, payload: Payload) -> Payload:
         """
         Process payload.
 
@@ -195,12 +190,11 @@ class DataNode(PipelineNode):
         based on the input types.
 
         Parameters:
-            payload (BaseDataType): The payload to be processed.
+            payload (Payload): The payload to be processed.
             execution_context (ContextType): The context at this step, which may be a singular context or a collection of contexts.
 
         Returns:
-            tuple[BaseDataType, ContextType]:
-            A tuple where the first element is the processed payload and the second element is the updated execution context.
+            Payload: The processed payload with updated context.
 
         Raises:
             ValueError:
@@ -209,11 +203,13 @@ class DataNode(PipelineNode):
             If the payload type is incompatible with the expected input type for the data processor.
         """
 
-        result_data, result_context = data, context
+        result_data, result_context = payload.data, payload.context
         input_type = self.processor.input_data_type()
 
         if issubclass(type(result_data), input_type):
-            return self._process_single_item_with_context(result_data, result_context)
+            return self._process_single_item_with_context(
+                Payload(result_data, result_context)
+            )
         else:
             raise TypeError(
                 f"Incompatible data type for Node {self.processor.__class__.__name__} "
@@ -289,20 +285,19 @@ class PayloadSourceNode(DataNode):
         return cls.processor.get_created_keys()
 
     @override
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
         """
         Process a single data item with its corresponding single context.
 
         Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The corresponding single context.
+            payload (Payload): A single data/context pair.
 
         Returns:
-            Tuple[BaseDataType, ContextType]: The processed data and updated context.
+            Payload: The processed data and updated context.
         """
 
+        data = payload.data
+        context = payload.context
         # Save the current context to be used by the processor
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
@@ -313,7 +308,7 @@ class PayloadSourceNode(DataNode):
             if key in context.keys():
                 raise KeyError(f"Key '{key}' already exists in the context.")
             context.set_value(key, value)
-        return loaded_data, context
+        return Payload(loaded_data, context)
 
 
 class PayloadSinkNode(DataNode):
@@ -772,20 +767,19 @@ class ProbeContextInjectorNode(ProbeNode):
         )
 
     @override
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
         """
         Process a single data item and inject the probe result into the context.
 
         Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The context to be updated.
+            payload (Payload): The input payload.
 
         Returns:
-            Tuple[BaseDataType, ContextType]: The unchanged data and the updated context with the probe result.
+            Payload: The unchanged data and the updated context with the probe result.
         """
 
+        data = payload.data
+        context = payload.context
         parameters = self._get_processor_parameters(context)
         probe_result = self.processor.process(data, **parameters)
         if isinstance(context, ContextCollectionType):
@@ -796,7 +790,7 @@ class ProbeContextInjectorNode(ProbeNode):
         else:
             ContextObserver.update_context(context, self.context_keyword, probe_result)
 
-        return data, context
+        return Payload(data, context)
 
 
 class ProbeResultCollectorNode(ProbeNode):
@@ -905,23 +899,22 @@ class ProbeResultCollectorNode(ProbeNode):
         return []
 
     @override
-    def _process_single_item_with_context(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
         """
         Execute the probe on a single data item, collecting the result.
 
         Args:
-            data (BaseDataType): A single data instance.
-            context (ContextType): The context, unchanged by this node.
+            payload (Payload): The input payload.
 
         Returns:
-            Tuple[BaseDataType, ContextType]: The original data and unchanged context.
+            Payload: The original data and unchanged context.
         """
+        data = payload.data
+        context = payload.context
         parameters = self._get_processor_parameters(context)
         probe_result = self.processor.process(data, **parameters)
         self.collect(probe_result)
-        return data, context
+        return Payload(data, context)
 
 
 class ContextProcessorNode(PipelineNode):
@@ -1024,20 +1017,19 @@ class ContextProcessorNode(PipelineNode):
         """
         return cls.processor.get_suppressed_keys()
 
-    def _process(
-        self, data: BaseDataType, context: ContextType
-    ) -> tuple[BaseDataType, ContextType]:
+    def _process(self, payload: Payload) -> Payload:
         """
         Processes the given data and context.
 
         Args:
-            data (BaseDataType): The data to be processed.
-            context (ContextType): The context in which the data is processed.
+            payload (Payload): The payload to process.
 
         Returns:
-            tuple[BaseDataType, ContextType]: A tuple containing the processed data and context.
+            Payload: The processed data and context.
         """
 
+        data = payload.data
+        context = payload.context
         updated_context = self.processor.operate_context(context)
 
-        return data, updated_context
+        return Payload(data, updated_context)

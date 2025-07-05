@@ -24,16 +24,17 @@ or distributed orchestrators.
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List
 
 from semantiva.data_types import BaseDataType
 from semantiva.context_processors.context_types import ContextType
-from semantiva.execution_tools.executor.executor import (
+from semantiva.pipeline.payload import Payload
+from semantiva.execution.executor.executor import (
     SemantivaExecutor,
     SequentialSemantivaExecutor,
 )
-from semantiva.execution_tools.transport import SemantivaTransport
-from semantiva.payload_operations.nodes.nodes import PipelineNode
+from semantiva.execution.transport import SemantivaTransport
+from semantiva.pipeline.nodes.nodes import PipelineNode
 from semantiva.logger import Logger
 
 
@@ -53,23 +54,21 @@ class SemantivaOrchestrator(ABC):
     def execute(
         self,
         nodes: List[PipelineNode],
-        data: BaseDataType,
-        context: ContextType,
+        payload: Payload,
         transport: SemantivaTransport,
         logger: Logger,
-    ) -> Tuple[BaseDataType, ContextType]:
+    ) -> Payload:
         """
         Walk the pipeline DAG, process each node, and publish intermediate results.
 
         Args:
             nodes:     Ordered list of PipelineNode instances forming the pipeline.
-            data:      Initial data payload (BaseDataType) for the first node.
-            context:   Initial context (ContextType) for the first node.
+            payload:   Initial payload for the first node.
             transport: Transport for publishing each node's output.
             logger:    Logger for debug/info messages.
 
         Returns:
-            A tuple (data, context) after the final node has executed.
+            Payload after the final node has executed.
         """
         ...
 
@@ -96,11 +95,10 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
     def execute(
         self,
         nodes: List[PipelineNode],
-        data: BaseDataType,
-        context: ContextType,
+        payload: Payload,
         transport: SemantivaTransport,
         logger: Logger,
-    ) -> Tuple[BaseDataType, ContextType]:
+    ) -> Payload:
         """
         Execute each node in the provided pipeline in order.
 
@@ -112,14 +110,15 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
 
         Args:
             nodes:     List of pipeline nodes to execute sequentially.
-            data:      Input data for the first node.
-            context:   Input context for the first node.
+            payload:   Input payload for the first node.
             transport: Transport used to publish intermediate outputs.
             logger:    Logger for orchestration debug/info messages.
 
         Returns:
             The final (data, context) after all nodes have run.
         """
+        data = payload.data
+        context = payload.context
         for index, node in enumerate(nodes, start=1):
             # Log which processor is being executed
             logger.debug(
@@ -127,7 +126,8 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
             )
             # Run the node’s processing logic (possibly via executor)
             # Note: default implementation ignores executor and calls node.process directly
-            data, context = node.process(data, context)
+            payload = node.process(Payload(data, context))
+            data, context = payload.data, payload.context
 
             # Publish intermediate result for this node
             transport.publish(
@@ -135,4 +135,4 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
             )
 
         # Return the output of the last node
-        return data, context
+        return Payload(data, context)

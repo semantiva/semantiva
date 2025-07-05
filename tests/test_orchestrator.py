@@ -27,12 +27,12 @@ before plugging in more advanced transports or executors.
 
 import pytest
 
-from semantiva.execution_tools.orchestrator.orchestrator import (
+from semantiva.execution.orchestrator.orchestrator import (
     LocalSemantivaOrchestrator,
 )
-from semantiva.execution_tools.transport import InMemorySemantivaTransport
-from semantiva.execution_tools.executor import SequentialSemantivaExecutor
-from semantiva.payload_operations.pipeline import Pipeline
+from semantiva import Pipeline, Payload
+from semantiva.execution.transport import InMemorySemantivaTransport
+from semantiva.execution.executor import SequentialSemantivaExecutor
 from semantiva.context_processors.context_types import ContextType
 from semantiva.examples.test_utils import FloatDataType, FloatMultiplyOperation
 from semantiva.logger import Logger
@@ -86,9 +86,13 @@ def test_orchestrator_applies_each_node_and_publishes(fake_pipeline):
     # - ctx: ContextType
     # - transport: in-memory transport captures published intermediates
     # - Logger(): dummy logger for debugging internal steps
-    data_output, context_output = orch.execute(
-        fake_pipeline.nodes, initial, ctx, InMemorySemantivaTransport(), Logger()
+    payload_output = orch.execute(
+        fake_pipeline.nodes,
+        Payload(initial, ctx),
+        InMemorySemantivaTransport(),
+        Logger(),
     )
+    data_output, context_output = payload_output.data, payload_output.context
 
     # After two sequential multiplications by 2, 2.0 → 4.0 → 8.0
     assert data_output.data == 8.0

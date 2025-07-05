@@ -18,6 +18,7 @@ from semantiva.exceptions.pipeline import (
 )
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import BaseDataType
+from .payload import Payload
 from semantiva.logger import Logger
 from .payload_processors import PayloadProcessor
 from .nodes.node_factory import node_factory
@@ -26,11 +27,11 @@ from .nodes.nodes import (
     ContextProcessorNode,
     ProbeResultCollectorNode,
 )
-from semantiva.execution_tools.transport import (
+from semantiva.execution.transport import (
     SemantivaTransport,
     InMemorySemantivaTransport,
 )
-from semantiva.execution_tools.orchestrator.orchestrator import (
+from semantiva.execution.orchestrator.orchestrator import (
     SemantivaOrchestrator,
     LocalSemantivaOrchestrator,
 )
@@ -73,19 +74,16 @@ class Pipeline(PayloadProcessor):
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
 
-    def _process(
-        self, data: BaseDataType, context: ContextType
-    ) -> Tuple[BaseDataType, ContextType]:
+    def _process(self, payload: Payload) -> Payload:
         """
         Processes the pipeline by executing the orchestrator with the provided data and context.
         This method starts a stopwatch timer to measure the execution time of the pipeline,
         logs the start and completion of the pipeline processing, and provides a detailed
         timing report upon completion.
         Args:
-            data (BaseDataType): The input data to be processed by the pipeline.
-            context (ContextType): The context information required for processing.
+            payload (Payload): Input payload for the pipeline.
         Returns:
-            Tuple[BaseDataType, ContextType]: A tuple containing the processed data and the updated context.
+            Payload: The processed payload after all nodes are executed.
         Logs:
             - Info: Logs the start and completion of the pipeline processing.
             - Debug: Logs a detailed timing report of the pipeline execution.
@@ -93,10 +91,9 @@ class Pipeline(PayloadProcessor):
         self.logger.info("Start processing pipeline")
         self.stop_watch.start()  # existing pipeline timer start
 
-        result_data, result_context = self.orchestrator.execute(
+        result_payload = self.orchestrator.execute(
             nodes=self.nodes,
-            data=data,
-            context=context,
+            payload=payload,
             transport=self.transport,
             logger=self.logger,
         )
@@ -108,7 +105,7 @@ class Pipeline(PayloadProcessor):
             str(self.stop_watch),
             self.get_timers(),
         )
-        return result_data, result_context
+        return result_payload
 
     def get_timers(self) -> str:
         """

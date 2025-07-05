@@ -16,7 +16,8 @@ from abc import abstractmethod
 from typing import Any, Optional
 from semantiva.context_processors import ContextType, ContextObserver
 from semantiva.data_types import BaseDataType, NoDataType
-from semantiva.payload_operations.stop_watch import StopWatch
+from .payload import Payload
+from semantiva.utils.stopwatch import Stopwatch
 from semantiva.logger import Logger
 
 
@@ -24,11 +25,11 @@ class PayloadProcessor(ContextObserver):
     """Base class for payload processing operations with integrated data and context management."""
 
     logger: Logger
-    stop_watch: StopWatch
+    stop_watch: Stopwatch
 
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__()
-        self.stop_watch = StopWatch()
+        self.stop_watch = Stopwatch()
         if logger:
             # If a logger instance is provided, use it
             self.logger = logger
@@ -37,13 +38,9 @@ class PayloadProcessor(ContextObserver):
             self.logger = Logger()
 
     @abstractmethod
-    def _process(self, data: BaseDataType, context: ContextType) -> Any: ...
+    def _process(self, payload: Payload) -> Payload: ...
 
-    def process(
-        self,
-        data: BaseDataType | None = None,
-        context: ContextType | dict[Any, Any] | None = None,
-    ) -> tuple[BaseDataType, ContextType]:
+    def process(self, payload: Payload | None = None) -> Payload:
         """
         Public method to execute the payload processing logic.
 
@@ -60,13 +57,11 @@ class PayloadProcessor(ContextObserver):
         Raises:
             NotImplementedError: If the `_process` method is not implemented in a subclass.
         """
-        context = context or {}
-        data = data or NoDataType()
-        context_ = ContextType(context) if isinstance(context, dict) else context
-        assert isinstance(
-            context_, ContextType
-        ), f"Context must be a dictionary of an instance of `ContextType`. Got {type(context)}"
+        if payload is None:
+            payload = Payload(NoDataType(), ContextType())
+        elif isinstance(payload.context, dict):
+            payload = Payload(payload.data, ContextType(payload.context))
         self.stop_watch.start()
-        payload_processor_result = self._process(data, context_)
+        result = self._process(payload)
         self.stop_watch.stop()
-        return payload_processor_result
+        return result

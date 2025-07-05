@@ -32,8 +32,8 @@ import threading
 from concurrent.futures import Future
 from typing import Any, Dict, List, Optional, Union
 
-from semantiva.execution_tools.transport.base import SemantivaTransport
-from semantiva.payload_operations.pipeline import Pipeline
+from semantiva.execution.transport.base import SemantivaTransport
+from semantiva.pipeline import Pipeline
 
 from semantiva.data_types import BaseDataType
 from semantiva.context_processors import ContextType

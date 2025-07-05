@@ -22,6 +22,7 @@ from semantiva.examples.test_utils import (
     FloatPayloadSink,
     DummyContext,
 )
+from semantiva.pipeline import Payload
 
 
 # -----------------------------------------------------------------------------------
@@ -55,7 +56,8 @@ def test_datasource_output_data_type():
 def test_payloadsource_get_payload():
     """Test the get_payload method of the PayloadSource"""
     ps = FloatPayloadSource()
-    data, context = ps.get_payload()
+    payload = ps.get_payload()
+    data, context = payload.data, payload.context
     assert isinstance(
         data, FloatDataType
     ), "PayloadSource did not return an FloatDataType."
@@ -105,7 +107,7 @@ def test_payloadsink_send_payload():
     sink = FloatPayloadSink()
     data = FloatDataType(1001.0)
     context = DummyContext()
-    sink.send_payload(data, context)
+    sink.send_payload(Payload(data, context))
     # Check that the sink stored the payload properly
     assert sink.last_payload is data, "PayloadSink did not store the data correctly."
     assert (

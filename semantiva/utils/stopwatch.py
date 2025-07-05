@@ -15,7 +15,7 @@
 import time
 
 
-class StopWatch:
+class Stopwatch:
     """
     A stopwatch class to measure wall-clock and CPU execution times.
 
@@ -100,28 +100,3 @@ class StopWatch:
 
     def __str__(self):
         return f"Calls: {self._start_count}; Elapsed Wall Time: {self.elapsed_wall_time():.6f}s; Elapsed CPU Time: {self.elapsed_cpu_time():.6f}s"
-
-
-# Example usage:
-if __name__ == "__main__":
-    stopwatch = StopWatch()
-
-    # Start the stopwatch
-    stopwatch.start()
-    time.sleep(1)  # Simulate some task by sleeping for 1 second
-    stopwatch.stop()  # Stop the stopwatch
-
-    # Print the stopwatch's state
-    print(stopwatch)
-
-    # Start the stopwatch again for a second task
-    stopwatch.start()
-    time.sleep(2)  # Simulate another task by sleeping for 2 seconds
-    stopwatch.stop()  # Stop the stopwatch
-
-    # Print the stopwatch's state again
-    print(stopwatch)
-
-    # Reset the stopwatch
-    stopwatch.reset()
-    print(stopwatch)

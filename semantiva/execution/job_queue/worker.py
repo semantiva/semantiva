@@ -21,11 +21,11 @@ import time
 from threading import Event
 from typing import Any, Dict, List, Union
 
-from semantiva.execution_tools.transport.base import SemantivaTransport, Message
+from semantiva.execution.transport.base import SemantivaTransport, Message
 from semantiva.data_types import NoDataType
 from semantiva.context_processors.context_processors import ContextType
-from semantiva.execution_tools.executor.executor import SemantivaExecutor
-from semantiva.payload_operations.pipeline import Pipeline
+from semantiva.execution.executor.executor import SemantivaExecutor
+from semantiva import Pipeline, Payload
 from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
 from semantiva.logger.logger import Logger
 from .logging_setup import _setup_log
@@ -122,9 +122,13 @@ def worker_loop(
                     # 3) Execute the pipeline with provided executor
 
                     pipeline_output = executor.submit(
-                        pipeline.process, data=data, context=context
+                        pipeline.process, Payload(data, context)
                     )
-                    result_data, result_ctx = pipeline_output.result()
+                    result_payload = pipeline_output.result()
+                    result_data, result_ctx = (
+                        result_payload.data,
+                        result_payload.context,
+                    )
 
                     # 4) Annotate context with job_id for master correlation
                     result_ctx.set_value("job_id", job_id)
