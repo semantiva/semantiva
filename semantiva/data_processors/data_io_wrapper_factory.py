@@ -17,6 +17,8 @@ from typing import Type, List
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 from semantiva.data_processors.data_processors import DataOperation
 from semantiva.data_types import BaseDataType, NoDataType
+from semantiva.pipeline.payload import Payload
+from semantiva.context_processors.context_types import ContextType
 from semantiva.logger import Logger
 
 
@@ -91,7 +93,7 @@ class DataIOWrapperFactory:
                     self, data: BaseDataType, *args, **kwargs
                 ) -> BaseDataType:
                     data_io_instance = data_io_class()
-                    loaded_data = data_io_instance._get_payload(*args, **kwargs)[0]
+                    loaded_data = data_io_instance._get_payload(*args, **kwargs).data
                     Logger().warning(
                         f"Context loading from Wrapped PayloadSource in pipelines is not supported ({data_io_class.__name__})"
                     )
@@ -159,7 +161,9 @@ class DataIOWrapperFactory:
                     self, data: BaseDataType, *args, **kwargs
                 ) -> BaseDataType:
                     data_io_instance = data_io_class()
-                    data_io_instance._send_payload(data, *args, **kwargs)
+                    data_io_instance._send_payload(
+                        Payload(data, ContextType()), *args, **kwargs
+                    )
                     Logger().warning(
                         f"Context sending from Wrapped PayloadSink in pipelines is not supported ({data_io_class.__name__})"
                     )

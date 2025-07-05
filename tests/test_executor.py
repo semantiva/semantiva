@@ -24,7 +24,7 @@ Key behaviors under test:
 """
 
 import pytest
-from semantiva.execution_tools.executor import SequentialSemantivaExecutor
+from semantiva.execution.executor import SequentialSemantivaExecutor
 from concurrent.futures import Future
 
 

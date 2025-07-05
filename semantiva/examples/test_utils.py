@@ -17,6 +17,7 @@ from typing import Tuple
 from semantiva.data_types import BaseDataType, DataCollectionType
 from semantiva.data_processors import DataOperation, DataProbe
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
+from semantiva.pipeline import Payload
 
 from semantiva.context_processors import ContextType
 
@@ -170,9 +171,9 @@ class FloatPayloadSource(PayloadSource):
     providing (FloatDataType, DummyContext) as payload.
     """
 
-    def _get_payload(self, *args, **kwargs) -> Tuple[FloatDataType, DummyContext]:
-        # Return a tuple of data and context
-        return (FloatDataType(456.0), DummyContext())
+    def _get_payload(self, *args, **kwargs) -> Payload:
+        # Return a Payload object with data and context
+        return Payload(FloatDataType(456.0), DummyContext())
 
     @classmethod
     def output_data_type(cls):
@@ -214,10 +215,10 @@ class FloatPayloadSink(PayloadSink[FloatDataType]):
         self.last_payload = None
         self.last_context = None
 
-    def _send_payload(self, data: FloatDataType, context: ContextType, *args, **kwargs):
+    def _send_payload(self, payload: Payload, *args, **kwargs):
         # Store the payload for inspection
-        self.last_payload = data
-        self.last_context = context
+        self.last_payload = payload.data
+        self.last_context = payload.context
 
     @classmethod
     def input_data_type(cls):

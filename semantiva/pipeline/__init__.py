@@ -15,6 +15,7 @@
 from .nodes.node_factory import node_factory
 from .payload_processors import PayloadProcessor
 from .pipeline import Pipeline
+from .payload import Payload
 from .nodes.nodes import (
     DataNode,
     ProbeNode,
@@ -32,6 +33,7 @@ __all__ = [
     "node_factory",
     "PayloadProcessor",
     "Pipeline",
+    "Payload",
     "DataNode",
     "ProbeNode",
     "PipelineNode",

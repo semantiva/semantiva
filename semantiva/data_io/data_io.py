@@ -16,6 +16,7 @@ from abc import abstractmethod
 from typing import Dict, Any, Tuple, TypeVar, Generic, List
 from semantiva.context_processors import ContextType
 from semantiva.data_types import BaseDataType
+from semantiva.pipeline.payload import Payload
 from semantiva.core import SemantivaObject
 
 T = TypeVar("T", bound=BaseDataType)
@@ -126,7 +127,7 @@ class PayloadSource(SemantivaObject):
         return component_metadata
 
     @abstractmethod
-    def _get_payload(self, *args, **kwargs) -> Tuple[BaseDataType, ContextType]:
+    def _get_payload(self, *args, **kwargs) -> Payload:
         """
         Abstract method to implement payload retrieval logic.
 
@@ -139,7 +140,7 @@ class PayloadSource(SemantivaObject):
         """
         ...
 
-    def get_payload(self, *args, **kwargs) -> Tuple[BaseDataType, ContextType]:
+    def get_payload(self, *args, **kwargs) -> Payload:
         """
         Retrieve a payload by invoking the `_get_payload` method.
 
@@ -265,13 +266,12 @@ class PayloadSink(SemantivaObject, Generic[T]):
     """Abstract base class for payload sinks that consume and store data along with its associated context."""
 
     @abstractmethod
-    def _send_payload(self, data: T, context: ContextType, *args, **kwargs):
+    def _send_payload(self, payload: Payload, *args, **kwargs):
         """
         Abstract method to implement payload consumption logic.
 
         Args:
-            data (BaseDataType): The data payload to consume.
-            context (ContextType): The context associated with the data.
+            payload (Payload): Payload containing data and context.
             *args: Additional positional arguments for payload consumption.
             **kwargs: Additional keyword arguments for payload consumption.
 
@@ -280,7 +280,7 @@ class PayloadSink(SemantivaObject, Generic[T]):
         """
         pass
 
-    def send_payload(self, data: T, context: ContextType, *args, **kwargs) -> None:
+    def send_payload(self, payload: Payload, *args, **kwargs) -> None:
         """
         Consume the provided data and context by invoking the `_send_payload` method.
 
@@ -293,7 +293,7 @@ class PayloadSink(SemantivaObject, Generic[T]):
         Returns:
             None
         """
-        self._send_payload(data, context, *args, **kwargs)
+        self._send_payload(payload, *args, **kwargs)
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:

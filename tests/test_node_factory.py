@@ -1,7 +1,7 @@
 import inspect
 import pytest
 
-from semantiva.payload_operations.nodes.node_factory import node_factory
+from semantiva.pipeline.nodes.node_factory import node_factory
 from semantiva.tools.pipeline_inspector import PipelineInspector
 from semantiva.examples.test_utils import (
     FloatDataSource,

@@ -31,13 +31,13 @@ import pytest
 import threading
 import time
 
-from semantiva.execution_tools.transport.in_memory import InMemorySemantivaTransport
-from semantiva.execution_tools.executor.executor import SequentialSemantivaExecutor
-from semantiva.execution_tools.job_queue.queue_orchestrator import (
+from semantiva.execution.transport.in_memory import InMemorySemantivaTransport
+from semantiva.execution.executor.executor import SequentialSemantivaExecutor
+from semantiva.execution.job_queue.queue_orchestrator import (
     QueueSemantivaOrchestrator,
 )
-from semantiva.execution_tools.job_queue.logging_setup import _setup_log
-from semantiva.execution_tools.job_queue.worker import worker_loop
+from semantiva.execution.job_queue.logging_setup import _setup_log
+from semantiva.execution.job_queue.worker import worker_loop
 from semantiva.examples.test_utils import (
     FloatMultiplyOperation,
     FloatCollectValueProbe,

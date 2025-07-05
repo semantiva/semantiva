@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .pipeline import Pipeline, Payload
+from semantiva.data_types import BaseDataType
+from semantiva.context_processors.context_types import ContextType
 
-__all__ = ["Pipeline", "Payload"]
+
+class Payload:
+    """Container for data and context passed through pipeline nodes."""
+
+    def __init__(self, data: BaseDataType, context: ContextType):
+        self.data = data
+        self.context = context

@@ -18,9 +18,9 @@ from semantiva.examples.test_utils import (
     FloatDataType,
     FloatCollectValueProbe,
 )
+from semantiva import Pipeline, Payload
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
-from semantiva.payload_operations.pipeline import Pipeline
 from semantiva.data_processors.data_slicer_factory import Slicer
 
 
@@ -53,6 +53,7 @@ def test_pipeline_single_string_key(linear_int_data_collection):
     ]
     pipeline = Pipeline(node_configurations)
     context_dict = {"t_values": t_values}
-    _, output_context = pipeline.process(linear_int_data_collection, context_dict)
+    payload = pipeline.process(Payload(linear_int_data_collection, context_dict))
+    output_context = payload.context
     assert "fit_coefficients" in output_context.keys()
     print(output_context.get_value("fit_coefficients"))

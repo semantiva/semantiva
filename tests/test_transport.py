@@ -27,8 +27,8 @@ This file tests the `InMemorySemantivaTransport`, which is:
   - No-op connect()/close() and ack() semantics.
 """
 
-from semantiva.execution_tools.transport.in_memory import InMemorySemantivaTransport
-from semantiva.execution_tools.transport.base import Message
+from semantiva.execution.transport.in_memory import InMemorySemantivaTransport
+from semantiva.execution.transport.base import Message
 
 
 def extract_data_context(messages):
