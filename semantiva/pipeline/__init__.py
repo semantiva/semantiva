@@ -25,8 +25,10 @@ from .nodes.nodes import (
     PayloadSinkNode,
     PayloadSourceNode,
     ContextProcessorNode,
+    ContextDataProcessorNode,
     ProbeContextInjectorNode,
     ProbeResultCollectorNode,
+    DataOperationContextInjectorProbeNode,
 )
 
 __all__ = [
@@ -42,6 +44,8 @@ __all__ = [
     "PayloadSinkNode",
     "PayloadSourceNode",
     "ContextProcessorNode",
+    "ContextDataProcessorNode",
     "ProbeContextInjectorNode",
     "ProbeResultCollectorNode",
+    "DataOperationContextInjectorProbeNode",
 ]
