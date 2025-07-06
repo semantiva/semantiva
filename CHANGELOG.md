@@ -8,8 +8,30 @@ Here is the updated changelog with the missing items included and the requested 
 
 ---
 
+## [Unreleased] – TBD
 
----
+### Added
+- Renamed `payload_operations` → `semantiva.pipeline` and `execution_tools` → `semantiva.execution`  
+- Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`  
+- New node types  
+  - `DataOperationContextInjectorProbeNode`: runs a `DataOperation`, stores its output in the pipeline context under a specified key, and forwards the original data  
+  - `ContextDataProcessorNode`: applies a `DataOperation` or `DataProbe` to a context value and writes the result back into context  
+- Factory methods  
+  - Exposed via `NodeFactory` to create the above node types  
+
+### Changed
+- Updated `PayloadSource`, `PayloadSink`, `Pipeline.process`, all node implementations, DataIO wrappers, examples and tests to use `Payload`  
+- Imports throughout codebase updated to new package paths  
+- Re-exported `Payload` at `semantiva.pipeline` and the package root
+- Moved `Stopwatch` utility to `semantiva/utils/stopwatch.py`  
+
+### Removed
+- Deleted legacy `payload_operations/` and `execution_tools/` directories
+
+### Breaking Changes
+- `Pipeline.process(...)` now returns `Payload` instead of a `(data, context)` tuple  
+- Top-level import paths for all pipeline and execution modules have changed  
+
 
 ## [v0.4.0] - 2025-06-04
 
