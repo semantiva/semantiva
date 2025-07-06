@@ -19,6 +19,7 @@ from semantiva.context_processors import ContextProcessor, ContextObserver
 from semantiva.data_processors import (
     BaseDataProcessor,
     DataOperation,
+    DataProbe,
 )
 from semantiva.context_processors.context_types import (
     ContextType,
@@ -644,6 +645,74 @@ class DataOperationNode(DataNode):
         return cls.processor.get_created_keys()
 
 
+class DataOperationContextInjectorProbeNode(DataOperationNode):
+    """A node that runs a :class:`DataOperation`, stores its output in the
+    context under a specified keyword, and forwards the original data."""
+
+    context_keyword: str
+
+    def __init__(
+        self,
+        processor: Type[BaseDataProcessor],
+        context_keyword: str,
+        processor_parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
+    ) -> None:
+        self.context_keyword = context_keyword
+        super().__init__(processor, processor_parameters, logger)
+
+    @classmethod
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
+            "component_type": "DataOperationContextInjectorProbeNode",
+            "wraps_component_type": "DataOperation",
+        }
+
+        try:
+            excluded_parameters = ["self", "data"]
+            assert hasattr(cls.processor, "_send_data")
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor._send_data, excluded_parameters
+                )
+            ]
+            component_metadata["wraped_component"] = getattr(
+                cls.processor, "__name__", type(cls.processor).__name__
+            )
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor.__doc__ or ""
+            )
+            component_metadata["input_parameters"] = annotated_parameter_list
+            component_metadata["input_data_type"] = cls.input_data_type().__name__
+            component_metadata["output_data_type"] = cls.output_data_type().__name__
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
+        except Exception:
+            # no binding available at this abstract level
+            pass
+        return component_metadata
+
+    @classmethod
+    def output_data_type(cls):
+        """The output type matches the input type as data is passed through."""
+
+        return cls.input_data_type()
+
+    @classmethod
+    def get_created_keys(cls) -> List[str]:
+        return [cls.context_keyword]
+
+    @override
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
+        data = payload.data
+        context = payload.context
+        self.observer_context = context
+        parameters = self._get_processor_parameters(self.observer_context)
+        result = self.processor.process(data, **parameters)
+        ContextObserver.update_context(context, self.context_keyword, result)
+        return Payload(data, context)
+
+
 class ProbeNode(DataNode):
     """
     A node that wraps a DataProbe.
@@ -915,6 +984,95 @@ class ProbeResultCollectorNode(ProbeNode):
         probe_result = self.processor.process(data, **parameters)
         self.collect(probe_result)
         return Payload(data, context)
+
+
+class ContextDataProcessorNode(PipelineNode):
+    """Apply a :class:`DataOperation` or :class:`DataProbe` to a context value."""
+
+    processor_cls: Type[BaseDataProcessor]
+    input_context_keyword: str
+    output_context_keyword: str
+    processor_kwargs: Dict[str, Any]
+
+    def __init__(
+        self,
+        processor_cls: Type[BaseDataProcessor],
+        input_context_keyword: str,
+        output_context_keyword: str,
+        processor_kwargs: Optional[Dict[str, Any]] = None,
+        logger: Optional[Logger] = None,
+    ) -> None:
+        super().__init__(logger)
+        self.processor_cls = processor_cls
+        self.input_context_keyword = input_context_keyword
+        self.output_context_keyword = output_context_keyword
+        self.processor_kwargs = processor_kwargs or {}
+
+    @classmethod
+    def _define_metadata(cls) -> Dict[str, Any]:
+        component_metadata: Dict[str, str | List[str]] = {
+            "component_type": "ContextDataProcessorNode",
+        }
+
+        try:
+            if issubclass(cls.processor_cls, DataOperation):
+                component_metadata["wraps_component_type"] = "DataOperation"
+            elif issubclass(cls.processor_cls, DataProbe):
+                component_metadata["wraps_component_type"] = "DataProbe"
+
+            excluded_parameters = ["self", "data"]
+            annotated_parameter_list = [
+                f"{param_name}: {param_type}"
+                for param_name, param_type in cls._retrieve_parameter_signatures(
+                    cls.processor_cls._process_logic,
+                    excluded_parameters,
+                )
+            ]
+            component_metadata["wraped_component"] = getattr(
+                cls.processor_cls,
+                "__name__",
+                type(cls.processor_cls).__name__,
+            )
+            component_metadata["wraped_component_docstring"] = (
+                cls.processor_cls.__doc__ or ""
+            )
+            component_metadata["input_parameters"] = annotated_parameter_list or "None"
+            component_metadata["required_context_keys"] = [cls.input_context_keyword]
+            component_metadata["injected_context_keys"] = cls.get_created_keys()
+            if issubclass(cls.processor_cls, DataOperation):
+                component_metadata["input_data_type"] = (
+                    cls.processor_cls.input_data_type().__name__
+                )
+                component_metadata["output_data_type"] = (
+                    cls.processor_cls.output_data_type().__name__
+                )
+            else:
+                component_metadata["input_data_type"] = (
+                    cls.processor_cls.input_data_type().__name__
+                )
+        except Exception:
+            pass
+
+        return component_metadata
+
+    @classmethod
+    def get_created_keys(cls) -> List[str]:
+        return [cls.output_context_keyword]
+
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
+        data = payload.data
+        context = payload.context
+
+        if self.input_context_keyword not in context.keys():
+            raise KeyError(self.input_context_keyword)
+        context_value = context.get_value(self.input_context_keyword)
+        processor = self.processor_cls(**self.processor_kwargs)
+        result = processor.process(context_value)
+        ContextObserver.update_context(context, self.output_context_keyword, result)
+        return Payload(data, context)
+
+    def _process(self, payload: Payload) -> Payload:
+        return self._process_single_item_with_context(payload)
 
 
 class ContextProcessorNode(PipelineNode):

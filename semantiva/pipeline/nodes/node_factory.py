@@ -24,14 +24,16 @@ from semantiva.context_processors import (
 )
 from .nodes import (
     PipelineNode,
-    PayloadSourceNode,
-    PayloadSinkNode,
     DataSinkNode,
     DataSourceNode,
+    PayloadSinkNode,
+    PayloadSourceNode,
     DataOperationNode,
+    ContextProcessorNode,
+    ContextDataProcessorNode,
     ProbeContextInjectorNode,
     ProbeResultCollectorNode,
-    ContextProcessorNode,
+    DataOperationContextInjectorProbeNode,
 )
 
 
@@ -268,6 +270,32 @@ class NodeFactory:
         return node_class(processor_class, context_keyword, parameters, logger)
 
     @staticmethod
+    def create_data_operation_context_injector_probe_node(
+        *,
+        processor_cls: Type[DataOperation],
+        context_keyword: str,
+        **processor_kwargs,
+    ) -> DataOperationContextInjectorProbeNode:
+        """Wrap a :class:`DataOperation` in a context‑injecting probe node."""
+
+        if (
+            not isinstance(processor_cls, type)
+            or not issubclass(processor_cls, DataOperation)
+            or issubclass(processor_cls, DataProbe)
+        ):
+            raise ValueError("processor_cls must be a DataOperation subclass")
+        if not context_keyword or not isinstance(context_keyword, str):
+            raise ValueError("context_keyword must be a non-empty string")
+
+        node_class = NodeFactory._create_class(
+            name=f"{processor_cls.__name__}DataOperationContextInjectorProbeNode",
+            base_cls=DataOperationContextInjectorProbeNode,
+            processor=processor_cls,
+            context_keyword=context_keyword,
+        )
+        return node_class(processor_cls, context_keyword, processor_kwargs)
+
+    @staticmethod
     def create_probe_result_collector(
         processor_class: Type[BaseDataProcessor],
         parameters: Optional[Dict] = None,
@@ -292,23 +320,13 @@ class NodeFactory:
         )
 
     @staticmethod
-    def create_context_processor_node(
+    def create_context_processor_wrapper_node(
         processor_class: Type[ContextProcessor],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ) -> ContextProcessorNode:
-        """Factory function to create an extended ContextProcessorNode.
-        This function dynamically creates a subclass of ContextProcessorNode
-        with a specific data processor class.
-        Args:
-            processor_class (Type[ContextProcessor]): The class of the context processor to be used.
-            parameters (Optional[Dict]): Configuration parameters for the context processor. Defaults to None.
-            logger (Optional[Logger]): A Logger instance. Defaults to None
-        Returns:
-            ContextProcessorNode: An instance of a dynamically created subclass of ContextProcessorNode.
-        """
+        """Factory helper for wrapping :class:`ContextProcessor` classes."""
 
-        # Ensure parameters is a dictionary
         parameters = parameters or {}
         context_processor_instance = processor_class(logger, **parameters)
 
@@ -321,6 +339,40 @@ class NodeFactory:
             processor=processor_class,
             processor_config=parameters,
             logger=logger,
+        )
+
+    @staticmethod
+    def create_context_processor_node(
+        *,
+        input_context_keyword: str,
+        output_context_keyword: str,
+        processor_cls: Type[DataOperation] | Type[DataProbe],
+        **processor_kwargs,
+    ) -> ContextDataProcessorNode:
+        """Create a node that processes a context value using a data processor."""
+
+        if not (isinstance(input_context_keyword, str) and input_context_keyword):
+            raise ValueError("input_context_keyword must be a non-empty string")
+        if not (isinstance(output_context_keyword, str) and output_context_keyword):
+            raise ValueError("output_context_keyword must be a non-empty string")
+        if not (
+            isinstance(processor_cls, type)
+            and issubclass(processor_cls, (DataOperation, DataProbe))
+        ):
+            raise ValueError("processor_cls must be a DataProcessor subclass")
+
+        node_class = NodeFactory._create_class(
+            name=f"{processor_cls.__name__}ContextDataProcessorNode",
+            base_cls=ContextDataProcessorNode,
+            processor_cls=processor_cls,
+            input_context_keyword=input_context_keyword,
+            output_context_keyword=output_context_keyword,
+        )
+        return node_class(
+            processor_cls,
+            input_context_keyword,
+            output_context_keyword,
+            processor_kwargs,
         )
 
 
@@ -365,7 +417,9 @@ def node_factory(
         raise ValueError("processor must be a class type or a string, not None.")
 
     if issubclass(processor, ContextProcessor):
-        return NodeFactory.create_context_processor_node(processor, parameters, logger)
+        return NodeFactory.create_context_processor_wrapper_node(
+            processor, parameters, logger
+        )
 
     if issubclass(processor, DataOperation):
         if context_keyword is not None:
