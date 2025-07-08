@@ -653,7 +653,7 @@ class DataOperationContextInjectorProbeNode(DataOperationNode):
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[DataOperation],
         context_keyword: str,
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
