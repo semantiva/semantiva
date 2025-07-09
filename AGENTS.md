@@ -4,17 +4,24 @@ This repository houses the Semantiva framework, a dual-channel pipeline system t
 
 ## Repository Layout
 
-* **`semantiva/`** - Core package containing the pipeline engine and reusable components.
-
-  * `core/` - Base classes like `SemantivaObject` for semantic metadata handling.
-  * `data_types/` - Minimal data containers used throughout the framework.
-  * `data_processors/` - Defines `DataOperation` and `DataProbe` along with factories for creating specialized versions.
-  * `context_processors/` - Utilities for manipulating the metadata context that travels alongside data.
-  * `pipeline/` - Pipeline orchestration, node definitions, and the `NodeFactory` for dynamic node creation.
-  * `tools/` - Command‑line helpers such as ontology export.
-  * `examples/` - Small demonstration modules and test utilities.
-* **`tests/`** - Pytest suite covering the various processors, nodes, and pipeline behaviours.
-* `CHANGELOG.md` and `README.md` - project history and overview
+* **semantiva/** - Core package containing the Semantiva framework:
+  * **component_loader/** - Dynamic loading of semantiva components.
+  * **configurations/** - Helpers to build pipelines from YAML configurations.
+  * **context_processors/** - Classes that manipulate pipeline context metadata.
+  * **core/** - Base classes (`SemantivaObject`) and semantic metadata registry.
+  * **data_io/** - Abstract data and payload sources and sinks.
+  * **data_processors/** - Definitions of data processors: `DataOperation`, `DataProbe`, slicers, and wrappers.
+  * **data_types/** - Minimal data containers used throughout the framework.
+  * **examples/** - Example processors and test utilities.
+  * **exceptions/** - Custom exception classes.
+  * **execution/** - Pipeline execution engine and job orchestration.
+  * **logger/** - Configurable logging helpers.
+  * **pipeline/** - Pipeline orchestration, node definitions, and `NodeFactory` for dynamic node creation.
+  * **specializations/** - Plugin loading for domain-specific extensions.
+  * **tools/** - Command-line utilities (e.g., ontology export, pipeline inspector).
+  * **utils/** - General-purpose helper functions.
+  * **workflows/** - Predefined workflow examples (e.g., model fitting).
+* **tests/** - Pytest suite covering processors, nodes, and pipeline behaviors.
 
 ## Architecture Overview
 
