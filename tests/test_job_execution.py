@@ -27,7 +27,6 @@ Semantiva's transport layer (InMemorySemantivaTransport) and executor (Sequentia
 are used here for simplicity; in production you'd swap in NATS, Ray, etc.
 """
 
-import pytest
 import threading
 import time
 

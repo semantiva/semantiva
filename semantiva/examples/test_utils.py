@@ -13,7 +13,6 @@
 # limitations under the License.
 
 # This file contains utility classes for testing the semantiva package.
-from typing import Tuple
 from semantiva.data_types import BaseDataType, DataCollectionType
 from semantiva.data_processors import DataOperation, DataProbe
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink

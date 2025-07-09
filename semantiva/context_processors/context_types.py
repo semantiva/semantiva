@@ -15,10 +15,10 @@
 from typing import Any, List, Optional, Iterator, Union, Dict, Tuple
 from collections import ChainMap
 from semantiva.logger import Logger
-from semantiva.core import SemantivaObject
+from semantiva.core.semantiva_component import _SemantivaComponent
 
 
-class ContextType(SemantivaObject):
+class ContextType(_SemantivaComponent):
     """A generic container for managing context in Semantiva via specific key-value pairs."""
 
     def __init__(

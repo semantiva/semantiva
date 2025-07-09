@@ -24,7 +24,7 @@ import inspect
 import importlib
 from typing import List
 from rdflib import Graph, RDF, RDFS, OWL, Literal
-from semantiva.core.semantiva_object import SemantivaObject
+from semantiva.core.semantiva_component import _SemantivaComponent
 from semantiva.core.semantiva_predicate_map import SMTV, PREDICATE_MAP
 
 
@@ -42,9 +42,9 @@ def discover_and_import(package_name: str) -> None:
                 pass
 
 
-def collect_components(packages: List[str]) -> List[type[SemantivaObject]]:
+def collect_components(packages: List[str]) -> List[type[_SemantivaComponent]]:
     """
-    Collect all SemantivaObject subclasses from the specified packages.
+    Collect all _SemantivaComponent subclasses from the specified packages.
     """
     duplicates = []
     for pkg in packages:
@@ -55,7 +55,10 @@ def collect_components(packages: List[str]) -> List[type[SemantivaObject]]:
             continue
         if any(module.__name__.startswith(root + ".") for root in packages):
             for _, cls in inspect.getmembers(module, inspect.isclass):
-                if issubclass(cls, SemantivaObject) and cls is not SemantivaObject:
+                if (
+                    issubclass(cls, _SemantivaComponent)
+                    and cls is not _SemantivaComponent
+                ):
                     duplicates.append(cls)
     # Deduplicate preserving order
     seen = set()

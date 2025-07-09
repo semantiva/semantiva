@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Test the SemantivaObject class for proper metadata handling and metaclass-based component registration.
+Test the _SemantivaComponent class for proper metadata handling and metaclass-based component registration.
 
 This module verifies that:
 - Valid components correctly register in the global registry.
@@ -25,15 +25,15 @@ import pytest
 from pprint import pprint
 import inspect
 from typing import Dict, Any
-from semantiva.core.semantiva_object import (
-    SemantivaObject,
+from semantiva.core.semantiva_component import (
+    _SemantivaComponent,
     get_component_registry,
 )
 from semantiva.tools.export_ontology import collect_components
 
 
-# Dummy base to allow registration in subclasses (avoids direct SemantivaObject inheritance)
-class DummyBase(SemantivaObject):
+# Dummy base to allow registration in subclasses (avoids direct _SemantivaComponent inheritance)
+class DummyBase(_SemantivaComponent):
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
         # Return an empty dict so that DummyBase itself doesn't register (no component_type)

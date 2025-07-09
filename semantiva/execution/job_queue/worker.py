@@ -19,14 +19,12 @@ via a SemantivaTransport, executes them using a SemantivaExecutor, and publishes
 
 import time
 from threading import Event
-from typing import Any, Dict, List, Union
 
-from semantiva.execution.transport.base import SemantivaTransport, Message
+from semantiva.execution.transport.base import SemantivaTransport
 from semantiva.data_types import NoDataType
 from semantiva.context_processors.context_processors import ContextType
 from semantiva.execution.executor.executor import SemantivaExecutor
 from semantiva import Pipeline, Payload
-from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
 from semantiva.logger.logger import Logger
 from .logging_setup import _setup_log
 import semantiva

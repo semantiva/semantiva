@@ -15,16 +15,16 @@
 from typing import Dict, Any, Optional, Union
 from collections import ChainMap
 from typing import Any
-from semantiva.core import SemantivaObject
+from semantiva.core.semantiva_component import _SemantivaComponent
 from .context_types import ContextType, ContextCollectionType
 
 
-class ContextObserver(SemantivaObject):
+class _ContextObserver(_SemantivaComponent):
     """Base class for all nodes in semantiva pipelines responsible for context propagation and updates."""
 
     def __init__(self):
         """
-        Initialize the ContextObserver with an empty context.
+        Initialize the _ContextObserver with an empty context.
 
         Attributes:
             context (dict): A dictionary to store contextual key-value pairs.
@@ -34,7 +34,7 @@ class ContextObserver(SemantivaObject):
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
         """
-        Define metadata for the ContextObserver class.
+        Define metadata for the _ContextObserver class.
 
         Returns:
             dict: Metadata dictionary containing component type and context type.

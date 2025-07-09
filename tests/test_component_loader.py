@@ -15,13 +15,13 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from pathlib import Path
-from semantiva.component_loader import ComponentLoader
+from semantiva.component_loader import _ComponentLoader
 
 
 @pytest.fixture
 def loader():
-    """Fixture to provide a fresh instance of ComponentLoader."""
-    return ComponentLoader
+    """Fixture to provide a fresh instance of _ComponentLoader."""
+    return _ComponentLoader
 
 
 @patch("pathlib.Path.is_file", return_value=True)

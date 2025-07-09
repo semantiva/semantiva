@@ -15,7 +15,7 @@
 """
 Defines the SemantivaOrchestrator abstraction and the default local implementation.
 The orchestrator is the control-plane component that drives a Semantiva pipeline:
-it walks the sequence of PipelineNode instances, invokes their processing logic,
+it walks the sequence of _PipelineNode instances, invokes their processing logic,
 and publishes intermediate results over the configured SemantivaTransport.
 
 This decouples “what to run” (pipeline topology) from “how to run it” (executor)
@@ -26,15 +26,13 @@ or distributed orchestrators.
 from abc import ABC, abstractmethod
 from typing import List
 
-from semantiva.data_types import BaseDataType
-from semantiva.context_processors.context_types import ContextType
 from semantiva.pipeline.payload import Payload
 from semantiva.execution.executor.executor import (
     SemantivaExecutor,
     SequentialSemantivaExecutor,
 )
 from semantiva.execution.transport import SemantivaTransport
-from semantiva.pipeline.nodes.nodes import PipelineNode
+from semantiva.pipeline.nodes.nodes import _PipelineNode
 from semantiva.logger import Logger
 
 
@@ -43,7 +41,7 @@ class SemantivaOrchestrator(ABC):
     Abstract base class for Semantiva orchestrators (control-plane schedulers).
 
     An orchestrator is responsible for executing a pipeline—a collection of
-    PipelineNode objects—in the correct order, using a provided executor,
+    _PipelineNode objects—in the correct order, using a provided executor,
     and publishing outputs via a transport.
 
     Subclasses must implement:
@@ -53,7 +51,7 @@ class SemantivaOrchestrator(ABC):
     @abstractmethod
     def execute(
         self,
-        nodes: List[PipelineNode],
+        nodes: List[_PipelineNode],
         payload: Payload,
         transport: SemantivaTransport,
         logger: Logger,
@@ -62,7 +60,7 @@ class SemantivaOrchestrator(ABC):
         Walk the pipeline DAG, process each node, and publish intermediate results.
 
         Args:
-            nodes:     Ordered list of PipelineNode instances forming the pipeline.
+            nodes:     Ordered list of _PipelineNode instances forming the pipeline.
             payload:   Initial payload for the first node.
             transport: Transport for publishing each node's output.
             logger:    Logger for debug/info messages.
@@ -94,7 +92,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
 
     def execute(
         self,
-        nodes: List[PipelineNode],
+        nodes: List[_PipelineNode],
         payload: Payload,
         transport: SemantivaTransport,
         logger: Logger,

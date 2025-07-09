@@ -15,7 +15,6 @@
 import importlib.metadata
 from unittest.mock import patch, MagicMock
 import logging
-import pytest
 from semantiva.specializations.specialization_loader import load_specializations
 from semantiva.specializations import SemantivaSpecialization
 

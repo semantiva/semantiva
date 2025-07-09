@@ -14,7 +14,7 @@
 
 import pytest
 
-from semantiva.pipeline.nodes.node_factory import NodeFactory
+from semantiva.pipeline.nodes._pipeline_node_factory import _PipelineNodeFactory
 from semantiva.pipeline import Payload
 from semantiva.context_processors.context_types import ContextType
 from semantiva.examples.test_utils import (
@@ -25,7 +25,7 @@ from semantiva.examples.test_utils import (
 
 
 def test_data_operation_context_injector_injects_result():
-    node = NodeFactory.create_data_operation_context_injector_probe_node(
+    node = _PipelineNodeFactory.create_data_operation_context_injector_probe_node(
         processor_cls=FloatMultiplyOperation,
         context_keyword="mask",
         factor=2,
@@ -40,7 +40,7 @@ def test_data_operation_context_injector_injects_result():
 
 def test_data_operation_context_injector_rejects_probe_class():
     with pytest.raises(ValueError):
-        NodeFactory.create_data_operation_context_injector_probe_node(
+        _PipelineNodeFactory.create_data_operation_context_injector_probe_node(
             processor_cls=FloatCollectValueProbe,
             context_keyword="mask",
         )
@@ -49,7 +49,7 @@ def test_data_operation_context_injector_rejects_probe_class():
 @pytest.mark.parametrize("keyword", ["", 123])
 def test_data_operation_context_injector_bad_keyword(keyword):
     with pytest.raises(ValueError):
-        NodeFactory.create_data_operation_context_injector_probe_node(
+        _PipelineNodeFactory.create_data_operation_context_injector_probe_node(
             processor_cls=FloatMultiplyOperation,
             context_keyword=keyword,
         )

@@ -28,7 +28,6 @@ This file tests the `InMemorySemantivaTransport`, which is:
 """
 
 from semantiva.execution.transport.in_memory import InMemorySemantivaTransport
-from semantiva.execution.transport.base import Message
 
 
 def extract_data_context(messages):

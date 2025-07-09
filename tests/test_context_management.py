@@ -16,7 +16,7 @@ from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
 )
-from semantiva.context_processors.context_observer import ContextObserver
+from semantiva.context_processors.context_observer import _ContextObserver
 
 
 def test_initialize_with_predefined_local_contexts():
@@ -74,7 +74,7 @@ def test_update_single_slice():
         [ContextType({"local_key": "initial_value"}), ContextType({})],
     )
 
-    ContextObserver.update_context(
+    _ContextObserver.update_context(
         collection_context, "local_key", "updated_value", index=0
     )
 

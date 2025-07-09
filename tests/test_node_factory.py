@@ -13,9 +13,8 @@
 # limitations under the License.
 
 import inspect
-import pytest
 
-from semantiva.pipeline.nodes.node_factory import node_factory
+from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
 from semantiva.tools.pipeline_inspector import PipelineInspector
 from semantiva.examples.test_utils import (
     FloatDataSource,
@@ -39,14 +38,14 @@ def test_node_factory_creates_all_supported_nodes_and_semantic_ids():
         {"processor": "rename:foo:bar"},
     ]
 
-    nodes = [node_factory(cfg) for cfg in configs]
+    nodes = [_pipeline_node_factory(cfg) for cfg in configs]
     report = PipelineInspector.get_nodes_semantic_ids_report(nodes)
     for node in nodes:
         assert node.semantic_id() in report
 
 
 def test_datasource_node_propagates_docstring():
-    node = node_factory({"processor": FloatDataSource})
+    node = _pipeline_node_factory({"processor": FloatDataSource})
     ds_doc = inspect.getdoc(FloatDataSource)
     generated_doc = inspect.getdoc(node.processor.__class__)
     assert ds_doc == generated_doc

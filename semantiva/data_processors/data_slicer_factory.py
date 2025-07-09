@@ -15,20 +15,20 @@
 from typing import Type, List, Any
 from semantiva.data_types.data_types import DataCollectionType
 from semantiva.data_processors.data_processors import (
-    BaseDataProcessor,
+    _BaseDataProcessor,
     DataOperation,
     DataProbe,
 )
 
 
-class SlicingDataProcessorFactory:
+class _SlicingDataProcessorFactory:
     """
     Factory that dynamically creates data slicer processors.
     """
 
     @staticmethod
     def create(
-        processor_class: Type[BaseDataProcessor],
+        processor_class: Type[_BaseDataProcessor],
         input_data_collection_type: Type[DataCollectionType],
     ):
         """
@@ -129,8 +129,10 @@ class SlicingDataProcessorFactory:
 
 
 def Slicer(
-    processor_cls: Type[BaseDataProcessor],
+    processor_cls: Type[_BaseDataProcessor],
     input_data_collection_type: Type[DataCollectionType],
 ):
     """Convenient user API for creating slicer nodes with explicit types."""
-    return SlicingDataProcessorFactory.create(processor_cls, input_data_collection_type)
+    return _SlicingDataProcessorFactory.create(
+        processor_cls, input_data_collection_type
+    )
