@@ -23,20 +23,20 @@ import typing
 
 
 # A thread‑safe registry mapping category names to component classes
-_COMPONENT_REGISTRY: Dict[str, List[Type[SemantivaObject]]] = {}
+_COMPONENT_REGISTRY: Dict[str, List[Type[_SemantivaComponent]]] = {}
 _REGISTRY_LOCK = threading.Lock()
 
 
-def get_component_registry() -> Dict[str, List[Type[SemantivaObject]]]:
+def get_component_registry() -> Dict[str, List[Type[_SemantivaComponent]]]:
     """
     Returns the global component registry, which maps component categories to their respective classes.
     """
     return _COMPONENT_REGISTRY
 
 
-class SemantivaObjectMeta(type):
+class _SemantivaComponentMeta(type):
     """
-    Metaclass for SemantivaObject, responsible for registering subclasses in a global registry.
+    Metaclass for _SemantivaComponent, responsible for registering subclasses in a global registry.
     This allows for dynamic discovery of components based on their semantic metadata.
     """
 
@@ -45,7 +45,7 @@ class SemantivaObjectMeta(type):
     ) -> None:
         super().__init__(name, bases, attrs)  # type: ignore
 
-        if not any(b is SemantivaObject for b in bases) and hasattr(
+        if not any(b is _SemantivaComponent for b in bases) and hasattr(
             cls, "get_metadata"
         ):
             # grab the class’s own metadata
@@ -59,7 +59,7 @@ class SemantivaObjectMeta(type):
                     _COMPONENT_REGISTRY.setdefault(cat, []).append(cls)
 
 
-class SemantivaObject(metaclass=SemantivaObjectMeta):
+class _SemantivaComponent(metaclass=_SemantivaComponentMeta):
     """
     The foundational base class for Semantiva components, providing a unified metadata interface.
 
@@ -80,7 +80,7 @@ class SemantivaObject(metaclass=SemantivaObjectMeta):
         - Default or framework-level fields
         - Component-specific fields via _define_metadata()
         """
-        # Base metadata, applicable to all SemantivaObjects
+        # Base metadata, applicable to all _SemantivaComponents
         docstring_content = inspect.getdoc(cls)
         if docstring_content is None:
             docstring_content = "No documentation available."

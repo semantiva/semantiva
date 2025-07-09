@@ -14,7 +14,7 @@
 
 import pytest
 
-from semantiva.pipeline.nodes.node_factory import NodeFactory
+from semantiva.pipeline.nodes._pipeline_node_factory import _PipelineNodeFactory
 from semantiva.pipeline import Payload
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_processors import DataOperation
@@ -38,7 +38,7 @@ class DoubleOperation(DataOperation):
 
 
 def test_context_processor_node_operation():
-    node = NodeFactory.create_context_processor_node(
+    node = _PipelineNodeFactory.create_context_processor_node(
         input_context_keyword="foo",
         output_context_keyword="bar",
         processor_cls=DoubleOperation,
@@ -51,7 +51,7 @@ def test_context_processor_node_operation():
 
 
 def test_context_processor_node_probe():
-    node = NodeFactory.create_context_processor_node(
+    node = _PipelineNodeFactory.create_context_processor_node(
         input_context_keyword="foo",
         output_context_keyword="bar",
         processor_cls=FloatCollectValueProbe,
@@ -63,7 +63,7 @@ def test_context_processor_node_probe():
 
 
 def test_context_processor_node_overwrite():
-    node = NodeFactory.create_context_processor_node(
+    node = _PipelineNodeFactory.create_context_processor_node(
         input_context_keyword="foo",
         output_context_keyword="foo",
         processor_cls=DoubleOperation,
@@ -74,7 +74,7 @@ def test_context_processor_node_overwrite():
 
 
 def test_context_processor_node_missing_key():
-    node = NodeFactory.create_context_processor_node(
+    node = _PipelineNodeFactory.create_context_processor_node(
         input_context_keyword="foo",
         output_context_keyword="bar",
         processor_cls=DoubleOperation,
@@ -85,20 +85,20 @@ def test_context_processor_node_missing_key():
 
 def test_context_processor_node_validation():
     with pytest.raises(ValueError):
-        NodeFactory.create_context_processor_node(
+        _PipelineNodeFactory.create_context_processor_node(
             input_context_keyword="foo",
             output_context_keyword="bar",
             processor_cls=str,
         )
     for key in ["", 123]:
         with pytest.raises(ValueError):
-            NodeFactory.create_context_processor_node(
+            _PipelineNodeFactory.create_context_processor_node(
                 input_context_keyword=key,
                 output_context_keyword="bar",
                 processor_cls=DoubleOperation,
             )
         with pytest.raises(ValueError):
-            NodeFactory.create_context_processor_node(
+            _PipelineNodeFactory.create_context_processor_node(
                 input_context_keyword="foo",
                 output_context_keyword=key,
                 processor_cls=DoubleOperation,

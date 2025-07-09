@@ -15,15 +15,15 @@
 import inspect
 from typing import Dict, Any, List, Optional, Type, TypeVar, Generic
 from abc import abstractmethod
-from semantiva.context_processors import ContextObserver
-from semantiva.core import SemantivaObject
+from semantiva.context_processors.context_observer import _ContextObserver
+from semantiva.core.semantiva_component import _SemantivaComponent
 from semantiva.data_types import BaseDataType
 from semantiva.logger import Logger
 
 T = TypeVar("T", bound=BaseDataType)
 
 
-class BaseDataProcessor(SemantivaObject, Generic[T]):
+class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
     """Abstract base class for data processing algorithms in Semantiva."""
 
     logger: Optional[Logger]
@@ -151,10 +151,10 @@ class BaseDataProcessor(SemantivaObject, Generic[T]):
         return component_metadata
 
 
-class DataOperation(BaseDataProcessor):
+class DataOperation(_BaseDataProcessor):
     """A data processor that applies computational transformations to input data while managing context updates."""
 
-    context_observer: Optional[ContextObserver]
+    context_observer: Optional[_ContextObserver]
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
@@ -205,14 +205,14 @@ class DataOperation(BaseDataProcessor):
 
     def __init__(
         self,
-        context_observer: Optional[ContextObserver] = None,
+        context_observer: Optional[_ContextObserver] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a `DataOperation` with an optional `ContextObserver`.
+        Initialize a `DataOperation` with an optional `_ContextObserver`.
 
         Args:
-            context_observer (Optional[ContextObserver]): An observer for managing
+            context_observer (Optional[_ContextObserver]): An observer for managing
                 context updates. Defaults to None.
             logger (Optional[Logger]): A logger instance for tracking execution
                 details. Defaults to None.
@@ -300,7 +300,7 @@ class OperationTopologyFactory:
         cls,
         input_type: Type[BaseDataType],
         output_type: Type[BaseDataType],
-        class_name="GeneratedOperation",
+        class_name: str,
     ) -> type[DataOperation]:
         """
         Dynamically creates a subclass of DataOperation that expects `input_type`
@@ -331,7 +331,7 @@ class OperationTopologyFactory:
         return generated_class
 
 
-class DataProbe(BaseDataProcessor):
+class DataProbe(_BaseDataProcessor):
     """DataProbe analyzes input data without modifying it."""
 
     @classmethod

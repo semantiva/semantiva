@@ -8,7 +8,7 @@ This repository houses the Semantiva framework, a dual-channel pipeline system t
   * **component_loader/** - Dynamic loading of semantiva components.
   * **configurations/** - Helpers to build pipelines from YAML configurations.
   * **context_processors/** - Classes that manipulate pipeline context metadata.
-  * **core/** - Base classes (`SemantivaObject`) and semantic metadata registry.
+  * **core/** - Base classes (`_SemantivaComponent`) and semantic metadata registry.
   * **data_io/** - Abstract data and payload sources and sinks.
   * **data_processors/** - Definitions of data processors: `DataOperation`, `DataProbe`, slicers, and wrappers.
   * **data_types/** - Minimal data containers used throughout the framework.
@@ -29,15 +29,15 @@ A Semantiva pipeline processes objects called **Payloads**. Each payload contain
 
 Key concepts include:
 
-1. **BaseDataProcessor** - abstract class for operations on data.
+1. **_BaseDataProcessor** - abstract class for operations on data.
 2. **DataOperation** - transforms data and may produce new data; must define `input_data_type` and `output_data_type`.
 3. **DataProbe** - inspects data without altering it.
 4. **ContextProcessor** - manipulates the context independently of the data channel.
-5. **PipelineNode** subclasses - wrappers around processors that plug into a pipeline.  Notable nodes:
-   * `DataOperationNode` and `ProbeNode` for normal data processors
-   * `ContextProcessorNode` for context-only operations
-   * `ContextDataProcessorNode` for applying a data processor to a value stored in context
-   * `DataOperationContextInjectorProbeNode` for running a data operation and storing its result back into context while passing the original data downstream
+5. **_PipelineNode** subclasses - wrappers around processors that plug into a pipeline.  Notable nodes:
+   * `_DataOperationNode` and `_ProbeNode` for normal data processors
+   * `_ContextProcessorNode` for context-only operations
+   * `_ContextDataProcessorNode` for applying a data processor to a value stored in context
+   * `_DataOperationContextInjectorProbeNode` for running a data operation and storing its result back into context while passing the original data downstream
 
 ## Working with the Codebase
 

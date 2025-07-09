@@ -47,10 +47,10 @@ def load_specializations(specs_to_load: str | List[str]):
                 )
                 continue
 
-            logger.debug("Subscribing %s to ComponentLoader paths", package.name)
+            logger.debug("Subscribing %s to _ComponentLoader paths", package.name)
             semantiva_spec().register()
             found_specs.add(package.name)
-            logger.debug("Subscribed %s to ComponentLoader paths", package.name)
+            logger.debug("Subscribed %s to _ComponentLoader paths", package.name)
 
     # Now compare the requested plugins with those actually found
     missing_specs = set(specs_to_load) - found_specs
@@ -67,6 +67,6 @@ class SemantivaSpecialization(ABC):
     @abstractmethod
     def register(self) -> None:
         """
-        Register all modules, paths, etc in ComponentLoader.
+        Register all modules, paths, etc in _ComponentLoader.
         """
         pass

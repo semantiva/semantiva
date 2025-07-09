@@ -18,9 +18,9 @@ from semantiva import Pipeline
 from semantiva.logger import Logger
 from semantiva.exceptions.pipeline import PipelineConfigurationError
 from semantiva.pipeline.nodes.nodes import (
-    PipelineNode,
-    ProbeContextInjectorNode,
-    ContextProcessorNode,
+    _PipelineNode,
+    _ProbeContextInjectorNode,
+    _ContextProcessorNode,
 )
 from semantiva.execution.transport import (
     SemantivaTransport,
@@ -39,9 +39,9 @@ class PipelineInspector:
     """
 
     @classmethod
-    def _inspect_nodes(cls, nodes: List[PipelineNode]) -> str:
+    def _inspect_nodes(cls, nodes: List[_PipelineNode]) -> str:
         """
-        Inspect a list of PipelineNode objects and return a summary of the pipeline.
+        Inspect a list of _PipelineNode objects and return a summary of the pipeline.
 
         The summary includes:
         - Node details: Class names and operations of the nodes.
@@ -51,7 +51,7 @@ class PipelineInspector:
         - Errors for invalid states, such as requiring deleted context keys.
 
         Args:
-            nodes (List[PipelineNode]): A list of pipeline nodes in execution order.
+            nodes (List[_PipelineNode]): A list of pipeline nodes in execution order.
 
         Returns:
             str: A formatted report describing the pipeline composition and relevant details.
@@ -99,7 +99,7 @@ class PipelineInspector:
     @classmethod
     def _build_node_summary(
         cls,
-        node: PipelineNode,
+        node: _PipelineNode,
         index: int,
         deleted_keys: set[str],
         all_required_params: set[str],
@@ -110,7 +110,7 @@ class PipelineInspector:
         Build a summary for a single node, updating tracking sets.
 
         Args:
-            node (PipelineNode): The pipeline node to summarize.
+            node (_PipelineNode): The pipeline node to summarize.
             index (int): The node's position in the pipeline.
             deleted_keys (set[str]): Keys deleted by previous nodes.
             all_required_params (set[str]): Context keys required by the pipeline.
@@ -129,7 +129,7 @@ class PipelineInspector:
         created_keys = node.processor.get_created_keys()
         injected_or_created_keywords.update(created_keys)
 
-        if isinstance(node, ProbeContextInjectorNode):
+        if isinstance(node, _ProbeContextInjectorNode):
             injected_or_created_keywords.add(node.context_keyword)
             created_keys.append(node.context_keyword)
             key_origin[node.context_keyword] = index
@@ -148,7 +148,7 @@ class PipelineInspector:
             f"\t\tContext additions: {cls._format_set(created_keys)}",
         ]
 
-        if isinstance(node, ContextProcessorNode):
+        if isinstance(node, _ContextProcessorNode):
             suppressed_keys = node.get_suppressed_keys()
             deleted_keys.update(suppressed_keys)
             node_summary_lines.append(
@@ -282,7 +282,7 @@ class PipelineInspector:
                 created_keys.update(processor.get_created_keys())
                 injected_keys |= created_keys
 
-            if isinstance(node, ProbeContextInjectorNode):
+            if isinstance(node, _ProbeContextInjectorNode):
                 injected_key = getattr(node, "context_keyword", None)
                 if injected_key:
                     injected_keys.add(injected_key)
@@ -330,12 +330,12 @@ class PipelineInspector:
         return "\n".join(summary_lines)
 
     @classmethod
-    def get_nodes_semantic_ids_report(cls, nodes: List[PipelineNode]) -> str:
+    def get_nodes_semantic_ids_report(cls, nodes: List[_PipelineNode]) -> str:
         """
         Generate a report of semantic IDs for each node in the pipeline.
 
         Args:
-            nodes (List[PipelineNode]): A list of pipeline nodes.
+            nodes (List[_PipelineNode]): A list of pipeline nodes.
 
         Returns:
             str: A report containing semantic IDs for each node.

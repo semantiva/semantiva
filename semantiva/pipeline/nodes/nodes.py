@@ -12,31 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Any, Dict, Optional, Type, Tuple
+from typing import List, Any, Dict, Optional, Type
 from typing_extensions import override
 from abc import abstractmethod
-from semantiva.context_processors import ContextProcessor, ContextObserver
-from semantiva.data_processors import (
-    BaseDataProcessor,
+from semantiva.context_processors import ContextProcessor
+from semantiva.data_processors.data_processors import (
+    _BaseDataProcessor,
     DataOperation,
     DataProbe,
 )
+from semantiva.context_processors.context_observer import _ContextObserver
+
 from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
 )
-from semantiva.data_types import BaseDataType, NoDataType
+from semantiva.data_types import NoDataType
 from semantiva.logger import Logger
-from ..payload_processors import PayloadProcessor
+from ..payload_processors import _PayloadProcessor
 from ..payload import Payload
 
 
-class PipelineNode(PayloadProcessor):
+class _PipelineNode(_PayloadProcessor):
     """
     Base node class for wraping data or context processors.
     """
 
-    processor: BaseDataProcessor | ContextProcessor
+    processor: _BaseDataProcessor | ContextProcessor
     processor_config: Dict
     logger: Logger
 
@@ -51,24 +53,24 @@ class PipelineNode(PayloadProcessor):
         """
 
 
-class DataNode(PipelineNode):
+class _DataNode(_PipelineNode):
     """
     A node that wraps a data processor.
     """
 
-    processor: BaseDataProcessor
+    processor: _BaseDataProcessor
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         processor_config: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a DataNode with a specific data processor and its configuration.
+        Initialize a _DataNode with a specific data processor and its configuration.
 
         Args:
-            processor (Type[BaseDataProcessor]): The class of the data processor associated with this node.
+            processor (Type[_BaseDataProcessor]): The class of the data processor associated with this node.
             processor_config (Optional[Dict]): Configuration parameters for the data processor. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
@@ -218,19 +220,19 @@ class DataNode(PipelineNode):
             )
 
 
-class PayloadSourceNode(DataNode):
+class _PayloadSourceNode(_DataNode):
     """
     A node that wraps a PayloadSource.
     """
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a PayloadSourceNode with the specified payload source.
+        Initialize a _PayloadSourceNode with the specified payload source.
 
         Args:
             processor (Type[PayloadSource]): The payload source class for this node.
@@ -312,19 +314,19 @@ class PayloadSourceNode(DataNode):
         return Payload(loaded_data, context)
 
 
-class PayloadSinkNode(DataNode):
+class _PayloadSinkNode(_DataNode):
     """
     A node that wraps a PayloadSink.
     """
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a PayloadSinkNode with the specified payload sink.
+        Initialize a _PayloadSinkNode with the specified payload sink.
 
         Args:
             processor (Type[PayloadSink]): The payload sink class for this node.
@@ -383,22 +385,22 @@ class PayloadSinkNode(DataNode):
         return cls.input_data_type()
 
 
-class DataSinkNode(DataNode):
+class _DataSinkNode(_DataNode):
     """
     A node that wraps a DataSink.
     """
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a DataSinkNode with the specified data sink.
+        Initialize a _DataSinkNode with the specified data sink.
 
         Args:
-            processor (Type[BaseDataProcessor]): The base data processor for the DataSinkNode.
+            processor (Type[_BaseDataProcessor]): The base data processor for the _DataSinkNode.
             processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
@@ -472,22 +474,22 @@ class DataSinkNode(DataNode):
         return []
 
 
-class DataSourceNode(DataNode):
+class _DataSourceNode(_DataNode):
     """
     A node that wraps a DataSource.
     """
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a DataSourceNode with the specified data source.
+        Initialize a _DataSourceNode with the specified data source.
 
         Args:
-            processor (Type[BaseDataProcessor]): The BaseDataProcessor for the DataSourceNode.
+            processor (Type[_BaseDataProcessor]): The _BaseDataProcessor for the _DataSourceNode.
             processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
@@ -560,22 +562,22 @@ class DataSourceNode(DataNode):
         return []
 
 
-class DataOperationNode(DataNode):
+class _DataOperationNode(_DataNode):
     """
     A node that wraps a DataOperation.
     """
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize an DataOperationNode with the specified data algorithm.
+        Initialize an _DataOperationNode with the specified data algorithm.
 
         Args:
-            processor (Type[BaseDataProcessor]): The base data processor for this node.
+            processor (Type[_BaseDataProcessor]): The base data processor for this node.
             processor_parameters (Optional[Dict]): Initial configuration for processor parameters. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         """
@@ -645,7 +647,7 @@ class DataOperationNode(DataNode):
         return cls.processor.get_created_keys()
 
 
-class DataOperationContextInjectorProbeNode(DataOperationNode):
+class _DataOperationContextInjectorProbeNode(_DataOperationNode):
     """A node that runs a :class:`DataOperation`, stores its output in the
     context under a specified keyword, and forwards the original data."""
 
@@ -709,11 +711,11 @@ class DataOperationContextInjectorProbeNode(DataOperationNode):
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         result = self.processor.process(data, **parameters)
-        ContextObserver.update_context(context, self.context_keyword, result)
+        _ContextObserver.update_context(context, self.context_keyword, result)
         return Payload(data, context)
 
 
-class ProbeNode(DataNode):
+class _ProbeNode(_DataNode):
     """
     A node that wraps a DataProbe.
     """
@@ -729,7 +731,7 @@ class ProbeNode(DataNode):
         return cls.input_data_type()
 
 
-class ProbeContextInjectorNode(ProbeNode):
+class _ProbeContextInjectorNode(_ProbeNode):
     """
     A node that wraps a DataProbe and injects the probe result into the context with the specified keyword.
     """
@@ -738,16 +740,16 @@ class ProbeContextInjectorNode(ProbeNode):
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         context_keyword: str,
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a ProbeContextInjectorNode with the specified data processor and context keyword.
+        Initialize a _ProbeContextInjectorNode with the specified data processor and context keyword.
 
         Args:
-            processor (Type[BaseDataProcessor]): The data probe class for this node.
+            processor (Type[_BaseDataProcessor]): The data probe class for this node.
             context_keyword (str): The keyword used to inject the probe result into the context.
             processor_parameters (Optional[Dict]): Operation configuration parameters. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
@@ -820,7 +822,7 @@ class ProbeContextInjectorNode(ProbeNode):
 
     def __str__(self) -> str:
         """
-        Return a string representation of the ProbeContextInjectorNode.
+        Return a string representation of the _ProbeContextInjectorNode.
 
         Returns:
             str: A string summarizing the node's attributes and execution summary.
@@ -853,28 +855,28 @@ class ProbeContextInjectorNode(ProbeNode):
         probe_result = self.processor.process(data, **parameters)
         if isinstance(context, ContextCollectionType):
             for index, p_item in enumerate(probe_result):
-                ContextObserver.update_context(
+                _ContextObserver.update_context(
                     context, self.context_keyword, p_item, index=index
                 )
         else:
-            ContextObserver.update_context(context, self.context_keyword, probe_result)
+            _ContextObserver.update_context(context, self.context_keyword, probe_result)
 
         return Payload(data, context)
 
 
-class ProbeResultCollectorNode(ProbeNode):
+class _ProbeResultCollectorNode(_ProbeNode):
     """
     A node that wraps a DataProbe and collects probe results.
     """
 
     def __init__(
         self,
-        processor: Type[BaseDataProcessor],
+        processor: Type[_BaseDataProcessor],
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a ProbeResultCollectorNode with the specified data probe.
+        Initialize a _ProbeResultCollectorNode with the specified data probe.
 
         Args:
             processor (Type[DataProbe]): The data probe class for this node.
@@ -986,17 +988,17 @@ class ProbeResultCollectorNode(ProbeNode):
         return Payload(data, context)
 
 
-class ContextDataProcessorNode(PipelineNode):
+class _ContextDataProcessorNode(_PipelineNode):
     """Apply a :class:`DataOperation` or :class:`DataProbe` to a context value."""
 
-    processor_cls: Type[BaseDataProcessor]
+    processor_cls: Type[_BaseDataProcessor]
     input_context_keyword: str
     output_context_keyword: str
     processor_kwargs: Dict[str, Any]
 
     def __init__(
         self,
-        processor_cls: Type[BaseDataProcessor],
+        processor_cls: Type[_BaseDataProcessor],
         input_context_keyword: str,
         output_context_keyword: str,
         processor_kwargs: Optional[Dict[str, Any]] = None,
@@ -1068,14 +1070,14 @@ class ContextDataProcessorNode(PipelineNode):
         context_value = context.get_value(self.input_context_keyword)
         processor = self.processor_cls(**self.processor_kwargs)
         result = processor.process(context_value)
-        ContextObserver.update_context(context, self.output_context_keyword, result)
+        _ContextObserver.update_context(context, self.output_context_keyword, result)
         return Payload(data, context)
 
     def _process(self, payload: Payload) -> Payload:
         return self._process_single_item_with_context(payload)
 
 
-class ContextProcessorNode(PipelineNode):
+class _ContextProcessorNode(_PipelineNode):
     """
     A node that wraps a context processor.
     """

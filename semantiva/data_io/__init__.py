@@ -12,4 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .data_io import *
+from .data_io import DataSource, DataSink, PayloadSource, PayloadSink
+
+__all__ = [
+    "DataSource",
+    "PayloadSource",
+    "DataSink",
+    "PayloadSink",
+]

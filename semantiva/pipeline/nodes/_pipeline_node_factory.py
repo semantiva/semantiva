@@ -14,30 +14,34 @@
 
 from types import new_class
 from typing import Any, Dict, Optional, Type
-from semantiva.data_processors.data_io_wrapper_factory import DataIOWrapperFactory
+from semantiva.data_processors.io_operation_factory import _IOOperationFactory
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
-from semantiva.data_processors import DataOperation, DataProbe, BaseDataProcessor
-from semantiva.component_loader import ComponentLoader
+from semantiva.data_processors.data_processors import (
+    DataOperation,
+    DataProbe,
+    _BaseDataProcessor,
+)
+from semantiva.component_loader import _ComponentLoader
 from semantiva.logger import Logger
 from semantiva.context_processors import (
     ContextProcessor,
 )
 from .nodes import (
-    PipelineNode,
-    DataSinkNode,
-    DataSourceNode,
-    PayloadSinkNode,
-    PayloadSourceNode,
-    DataOperationNode,
-    ContextProcessorNode,
-    ContextDataProcessorNode,
-    ProbeContextInjectorNode,
-    ProbeResultCollectorNode,
-    DataOperationContextInjectorProbeNode,
+    _PipelineNode,
+    _DataSinkNode,
+    _DataSourceNode,
+    _PayloadSinkNode,
+    _PayloadSourceNode,
+    _DataOperationNode,
+    _ContextProcessorNode,
+    _ContextDataProcessorNode,
+    _ProbeContextInjectorNode,
+    _ProbeResultCollectorNode,
+    _DataOperationContextInjectorProbeNode,
 )
 
 
-class NodeFactory:
+class _PipelineNodeFactory:
     """
     Factory class to create nodes based on the provided configuration.
     """
@@ -64,7 +68,7 @@ class NodeFactory:
     def create_io_node(
         node_definition: Dict,
         logger: Optional[Logger] = None,
-    ) -> PipelineNode:
+    ) -> _PipelineNode:
         """
         Factory function to create an appropriate data I/O node instance based on the given definition.
 
@@ -73,7 +77,7 @@ class NodeFactory:
             logger (Optional[Logger]): Optional logger instance for diagnostic messages.
 
         Returns:
-            PipelineNode: A subclass of PipelineNode.
+            _PipelineNode: A subclass of _PipelineNode.
 
         Raises:
             ValueError: If the node definition is invalid or if the processor type is unsupported.
@@ -84,7 +88,7 @@ class NodeFactory:
         def get_class(class_name):
             """Helper function to retrieve the class from the loader if the input is a string."""
             if isinstance(class_name, str):
-                return ComponentLoader.get_class(class_name)
+                return _ComponentLoader.get_class(class_name)
             return class_name
 
         # Resolve the processor class if provided as a string.
@@ -94,13 +98,17 @@ class NodeFactory:
             raise ValueError("processor must be a class type or a string, not None.")
 
         if issubclass(processor, DataSource):
-            return NodeFactory.create_data_source_node(processor, parameters, logger)
+            return _PipelineNodeFactory.create_data_source_node(
+                processor, parameters, logger
+            )
         if issubclass(processor, PayloadSource):
-            return NodeFactory.create_payload_source_node(processor, parameters, logger)
+            return _PipelineNodeFactory.create_payload_source_node(
+                processor, parameters, logger
+            )
         if issubclass(processor, DataSink):
-            return NodeFactory.create_data_sink_node(processor, parameters)
+            return _PipelineNodeFactory.create_data_sink_node(processor, parameters)
         if issubclass(processor, PayloadSink):
-            return NodeFactory.create_payload_sink_node(processor, parameters)
+            return _PipelineNodeFactory.create_payload_sink_node(processor, parameters)
 
         raise ValueError(
             "Unsupported processor. Processor must be of type DataOperation, DataProbe, DataSource, PayloadSource, DataSink, or PayloadSink."
@@ -111,9 +119,9 @@ class NodeFactory:
         data_io_class: Type[PayloadSource],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> PayloadSourceNode:
-        """Factory function to create an extended PayloadSourceNode.
-        This function dynamically creates a subclass of PayloadSourceNode
+    ) -> _PayloadSourceNode:
+        """Factory function to create an extended _PayloadSourceNode.
+        This function dynamically creates a subclass of _PayloadSourceNode
         with a specific payload source class and its associated metadata.
 
         Args:
@@ -121,15 +129,15 @@ class NodeFactory:
             parameters (Optional[Dict]): Configuration parameters for the payload source. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
         Returns:
-            PayloadSourceNode: An instance of a dynamically created subclass of PayloadSourceNode.
+            _PayloadSourceNode: An instance of a dynamically created subclass of _PayloadSourceNode.
         """
 
         # Wrap the data IO class in a DataOperation subclass
-        processor = DataIOWrapperFactory.create_data_operation(data_io_class)
+        processor = _IOOperationFactory.create_data_operation(data_io_class)
 
-        node_class = NodeFactory._create_class(
-            name="PayloadSourceNode",
-            base_cls=PayloadSourceNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name="_PayloadSourceNode",
+            base_cls=_PayloadSourceNode,
             processor=data_io_class,
         )
         return node_class(
@@ -139,22 +147,22 @@ class NodeFactory:
     @staticmethod
     def create_payload_sink_node(
         data_io_class: Type[PayloadSink], parameters: Optional[Dict] = None
-    ) -> PayloadSinkNode:
-        """Factory function to create an extended PayloadSinkNode.
-        This function dynamically creates a subclass of PayloadSinkNode
+    ) -> _PayloadSinkNode:
+        """Factory function to create an extended _PayloadSinkNode.
+        This function dynamically creates a subclass of _PayloadSinkNode
         with a specific payload sink class and its associated metadata.
         Args:
             data_io_class (Type[PayloadSink]): The class of the payload sink to be used.
             parameters (Optional[Dict]): Configuration parameters for the payload sink. Defaults to None.
         Returns:
-            PayloadSinkNode: An instance of a dynamically created subclass of PayloadSinkNode.
+            _PayloadSinkNode: An instance of a dynamically created subclass of _PayloadSinkNode.
         """
 
-        processor = DataIOWrapperFactory.create_data_operation(data_io_class)
+        processor = _IOOperationFactory.create_data_operation(data_io_class)
 
-        node_class = NodeFactory._create_class(
-            name=f"{data_io_class.__name__}PayloadSinkNode",
-            base_cls=PayloadSinkNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{data_io_class.__name__}_PayloadSinkNode",
+            base_cls=_PayloadSinkNode,
             processor=data_io_class,
         )
         return node_class(processor=processor, processor_parameters=parameters)
@@ -162,22 +170,22 @@ class NodeFactory:
     @staticmethod
     def create_data_sink_node(
         data_io_class: Type[DataSink], parameters: Optional[Dict] = None
-    ) -> DataSinkNode:
-        """Factory function to create an extended DataSinkNode.
-        This function dynamically creates a subclass of DataSinkNode
+    ) -> _DataSinkNode:
+        """Factory function to create an extended _DataSinkNode.
+        This function dynamically creates a subclass of _DataSinkNode
         with a specific data sink class.
         Args:
             data_io_class (Type[DataSink]): The class of the data sink to be used.
             parameters (Optional[Dict]): Configuration parameters for the payload sink. Defaults to None.
         Returns:
-            DataSinkNode: An instance of a dynamically created subclass of DataSinkNode.
+            _DataSinkNode: An instance of a dynamically created subclass of _DataSinkNode.
         """
 
-        processor = DataIOWrapperFactory.create_data_operation(data_io_class)
+        processor = _IOOperationFactory.create_data_operation(data_io_class)
 
-        node_class = NodeFactory._create_class(
-            name=f"{data_io_class.__name__}DataSinkNode",
-            base_cls=DataSinkNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{data_io_class.__name__}_DataSinkNode",
+            base_cls=_DataSinkNode,
             processor=data_io_class,
         )
 
@@ -188,23 +196,23 @@ class NodeFactory:
         data_io_class: Type[DataSource],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> DataSourceNode:
-        """Factory function to create an extended DataSourceNode.
-        This function dynamically creates a subclass of DataSourceNode
+    ) -> _DataSourceNode:
+        """Factory function to create an extended _DataSourceNode.
+        This function dynamically creates a subclass of _DataSourceNode
         with a specific data source class.
         Args:
             data_io_class (Type[DataSource]): The class of the data source to be used.
             parameters (Optional[Dict]): Configuration parameters for the data source. Defaults to None.
             logger (Optional[Logger]): A Logger instance. Defaults to None
         Returns:
-            DataSinkNode: An instance of a dynamically created subclass of DataSourceNode.
+            _DataSinkNode: An instance of a dynamically created subclass of _DataSourceNode.
         """
 
-        processor = DataIOWrapperFactory.create_data_operation(data_io_class)
+        processor = _IOOperationFactory.create_data_operation(data_io_class)
 
-        node_class = NodeFactory._create_class(
-            name="DataSourceNode",
-            base_cls=DataSourceNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name="_DataSourceNode",
+            base_cls=_DataSourceNode,
             processor=data_io_class,
         )
 
@@ -214,24 +222,24 @@ class NodeFactory:
 
     @staticmethod
     def create_data_operation_node(
-        processor_class: Type[BaseDataProcessor],
+        processor_class: Type[_BaseDataProcessor],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> DataOperationNode:
-        """Factory function to create an extended DataOperationNode.
-        This function dynamically creates a subclass of DataOperationNode
+    ) -> _DataOperationNode:
+        """Factory function to create an extended _DataOperationNode.
+        This function dynamically creates a subclass of _DataOperationNode
         with a specific data source class.
         Args:
-            processor_class (Type[BaseDataProcessor]): The class of the data operation to be used.
+            processor_class (Type[_BaseDataProcessor]): The class of the data operation to be used.
             parameters (Optional[Dict]): Configuration parameters for the data source. Defaults to None.
             logger (Optional[Logger]): A Logger instance. Defaults to None
         Returns:
-            DataOperationNode: An instance of a dynamically created subclass of DataSourceNode.
+            _DataOperationNode: An instance of a dynamically created subclass of _DataSourceNode.
         """
 
-        node_class = NodeFactory._create_class(
-            name=f"{processor_class.__name__}DataOperationNode",
-            base_cls=DataOperationNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{processor_class.__name__}_DataOperationNode",
+            base_cls=_DataOperationNode,
             processor=processor_class,
         )
 
@@ -241,29 +249,29 @@ class NodeFactory:
 
     @staticmethod
     def create_probe_context_injector(
-        processor_class: Type[BaseDataProcessor],
+        processor_class: Type[_BaseDataProcessor],
         context_keyword: str,
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> ProbeContextInjectorNode:
-        """Factory function to create an extended ProbeContextInjectorNode.
-        This function dynamically creates a subclass of ProbeContextInjectorNode
+    ) -> _ProbeContextInjectorNode:
+        """Factory function to create an extended _ProbeContextInjectorNode.
+        This function dynamically creates a subclass of _ProbeContextInjectorNode
         with a specific data processor class.
         Args:
-            processor_class (Type[BaseDataProcessor]): The class of the data operation to be used.
+            processor_class (Type[_BaseDataProcessor]): The class of the data operation to be used.
             context_keyword (str): The context key for the probe result.
             parameters (Optional[Dict]): Configuration parameters. Defaults to None.
             logger (Optional[Logger]): A Logger instance. Defaults to None
         Returns:
-            ProbeContextInjectorNode: An instance of a dynamically created subclass of ProbeContextInjectorNode.
+            _ProbeContextInjectorNode: An instance of a dynamically created subclass of _ProbeContextInjectorNode.
         """
 
         if not context_keyword or not isinstance(context_keyword, str):
             raise ValueError("context_keyword must be a non-empty string.")
 
-        node_class = NodeFactory._create_class(
-            name=f"{processor_class.__name__}ProbeContextInjectorNode",
-            base_cls=ProbeContextInjectorNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{processor_class.__name__}_ProbeContextInjectorNode",
+            base_cls=_ProbeContextInjectorNode,
             processor=processor_class,
             context_keyword=context_keyword,
         )
@@ -275,7 +283,7 @@ class NodeFactory:
         processor_cls: Type[DataOperation],
         context_keyword: str,
         **processor_kwargs,
-    ) -> DataOperationContextInjectorProbeNode:
+    ) -> _DataOperationContextInjectorProbeNode:
         """Wrap a :class:`DataOperation` in a context‑injecting probe node."""
 
         if (
@@ -287,9 +295,9 @@ class NodeFactory:
         if not context_keyword or not isinstance(context_keyword, str):
             raise ValueError("context_keyword must be a non-empty string")
 
-        node_class = NodeFactory._create_class(
-            name=f"{processor_cls.__name__}DataOperationContextInjectorProbeNode",
-            base_cls=DataOperationContextInjectorProbeNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{processor_cls.__name__}_DataOperationContextInjectorProbeNode",
+            base_cls=_DataOperationContextInjectorProbeNode,
             processor=processor_cls,
             context_keyword=context_keyword,
         )
@@ -297,20 +305,20 @@ class NodeFactory:
 
     @staticmethod
     def create_probe_result_collector(
-        processor_class: Type[BaseDataProcessor],
+        processor_class: Type[_BaseDataProcessor],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> ProbeResultCollectorNode:
-        """Factory function to create an extended ProbeResultCollectorNode.
-        This function dynamically creates a subclass of ProbeResultCollectorNode
+    ) -> _ProbeResultCollectorNode:
+        """Factory function to create an extended _ProbeResultCollectorNode.
+        This function dynamically creates a subclass of _ProbeResultCollectorNode
         with a specific processor class.
         Returns:
-            ProbeResultCollectorNode: An instance of a dynamically created subclass of ProbeNode.
+            _ProbeResultCollectorNode: An instance of a dynamically created subclass of _ProbeNode.
         """
 
-        node_class = NodeFactory._create_class(
-            name=f"{processor_class.__name__}ProbeResultCollectorNode",
-            base_cls=ProbeResultCollectorNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{processor_class.__name__}_ProbeResultCollectorNode",
+            base_cls=_ProbeResultCollectorNode,
             processor=processor_class,
         )
         return node_class(
@@ -324,15 +332,15 @@ class NodeFactory:
         processor_class: Type[ContextProcessor],
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
-    ) -> ContextProcessorNode:
+    ) -> _ContextProcessorNode:
         """Factory helper for wrapping :class:`ContextProcessor` classes."""
 
         parameters = parameters or {}
         context_processor_instance = processor_class(logger, **parameters)
 
-        node_class = NodeFactory._create_class(
-            name=f"{processor_class.__name__}ContextProcessorNode",
-            base_cls=ContextProcessorNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{processor_class.__name__}_ContextProcessorNode",
+            base_cls=_ContextProcessorNode,
             processor=context_processor_instance,
         )
         return node_class(
@@ -348,7 +356,7 @@ class NodeFactory:
         output_context_keyword: str,
         processor_cls: Type[DataOperation] | Type[DataProbe],
         **processor_kwargs,
-    ) -> ContextDataProcessorNode:
+    ) -> _ContextDataProcessorNode:
         """Create a node that processes a context value using a data processor."""
 
         if not (isinstance(input_context_keyword, str) and input_context_keyword):
@@ -361,9 +369,9 @@ class NodeFactory:
         ):
             raise ValueError("processor_cls must be a DataProcessor subclass")
 
-        node_class = NodeFactory._create_class(
-            name=f"{processor_cls.__name__}ContextDataProcessorNode",
-            base_cls=ContextDataProcessorNode,
+        node_class = _PipelineNodeFactory._create_class(
+            name=f"{processor_cls.__name__}_ContextDataProcessorNode",
+            base_cls=_ContextDataProcessorNode,
             processor_cls=processor_cls,
             input_context_keyword=input_context_keyword,
             output_context_keyword=output_context_keyword,
@@ -377,10 +385,10 @@ class NodeFactory:
 
 
 # Main node factory function
-def node_factory(
+def _pipeline_node_factory(
     node_definition: Dict,
     logger: Optional[Logger] = None,
-) -> PipelineNode:
+) -> _PipelineNode:
     """
     Factory function to create an appropriate node instance based on the given definition.
 
@@ -394,7 +402,7 @@ def node_factory(
         logger (Optional[Logger]): Optional logger instance for diagnostic messages.
 
     Returns:
-        PipelineNode: An instance of a subclass of DataNode or ContextProcessorNode.
+        _PipelineNode: An instance of a subclass of _DataNode or _ContextProcessorNode.
 
     Raises:
         ValueError: If the node definition is invalid or if the processor type is unsupported.
@@ -403,7 +411,7 @@ def node_factory(
     def get_class(class_name):
         """Helper function to retrieve the class from the loader if the input is a string."""
         if isinstance(class_name, str):
-            return ComponentLoader.get_class(class_name)
+            return _ComponentLoader.get_class(class_name)
         return class_name
 
     processor = node_definition.get("processor")
@@ -417,7 +425,7 @@ def node_factory(
         raise ValueError("processor must be a class type or a string, not None.")
 
     if issubclass(processor, ContextProcessor):
-        return NodeFactory.create_context_processor_wrapper_node(
+        return _PipelineNodeFactory.create_context_processor_wrapper_node(
             processor, parameters, logger
         )
 
@@ -426,18 +434,20 @@ def node_factory(
             raise ValueError(
                 "context_keyword must not be defined for DataOperation nodes."
             )
-        return NodeFactory.create_data_operation_node(processor, parameters, logger)
+        return _PipelineNodeFactory.create_data_operation_node(
+            processor, parameters, logger
+        )
     if issubclass(processor, DataProbe):
         if context_keyword is not None:
-            return NodeFactory.create_probe_context_injector(
+            return _PipelineNodeFactory.create_probe_context_injector(
                 processor, context_keyword, parameters, logger
             )
         else:
-            return NodeFactory.create_probe_result_collector(
+            return _PipelineNodeFactory.create_probe_result_collector(
                 processor, parameters, logger
             )
     if issubclass(processor, (DataSource, PayloadSource, DataSink, PayloadSink)):
-        return NodeFactory.create_io_node(node_definition, logger)
+        return _PipelineNodeFactory.create_io_node(node_definition, logger)
     else:
         raise ValueError(
             "Unsupported processor. Processor must be of type DataOperation or DataProbe."

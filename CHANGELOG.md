@@ -14,8 +14,8 @@ Here is the updated changelog with the missing items included and the requested 
 - Renamed `payload_operations` → `semantiva.pipeline` and `execution_tools` → `semantiva.execution`
 - Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`
 - New node types  
-  - `DataOperationContextInjectorProbeNode`: runs a `DataOperation`, stores its output in the pipeline context under a specified key, and forwards the original data  
-  - `ContextDataProcessorNode`: applies a `DataOperation` or `DataProbe` to a context value and writes the result back into context  
+  - `_DataOperationContextInjectorProbeNode`: runs a `DataOperation`, stores its output in the pipeline context under a specified key, and forwards the original data  
+  - `_ContextDataProcessorNode`: applies a `DataOperation` or `DataProbe` to a context value and writes the result back into context  
 - Factory methods
   - Exposed via `NodeFactory` to create the above node types
  - Added `scripts/add_license.py` and `scripts/check_license_headers.py` for license header management
@@ -25,13 +25,42 @@ Here is the updated changelog with the missing items included and the requested 
 - Imports throughout codebase updated to new package paths  
 - Re-exported `Payload` at `semantiva.pipeline` and the package root
 - Moved `Stopwatch` utility to `semantiva/utils/stopwatch.py`  
+- Consolidated public API by renaming classes to indicate private components by the following renames:
+  - file `data_io_wrapper_factory.py` → `io_operation_factory.py`
+  - file `pipeline/nodes/node_factory.py` → `_pipeline_node_factory.py`
+  - file `core/semantiva_object.py` → `core/semantiva_component.py`
+  - class `BaseDataProcessor` → `_BaseDataProcessor`
+  - class `ContextObserver` → `_ContextObserver`
+  - class `SemantivaObject` → `_SemantivaComponent`
+  - class `SemantivaObjectMeta` → `_SemantivaComponentMeta`
+  - class `ComponentLoader` → `_ComponentLoader`
+  - class `PayloadProcessor` → `_PayloadProcessor`
+  - class `SlicingDataProcessorFactory` → `_SlicingDataProcessorFactory`
+  - class `DataIOWrapperFactory` → `_IOOperationFactory`
+  - class `NodeFactory` → `_PipelineNodeFactory`
+  - function `node_factory` → `_pipeline_node_factory`
+  - class `PipelineNode` → `_PipelineNode`
+  - class `DataNode` → `_DataNode`
+  - class `PayloadSourceNode` → `_PayloadSourceNode`
+  - class `PayloadSinkNode` → `_PayloadSinkNode`
+  - class `DataSinkNode` → `_DataSinkNode`
+  - class `DataSourceNode` → `_DataSourceNode`
+  - class `DataOperationNode` → `_DataOperationNode`
+  - class `DataOperationContextInjectorProbeNode` → `_DataOperationContextInjectorProbeNode`
+  - class `ProbeNode` → `_ProbeNode`
+  - class `ProbeContextInjectorNode` → `_ProbeContextInjectorNode`
+  - class `ProbeResultCollectorNode` → `_ProbeResultCollectorNode`
+  - class `ContextDataProcessorNode` → `_ContextDataProcessorNode`
+  - class `ContextProcessorNode` → `_ContextProcessorNode`
+- Correct global typo: `wraped_component*` → `wrapped_component*` in code, RDF export logic, and tests
+
 
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories
 
 ### Breaking Changes
 - `Pipeline.process(...)` now returns `Payload` instead of a `(data, context)` tuple  
-- Top-level import paths for all pipeline and execution modules have changed  
+- Top-level import paths for several pipeline and execution modules have changed  
 
 
 ## [v0.4.0] - 2025-06-04

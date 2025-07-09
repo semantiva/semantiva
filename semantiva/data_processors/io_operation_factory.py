@@ -22,7 +22,7 @@ from semantiva.context_processors.context_types import ContextType
 from semantiva.logger import Logger
 
 
-class DataIOWrapperFactory:
+class _IOOperationFactory:
     """
     A factory class for wrapping data IO classes into data processors.
 

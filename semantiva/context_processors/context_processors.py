@@ -17,11 +17,11 @@ from typing import Dict, Any, List, Optional, Union
 from semantiva.context_processors.context_types import ContextType
 from semantiva.workflows.fitting_model import FittingModel
 from semantiva.data_types.data_types import BaseDataType
-from semantiva.core import SemantivaObject
+from semantiva.core.semantiva_component import _SemantivaComponent
 from semantiva.logger import Logger
 
 
-class ContextProcessor(SemantivaObject):
+class ContextProcessor(_SemantivaComponent):
     """
     Base class for performing context operations.
     """

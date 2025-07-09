@@ -18,7 +18,7 @@ from pathlib import Path
 import importlib.util
 import re
 from semantiva.logger import Logger
-from semantiva.data_processors import BaseDataProcessor
+from semantiva.data_processors.data_processors import _BaseDataProcessor
 from semantiva.context_processors.context_processors import (
     ContextProcessor,
     ContextType,
@@ -165,8 +165,8 @@ def context_deleter_factory(key: str) -> type[ContextProcessor]:
     return type(dynamic_class_name, (ContextProcessor,), class_attrs)
 
 
-class ComponentLoader:
-    """ComponentLoader is a class that loads components
+class _ComponentLoader:
+    """_ComponentLoader is a class that loads components
     from a given set of paths"""
 
     _registered_paths: Set[Path] = set()
@@ -208,7 +208,7 @@ class ComponentLoader:
     @classmethod
     def get_class(
         cls, class_name: str
-    ) -> type[ContextProcessor] | type[BaseDataProcessor]:
+    ) -> type[ContextProcessor] | type[_BaseDataProcessor]:
         """Lookup in registered paths and modules for the class and
         return its type. It starts with modules and then looks in paths.
 
@@ -216,7 +216,7 @@ class ComponentLoader:
             class_name (str): The class name of the context processor or base data processor.
 
         Returns:
-            ContextProcessor | BaseDataProcessor: The type of the ContextProcessor or BaseDataProcessor.
+            ContextProcessor | _BaseDataProcessor: The type of the ContextProcessor or _BaseDataProcessor.
 
         """
         logger = Logger()
@@ -251,7 +251,7 @@ class ComponentLoader:
     @classmethod
     def _get_class_from_module(
         cls, module_name: str, class_name: str
-    ) -> type[ContextProcessor] | type[BaseDataProcessor] | None:
+    ) -> type[ContextProcessor] | type[_BaseDataProcessor] | None:
         """Lookup in registered modules for the class and
         return its type. If module is not found, return None.
 
@@ -260,7 +260,7 @@ class ComponentLoader:
             class_name (str): The class name of the context processor or base data processor.
 
         Returns:
-            ContextProcessor | BaseDataProcessor | None: The type of the ContextProcessor or BaseDataProcessor. If not found, returns None.
+            ContextProcessor | _BaseDataProcessor | None: The type of the ContextProcessor or _BaseDataProcessor. If not found, returns None.
 
         """
 
@@ -274,7 +274,7 @@ class ComponentLoader:
     @classmethod
     def _get_class_from_file(
         cls, file_path: Path, class_name: str
-    ) -> type[ContextProcessor] | type[BaseDataProcessor] | None:
+    ) -> type[ContextProcessor] | type[_BaseDataProcessor] | None:
         """Lookup in registered paths for the class and return its type.
 
         Args:
@@ -282,7 +282,7 @@ class ComponentLoader:
             class_name (str): The class name of the context processor or base data processor.
 
         Returns:
-            ContextProcessor | BaseDataProcessor: The type of the ContextProcessor or BaseDataProcessor. If not found, returns None.
+            ContextProcessor | _BaseDataProcessor: The type of the ContextProcessor or _BaseDataProcessor. If not found, returns None.
 
         """
 

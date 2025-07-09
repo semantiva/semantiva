@@ -17,12 +17,12 @@ from typing import Dict, Any, Tuple, TypeVar, Generic, List
 from semantiva.context_processors import ContextType
 from semantiva.data_types import BaseDataType
 from semantiva.pipeline.payload import Payload
-from semantiva.core import SemantivaObject
+from semantiva.core.semantiva_component import _SemantivaComponent
 
 T = TypeVar("T", bound=BaseDataType)
 
 
-class DataSource(SemantivaObject):
+class DataSource(_SemantivaComponent):
     """Abstract base class representing a data source in Semantiva."""
 
     @classmethod
@@ -94,7 +94,7 @@ class DataSource(SemantivaObject):
         return f"{cls.__name__}"
 
 
-class PayloadSource(SemantivaObject):
+class PayloadSource(_SemantivaComponent):
     """Abstract base class for providing structured payloads (data and context) in Semantiva."""
 
     @classmethod
@@ -189,7 +189,7 @@ class PayloadSource(SemantivaObject):
         return f"{cls.__name__}"
 
 
-class DataSink(SemantivaObject, Generic[T]):
+class DataSink(_SemantivaComponent, Generic[T]):
     """Abstract base class for data sinks that consume and store data."""
 
     @abstractmethod
@@ -262,7 +262,7 @@ class DataSink(SemantivaObject, Generic[T]):
         return f"{cls.__name__}"
 
 
-class PayloadSink(SemantivaObject, Generic[T]):
+class PayloadSink(_SemantivaComponent, Generic[T]):
     """Abstract base class for payload sinks that consume and store data along with its associated context."""
 
     @abstractmethod

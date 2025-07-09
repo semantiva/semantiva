@@ -14,12 +14,12 @@
 
 from abc import abstractmethod
 from typing import Dict, Any, Type, TypeVar, Generic, Iterator, get_args, Optional
-from semantiva.core import SemantivaObject
+from semantiva.core.semantiva_component import _SemantivaComponent
 
 T = TypeVar("T")
 
 
-class BaseDataType(SemantivaObject, Generic[T]):
+class BaseDataType(_SemantivaComponent, Generic[T]):
     """
     Abstract generic base class for all data types in the semantic framework.
 
@@ -116,7 +116,7 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
                     f"{element_cls.__name__}<{elem_meta}>"
                 )
             else:
-                # element_cls is not a SemantivaObject subclass (e.g. still a TypeVar)
+                # element_cls is not a _SemantivaComponent subclass (e.g. still a TypeVar)
                 component_metadata["collection_element_type"] = BaseDataType.__name__
         except Exception:
             # no binding available at this abstract level

@@ -13,15 +13,16 @@
 # limitations under the License.
 
 from abc import abstractmethod
-from typing import Any, Optional
-from semantiva.context_processors import ContextType, ContextObserver
-from semantiva.data_types import BaseDataType, NoDataType
+from typing import Optional
+from semantiva.context_processors import ContextType
+from semantiva.context_processors.context_observer import _ContextObserver
+from semantiva.data_types import NoDataType
 from .payload import Payload
 from semantiva.utils.stopwatch import Stopwatch
 from semantiva.logger import Logger
 
 
-class PayloadProcessor(ContextObserver):
+class _PayloadProcessor(_ContextObserver):
     """Base class for payload processing operations with integrated data and context management."""
 
     logger: Logger

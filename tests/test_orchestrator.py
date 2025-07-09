@@ -16,7 +16,7 @@
 Unit tests for Semantiva's LocalSemantivaOrchestrator.
 
 These tests verify that:
-  - The orchestrator executes each PipelineNode in sequence,
+  - The orchestrator executes each _PipelineNode in sequence,
   - Uses the default SequentialSemantivaExecutor,
   - Publishes each node's output via the provided transport,
   - Returns the correct final data and context.
@@ -47,7 +47,7 @@ def fake_pipeline():
         Pipeline object with .nodes list populated.
     """
     # We use an in-memory transport and sequential executor just to satisfy
-    # PipelineNode requirements, though they aren't used by LocalSemantivaOrchestrator directly here.
+    # _PipelineNode requirements, though they aren't used by LocalSemantivaOrchestrator directly here.
     transport = InMemorySemantivaTransport()
     executor = SequentialSemantivaExecutor()
 
@@ -62,7 +62,7 @@ def fake_pipeline():
         },
     ]
 
-    # Build the Pipeline, which constructs PipelineNodes internally
+    # Build the Pipeline, which constructs _PipelineNodes internally
     pipeline = Pipeline(node_configurations)
     return pipeline
 
@@ -81,7 +81,7 @@ def test_orchestrator_applies_each_node_and_publishes(fake_pipeline):
     ctx = ContextType({})
 
     # Execute the pipeline:
-    # - fake_pipeline.nodes: list of PipelineNode
+    # - fake_pipeline.nodes: list of _PipelineNode
     # - initial: BaseDataType
     # - ctx: ContextType
     # - transport: in-memory transport captures published intermediates

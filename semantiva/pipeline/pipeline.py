@@ -12,20 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 from semantiva.exceptions.pipeline import (
     PipelineTopologyError,
 )
-from semantiva.context_processors.context_types import ContextType
-from semantiva.data_types import BaseDataType
 from .payload import Payload
 from semantiva.logger import Logger
-from .payload_processors import PayloadProcessor
-from .nodes.node_factory import node_factory
+from .payload_processors import _PayloadProcessor
+from .nodes._pipeline_node_factory import _pipeline_node_factory
 from .nodes.nodes import (
-    PipelineNode,
-    ContextProcessorNode,
-    ProbeResultCollectorNode,
+    _PipelineNode,
+    _ContextProcessorNode,
+    _ProbeResultCollectorNode,
 )
 from semantiva.execution.transport import (
     SemantivaTransport,
@@ -37,11 +35,11 @@ from semantiva.execution.orchestrator.orchestrator import (
 )
 
 
-class Pipeline(PayloadProcessor):
+class Pipeline(_PayloadProcessor):
     """A class for orchestrating multiple payload operations by sequentially processing data and context."""
 
     pipeline_configuration: List[Dict]
-    nodes: List[PipelineNode]
+    nodes: List[_PipelineNode]
 
     def __init__(
         self,
@@ -128,7 +126,7 @@ class Pipeline(PayloadProcessor):
         Retrieve the collected data from all probe collector nodes in the pipeline.
 
         This method iterates through the pipeline's nodes and checks for instances of
-        `ProbeResultCollectorNode`. For each such node, it retrieves the collected data and
+        `_ProbeResultCollectorNode`. For each such node, it retrieves the collected data and
         associates it with the corresponding node's index in the pipeline.
 
         Returns:
@@ -148,7 +146,7 @@ class Pipeline(PayloadProcessor):
         # Iterate over all nodes in the pipeline
         for i, node in enumerate(self.nodes):
 
-            if isinstance(node, ProbeResultCollectorNode):
+            if isinstance(node, _ProbeResultCollectorNode):
                 # Add the collected data from the node to the results dictionary
                 assert hasattr(node, "get_collected_data")
                 probe_results[f"Node {i + 1}/{type(node.processor).__name__}"] = (
@@ -162,19 +160,19 @@ class Pipeline(PayloadProcessor):
         """
         Initialize all nodes in the pipeline.
 
-        This method uses the `node_factory` function to create nodes from the provided
+        This method uses the `_pipeline_node_factory` function to create nodes from the provided
         pipeline configuration. Each node is then added to the pipeline.
         """
         nodes = []
         prev_output_type = None
 
         for index, node_config in enumerate(self.pipeline_configuration, start=1):
-            node = node_factory(node_config, self.logger)
+            node = _pipeline_node_factory(node_config, self.logger)
             self.logger.info(f"Initialized Node {index}: {type(node).__name__}")
             nodes.append(node)
 
-            # Skip type consistency check for `ContextProcessorNode`
-            if isinstance(node, ContextProcessorNode):
+            # Skip type consistency check for `_ContextProcessorNode`
+            if isinstance(node, _ContextProcessorNode):
                 continue
 
             # Perform type consistency check

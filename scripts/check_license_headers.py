@@ -38,6 +38,8 @@ def main() -> None:
                     if not has_header(fullpath):
                         print(f"❌ Missing header: {fullpath}")
                         missing_files.append(fullpath)
+                    else:
+                        print(f"✅ Header found: {fullpath}")
 
     print("\n✅ License check complete.")
     print(f"Total files missing header: {len(missing_files)}")

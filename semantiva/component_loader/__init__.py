@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .component_loader import ComponentLoader
+from .component_loader import _ComponentLoader
 
 # Initialize default modules when the class is loaded
-ComponentLoader.initialize_default_modules()
+_ComponentLoader.initialize_default_modules()
