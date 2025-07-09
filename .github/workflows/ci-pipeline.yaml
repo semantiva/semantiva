@@ -41,11 +41,15 @@ jobs:
       - name: Run mypy
         run: |
           pdm run mypy .
+          
+      - name: Check license headers
+        run: |
+          pdm run python scripts/check_license_headers.py
 
-      - name: Run black
+      - name: Run black    
         run: |
           pdm run black --check ${{ env.project_name }}
-
+    
   test:
     runs-on: ubuntu-latest
     needs: linting  # Ensure that the test job runs after linting job passes

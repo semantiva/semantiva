@@ -18,6 +18,8 @@ pdm run pylint semantiva --fail-under=7.5
 # Step 3: Run black (code formatting check)
 echo "Running black..."
 pdm run black --check semantiva
+echo "Running license header check..."
+pdm run python scripts/check_license_headers.py
 
 # Step 4: Run mypy
 echo "Running mypy"

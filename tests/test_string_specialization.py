@@ -16,6 +16,7 @@
 # Step 1: Define StringLiteralDataType
 #########################
 from semantiva.data_types import BaseDataType
+from semantiva.context_processors.context_types import ContextType
 
 
 class StringLiteralDataType(BaseDataType):
@@ -106,7 +107,7 @@ if __name__ == "__main__":
     input_data = StringLiteralDataType("World!")
 
     # 3. Run the pipeline
-    payload = pipeline.process(Payload(input_data, {}))
+    payload = pipeline.process(Payload(input_data, ContextType({})))
     output_data = payload.data
 
     # 4. Print final result
@@ -121,7 +122,7 @@ def test_string_specialization():
     input_data = StringLiteralDataType("World!")
 
     # 3. Run the pipeline
-    payload = pipeline.process(Payload(input_data, {}))
+    payload = pipeline.process(Payload(input_data, ContextType({})))
     output_data = payload.data
 
     # 4. Print final result
