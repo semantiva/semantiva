@@ -21,7 +21,7 @@ from semantiva.data_processors.data_processors import (
     DataProbe,
     _BaseDataProcessor,
 )
-from semantiva.component_loader import _ComponentLoader
+from semantiva.component_loader import ComponentLoader
 from semantiva.logger import Logger
 from semantiva.context_processors import (
     ContextProcessor,
@@ -88,7 +88,7 @@ class _PipelineNodeFactory:
         def get_class(class_name):
             """Helper function to retrieve the class from the loader if the input is a string."""
             if isinstance(class_name, str):
-                return _ComponentLoader.get_class(class_name)
+                return ComponentLoader.get_class(class_name)
             return class_name
 
         # Resolve the processor class if provided as a string.
@@ -411,7 +411,7 @@ def _pipeline_node_factory(
     def get_class(class_name):
         """Helper function to retrieve the class from the loader if the input is a string."""
         if isinstance(class_name, str):
-            return _ComponentLoader.get_class(class_name)
+            return ComponentLoader.get_class(class_name)
         return class_name
 
     processor = node_definition.get("processor")

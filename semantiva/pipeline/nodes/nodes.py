@@ -254,10 +254,10 @@ class _PayloadSourceNode(_DataNode):
         }
 
         try:
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             assert hasattr(cls.processor, "get_input_parameters")
@@ -347,10 +347,10 @@ class _PayloadSinkNode(_DataNode):
         }
 
         try:
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             assert hasattr(cls.processor, "get_input_parameters")
@@ -426,10 +426,10 @@ class _DataSinkNode(_DataNode):
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             component_metadata["input_parameters"] = annotated_parameter_list
@@ -516,10 +516,10 @@ class _DataSourceNode(_DataNode):
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             component_metadata["input_parameters"] = annotated_parameter_list or "None"
@@ -602,10 +602,10 @@ class _DataOperationNode(_DataNode):
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             component_metadata["input_parameters"] = annotated_parameter_list
@@ -679,10 +679,10 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             component_metadata["input_parameters"] = annotated_parameter_list
@@ -776,10 +776,10 @@ class _ProbeContextInjectorNode(_ProbeNode):
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             component_metadata["input_parameters"] = annotated_parameter_list
@@ -902,10 +902,10 @@ class _ProbeResultCollectorNode(_ProbeNode):
                     cls.processor._send_data, excluded_parameters
                 )
             ]
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             component_metadata["input_parameters"] = annotated_parameter_list
@@ -1030,12 +1030,12 @@ class _ContextDataProcessorNode(_PipelineNode):
                     excluded_parameters,
                 )
             ]
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor_cls,
                 "__name__",
                 type(cls.processor_cls).__name__,
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor_cls.__doc__ or ""
             )
             component_metadata["input_parameters"] = annotated_parameter_list or "None"
@@ -1114,10 +1114,10 @@ class _ContextProcessorNode(_PipelineNode):
         }
 
         try:
-            component_metadata["wraped_component"] = getattr(
+            component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
-            component_metadata["wraped_component_docstring"] = (
+            component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
             component_metadata["required_context_keys"] = cls.get_required_keys()

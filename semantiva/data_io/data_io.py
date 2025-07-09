@@ -13,8 +13,7 @@
 # limitations under the License.
 
 from abc import abstractmethod
-from typing import Dict, Any, Tuple, TypeVar, Generic, List
-from semantiva.context_processors import ContextType
+from typing import Dict, Any, TypeVar, Generic, List
 from semantiva.data_types import BaseDataType
 from semantiva.pipeline.payload import Payload
 from semantiva.core.semantiva_component import _SemantivaComponent

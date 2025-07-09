@@ -32,7 +32,7 @@ def test_export_framework_ontology_script():
     result = subprocess.run(
         [
             "python",
-            "semantiva/tools/export_ontology.py",
+            "semantiva/examples/export_ontology.py",
             "-o",
             output_file,
             "-p",

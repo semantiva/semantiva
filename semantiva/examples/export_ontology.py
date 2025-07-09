@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# semantiva/tools/export_ontology.py
+# semantiva/examples/export_ontology.py
 """
 Export the Semantiva component taxonomy and metadata to RDF/Turtle using live framework metadata.
 Sample usage:
-    python semantiva/tools/export_ontology.py -o semantiva_ontology.ttl -p semantiva,semantiva_imaging
+    python semantiva/examples/export_ontology.py -o semantiva_ontology.ttl -p semantiva,semantiva_imaging
+
+This is an experimental tool, not part of the public API.
 """
 import sys
 import pkgutil
@@ -25,10 +27,10 @@ import importlib
 from typing import List
 from rdflib import Graph, RDF, RDFS, OWL, Literal
 from semantiva.core.semantiva_component import _SemantivaComponent
-from semantiva.core.semantiva_predicate_map import SMTV, PREDICATE_MAP
+from semantiva.core.semantiva_predicate_map import SMTV, EXPERIMENTAL_PREDICATE_MAP
 
 
-def discover_and_import(package_name: str) -> None:
+def _discover_and_import(package_name: str) -> None:
     """
     Discover and import all modules in the specified package.
     """
@@ -42,13 +44,13 @@ def discover_and_import(package_name: str) -> None:
                 pass
 
 
-def collect_components(packages: List[str]) -> List[type[_SemantivaComponent]]:
+def _collect_components(packages: List[str]) -> List[type[_SemantivaComponent]]:
     """
     Collect all _SemantivaComponent subclasses from the specified packages.
     """
     duplicates = []
     for pkg in packages:
-        discover_and_import(pkg)
+        _discover_and_import(pkg)
     for module in list(sys.modules.values()):
         path = getattr(module, "__file__", "")
         if not path:
@@ -70,7 +72,7 @@ def collect_components(packages: List[str]) -> List[type[_SemantivaComponent]]:
     return components
 
 
-def export_framework_ontology(output_path: str, packages: list[str]) -> None:
+def _export_framework_ontology(output_path: str, packages: list[str]) -> None:
     """
     Export the Semantiva component ontology to a Turtle file with metadata.
     """
@@ -80,7 +82,7 @@ def export_framework_ontology(output_path: str, packages: list[str]) -> None:
     g.add((SMTV.hasCategory, RDF.type, OWL.ObjectProperty))
     g.add((SMTV.hasCategory, RDFS.label, Literal("has category")))
 
-    for cls in collect_components(packages):
+    for cls in _collect_components(packages):
         if not hasattr(cls, "get_metadata"):
             continue
         metadata = cls.get_metadata()
@@ -98,9 +100,9 @@ def export_framework_ontology(output_path: str, packages: list[str]) -> None:
 
         # Emit metadata triples
         for key in metadata.keys():
-            if key not in PREDICATE_MAP and key != "class_name":
+            if key not in EXPERIMENTAL_PREDICATE_MAP and key != "class_name":
                 print(f"Warning: No predicate for '{key}' in {class_name}")
-        for key, predicate in PREDICATE_MAP.items():
+        for key, predicate in EXPERIMENTAL_PREDICATE_MAP.items():
             value = metadata.get(key)
             if not value:
                 continue
@@ -127,7 +129,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Export Semantiva component ontology to TTL with category grouping"
+        description="Export Semantiva component ontology to TTL with category grouping [experimental]"
     )
     parser.add_argument(
         "--output",
@@ -140,4 +142,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     package_list = args.packages.split(",") if args.packages else []
-    export_framework_ontology(args.output, package_list)
+    _export_framework_ontology(args.output, package_list)
