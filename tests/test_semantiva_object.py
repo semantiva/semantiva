@@ -29,7 +29,7 @@ from semantiva.core.semantiva_component import (
     _SemantivaComponent,
     get_component_registry,
 )
-from semantiva.tools.export_ontology import collect_components
+from semantiva.examples.export_ontology import _collect_components
 
 
 # Dummy base to allow registration in subclasses (avoids direct _SemantivaComponent inheritance)
@@ -148,7 +148,7 @@ def test_semantic_id_metadata_consistency():
     For every registered component, ensure that all get_metadata keys (except docstring, processor_docstring, class_name)
     appear in the semantic_id output.
     """
-    collect_components(["semantiva"])
+    _collect_components(["semantiva"])
     registry = get_component_registry()
     for category, classes in registry.items():
         for cls in classes:
@@ -164,7 +164,7 @@ def test_semantic_id_metadata_consistency():
             for key, value in metadata.items():
                 if key not in (
                     "docstring",
-                    "wraped_component_docstring",
+                    "wrapped_component_docstring",
                     # "class_name",
                 ):
                     print(f"     Checking key '{key}', {value} in semantic_id")

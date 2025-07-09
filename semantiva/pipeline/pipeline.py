@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from typing import Any, Dict, List
-from semantiva.exceptions.pipeline import (
+from semantiva.exceptions import (
     PipelineTopologyError,
 )
 from .payload import Payload

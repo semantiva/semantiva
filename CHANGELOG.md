@@ -18,22 +18,30 @@ Here is the updated changelog with the missing items included and the requested 
   - `_ContextDataProcessorNode`: applies a `DataOperation` or `DataProbe` to a context value and writes the result back into context  
 - Factory methods
   - Exposed via `NodeFactory` to create the above node types
- - Added `scripts/add_license.py` and `scripts/check_license_headers.py` for license header management
+- Added `scripts/add_license.py` and `scripts/check_license_headers.py` for license header management
+- Expanded public API exports:
+  - Major expansion of `semantiva.__init__.py` to export core classes and functions including `Pipeline`, `Payload`, `load_pipeline_from_yaml`, `PipelineInspector`, data types, processors, I/O components, and workflow utilities
+  - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
 
 ### Changed
 - Updated `PayloadSource`, `PayloadSink`, `Pipeline.process`, all node implementations, DataIO wrappers, examples and tests to use `Payload`  
-- Imports throughout codebase updated to new package paths  
-- Re-exported `Payload` at `semantiva.pipeline` and the package root
-- Moved `Stopwatch` utility to `semantiva/utils/stopwatch.py`  
+- Module reorganization:
+  - Moved `semantiva/tools/export_ontology.py` → `semantiva/examples/export_ontology.py` and marked as experimental
+  - Renamed `semantiva/exceptions/pipeline.py` → `semantiva/exceptions/pipeline_exceptions.py`  
+  - Moved `Stopwatch` class from `semantiva/utils/stopwatch.py` into `semantiva/pipeline/payload_processors.py` (deleted standalone file)
+- API consolidation and public/private separation:
+  - Renamed predicate mapping: `PREDICATE_MAP` → `EXPERIMENTAL_PREDICATE_MAP` with experimental disclaimers
+  - Fixed global typo: `wraped_component*` → `wrapped_component*` in code, RDF export logic, and tests
 - Consolidated public API by renaming classes to indicate private components by the following renames:
   - file `data_io_wrapper_factory.py` → `io_operation_factory.py`
   - file `pipeline/nodes/node_factory.py` → `_pipeline_node_factory.py`
   - file `core/semantiva_object.py` → `core/semantiva_component.py`
+  - function `context_renamer_factory` → `_context_renamer_factory`
+  - function `context_deleter_factory` → `_context_deleter_factory`
   - class `BaseDataProcessor` → `_BaseDataProcessor`
   - class `ContextObserver` → `_ContextObserver`
   - class `SemantivaObject` → `_SemantivaComponent`
   - class `SemantivaObjectMeta` → `_SemantivaComponentMeta`
-  - class `ComponentLoader` → `_ComponentLoader`
   - class `PayloadProcessor` → `_PayloadProcessor`
   - class `SlicingDataProcessorFactory` → `_SlicingDataProcessorFactory`
   - class `DataIOWrapperFactory` → `_IOOperationFactory`
@@ -52,15 +60,14 @@ Here is the updated changelog with the missing items included and the requested 
   - class `ProbeResultCollectorNode` → `_ProbeResultCollectorNode`
   - class `ContextDataProcessorNode` → `_ContextDataProcessorNode`
   - class `ContextProcessorNode` → `_ContextProcessorNode`
-- Correct global typo: `wraped_component*` → `wrapped_component*` in code, RDF export logic, and tests
-
 
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories
 
 ### Breaking Changes
 - `Pipeline.process(...)` now returns `Payload` instead of a `(data, context)` tuple  
-- Top-level import paths for several pipeline and execution modules have changed  
+- Top-level import paths for several pipeline and execution modules have changed
+- Public API consolidation: Many internal classes and functions now use underscore prefixes to indicate private status
 
 
 ## [v0.4.0] - 2025-06-04

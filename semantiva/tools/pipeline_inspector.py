@@ -16,7 +16,7 @@ from typing import List, Any, Dict
 import inspect
 from semantiva import Pipeline
 from semantiva.logger import Logger
-from semantiva.exceptions.pipeline import PipelineConfigurationError
+from semantiva.exceptions import PipelineConfigurationError
 from semantiva.pipeline.nodes.nodes import (
     _PipelineNode,
     _ProbeContextInjectorNode,

@@ -105,7 +105,7 @@ def main():
         },
     ]
 
-    example_job_cfg = {"pipeline": node_configurations}
+    example_job_cfg = node_configurations
 
     # 6) Enqueue two jobs, requesting Future results
     future1 = orchestrator.enqueue(

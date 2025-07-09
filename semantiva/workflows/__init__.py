@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .component_loader import ComponentLoader
-
-# Initialize default modules when the class is loaded
-ComponentLoader.initialize_default_modules()
+from .fitting_model import FittingModel
 
 __all__ = [
-    "ComponentLoader",
+    "FittingModel",
 ]

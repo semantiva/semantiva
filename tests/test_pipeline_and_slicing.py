@@ -18,7 +18,7 @@ from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
 )
-from semantiva.exceptions.pipeline import PipelineTopologyError
+from semantiva.exceptions import PipelineTopologyError
 from semantiva.pipeline import Pipeline, Payload
 from semantiva.examples.test_utils import (
     FloatDataType,

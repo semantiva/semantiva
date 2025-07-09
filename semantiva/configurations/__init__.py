@@ -11,3 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from .load_pipeline_from_yaml import load_pipeline_from_yaml
+
+__all__ = [
+    "load_pipeline_from_yaml",
+]

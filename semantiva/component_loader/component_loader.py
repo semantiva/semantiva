@@ -25,7 +25,7 @@ from semantiva.context_processors.context_processors import (
 )
 
 
-def context_renamer_factory(
+def _context_renamer_factory(
     original_key: str, destination_key: str
 ) -> type[ContextProcessor]:
     """
@@ -100,7 +100,7 @@ def context_renamer_factory(
     return type(dynamic_class_name, (ContextProcessor,), class_attrs)
 
 
-def context_deleter_factory(key: str) -> type[ContextProcessor]:
+def _context_deleter_factory(key: str) -> type[ContextProcessor]:
     """
     Factory function that creates a ContextProcessor subclass to delete a context key.
 
@@ -165,8 +165,8 @@ def context_deleter_factory(key: str) -> type[ContextProcessor]:
     return type(dynamic_class_name, (ContextProcessor,), class_attrs)
 
 
-class _ComponentLoader:
-    """_ComponentLoader is a class that loads components
+class ComponentLoader:
+    """ComponentLoader is a class that loads components
     from a given set of paths"""
 
     _registered_paths: Set[Path] = set()
@@ -226,13 +226,13 @@ class _ComponentLoader:
             match = re.match(r"rename:(.*?):(.*?)$", class_name)
             if match:
                 old_key, new_key = match.groups()
-                return context_renamer_factory(old_key, new_key)
+                return _context_renamer_factory(old_key, new_key)
 
         elif class_name.startswith("delete:"):
             match = re.match(r"delete:(.*?)$", class_name)
             if match:
                 key = match.group(1)
-                return context_deleter_factory(key)
+                return _context_deleter_factory(key)
 
         for module_name in cls._registered_modules:
             class_type = cls._get_class_from_module(module_name, class_name)
