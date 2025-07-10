@@ -15,8 +15,7 @@
 import importlib.metadata
 from unittest.mock import patch, MagicMock
 import logging
-from semantiva.specializations.specialization_loader import load_specializations
-from semantiva.specializations import SemantivaSpecialization
+from semantiva.registry import load_specializations, SemantivaSpecialization
 
 
 def test_load_plugins_happy_path():

@@ -12,5 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .specialization_loader import SemantivaSpecialization
-from .specialization_loader import load_specializations
+from .class_registry import ClassRegistry
+from .plugin_registry import SemantivaSpecialization, load_specializations
+
+# Initialize default modules when the class is loaded
+ClassRegistry.initialize_default_modules()
+
+__all__ = [
+    "ClassRegistry",
+    "SemantivaSpecialization",
+    "load_specializations",
+]
