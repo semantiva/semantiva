@@ -22,6 +22,8 @@ Here is the updated changelog with the missing items included and the requested 
 - Expanded public API exports:
   - Major expansion of `semantiva.__init__.py` to export core classes and functions including `Pipeline`, `Payload`, `load_pipeline_from_yaml`, `PipelineInspector`, data types, processors, I/O components, and workflow utilities
   - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
+  - Added package `registry` to gather plugin and class/module registry.
+  - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
 
 ### Changed
 - Updated `PayloadSource`, `PayloadSink`, `Pipeline.process`, all node implementations, DataIO wrappers, examples and tests to use `Payload`  
@@ -60,9 +62,14 @@ Here is the updated changelog with the missing items included and the requested 
   - class `ProbeResultCollectorNode` → `_ProbeResultCollectorNode`
   - class `ContextDataProcessorNode` → `_ContextDataProcessorNode`
   - class `ContextProcessorNode` → `_ContextProcessorNode`
+  - Renamed `ComponentLoader` → `ClassRegistry`
+  - File `Semantiva/specializations/specialization_loader.py` → `semantiva/registry/plugin_registry.py`
+  - File `Semantiva/component_loader/component_loader.py` → `semantiva/registry/class_registry.py`
+  - Moved `context_renamer_factory` and `context_deleter_factory` functions from `component_loader.py` to `context_processor/factory.py`
 
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories
+- Deleted package `specializations/`
 
 ### Breaking Changes
 - `Pipeline.process(...)` now returns `Payload` instead of a `(data, context)` tuple  

@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 from unittest.mock import patch, MagicMock
 from pathlib import Path
-from semantiva.component_loader import ComponentLoader
+import pytest
+from semantiva.registry import ClassRegistry
 
 
 @pytest.fixture
 def loader():
-    """Fixture to provide a fresh instance of ComponentLoader."""
-    return ComponentLoader
+    """Fixture to provide a fresh instance of ClassRegistry."""
+    return ClassRegistry
 
 
 @patch("pathlib.Path.is_file", return_value=True)

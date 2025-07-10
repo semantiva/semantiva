@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """Utility to prepend Apache 2.0 license headers to project files,
-    and report a summary of changes."""
+and report a summary of changes."""
 
 import os
 import re

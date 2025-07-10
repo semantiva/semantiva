@@ -5,7 +5,7 @@ This repository houses the Semantiva framework, a dual-channel pipeline system t
 ## Repository Layout
 
 * **semantiva/** - Core package containing the Semantiva framework:
-  * **component_loader/** - Dynamic loading of semantiva components.
+  * **registry/** - Dynamic registry of semantiva plugins and paths.
   * **configurations/** - Helpers to build pipelines from YAML configurations.
   * **context_processors/** - Classes that manipulate pipeline context metadata.
   * **core/** - Base classes (`_SemantivaComponent`) and semantic metadata registry.
@@ -17,7 +17,6 @@ This repository houses the Semantiva framework, a dual-channel pipeline system t
   * **execution/** - Pipeline execution engine and job orchestration.
   * **logger/** - Configurable logging helpers.
   * **pipeline/** - Pipeline orchestration, node definitions, and `NodeFactory` for dynamic node creation.
-  * **specializations/** - Plugin loading for domain-specific extensions.
   * **tools/** - Command-line utilities (e.g., ontology export, pipeline inspector).
   * **utils/** - General-purpose helper functions.
   * **workflows/** - Predefined workflow examples (e.g., model fitting).
