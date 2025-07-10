@@ -133,6 +133,7 @@ Here is the updated changelog with the missing items included and the requested 
   > **BREAKING CHANGE**: Nodes no longer directly handle slicing logic; any pipeline that previously relied on node-level slicing must now be refactored to use `SlicingDataProcessorFactory`.  
 - **ContextProcessor signature**: Some `ContextProcessor` subclasses now define classmethods (`get_required_keys`, `get_created_keys`), which may require updates if you extended them in custom code.  
 - **Dynamic node generation**: The old `Node` factory API that returned anonymous classes without explicit metadata is gone; new consumers should use the updated `NodeFactory` methods and rely on `SemantivaObjectMeta` for registration.
+- New location of `SemantivaSpecialization` require updates in specializations.
 
 ## [v0.3.0] - 2025-03-11
 
