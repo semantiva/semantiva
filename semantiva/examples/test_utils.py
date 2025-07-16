@@ -108,7 +108,7 @@ class FloatSquareOperation(FloatOperation):
     """An operation specialized in squaring FloatDataType data."""
 
     def _process_logic(self, data, *args, **kwargs):
-        return FloatDataType(data.data ** 2)
+        return FloatDataType(data.data**2)
 
 
 class FloatSqrtOperation(FloatOperation):
@@ -116,6 +116,7 @@ class FloatSqrtOperation(FloatOperation):
 
     def _process_logic(self, data, *args, **kwargs):
         import math
+
         return FloatDataType(math.sqrt(abs(data.data)))
 
 
@@ -136,7 +137,7 @@ class FloatBasicProbe(FloatProbe):
             "value": data.data,
             "type": type(data.data).__name__,
             "is_positive": data.data > 0,
-            "abs_value": abs(data.data)
+            "abs_value": abs(data.data),
         }
 
 
@@ -155,7 +156,7 @@ class FloatCollectValueProbe(FloatProbe):
 
 
 class FloatMockDataSource(DataSource):
-    """Concrete implementation of DataSource providing FloatDataType data."""
+    """A Mock DataSource for FloatDataType data."""
 
     @classmethod
     def _get_data(cls, *args, **kwargs) -> FloatDataType:
@@ -167,7 +168,7 @@ class FloatMockDataSource(DataSource):
 
 
 class FloatMockDataSink(DataSink):
-    """Concrete implementation of Datasink for FloatDataType data."""
+    """A Mock Datasink for FloatDataType data."""
 
     def _send_data(self, data: BaseDataType, path: str, *args, **kwargs):
         return

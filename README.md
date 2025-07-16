@@ -78,8 +78,15 @@ To quickly dive into Semantiva, explore the following resources:
 - **Interactive Hands-On Notebooks:**  
    Practice with real-world examples available in the [semantiva-hands-on-intro](https://github.com/semantiva/semantiva-hands-on-intro) repository, which provides step-by-step guides and notebooks.
 
-- **Extended Documentation:**  
+- **Extended Documentation:**
    Visit [docs.semantiva.org](https://docs.semantiva.org/) for comprehensive reference material on Semantiva's architecture, principles, and usage.
+
+- **Local Pipeline GUI:**
+  Visualize pipeline configurations in your browser by running:
+  ```bash
+  python serve_pipeline_gui.py path/to/pipeline.yaml
+  ```
+  Then open `http://127.0.0.1:8000` to explore the graph of nodes and view details on click.
 
 These resources offer a practical roadmap to mastering the framework and leveraging its full potential in your projects.
  

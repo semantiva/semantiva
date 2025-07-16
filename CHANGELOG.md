@@ -19,6 +19,19 @@ Here is the updated changelog with the missing items included and the requested 
 - Factory methods
   - Exposed via `NodeFactory` to create the above node types
 - Added `scripts/add_license.py` and `scripts/check_license_headers.py` for license header management
+- Added `serve_pipeline_gui.py` and `web_gui/` for a lightweight pipeline visualization server with custom graph rendering
+  - Features dual-channel pipeline layout separating Data Processing and Context Processing operations
+  - Data processor nodes displayed in the left channel (blue theme)
+  - Context processor nodes displayed in the right channel (purple theme)  
+  - Source and sink nodes span both channels with distinctive styling (red theme)
+  - Cross-channel connections shown with dashed curved arrows
+  - Responsive percentage-based positioning maintains proper channel alignment at any screen size
+  - Maintains original pipeline sequence order while separating nodes horizontally by type
+  - Properly oriented downward-pointing arrows with color-coded connections
+  - Three-panel interface: categorized node list, graph visualization, and detailed node information
+  - Interactive nodes with selection highlighting and detailed parameter inspection
+  - Enhanced sidebar with docstring display, input/output data types, and comprehensive node metadata
+  - Visual distinction for input types (green background) and output types (red background)
 - Expanded public API exports:
   - Major expansion of `semantiva.__init__.py` to export core classes and functions including `Pipeline`, `Payload`, `load_pipeline_from_yaml`, `PipelineInspector`, data types, processors, I/O components, and workflow utilities
   - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
