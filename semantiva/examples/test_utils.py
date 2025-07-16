@@ -97,6 +97,49 @@ class FloatMultiplyOperation(FloatOperation):
         return FloatDataType(data.data * factor)
 
 
+class FloatAddOperation(FloatOperation):
+    """An operation specialized in adding to FloatDataType data."""
+
+    def _process_logic(self, data, addend: float, *args, **kwargs):
+        return FloatDataType(data.data + addend)
+
+
+class FloatSquareOperation(FloatOperation):
+    """An operation specialized in squaring FloatDataType data."""
+
+    def _process_logic(self, data, *args, **kwargs):
+        return FloatDataType(data.data ** 2)
+
+
+class FloatSqrtOperation(FloatOperation):
+    """An operation specialized in taking square root of FloatDataType data."""
+
+    def _process_logic(self, data, *args, **kwargs):
+        import math
+        return FloatDataType(math.sqrt(abs(data.data)))
+
+
+class FloatDivideOperation(FloatOperation):
+    """An operation specialized in dividing FloatDataType data."""
+
+    def _process_logic(self, data, divisor: float, *args, **kwargs):
+        if divisor == 0:
+            raise ValueError("Division by zero is not allowed")
+        return FloatDataType(data.data / divisor)
+
+
+class FloatBasicProbe(FloatProbe):
+    """A basic probe for FloatDataType that returns debug information."""
+
+    def _process_logic(self, data, *args, **kwargs):
+        return {
+            "value": data.data,
+            "type": type(data.data).__name__,
+            "is_positive": data.data > 0,
+            "abs_value": abs(data.data)
+        }
+
+
 class FloatCollectionSumOperation(FloatCollectionMergeOperation):
     """An operation specialized in summing FloatDataCollection data."""
 

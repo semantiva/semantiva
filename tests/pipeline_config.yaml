@@ -1,20 +1,34 @@
 pipeline:
   nodes:
-    - processor: "ImageAddition"
+    - processor: "FloatMockDataSource"
 
-    - processor: "BasicImageProbe"
+    - processor: "FloatBasicProbe"
       context_keyword: "debug_info"
 
-    - processor: "ImageAddition"
-
-    - processor: "rename:debug_info:final_info"
-
-    - processor: "ImageCropper"
+    - processor: "FloatMultiplyOperation"
       parameters:
-        x_start: 10
-        x_end: 20
-        y_start: 10
-        y_end: 20
+        factor: 2.5
 
-    - processor: "delete:image_to_add"
+    - processor: "FloatAddOperation"
+      parameters:
+        addend: 10.0
+
+    - processor: "rename:debug_info:initial_debug"
+
+    - processor: "FloatSquareOperation"
+
+    - processor: "FloatCollectValueProbe"
+      context_keyword: "final_value"
+
+    - processor: "FloatSqrtOperation"
+
+    - processor: "FloatDivideOperation"
+      parameters:
+        divisor: 3.0
+
+    - processor: "delete:initial_debug"
+
+    - processor: "FloatMockDataSink"
+      parameters:
+        path: "output.txt"
 
