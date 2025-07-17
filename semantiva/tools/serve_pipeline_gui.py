@@ -34,14 +34,12 @@ def build_pipeline_json(pipeline: Pipeline) -> dict:
             "label": node.processor.__class__.__name__,
             "component_type": meta.get("component_type"),
             "input_type": (
-                getattr(node, "input_data_type", lambda: None)().__name__
-                if hasattr(node, "input_data_type")
-                else None
+                (typ := getattr(node, "input_data_type", lambda: None)())
+                and typ.__name__
             ),
             "output_type": (
-                getattr(node, "output_data_type", lambda: None)().__name__
-                if hasattr(node, "output_data_type")
-                else None
+                (typ := getattr(node, "output_data_type", lambda: None)())
+                and typ.__name__
             ),
             "docstring": (
                 node.processor.__class__.__doc__.strip()
@@ -49,7 +47,9 @@ def build_pipeline_json(pipeline: Pipeline) -> dict:
                 else "No description available."
             ),
             "parameters": node.processor_config,
-            "created_keys": node.get_created_keys(),
+            "created_keys": (
+                node.get_created_keys() if hasattr(node, "get_created_keys") else []
+            ),
             "required_keys": (
                 node.get_required_keys() if hasattr(node, "get_required_keys") else []
             ),

@@ -6,12 +6,10 @@
   <style>
     body, html { margin:0; height:100%; }
     #root { display:flex; height:100%; width:100%; }
-    #sidebar { width:300px; border-right:1px solid #ccc; overflow:auto; padding:4px; }
-    #details { width:300px; border-left:1px solid #ccc; overflow:auto; padding:10px; }
+    #sidebar { width:400px; border-right:1px solid #ccc; overflow:auto; padding:4px; }
+    #details { width:300px; border-left:1px solid #ccc; overflow:auto; padding:20px; }
     #graph { flex:1; overflow: auto; position: relative; }
     pre { white-space:pre-wrap; }
-    .error { color: red; padding: 20px; }
-    .loading { padding: 20px; }
     .node-item { 
       cursor: pointer; 
       padding: 8px; 
@@ -29,7 +27,8 @@
       position: relative;
       overflow: auto;
       background: #fafafa;
-      padding: 40px;
+      min-width: 800px;
+      padding: 0px;
       transform-origin: 0 0;
       transition: transform 0.2s ease;
     }
@@ -73,10 +72,11 @@
     /* Dual channel background */
     .channel-background {
       position: absolute;
-      top: 80px;
-      bottom: 80px;
-      width: 45%;
-      border-radius: 8px;
+      top: 10px;
+      bottom: 20px;
+      width: 43%;
+      min-width: 300px;
+      border-radius: 12px;
       opacity: 0.3;
       z-index: 0;
     }
@@ -99,7 +99,7 @@
       left: 50%;
       transform: translateX(-50%);
       font-weight: bold;
-      font-size: 14px;
+      font-size: 15px;
       color: #333;
       z-index: 1;
     }
@@ -110,12 +110,10 @@
       border: 2px solid #007acc;
       border-radius: 8px;
       padding: 15px;
-      min-width: 180px;
-      max-width: 220px;
       text-align: center;
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      font-size: 12px;
+      font-size: 13px;
       line-height: 1.3;
       z-index: 10;
     }
@@ -146,8 +144,6 @@
     .custom-node.source-sink {
       border-color: #d32f2f;
       background: linear-gradient(90deg, #e3f2fd 0%, #f3e5f5 100%);
-      min-width: 300px;
-      max-width: 400px;
     }
     .custom-node.source-sink:hover {
       background: linear-gradient(90deg, #bbdefb 0%, #e1bee7 100%);
@@ -195,7 +191,7 @@
     function CustomGraph({ nodes, edges, onNodeClick, selectedNodeId }) {
       const [zoomLevel, setZoomLevel] = useState(1);
       const [containerRef, setContainerRef] = useState(null);
-      const nodeWidth = 200;
+      const nodeWidth = 300;
       const nodeHeight = 50;
       const verticalSpacing = 80;
       
@@ -212,13 +208,13 @@
       };
       
       // Use percentage-based positioning to match channel backgrounds
-      const leftChannelCenter = 27.5; // 27.5% from left (center of left channel which goes from 5% to 50%)
-      const rightChannelCenter = 72.5; // 72.5% from left (center of right channel which goes from 50% to 95%)
+      const leftChannelCenter = 24.5; // 27.5% from left (center of left channel which goes from 5% to 50%)
+      const rightChannelCenter = 71.; // 72.5% from left (center of right channel which goes from 50% to 95%)
       const centerPosition = 50; // 50% for source/sink nodes
       
       // Calculate positions maintaining original vertical order
       const nodePositions = {};
-      let currentY = 120; // Start lower to reveal channel titles
+      let currentY = 60; // Start lower to reveal channel titles
       
       // Process all nodes in their original order, just split horizontally by type
       nodes.forEach((node, originalIndex) => {
@@ -314,30 +310,36 @@
               if (isCrossChannel) {
                 // Curved arrow for cross-channel connections
                 const controlY = (sourceY + targetY) / 2 - 30;
-                return (
-                  <path
-                    key={edge.id}
-                    d={`M ${sourcePos.xPercent}% ${sourceY} Q ${(sourcePos.xPercent + targetPos.xPercent) / 2}% ${controlY} ${targetPos.xPercent}% ${targetY - 10}`}
-                    stroke="#ff6b6b"
-                    strokeWidth="2"
-                    fill="none"
-                    strokeDasharray="5,5"
-                    markerEnd="url(#cross-arrow)"
-                  />
-                );
-              } else {
-                // Straight arrow for same-channel connections
-                const arrowColor = sourcePos.type === 'data-processor' ? '#1976d2' : 
-                                 sourcePos.type === 'context-processor' ? '#7b1fa2' : '#d32f2f';
-                const markerId = sourcePos.type === 'data-processor' ? 'straight-arrow-blue' : 
+                // Straight arrow for same-channel connections (including source/sink)
+                const arrowColor = sourcePos.type === 'data-processor' ? '#1976d2' :
+                                 sourcePos.type === 'context-processor' ? '#7b1fa2' : '#32f2f';
+                const markerId = sourcePos.type === 'data-processor' ? 'straight-arrow-blue' :
                                sourcePos.type === 'context-processor' ? 'straight-arrow-purple' : 'straight-arrow-red';
-                
                 return (
                   <line
                     key={edge.id}
                     x1={`${sourcePos.xPercent}%`}
                     y1={sourceY + 5}
-                    x2={`${sourcePos.xPercent}%`}
+                    x2={`${targetPos.xPercent}%`}
+                    y2={targetY - 10}
+                    stroke={arrowColor}
+                    strokeWidth="3"
+                    markerEnd={`url(#${markerId})`}
+                  />
+                );
+              } else {
+                // Straight arrow for same-channel connections (including source/sink)
+                const arrowColor = sourcePos.type === 'data-processor' ? '#1976d2' :
+                                 sourcePos.type === 'context-processor' ? '#7b1fa2' : '#d32f2f';
+                const markerId = sourcePos.type === 'data-processor' ? 'straight-arrow-blue' :
+                               sourcePos.type === 'context-processor' ? 'straight-arrow-purple' : 'straight-arrow-red';
+
+                return (
+                  <line
+                    key={edge.id}
+                    x1={`${sourcePos.xPercent}%`}
+                    y1={sourceY + 5}
+                    x2={`${targetPos.xPercent}%`}
                     y2={targetY - 10}
                     stroke={arrowColor}
                     strokeWidth="3"
@@ -357,7 +359,7 @@
             
             // Calculate actual position using CSS calc() for responsive positioning
             const leftPercentage = pos.xPercent;
-            const nodeWidthToUse = pos.type === 'source-sink' ? 350 : nodeWidth;
+            const nodeWidthToUse = pos.type === 'source-sink' ? 450 : nodeWidth;
             
             // Parse node label
             const labelParts = node.data.label.split('\n');
