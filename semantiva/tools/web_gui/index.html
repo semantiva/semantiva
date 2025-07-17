@@ -670,13 +670,6 @@
                   <strong>Type:</strong> {nodeInfo.component_type}
                 </div>
                 
-                {nodeInfo.signature && (
-                  <div style={{ marginBottom: '10px' }}>
-                    <strong>Signature:</strong>
-                    <pre style={{fontSize:'11px', background: '#f8f9fa', padding: '8px', borderRadius: '4px', overflow: 'auto'}}>{nodeInfo.signature}</pre>
-                  </div>
-                )}
-                
                 <div style={{ marginBottom: '10px' }}>
                   <p><b>Created Keys:</b> {nodeInfo.created_keys && nodeInfo.created_keys.length > 0 ? nodeInfo.created_keys.join(', ') : 'None'}</p>
                   <p><b>Required Keys:</b> {nodeInfo.required_keys && nodeInfo.required_keys.length > 0 ? nodeInfo.required_keys.join(', ') : 'None'}</p>
@@ -685,12 +678,81 @@
                 
                 <div>
                   <p><b>Parameters:</b></p>
-                  <pre style={{fontSize:'11px', background: '#f8f9fa', padding: '8px', borderRadius: '4px', overflow: 'auto'}}>
-                    {Object.keys(nodeInfo.parameters || {}).length > 0 ? 
-                      JSON.stringify(nodeInfo.parameters, null, 2) : 
-                      'No parameters'
-                    }
-                  </pre>
+                  
+                  {nodeInfo.parameter_resolution && nodeInfo.parameter_resolution.required_params && 
+                   nodeInfo.parameter_resolution.required_params.length > 0 ? (
+                    <div>
+                      {/* Parameters from pipeline configuration */}
+                      <div style={{marginTop: '10px'}}>
+                        <p style={{margin: '0 0 5px 0', fontWeight: 'bold', color: '#1976d2'}}>From Pipeline Configuration:</p>
+                        {Object.keys(nodeInfo.parameter_resolution.from_pipeline_config || {}).length > 0 ? (
+                          <div style={{
+                            background: '#e3f2fd', 
+                            padding: '8px', 
+                            borderRadius: '4px',
+                            border: '1px solid #bbdefb',
+                            fontSize: '12px'
+                          }}>
+                            {Object.entries(nodeInfo.parameter_resolution.from_pipeline_config).map(([key, value]) => (
+                              <div key={key} style={{marginBottom: '3px'}}>
+                                <span style={{fontWeight: 'bold'}}>{key}:</span> {value}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{
+                            background: '#f8f9fa',
+                            padding: '8px',
+                            borderRadius: '4px',
+                            color: '#666',
+                            fontSize: '12px'
+                          }}>None</div>
+                        )}
+                      </div>
+                      
+                      {/* Parameters from context */}
+                      <div style={{marginTop: '10px'}}>
+                        <p style={{margin: '0 0 5px 0', fontWeight: 'bold', color: '#7b1fa2'}}>From Context:</p>
+                        {Object.keys(nodeInfo.parameter_resolution.from_context || {}).length > 0 ? (
+                          <div style={{
+                            background: '#f3e5f5', 
+                            padding: '8px', 
+                            borderRadius: '4px',
+                            border: '1px solid #e1bee7',
+                            fontSize: '12px'
+                          }}>
+                            {Object.entries(nodeInfo.parameter_resolution.from_context).map(([key, details]) => (
+                              <div key={key} style={{marginBottom: '3px'}}>
+                                <span style={{fontWeight: 'bold'}}>{key}:</span> {details.source !== "Initial Context" ? (
+                                  <span>From <span style={{color: '#7b1fa2', fontWeight: 'bold'}}>Node {details.source_idx}</span></span>
+                                ) : (
+                                  <span>From <span style={{color: '#d32f2f', fontWeight: 'bold'}}>Initial Context</span></span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{
+                            background: '#f8f9fa',
+                            padding: '8px',
+                            borderRadius: '4px',
+                            color: '#666',
+                            fontSize: '12px'
+                          }}>None</div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{
+                      background: '#f8f9fa', 
+                      padding: '8px', 
+                      borderRadius: '4px',
+                      color: '#666',
+                      fontSize: '12px'
+                    }}>
+                      This node does not require any parameters.
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (

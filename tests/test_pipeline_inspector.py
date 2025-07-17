@@ -127,3 +127,44 @@ def test_validate_deleted_keys_error_and_ok():
     PipelineInspector._validate_deleted_keys(
         index=3, operation_params={"foo"}, config_params={"foo"}, deleted_keys={"foo"}
     )
+
+
+def test_get_node_parameter_resolutions(pipeline):
+    """Test the get_node_parameter_resolutions method."""
+    resolutions = PipelineInspector.get_node_parameter_resolutions(pipeline)
+
+    # Check basic structure
+    assert isinstance(resolutions, list)
+    assert len(resolutions) == len(pipeline.nodes)
+
+    # Check that each node has the expected format
+    for node_info in resolutions:
+        assert "id" in node_info
+        assert "parameter_resolution" in node_info
+        assert "required_params" in node_info["parameter_resolution"]
+        assert "from_pipeline_config" in node_info["parameter_resolution"]
+        assert "from_context" in node_info["parameter_resolution"]
+
+    # Check specific nodes
+    # FloatMultiplyOperation should have 'factor' in 'required_params' and from_context
+    multiply_node = resolutions[1]  # 0-indexed array, 2nd node (index 1)
+    assert "factor" in multiply_node["parameter_resolution"]["required_params"]
+    assert "factor" in multiply_node["parameter_resolution"]["from_context"]
+    assert (
+        multiply_node["parameter_resolution"]["from_context"]["factor"]["source_idx"]
+        == 1
+    )
+
+    # Check rename node
+    rename_node = resolutions[2]  # 0-indexed array, 3rd node (index 2)
+    assert "factor" in rename_node["parameter_resolution"]["required_params"]
+    assert "factor" in rename_node["parameter_resolution"]["from_context"]
+
+    # Check delete node
+    delete_node = resolutions[3]  # 0-indexed array, 4th node (index 3)
+    assert "renamed_key" in delete_node["parameter_resolution"]["required_params"]
+    assert "renamed_key" in delete_node["parameter_resolution"]["from_context"]
+    assert (
+        delete_node["parameter_resolution"]["from_context"]["renamed_key"]["source_idx"]
+        == 3
+    )

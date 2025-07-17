@@ -14,17 +14,25 @@
 
 import argparse
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from semantiva import Pipeline, load_pipeline_from_yaml
+from semantiva.tools.pipeline_inspector import PipelineInspector
 
 app = FastAPI()
 
-pipeline: Pipeline | None = None
-
 
 def build_pipeline_json(pipeline: Pipeline) -> dict:
+    # Get parameter resolution information using PipelineInspector
+    param_resolutions = PipelineInspector.get_node_parameter_resolutions(pipeline)
+
+    # Create a lookup dictionary for parameter resolutions
+    # Note: param_resolutions uses 0-indexed IDs, so we don't need to adjust them
+    resolution_lookup = {
+        item["id"]: item["parameter_resolution"] for item in param_resolutions
+    }
+
     nodes = []
     edges = []
     for idx, node in enumerate(pipeline.nodes):
@@ -47,6 +55,7 @@ def build_pipeline_json(pipeline: Pipeline) -> dict:
                 else "No description available."
             ),
             "parameters": node.processor_config,
+            "parameter_resolution": resolution_lookup.get(idx, {}),
             "created_keys": (
                 node.get_created_keys() if hasattr(node, "get_created_keys") else []
             ),
@@ -58,11 +67,6 @@ def build_pipeline_json(pipeline: Pipeline) -> dict:
                 if hasattr(node, "get_suppressed_keys")
                 else []
             ),
-            "signature": (
-                node.processor.signature_string()
-                if hasattr(node.processor, "signature_string")
-                else ""
-            ),
         }
         nodes.append(info)
         if idx < len(pipeline.nodes) - 1:
@@ -72,8 +76,11 @@ def build_pipeline_json(pipeline: Pipeline) -> dict:
 
 @app.get("/pipeline")
 def get_pipeline():
-    assert pipeline is not None
-    return build_pipeline_json(pipeline)
+    if not hasattr(app.state, "pipeline") or app.state.pipeline is None:
+        raise HTTPException(
+            status_code=404, detail="Pipeline not found. Please load a pipeline first."
+        )
+    return build_pipeline_json(app.state.pipeline)
 
 
 @app.get("/")
@@ -93,9 +100,19 @@ def main():
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
 
-    global pipeline
+    # Load the pipeline
     config = load_pipeline_from_yaml(args.yaml)
-    pipeline = Pipeline(config)
+    app.state.pipeline = Pipeline(config)
+
+    # Print inspection information
+    from semantiva.tools.pipeline_inspector import PipelineInspector
+
+    print("Pipeline Inspector:", PipelineInspector.inspect_pipeline(app.state.pipeline))
+    print("-" * 40)
+    print(
+        "Extended Pipeline Inspection:",
+        PipelineInspector.inspect_pipeline_extended(app.state.pipeline),
+    )
 
     static_dir = Path(__file__).parent / "web_gui"
     app.mount("/static", StaticFiles(directory=static_dir), name="static")

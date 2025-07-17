@@ -409,3 +409,122 @@ class PipelineInspector:
             config, logger=logger, transport=transport, orchestrator=orchestrator
         )
         return cls.inspect_pipeline_extended(pipeline)
+
+    @classmethod
+    def get_node_parameter_resolutions(cls, pipeline: Pipeline) -> list[dict]:
+        """
+        Get structured parameter resolution information for each node.
+
+        This method returns a list of dictionaries, each containing detailed information
+        about parameter resolution for a node in the pipeline:
+        - Which parameters are required
+        - Which parameters come from pipeline configuration
+        - Which parameters come from context, and from which node they originated
+
+        Args:
+            pipeline (Pipeline): The pipeline to inspect.
+
+        Returns:
+            list[dict]: A list of dictionaries, one for each node, containing parameter resolution info.
+        """
+        try:
+            nodes = pipeline.nodes
+            result = []
+
+            # Track created context keys and their origin (1-indexed for human readability)
+            key_origin: dict[str, int] = {}
+            deleted_keys: set[str] = set()
+
+            # First pass: identify all context keys created by any node
+            for idx, node in enumerate(nodes, start=1):
+                created_keys = []
+
+                # Get created keys
+                if hasattr(node, "get_created_keys"):
+                    created_keys.extend(node.get_created_keys())
+                elif hasattr(node.processor, "get_created_keys"):
+                    created_keys.extend(node.processor.get_created_keys())
+
+                # Handle probe nodes specially
+                if hasattr(node, "context_keyword"):
+                    created_keys.append(node.context_keyword)
+
+                # Record key origins (1-indexed for user display)
+                for key in created_keys:
+                    key_origin[key] = idx
+
+                # Track suppressed/deleted keys
+                suppressed_keys = []
+                if hasattr(node, "get_suppressed_keys"):
+                    suppressed_keys = node.get_suppressed_keys()
+                deleted_keys.update(suppressed_keys)
+
+            # Second pass: analyze parameter resolution for each node
+            for idx, node in enumerate(nodes):
+                # Get processing parameters
+                operation_params = []
+                if hasattr(node.processor, "get_processing_parameter_names"):
+                    operation_params = list(
+                        node.processor.get_processing_parameter_names()
+                    )
+                elif hasattr(node, "get_required_keys"):
+                    operation_params = list(node.get_required_keys())
+
+                # Get parameters from configuration
+                config_params = (
+                    list(node.processor_config.keys())
+                    if hasattr(node, "processor_config")
+                    else []
+                )
+                context_params = [p for p in operation_params if p not in config_params]
+
+                # Format parameters from pipeline configuration
+                from_config = {}
+                if hasattr(node, "processor_config"):
+                    for key, value in node.processor_config.items():
+                        from_config[key] = str(value)
+
+                # Format parameters from context
+                from_context = {}
+                for param in context_params:
+                    if param in key_origin:
+                        source_node_idx = key_origin[param]
+                        from_context[param] = {
+                            "value": None,  # We don't have the actual value here
+                            "source": f"Node {source_node_idx}",
+                            "source_idx": source_node_idx,
+                        }
+                    else:
+                        from_context[param] = {
+                            "value": None,
+                            "source": "Initial Context",
+                            "source_idx": -1,
+                        }
+
+                # Build the result for this node
+                node_info = {
+                    "id": idx,  # Use 1-indexed for nodes (idx) but 0-indexed for the result array
+                    "parameter_resolution": {
+                        "required_params": operation_params,
+                        "from_pipeline_config": from_config,
+                        "from_context": from_context,
+                    },
+                }
+
+                result.append(node_info)
+
+            return result
+        except Exception as e:
+            print(f"Error in get_node_parameter_resolutions: {e}")
+            # Return empty data on error to not break the UI
+            return [
+                {
+                    "id": i,
+                    "parameter_resolution": {
+                        "required_params": [],
+                        "from_pipeline_config": {},
+                        "from_context": {},
+                    },
+                }
+                for i in range(len(pipeline.nodes))
+            ]
