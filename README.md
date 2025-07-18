@@ -87,6 +87,13 @@ To quickly dive into Semantiva, explore the following resources:
   python serve_pipeline_gui.py path/to/pipeline.yaml
   ```
   Then open `http://127.0.0.1:8000` to explore the graph of nodes and view details on click.
+- **Export Standalone GUI:**
+  Generate a static HTML inspection page with:
+  ```bash
+  python export_pipeline_gui.py path/to/pipeline.yaml output.html
+  ```
+  The generated file can be hosted on GitHub Pages or any static site.
+
 
 These resources offer a practical roadmap to mastering the framework and leveraging its full potential in your projects.
  

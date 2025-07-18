@@ -32,6 +32,7 @@ Here is the updated changelog with the missing items included and the requested 
   - Interactive nodes with selection highlighting and detailed parameter inspection
   - Enhanced sidebar with docstring display, input/output data types, and comprehensive node metadata
   - Visual distinction for input types (green background) and output types (red background)
+- Added `export_pipeline_gui.py` to generate standalone HTML visualizations of pipeline configurations
 - Expanded public API exports:
   - Major expansion of `semantiva.__init__.py` to export core classes and functions including `Pipeline`, `Payload`, `load_pipeline_from_yaml`, `PipelineInspector`, data types, processors, I/O components, and workflow utilities
   - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
