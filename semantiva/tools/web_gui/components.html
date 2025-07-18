@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Semantiva Components</title>
+  <style>
+    body, html { margin:0; height:100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    #root { display:flex; height:100%; width:100%; }
+    #sidebar { width:400px; border-right:1px solid #ccc; overflow:auto; padding:4px; background: #f8f9fa; }
+    #details { width:300px; border-left:1px solid #ccc; overflow:auto; padding:20px; background: #ffffff; }
+    #graph { flex:1; overflow:auto; position: relative; background: #fafafa; }
+    
+    /* Main header styling */
+    .graph-header {
+      padding: 15px 20px;
+      border-bottom: 2px solid #ddd;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .graph-header-content h3 {
+      margin: 0;
+      color: #007acc;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .graph-header-content p {
+      margin: 5px 0 0 0;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .checkbox-container:hover {
+      background: #f8f9fa;
+      border-color: #007acc;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+      margin: 0;
+      cursor: pointer;
+    }
+    
+    .checkbox-container label {
+      cursor: pointer;
+      font-weight: 500;
+      user-select: none;
+    }
+    
+    /* Sidebar styling */
+    #sidebar h3 {
+      margin: 15px 10px 10px 10px;
+      color: #007acc;
+      font-size: 16px;
+      font-weight: 600;
+      border-bottom: 2px solid #007acc;
+      padding-bottom: 5px;
+    }
+    
+    .component-group {
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .component-group h4 {
+      margin: 0;
+      padding: 12px 15px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .group-checkbox {
+      margin: 0;
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+    
+    .group-checkbox:hover {
+      transform: scale(1.2);
+    }
+    
+    /* Component type colors */
+    .group-data-processor h4 { background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%); }
+    .group-context-processor h4 { background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%); }
+    .group-io-component h4 { background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); }
+    .group-workflow h4 { background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%); }
+    .group-default h4 { background: linear-gradient(135deg, #616161 0%, #424242 100%); }
+    
+    .node-item {
+      cursor: pointer;
+      padding: 12px 15px;
+      border: none;
+      margin: 0;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    .node-item:hover {
+      background: #f5f5f5;
+      transform: translateX(3px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .node-item.selected {
+      background: #e3f2fd;
+      border-left: 4px solid #1976d2;
+      font-weight: 500;
+    }
+    
+    .node-item:last-child {
+      border-bottom: none;
+    }
+    
+    /* Tree node styling in main area */
+    .tree-container {
+      padding: 20px;
+      min-height: calc(100vh - 100px);
+    }
+    
+    .tree-node {
+      margin: 8px 0;
+    }
+    
+    .tree-node-item {
+      display: inline-block;
+      min-width: 250px;
+      padding: 15px 20px;
+      background: white;
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      font-size: 13px;
+      line-height: 1.3;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .tree-node-item:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+    
+    .tree-node-item.selected {
+      border-color: #28a745;
+      box-shadow: 0 6px 12px rgba(40,167,69,0.3);
+    }
+    
+    /* Component type styling for tree nodes */
+    .tree-node-item.data-processor {
+      border-color: #1976d2;
+      background: linear-gradient(135deg, #e3f2fd 0%, #f8fbff 100%);
+    }
+    .tree-node-item.data-processor:hover {
+      background: linear-gradient(135deg, #bbdefb 0%, #e3f2fd 100%);
+      border-color: #0d47a1;
+    }
+    
+    .tree-node-item.context-processor {
+      border-color: #7b1fa2;
+      background: linear-gradient(135deg, #f3e5f5 0%, #faf8fb 100%);
+    }
+    .tree-node-item.context-processor:hover {
+      background: linear-gradient(135deg, #e1bee7 0%, #f3e5f5 100%);
+      border-color: #4a148c;
+    }
+    
+    .tree-node-item.io-component {
+      border-color: #d32f2f;
+      background: linear-gradient(135deg, #ffebee 0%, #fff8f8 100%);
+    }
+    .tree-node-item.io-component:hover {
+      background: linear-gradient(135deg, #ffcdd2 0%, #ffebee 100%);
+      border-color: #b71c1c;
+    }
+    
+    .tree-node-item.workflow {
+      border-color: #388e3c;
+      background: linear-gradient(135deg, #e8f5e8 0%, #f8fbf8 100%);
+    }
+    .tree-node-item.workflow:hover {
+      background: linear-gradient(135deg, #c8e6c9 0%, #e8f5e8 100%);
+      border-color: #1b5e20;
+    }
+    
+    .tree-node-item.default {
+      border-color: #616161;
+      background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+    }
+    .tree-node-item.default:hover {
+      background: linear-gradient(135deg, #eeeeee 0%, #f5f5f5 100%);
+      border-color: #424242;
+    }
+    
+    /* Component type indicator */
+    .component-type-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    }
+    
+    .data-processor .component-type-badge { background: #1976d2; }
+    .context-processor .component-type-badge { background: #7b1fa2; }
+    .io-component .component-type-badge { background: #d32f2f; }
+    .workflow .component-type-badge { background: #388e3c; }
+    .default .component-type-badge { background: #616161; }
+    
+    /* Details panel styling */
+    #details h3 {
+      margin: 0 0 15px 0;
+      color: #007acc;
+      font-size: 18px;
+      font-weight: 600;
+      border-bottom: 2px solid #007acc;
+      padding-bottom: 8px;
+    }
+    
+    #details p {
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    #details b {
+      color: #333;
+      font-weight: 600;
+    }
+    
+    #details pre {
+      white-space: pre-wrap;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 15px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #495057;
+      margin: 15px 0;
+      overflow-x: auto;
+    }
+    
+    .details-section {
+      margin: 15px 0;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .details-section b {
+      color: #007acc;
+    }
+    
+    .no-selection {
+      text-align: center;
+      color: #999;
+      font-style: italic;
+      margin-top: 50px;
+      font-size: 14px;
+    }
+    
+    /* Connection lines for tree structure */
+    .tree-connector {
+      border-left: 2px dashed #ccc;
+      margin-left: 20px;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"><div class="loading">Loading...</div></div>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function TreeNode({ node, depth, onSelect, selectedId }) {
+      const isSelected = selectedId === node.id;
+      const componentTypeClass = getComponentTypeClass(node.component_type);
+      
+      return (
+        <div className="tree-node" style={{ marginLeft: depth * 40 }}>
+          <div 
+            className={`tree-node-item ${componentTypeClass} ${isSelected ? 'selected' : ''}`} 
+            onClick={() => onSelect(node)}
+          >
+            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+              {node.label}
+            </div>
+            <div style={{ fontSize: '11px', color: '#666' }}>
+              {node.component_type}
+            </div>
+            <div className="component-type-badge">
+              {getComponentTypeBadge(node.component_type)}
+            </div>
+          </div>
+          {node.children && node.children.length > 0 && (
+            <div className="tree-connector">
+              {node.children.map(child => (
+                <TreeNode key={child.id} node={child} depth={depth + 1} onSelect={onSelect} selectedId={selectedId} />
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function buildTree(nodes, edges) {
+      const map = {};
+      nodes.forEach(n => { map[n.id] = { ...n, children: [] }; });
+      edges.forEach(e => { if(map[e.source] && map[e.target]) map[e.source].children.push(map[e.target]); });
+      const childIds = new Set(edges.map(e => e.target));
+      return Object.values(map).filter(n => !childIds.has(n.id));
+    }
+
+    function groupByType(nodes) {
+      const groups = {};
+      nodes.forEach(n => {
+        const type = n.component_type || 'Unknown';
+        if(!groups[type]) groups[type] = [];
+        groups[type].push(n);
+      });
+      return groups;
+    }
+
+    function isPrivateComponent(node) {
+      return node.label && node.label.startsWith('_');
+    }
+
+    function filterPrivateComponents(nodes, showPrivate) {
+      if (showPrivate) return nodes;
+      return nodes.filter(node => !isPrivateComponent(node));
+    }
+
+    function filterPrivateGroups(groups, showPrivate) {
+      if (showPrivate) return groups;
+      const filteredGroups = {};
+      Object.entries(groups).forEach(([type, list]) => {
+        const filteredList = list.filter(node => !isPrivateComponent(node));
+        if (filteredList.length > 0) {
+          filteredGroups[type] = filteredList;
+        }
+      });
+      return filteredGroups;
+    }
+
+    function getComponentTypeClass(componentType) {
+      const type = (componentType || '').toLowerCase();
+      if (type.includes('data') && (type.includes('processor') || type.includes('source') || type.includes('sink'))) {
+        return 'data-processor';
+      } else if (type.includes('context') || type.includes('rename') || type.includes('delete')) {
+        return 'context-processor';
+      } else if (type.includes('source') || type.includes('sink') || type.includes('io')) {
+        return 'io-component';
+      } else if (type.includes('workflow') || type.includes('pipeline')) {
+        return 'workflow';
+      }
+      return 'default';
+    }
+
+    function getComponentTypeBadge(componentType) {
+      const type = (componentType || '').toLowerCase();
+      if (type.includes('data')) return 'DATA';
+      if (type.includes('context')) return 'CTX';
+      if (type.includes('source') || type.includes('sink')) return 'I/O';
+      if (type.includes('workflow')) return 'WF';
+      return 'COMP';
+    }
+
+    function getGroupClass(componentType) {
+      return `group-${getComponentTypeClass(componentType)}`;
+    }
+
+    function filterTreeByGroups(nodes, edges, enabledGroups) {
+      // Filter nodes to only include those from enabled groups
+      const filteredNodes = nodes.filter(node => {
+        const groupType = node.component_type || 'Unknown';
+        return enabledGroups.has(groupType);
+      });
+      
+      // Filter edges to only include connections between visible nodes
+      const visibleNodeIds = new Set(filteredNodes.map(n => n.id));
+      const filteredEdges = edges.filter(edge => 
+        visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target)
+      );
+      
+      return { nodes: filteredNodes, edges: filteredEdges };
+    }
+
+    function App() {
+      const [data, setData] = useState(null);
+      const [selected, setSelected] = useState(null);
+      const [showPrivateComponents, setShowPrivateComponents] = useState(false);
+      const [enabledGroups, setEnabledGroups] = useState(new Set());
+
+      useEffect(() => {
+        fetch('/components').then(r => r.json()).then(d => {
+          setData(d);
+          // Initialize all groups as enabled by default
+          const allGroups = new Set();
+          d.nodes.forEach(node => {
+            const groupType = node.component_type || 'Unknown';
+            allGroups.add(groupType);
+          });
+          setEnabledGroups(allGroups);
+        });
+      }, []);
+
+      const toggleGroup = (groupType) => {
+        setEnabledGroups(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(groupType)) {
+            newSet.delete(groupType);
+          } else {
+            newSet.add(groupType);
+          }
+          return newSet;
+        });
+      };
+
+      if (!data) return <div className="loading">Loading...</div>;
+
+      // Filter nodes based on private component visibility
+      const filteredNodes = filterPrivateComponents(data.nodes, showPrivateComponents);
+      
+      // Filter nodes and edges based on enabled groups for tree view
+      const { nodes: treeNodes, edges: treeEdges } = filterTreeByGroups(
+        filteredNodes, 
+        data.edges, 
+        enabledGroups
+      );
+
+      const tree = buildTree(treeNodes, treeEdges);
+      const groups = groupByType(filteredNodes);
+      const filteredGroups = filterPrivateGroups(groups, showPrivateComponents);
+
+      return (
+        <div style={{display:'flex', height:'100%', width:'100%'}}>
+          <div id="sidebar">
+            <h3>Semantiva Components</h3>
+            {Object.entries(filteredGroups).map(([type, list]) => (
+              <div key={type} className={`component-group ${getGroupClass(type)}`}>
+                <h4>
+                  <span>{type || 'Unknown Type'}</span>
+                  <input 
+                    type="checkbox" 
+                    className="group-checkbox"
+                    checked={enabledGroups.has(type)}
+                    onChange={() => toggleGroup(type)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </h4>
+                <div>
+                  {list.map(item => (
+                    <div 
+                      key={item.id} 
+                      className={`node-item ${selected && selected.id===item.id ? 'selected' : ''}`} 
+                      onClick={() => setSelected(item)}
+                    >
+                      <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
+                        {item.label}
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#666' }}>
+                        {item.input_type && `${item.input_type} →`} {item.output_type}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div id="graph">
+            <div className="graph-header">
+              <div className="graph-header-content">
+                <h3>Semantiva Component Hierarchy</h3>
+                <p>Interactive visualization of the component ontology structure and relationships</p>
+              </div>
+              <div className="header-controls">
+                <div className="checkbox-container">
+                  <input 
+                    type="checkbox" 
+                    id="showPrivate" 
+                    checked={showPrivateComponents}
+                    onChange={(e) => setShowPrivateComponents(e.target.checked)}
+                  />
+                  <label htmlFor="showPrivate">Show private components</label>
+                </div>
+              </div>
+            </div>
+            <div className="tree-container">
+              {tree.map(node => (
+                <TreeNode key={node.id} node={node} depth={0} onSelect={setSelected} selectedId={selected && selected.id} />
+              ))}
+            </div>
+          </div>
+          <div id="details">
+            {selected ? (
+              <div>
+                <h3>{selected.label}</h3>
+                <div className="details-section">
+                  <p><b>Component Type:</b> {selected.component_type}</p>
+                  {selected.input_type && <p><b>Input Type:</b> {selected.input_type}</p>}
+                  {selected.output_type && <p><b>Output Type:</b> {selected.output_type}</p>}
+                  {selected.parameters && selected.parameters !== 'None' && (
+                    <p><b>Parameters:</b> {selected.parameters}</p>
+                  )}
+                </div>
+                {selected.docstring && (
+                  <div>
+                    <h4 style={{ color: '#007acc', marginBottom: '8px' }}>Documentation</h4>
+                    <pre>{selected.docstring}</pre>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="no-selection">
+                Select a component to view detailed information
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(React.createElement(App), document.getElementById('root'));
+  </script>
+</body>
+</html>

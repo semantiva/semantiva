@@ -93,6 +93,16 @@ To quickly dive into Semantiva, explore the following resources:
   python export_pipeline_gui.py path/to/pipeline.yaml output.html
   ```
   The generated file can be hosted on GitHub Pages or any static site.
+- **Component Ontology GUI:**
+  Browse the full Semantiva component hierarchy by exporting the ontology and
+  opening the interactive viewer:
+  ```bash
+  python serve_component_gui.py semantiva_components.ttl
+  ```
+  Or generate a standalone page:
+  ```bash
+  python export_component_gui.py semantiva_components.ttl components.html
+  ```
 
 
 These resources offer a practical roadmap to mastering the framework and leveraging its full potential in your projects.

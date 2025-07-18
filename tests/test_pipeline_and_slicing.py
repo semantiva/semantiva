@@ -35,13 +35,13 @@ from .test_string_specialization import HelloOperation
 # Start test
 @pytest.fixture
 def float_data():
-    """Pytest fixture for providing an FloatDataType instance with generated integer data."""
+    """Pytest fixture for providing an FloatDataType instance with generated floating point data."""
     return FloatDataType(5.0)
 
 
 @pytest.fixture
 def float_data_collection():
-    """Pytest fixture for providing an FloatDataCollection instance with generated integer data."""
+    """Pytest fixture for providing an FloatDataCollection instance with generated floating point data."""
     return FloatDataCollection.from_list(
         [FloatDataType(1.0), FloatDataType(2.0), FloatDataType(3.0)]
     )

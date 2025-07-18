@@ -23,7 +23,7 @@ from semantiva.context_processors import ContextType
 
 # Concrete implementation of BaseDataType for testing
 class FloatDataType(BaseDataType[float]):
-    """A data type for integers."""
+    """A data type for floating point values."""
 
     def validate(self, data: float) -> bool:
         if not isinstance(data, float):
