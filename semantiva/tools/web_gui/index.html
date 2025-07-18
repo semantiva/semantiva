@@ -175,6 +175,34 @@
       border-top: 12px solid #666;
       border-bottom: 0;
     }
+
+    /* Invisible anchor points around nodes for arrows */
+    .anchor {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      pointer-events: none;
+    }
+    .anchor.top {
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .anchor.bottom {
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .anchor.left {
+      left: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .anchor.right {
+      right: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   </style>
 </head>
 <body>
@@ -185,15 +213,139 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <script type="text/babel">
-    const {useState, useEffect} = React;
+    const {useState, useEffect, useRef} = React;
+
+    // Individual node component with anchor placeholders
+    function PipelineNode({ node, pos, isSelected, onClick, registerAnchors, width, height }) {
+      const nodeRef = useRef(null);
+      const topRef = useRef(null);
+      const bottomRef = useRef(null);
+      const leftRef = useRef(null);
+      const rightRef = useRef(null);
+
+      useEffect(() => {
+        if (!nodeRef.current) return;
+        const rect = nodeRef.current.getBoundingClientRect();
+        const anchors = {
+          top: topRef.current.getBoundingClientRect(),
+          bottom: bottomRef.current.getBoundingClientRect(),
+          left: leftRef.current.getBoundingClientRect(),
+          right: rightRef.current.getBoundingClientRect(),
+          node: rect
+        };
+        registerAnchors(node.id, anchors);
+      });
+
+      const leftPercentage = pos.xPercent;
+      const nodeWidthToUse = pos.type === 'source-sink' ? 450 : width;
+
+      const labelParts = node.data.label.split('\n');
+      const nodeName = labelParts[0];
+      const typeInfo = labelParts.slice(1).join(' ');
+
+      return (
+        <div
+          ref={nodeRef}
+          key={node.id}
+          className={`custom-node ${pos.type} ${isSelected ? 'selected' : ''}`}
+          style={{
+            left: `calc(${leftPercentage}% - ${nodeWidthToUse / 2}px)`,
+            top: pos.y,
+            width: nodeWidthToUse,
+            height: height
+          }}
+          onClick={() => onClick(null, node)}
+        >
+          <div
+            style={{
+              fontWeight: 'bold',
+              marginBottom: '8px',
+              fontSize: '14px',
+              color: '#333',
+              wordWrap: 'break-word'
+            }}
+          >
+            {nodeName}
+          </div>
+          <div
+            style={{
+              fontSize: '11px',
+              color: '#666',
+              wordWrap: 'break-word'
+            }}
+          >
+            {typeInfo}
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: '5px',
+              right: '8px',
+              fontSize: '10px',
+              color: '#999',
+              fontWeight: 'bold'
+            }}
+          >
+            #{node.id}
+          </div>
+          {/* Channel indicator */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '5px',
+              left: '8px',
+              fontSize: '10px',
+              fontWeight: 'bold',
+              color:
+                pos.type === 'data-processor'
+                  ? '#1976d2'
+                  : pos.type === 'context-processor'
+                  ? '#7b1fa2'
+                  : '#d32f2f'
+            }}
+          >
+            {pos.type === 'data-processor'
+              ? 'DATA'
+              : pos.type === 'context-processor'
+              ? 'CTX'
+              : 'I/O'}
+          </div>
+
+          {/* Anchor elements */}
+          <div ref={topRef} className="anchor top" />
+          <div ref={bottomRef} className="anchor bottom" />
+          <div ref={leftRef} className="anchor left" />
+          <div ref={rightRef} className="anchor right" />
+        </div>
+      );
+    }
 
     // Custom Graph Component with dual-channel layout
     function CustomGraph({ nodes, edges, onNodeClick, selectedNodeId }) {
       const [zoomLevel, setZoomLevel] = useState(1);
       const [containerRef, setContainerRef] = useState(null);
+      const [anchorMap, setAnchorMap] = useState({});
       const nodeWidth = 300;
       const nodeHeight = 50;
       const verticalSpacing = 80;
+
+      const registerAnchors = (id, rects) => {
+        if (!containerRef) return;
+        const containerRect = containerRef.getBoundingClientRect();
+        const convert = r => ({
+          x: r.left + r.width / 2 - containerRect.left,
+          y: r.top + r.height / 2 - containerRect.top
+        });
+        setAnchorMap(prev => ({
+          ...prev,
+          [id]: {
+            top: convert(rects.top),
+            bottom: convert(rects.bottom),
+            left: convert(rects.left),
+            right: convert(rects.right)
+          }
+        }));
+      };
       
       const handleZoomIn = () => {
         setZoomLevel(prev => Math.min(prev + 0.2, 2.0));
@@ -253,10 +405,10 @@
             <button className="zoom-btn" onClick={handleZoomOut} title="Zoom Out">−</button>
           </div>
           
-          <div className="custom-graph" style={{ 
-            position: 'relative', 
-            width: '100%', 
-            height: '100%', 
+          <div ref={setContainerRef} className="custom-graph" style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
             minHeight: `${Math.max(totalHeight * zoomLevel, 500)}px`,
             transform: `scale(${zoomLevel})`,
             transformOrigin: '0 0'
@@ -297,56 +449,30 @@
             {edges.map(edge => {
               const sourcePos = nodePositions[edge.source];
               const targetPos = nodePositions[edge.target];
-              if (!sourcePos || !targetPos) return null;
-              
-              const sourceY = sourcePos.y + nodeHeight;
-              const targetY = targetPos.y;
-              
-              // Different arrow styles for cross-channel connections
-              const isCrossChannel = 
-                (sourcePos.type === 'data-processor' && targetPos.type === 'context-processor') ||
-                (sourcePos.type === 'context-processor' && targetPos.type === 'data-processor');
-              
-              if (isCrossChannel) {
-                // Curved arrow for cross-channel connections
-                const controlY = (sourceY + targetY) / 2 - 30;
-                // Straight arrow for same-channel connections (including source/sink)
-                const arrowColor = sourcePos.type === 'data-processor' ? '#1976d2' :
-                                 sourcePos.type === 'context-processor' ? '#7b1fa2' : '#32f2f';
-                const markerId = sourcePos.type === 'data-processor' ? 'straight-arrow-blue' :
-                               sourcePos.type === 'context-processor' ? 'straight-arrow-purple' : 'straight-arrow-red';
-                return (
-                  <line
-                    key={edge.id}
-                    x1={`${sourcePos.xPercent}%`}
-                    y1={sourceY + 5}
-                    x2={`${targetPos.xPercent}%`}
-                    y2={targetY - 10}
-                    stroke={arrowColor}
-                    strokeWidth="3"
-                    markerEnd={`url(#${markerId})`}
-                  />
-                );
-              } else {
-                // Straight arrow for same-channel connections (including source/sink)
-                const arrowColor = sourcePos.type === 'data-processor' ? '#1976d2' :
-                                 sourcePos.type === 'context-processor' ? '#7b1fa2' : '#d32f2f';
-                const markerId = sourcePos.type === 'data-processor' ? 'straight-arrow-blue' :
-                               sourcePos.type === 'context-processor' ? 'straight-arrow-purple' : 'straight-arrow-red';
+              const sourceAnchors = anchorMap[edge.source];
+              const targetAnchors = anchorMap[edge.target];
+              if (!sourcePos || !targetPos || !sourceAnchors || !targetAnchors) return null;
 
-                return (
-                  <line
-                    key={edge.id}
-                    x1={`${sourcePos.xPercent}%`}
-                    y1={sourceY + 5}
-                    x2={`${targetPos.xPercent}%`}
-                    y2={targetY - 10}
-                    stroke={arrowColor}
-                    strokeWidth="3"
-                    markerEnd={`url(#${markerId})`}
-                  />
-                );
-              }
+              const start = sourceAnchors.bottom;
+              const end = targetAnchors.top;
+
+              const arrowColor = sourcePos.type === 'data-processor' ? '#1976d2' :
+                               sourcePos.type === 'context-processor' ? '#7b1fa2' : '#d32f2f';
+              const markerId = sourcePos.type === 'data-processor' ? 'straight-arrow-blue' :
+                             sourcePos.type === 'context-processor' ? 'straight-arrow-purple' : 'straight-arrow-red';
+
+              return (
+                <line
+                  key={edge.id}
+                  x1={start.x}
+                  y1={start.y}
+                  x2={end.x}
+                  y2={end.y}
+                  stroke={arrowColor}
+                  strokeWidth="3"
+                  markerEnd={`url(#${markerId})`}
+                />
+              );
             })}
           </svg>
           
@@ -354,70 +480,18 @@
           {nodes.map(node => {
             const pos = nodePositions[node.id];
             if (!pos) return null;
-            
             const isSelected = selectedNodeId === node.id;
-            
-            // Calculate actual position using CSS calc() for responsive positioning
-            const leftPercentage = pos.xPercent;
-            const nodeWidthToUse = pos.type === 'source-sink' ? 450 : nodeWidth;
-            
-            // Parse node label
-            const labelParts = node.data.label.split('\n');
-            const nodeName = labelParts[0];
-            const typeInfo = labelParts.slice(1).join(' ');
-            
             return (
-              <div
+              <PipelineNode
                 key={node.id}
-                className={`custom-node ${pos.type} ${isSelected ? 'selected' : ''}`}
-                style={{
-                  left: `calc(${leftPercentage}% - ${nodeWidthToUse / 2}px)`,
-                  top: pos.y,
-                  width: nodeWidthToUse,
-                  height: nodeHeight
-                }}
-                onClick={() => onNodeClick(null, node)}
-              >
-                <div style={{ 
-                  fontWeight: 'bold', 
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  color: '#333',
-                  wordWrap: 'break-word'
-                }}>
-                  {nodeName}
-                </div>
-                <div style={{ 
-                  fontSize: '11px', 
-                  color: '#666',
-                  wordWrap: 'break-word'
-                }}>
-                  {typeInfo}
-                </div>
-                <div style={{
-                  position: 'absolute',
-                  top: '5px',
-                  right: '8px',
-                  fontSize: '10px',
-                  color: '#999',
-                  fontWeight: 'bold'
-                }}>
-                  #{node.id}
-                </div>
-                {/* Channel indicator */}
-                <div style={{
-                  position: 'absolute',
-                  top: '5px',
-                  left: '8px',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                  color: pos.type === 'data-processor' ? '#1976d2' : 
-                         pos.type === 'context-processor' ? '#7b1fa2' : '#d32f2f'
-                }}>
-                  {pos.type === 'data-processor' ? 'DATA' : 
-                   pos.type === 'context-processor' ? 'CTX' : 'I/O'}
-                </div>
-              </div>
+                node={node}
+                pos={pos}
+                isSelected={isSelected}
+                onClick={onNodeClick}
+                registerAnchors={registerAnchors}
+                width={nodeWidth}
+                height={nodeHeight}
+              />
             );
           })}
         </div>
@@ -617,7 +691,7 @@
           </div>
           <div id="graph">
             <div style={{ padding: '10px', borderBottom: '1px solid #ddd', background: '#f8f9fa' }}>
-              <h3 style={{ margin: '0', color: '#007acc' }}>Dual-Channel Pipeline Visualization</h3>
+              <h3 style={{ margin: '0', color: '#007acc' }}>Semantiva Dual-Channel Pipeline Visualization</h3>
               <p style={{ margin: '5px 0 0 0', fontSize: '12px', color: '#666' }}>
                 <span style={{ color: '#1976d2', fontWeight: 'bold' }}>Data Processing</span> • 
                 <span style={{ color: '#7b1fa2', fontWeight: 'bold' }}> Context Processing</span> • 
