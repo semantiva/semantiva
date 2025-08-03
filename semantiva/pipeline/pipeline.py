@@ -68,6 +68,13 @@ class Pipeline(_PayloadProcessor):
         self.pipeline_configuration = pipeline_configuration
         self.transport = transport or InMemorySemantivaTransport()
         self.orchestrator = orchestrator or LocalSemantivaOrchestrator()
+
+        # Use inspection system for validation
+        from semantiva.inspection import build_pipeline_inspection, validate_pipeline
+
+        inspection = build_pipeline_inspection(pipeline_configuration)
+        validate_pipeline(inspection)  # This will raise if there are any errors
+
         self.nodes = self._initialize_nodes()  # existing initialization logic
         if self.logger:
             self.logger.info(f"Initialized {self.__class__.__name__}")
@@ -162,33 +169,15 @@ class Pipeline(_PayloadProcessor):
 
         This method uses the `_pipeline_node_factory` function to create nodes from the provided
         pipeline configuration. Each node is then added to the pipeline.
+
+        Note: Validation is now handled by the inspection system before this method is called.
         """
         nodes = []
-        prev_output_type = None
 
         for index, node_config in enumerate(self.pipeline_configuration, start=1):
             node = _pipeline_node_factory(node_config, self.logger)
             self.logger.info(f"Initialized Node {index}: {type(node).__name__}")
             nodes.append(node)
-
-            # Skip type consistency check for `_ContextProcessorNode`
-            if isinstance(node, _ContextProcessorNode):
-                continue
-
-            # Perform type consistency check
-            input_type = node.input_data_type()
-            # Enforce strict type matching otherwise
-            if prev_output_type and input_type:
-                if prev_output_type != input_type:
-                    raise PipelineTopologyError(
-                        f"Output of "
-                        f"{prev_output_type.__class__.__name__} ({prev_output_type}) "
-                        f"not compatible with "
-                        f"{node.processor.__class__.__name__} ({input_type})."
-                    )
-
-            # Update previous output type for next iteration
-            prev_output_type = node.output_data_type()
 
         return nodes
 

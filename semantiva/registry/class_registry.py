@@ -39,6 +39,7 @@ class ClassRegistry:
     def initialize_default_modules(cls) -> None:
         """Initialize default modules at the class level"""
         cls._registered_modules.add("semantiva.context_processors.context_processors")
+        cls._registered_modules.add("semantiva.examples.test_utils")
 
     @classmethod
     def register_paths(cls, paths: str | List[str]) -> None:

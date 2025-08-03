@@ -39,7 +39,13 @@ from .data_types import (
     NoDataType,
 )
 
-from .tools import PipelineInspector
+from .inspection import (
+    build_pipeline_inspection,
+    summary_report,
+    extended_report,
+    json_report,
+    parameter_resolutions,
+)
 from .core import get_component_registry
 from .workflows import FittingModel
 
@@ -47,7 +53,6 @@ __all__ = [
     "Pipeline",
     "Payload",
     "load_pipeline_from_yaml",
-    "PipelineInspector",
     "BaseDataType",
     "DataCollectionType",
     "NoDataType",
@@ -65,4 +70,9 @@ __all__ = [
     "PayloadSink",
     "FittingModel",
     "get_component_registry",
+    "build_pipeline_inspection",
+    "summary_report",
+    "extended_report",
+    "json_report",
+    "parameter_resolutions",
 ]
