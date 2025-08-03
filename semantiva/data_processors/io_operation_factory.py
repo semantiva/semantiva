@@ -171,17 +171,17 @@ class _IOOperationFactory:
 
                 def get_processing_parameter_names(cls) -> List[str]:
                     """
-                    Retrieve the names of parameters required by the `_get_data` method.
+                    Retrieve the names of parameters required by the `_send_payload` method.
 
                     Returns:
-                        List[str]: A list of parameter names (excluding `self` and `data`).
+                        List[str]: A list of parameter names (excluding `self` and `payload`).
                     """
 
                     signature = inspect.signature(data_io_class._send_payload)
                     return [
                         param.name
                         for param in signature.parameters.values()
-                        if param.name not in {"self", "data"}
+                        if param.name not in {"self", "payload"}
                         and param.kind
                         not in {
                             inspect.Parameter.VAR_POSITIONAL,

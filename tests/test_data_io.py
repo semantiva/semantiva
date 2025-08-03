@@ -19,7 +19,7 @@ from semantiva.examples.test_utils import (
     FloatPayloadSource,
     FloatDataSink,
     FloatPayloadSink,
-    DummyContext,
+    ContextType,
 )
 from semantiva.pipeline import Payload
 
@@ -61,8 +61,8 @@ def test_payloadsource_get_payload():
         data, FloatDataType
     ), "PayloadSource did not return an FloatDataType."
     assert isinstance(
-        context, DummyContext
-    ), "PayloadSource did not return a DummyContext."
+        context, ContextType
+    ), "PayloadSource did not return a ContextType."
     assert data.data == 456, "PayloadSource returned unexpected data value."
 
 
@@ -105,7 +105,7 @@ def test_payloadsink_send_payload():
     """Test the send_payload method of the PayloadSink"""
     sink = FloatPayloadSink()
     data = FloatDataType(1001.0)
-    context = DummyContext()
+    context = ContextType()
     sink.send_payload(Payload(data, context))
     # Check that the sink stored the payload properly
     assert sink.last_payload is data, "PayloadSink did not store the data correctly."
@@ -120,3 +120,24 @@ def test_payloadsink_input_data_type():
     assert (
         sink.input_data_type() is FloatDataType
     ), "PayloadSink input_data_type mismatch."
+
+
+def test_payloadsink_no_payload_in_context_params():
+    """Test that PayloadSink nodes don't include 'payload' as a required context parameter"""
+    from semantiva.inspection import build_pipeline_inspection, parameter_resolutions
+
+    # Create a pipeline configuration with a PayloadSink node
+    node_configuration = [{"processor": FloatPayloadSink}]
+
+    # Build inspection data
+    inspection = build_pipeline_inspection(node_configuration)
+    resolutions = parameter_resolutions(inspection)
+
+    # Verify that the PayloadSink node doesn't have 'payload' in its context parameters
+    payloadsink_node = resolutions[0]  # First and only node
+    context_params = payloadsink_node["parameter_resolution"]["from_context"]
+
+    # 'payload' should not be in the required context parameters
+    assert (
+        "payload" not in context_params
+    ), "PayloadSink should not require 'payload' as a context parameter"

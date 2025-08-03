@@ -56,7 +56,10 @@ def test_datasink_semantic_metadata():
 
 def test_payloadsink_semantic_metadata():
     """Test the semantic metadata of the PayloadSink"""
+    print_metadata(FloatPayloadSink)
     assert FloatPayloadSink.get_metadata()["input_data_type"] == "FloatDataType"
+    # Verify that 'payload' is not listed as a required parameter
+    assert FloatPayloadSink.get_metadata()["input_parameters"] == "None"
 
 
 def test_float_multiply_operation_semantic_metadata():

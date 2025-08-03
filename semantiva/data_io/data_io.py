@@ -296,7 +296,7 @@ class PayloadSink(_SemantivaComponent, Generic[T]):
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
-        excluded_parameters = ["self", "data"]
+        excluded_parameters = ["self", "payload"]
 
         annotated_parameter_list = [
             f"{param_name}: {param_type}"

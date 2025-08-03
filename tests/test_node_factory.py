@@ -15,7 +15,6 @@
 import inspect
 
 from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
-from semantiva.tools.pipeline_inspector import PipelineInspector
 from semantiva.examples.test_utils import (
     FloatDataSource,
     FloatPayloadSource,
@@ -39,9 +38,8 @@ def test_node_factory_creates_all_supported_nodes_and_semantic_ids():
     ]
 
     nodes = [_pipeline_node_factory(cfg) for cfg in configs]
-    report = PipelineInspector.get_nodes_semantic_ids_report(nodes)
     for node in nodes:
-        assert node.semantic_id() in report
+        assert isinstance(node.semantic_id(), str)
 
 
 def test_datasource_node_propagates_docstring():

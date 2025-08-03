@@ -26,6 +26,16 @@ Here is the updated changelog with the missing items included and the requested 
   - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
 
 ### Changed
+- **Refactored Pipeline Introspection System**: Replaced `PipelineInspector` with modular inspection architecture
+  - **New Inspection Module** (`semantiva.inspection`): Introduces builder/reporter/validator separation of concerns
+  - **Error-Resilient Inspection**: `build_pipeline_inspection()` never raises exceptions, captures errors as inspection data instead
+  - **Structured Inspection Data**: New `NodeInspection` and `PipelineInspection` dataclasses provide single source of truth
+  - **Parameter Origin Tracking**: Enhanced context parameter resolution with detailed origin tracking (initial context vs. node creation)
+  - **Multiple Report Formats**: Unified data drives `summary_report()`, `extended_report()`, `json_report()`, and `parameter_resolutions()`
+  - **Invalid Configuration Support**: Can inspect and analyze partially valid or completely invalid pipeline configurations
+  - **Post-Inspection Validation**: New `validate_pipeline()` function operates on inspection data, enabling validation as separate step
+
+### Changed
 - Updated `PayloadSource`, `PayloadSink`, `Pipeline.process`, all node implementations, DataIO wrappers, examples and tests to use `Payload`  
 - Module reorganization:
   - Moved `semantiva/tools/export_ontology.py` → `semantiva/examples/export_ontology.py` and marked as experimental
