@@ -1,0 +1,8 @@
+pipeline:
+  nodes:
+    - processor: ModelFittingContextProcessor
+      parameters:
+        fitting_model: "model:PolynomialFittingModel:degree=2"
+        independent_var_key: "t_values"
+        dependent_var_key: "data_values"
+        context_keyword: "fit_coefficients"
