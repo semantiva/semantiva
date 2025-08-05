@@ -29,6 +29,7 @@ from semantiva.examples.test_utils import (
     FloatMockDataSource,
     FloatMockDataSink,
 )
+import yaml
 from .test_string_specialization import HelloOperation
 
 
@@ -243,6 +244,33 @@ def test_pipeline_slicing_with_context_collection(
         pipeline.get_probe_results()["Node 3/SlicerForFloatCollectValueProbe"][0]
         == expected_context_values
     )
+
+
+def test_yaml_slicer_prefix(float_data_collection, empty_context):
+    """Test loading a slicer-defined processor from YAML configuration."""
+
+    yaml_config = """
+pipeline:
+  nodes:
+    - processor: "slicer:FloatMultiplyOperation:FloatDataCollection"
+      parameters:
+        factor: 2
+"""
+
+    node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
+
+    pipeline = Pipeline(node_configs)
+
+    assert (
+        pipeline.nodes[0].processor.__class__.__name__
+        == "SlicerForFloatMultiplyOperation"
+    )
+
+    payload = pipeline.process(Payload(float_data_collection, empty_context))
+    data, _ = payload.data, payload.context
+
+    assert isinstance(data, FloatDataCollection)
+    assert [item.data for item in data] == [2.0, 4.0, 6.0]
 
 
 def test_image_pipeline_invalid_configuration():
