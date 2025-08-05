@@ -49,16 +49,13 @@ class StringLiteralDataType(BaseDataType):
 #########################
 # Step 2: Create a Specialized StringLiteralOperation Using OperationTopologyFactory
 #########################
-from typing import Type
-from semantiva.data_processors import OperationTopologyFactory, DataOperation
+from semantiva.data_processors import OperationTopologyFactory
 
 # Dynamically create a base operation class for (StringLiteralDataType -> StringLiteralDataType)
-StringLiteralOperation: Type[DataOperation] = (
-    OperationTopologyFactory.create_data_operation(
-        input_type=StringLiteralDataType,
-        output_type=StringLiteralDataType,
-        class_name="StringLiteralOperation",
-    )
+StringLiteralOperation = OperationTopologyFactory.create_data_operation(
+    input_type=StringLiteralDataType,
+    output_type=StringLiteralDataType,
+    class_name="StringLiteralOperation",
 )
 
 
@@ -67,7 +64,7 @@ StringLiteralOperation: Type[DataOperation] = (
 #########################
 class HelloOperation(StringLiteralOperation):
     """
-    A simple operation that modifies the input string to greet the inout
+    A simple operation that modifies the input string to greet the input
     and returns the updated value as a new StringLiteralDataType.
     """
 

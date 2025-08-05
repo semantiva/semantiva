@@ -52,7 +52,7 @@ class _SlicingDataProcessorFactory:
 
             class SlicingDataOperator(processor_class):  # type: ignore[valid-type, misc]
                 """
-                Wraps a data operator to handle data slicing.
+                Data Collection slicer operator.
                 """
 
                 data_type_override = input_data_collection_type
@@ -83,16 +83,14 @@ class _SlicingDataProcessorFactory:
                     return processed_data
 
             SlicingDataOperator.__name__ = class_name
-            SlicingDataOperator.__doc__ = (
-                f"{SlicingDataOperator.__doc__} Wraps {processor_class.__doc__}"
-            )
+            SlicingDataOperator.__doc__ = f"{SlicingDataOperator.__doc__} For each element in the collection: {processor_class.__doc__}"
             return SlicingDataOperator
 
         elif issubclass(processor_class, DataProbe):
 
             class SlicingDataProbe(processor_class):  # type: ignore[valid-type, misc]
                 """
-                Data slicer probe.
+                Data Collection slicer probe.
                 """
 
                 input_data_type_override = input_data_collection_type
@@ -122,9 +120,7 @@ class _SlicingDataProcessorFactory:
 
             SlicingDataProbe.__name__ = class_name
 
-            SlicingDataProbe.__doc__ = (
-                f"{SlicingDataProbe.__doc__} Wraps {processor_class.__doc__}"
-            )
+            SlicingDataProbe.__doc__ = f"{SlicingDataProbe.__doc__} For each element in the collection: {processor_class.__doc__}"
             return SlicingDataProbe
 
 
