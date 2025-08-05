@@ -416,6 +416,8 @@ def _pipeline_node_factory(
 
     processor = node_definition.get("processor")
     parameters = node_definition.get("parameters", {})
+    parameters = ClassRegistry.resolve_parameters(parameters)
+    node_definition["parameters"] = parameters
     context_keyword = node_definition.get("context_keyword")
 
     # Resolve the processor class if provided as a string.

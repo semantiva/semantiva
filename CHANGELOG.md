@@ -24,6 +24,10 @@ Here is the updated changelog with the missing items included and the requested 
   - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
   - Added package `registry` to gather plugin and class/module registry.
   - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
+  - Pluggable class name resolvers in `ClassRegistry` with built-in support for `slicer:` YAML prefixes.
+  - Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in
+    support for a ``model:`` prefix to instantiate fitting models from YAML
+    pipeline definitions
 
 ### Changed
 - **Refactored Pipeline Introspection System**: Replaced `PipelineInspector` with modular inspection architecture

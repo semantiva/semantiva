@@ -26,10 +26,10 @@ special cases like renaming, deletion, or slicing operations.
 
 Custom Resolver System
 ---------------------
-The registry supports pluggable resolvers via the `register_resolver` API. A 
+The registry supports pluggable resolvers via the `register_resolver` API. A
 resolver is a callable that takes a class name string and returns a class type
-(or None if it does not handle the name). This allows the registry to support 
-arbitrary prefixes (e.g., `rename:`, `delete:`, `slicer:`) without modifying 
+(or None if it does not handle the name). This allows the registry to support
+arbitrary prefixes (e.g., `rename:`, `delete:`, `slicer:`) without modifying
 core logic. New resolvers can be registered at runtime, enabling extensibility
 for future processor types or domain-specific behaviors.
 
@@ -49,10 +49,11 @@ By default, the registry registers three resolvers:
 """
 
 from importlib import import_module
-from typing import Callable, List, Optional, Set, cast
 from pathlib import Path
 import importlib.util
 import re
+from typing import Any, Callable, List, Optional, Set, cast
+
 from semantiva.logger import Logger
 from semantiva.data_processors.data_processors import _BaseDataProcessor
 from semantiva.data_processors.data_slicer_factory import Slicer
@@ -64,6 +65,7 @@ from semantiva.context_processors.factory import (
     _context_deleter_factory,
     _context_renamer_factory,
 )
+from semantiva.workflows.fitting_model import FittingModel
 
 
 class ClassRegistry:
@@ -77,17 +79,21 @@ class ClassRegistry:
     _registered_paths: Set[Path] = set()
     _registered_modules: Set[str] = set()
     _custom_resolvers: List[Callable[[str], Optional[type]]] = []
+    _param_resolvers: List[Callable[[Any], Any | None]] = []
 
     @classmethod
     def initialize_default_modules(cls) -> None:
         """Initialize default modules at the class level"""
         cls._registered_modules.add("semantiva.context_processors.context_processors")
         cls._registered_modules.add("semantiva.examples.test_utils")
+        cls._registered_modules.add("semantiva.workflows.fitting_model")
 
         cls._custom_resolvers = []
+        cls._param_resolvers = []
         cls.register_resolver(_rename_resolver)
         cls.register_resolver(_delete_resolver)
         cls.register_resolver(_slicer_resolver)
+        cls.register_param_resolver(_model_param_resolver)
 
     @classmethod
     def register_resolver(cls, resolver_fn: Callable[[str], Optional[type]]) -> None:
@@ -101,6 +107,37 @@ class ClassRegistry:
             resolver_fn (Callable[[str], Optional[type]]): A function that takes a string and returns a class type or None.
         """
         cls._custom_resolvers.append(resolver_fn)
+
+    @classmethod
+    def register_param_resolver(cls, resolver_fn: Callable[[Any], Any | None]) -> None:
+        """Register a resolver for parameter values.
+
+        Resolvers are called for every string parameter encountered while
+        loading a pipeline configuration. If a resolver returns a non-``None``
+        value, that value replaces the original string.
+
+        Args:
+            resolver_fn: Callable that takes the parameter specification and
+                returns a resolved value or ``None`` if it does not handle the
+                input.
+        """
+
+        cls._param_resolvers.append(resolver_fn)
+
+    @classmethod
+    def resolve_parameters(cls, obj: Any) -> Any:
+        """Recursively resolve parameters using registered resolvers."""
+        if isinstance(obj, dict):
+            return {k: cls.resolve_parameters(v) for k, v in obj.items()}
+        if isinstance(obj, list):
+            return [cls.resolve_parameters(v) for v in obj]
+        if isinstance(obj, str):
+            for resolver in cls._param_resolvers:
+                resolved = resolver(obj)
+                if resolved is not None:
+                    return resolved
+            return obj
+        return obj
 
     @classmethod
     def register_paths(cls, paths: str | List[str]) -> None:
@@ -264,4 +301,43 @@ def _slicer_resolver(name: str) -> Optional[type]:
             processor_t = cast(type[_BaseDataProcessor], processor_cls)
             collection_t = cast(type[DataCollectionType], collection_cls)
             return Slicer(processor_t, collection_t)
+    return None
+
+
+def _parse_scalar(value: str) -> Any:
+    """Best-effort conversion of a string to int, float, bool, or str."""
+    lowered = value.lower()
+    if lowered in {"true", "false"}:
+        return lowered == "true"
+    try:
+        return int(value)
+    except ValueError:
+        try:
+            return float(value)
+        except ValueError:
+            return value
+
+
+def _model_param_resolver(spec: Any) -> FittingModel | None:
+    """Instantiate fitting models from ``model:``-prefixed specs.
+
+    The expected format is ``model:ClassName:k1=v1,k2=v2``.  The class name is
+    resolved using :meth:`ClassRegistry.get_class` and keyword arguments are
+    parsed as simple scalars.
+    """
+
+    if isinstance(spec, str) and spec.startswith("model:"):
+        _, remainder = spec.split("model:", 1)
+        class_part, _, arg_part = remainder.partition(":")
+        model_cls = ClassRegistry.get_class(class_part)
+        if not issubclass(model_cls, FittingModel):
+            raise ValueError(f"{class_part} is not a FittingModel subclass")
+        kwargs = {}
+        if arg_part:
+            for item in arg_part.split(","):
+                if not item:
+                    continue
+                key, _, val = item.partition("=")
+                kwargs[key] = _parse_scalar(val)
+        return model_cls(**kwargs)
     return None
