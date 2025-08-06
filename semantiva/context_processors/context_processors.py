@@ -121,7 +121,7 @@ class ContextProcessor(_SemantivaComponent):
 
         component_metadata = {
             "component_type": "ContextProcessor",
-            "input_parameters": annotated_parameter_list or "None",
+            "parameters": annotated_parameter_list or "None",
         }
         return component_metadata
 

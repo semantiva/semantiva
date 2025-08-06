@@ -166,6 +166,7 @@ def test_semantic_id_metadata_consistency():
                     "docstring",
                     "wrapped_component_docstring",
                     # "class_name",
+                    "parameters",
                 ):
                     print(f"     Checking key '{key}', {value} in semantic_id")
                     if isinstance(value, list):

@@ -11,6 +11,7 @@ Here is the updated changelog with the missing items included and the requested 
 ## [Unreleased] – TBD
 
 ### Added
+- Enable use of data processor parameter defaults with full introspection support
 - Renamed `payload_operations` → `semantiva.pipeline` and `execution_tools` → `semantiva.execution`
 - Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`
 - **ParametricSweepFactory**: Factory for creating parametric sweep data operations with multi-dimensional parameter ranges
