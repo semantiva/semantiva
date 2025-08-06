@@ -97,6 +97,13 @@ class FloatMultiplyOperation(FloatOperation):
         return FloatDataType(data.data * factor)
 
 
+class FloatMultiplyOperationWithDefault(FloatOperation):
+    """Multiply a Float by a factor with a default value of 2.0."""
+
+    def _process_logic(self, data, factor: float = 2.0):
+        return FloatDataType(data.data * factor)
+
+
 class FloatAddOperation(FloatOperation):
     """Add a constant to FloatDataType data."""
 
@@ -149,14 +156,14 @@ class FloatCollectionSumOperation(FloatCollectionMergeOperation):
 
 
 class FloatCollectValueProbe(FloatProbe):
-    """Collect the value of the provided FloatDataType data."""
+    """Collect the value of the input."""
 
     def _process_logic(self, data, *args, **kwargs):
         return data.data
 
 
 class FloatMockDataSource(DataSource):
-    """DataSource for 42.0 as a FloatDataType."""
+    """Float DataSource. Always produces the value 42.0."""
 
     @classmethod
     def _get_data(cls, *args, **kwargs) -> FloatDataType:

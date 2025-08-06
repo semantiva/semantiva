@@ -36,7 +36,7 @@ all receive consistent information about pipeline structure and parameters.
 
 from __future__ import annotations
 
-from typing import Iterable, Dict, Any, List
+from typing import Iterable, Dict, Any, List, Optional
 
 from .builder import PipelineInspection
 
@@ -53,18 +53,48 @@ def _format_set(values: Iterable[str]) -> str:
     return ", ".join(sorted(values)) if values else "None"
 
 
-def _format_pipeline_config(processor_config: Dict[str, Any]) -> str:
-    """Format pipeline configuration parameters for display.
+def _format_pipeline_config(
+    processor_config: Dict[str, Any],
+    default_params: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Format pipeline configuration-provided parameters for display.
 
     Args:
         processor_config: Dictionary of parameter names to values
+        default_params: Parameters that used signature defaults (excluded from output)
 
     Returns:
-        Formatted string showing key=value pairs, or "None" if empty
+        Formatted string showing key=value pairs for pipeline config-provided params, or "None" if empty
     """
     if not processor_config:
         return "None"
-    return ", ".join(f"{k}={v}" for k, v in processor_config.items())
+    default_params = default_params or {}
+    config_params = {
+        k: v for k, v in processor_config.items() if k not in default_params
+    }
+    if not config_params:
+        return "None"
+    parts: List[str] = []
+    for k, v in config_params.items():
+        parts.append(f"{k}={v}")
+    return ", ".join(parts)
+
+
+def _format_default_params(default_params: Dict[str, Any]) -> str:
+    """Format default parameters for display.
+
+    Args:
+        default_params: Dictionary of parameter names to default values
+
+    Returns:
+        Formatted string showing key=value pairs for defaults, or "None" if empty
+    """
+    if not default_params:
+        return "None"
+    parts: List[str] = []
+    for k, v in default_params.items():
+        parts.append(f"{k}={v}")
+    return ", ".join(parts)
 
 
 def _format_context_params(context_params: Dict[str, int | None]) -> str:
@@ -119,7 +149,10 @@ def summary_report(inspection: PipelineInspection) -> str:
         )
         lines.append(f"\t\tParameters: {_format_set(param_names)}")
         lines.append(
-            f"\t\t\tFrom pipeline configuration: {_format_pipeline_config(node.config_params)}"
+            f"\t\t\tFrom pipeline configuration: {_format_pipeline_config(node.config_params, node.default_params)}"
+        )
+        lines.append(
+            f"\t\t\tFrom processor defaults: {_format_default_params(node.default_params)}"
         )
         lines.append(
             f"\t\t\tFrom context: {_format_context_params(node.context_params)}"
@@ -173,7 +206,8 @@ def extended_report(inspection: PipelineInspection) -> str:
                 f"    - Component type: {node.component_type}",
                 f"    - Input data type: {input_name}",
                 f"    - Output data type: {output_name}",
-                f"    - Parameters from pipeline configuration: {_format_pipeline_config(node.config_params)}",
+                f"    - Parameters from pipeline configuration: {_format_pipeline_config(node.config_params, node.default_params)}",
+                f"    - Parameters from processor defaults: {_format_default_params(node.default_params)}",
                 f"    - Parameters from context: {_format_context_params(node.context_params)}",
                 f"    - Context additions: {_format_set(node.created_keys)}",
                 f"    - Context suppressions: {_format_set(node.suppressed_keys)}",
@@ -211,10 +245,17 @@ def json_report(inspection: PipelineInspection) -> Dict[str, Any]:
     edges: List[Dict[str, int]] = []
 
     for node in inspection.nodes:
-        # Format parameter resolution data with origin tracking
-        param_resolution_from_config = {
-            k: str(v) for k, v in node.config_params.items()
+        # Format parameter resolution data with clear separation
+        config_params = {
+            k: v for k, v in node.config_params.items() if k not in node.default_params
         }
+        param_resolution_from_config: Dict[str, str] = {}
+        for k, v in config_params.items():
+            param_resolution_from_config[k] = str(v)
+
+        param_resolution_from_defaults: Dict[str, str] = {}
+        for k, v in node.default_params.items():
+            param_resolution_from_defaults[k] = str(v)
 
         param_resolution_from_context: Dict[str, Dict[str, Any]] = {}
         for key, origin in node.context_params.items():
@@ -235,6 +276,7 @@ def json_report(inspection: PipelineInspection) -> Dict[str, Any]:
                 set(node.config_params.keys()) | set(node.context_params.keys())
             ),
             "from_pipeline_config": param_resolution_from_config,
+            "from_processor_defaults": param_resolution_from_defaults,
             "from_context": param_resolution_from_context,
         }
 
@@ -253,9 +295,7 @@ def json_report(inspection: PipelineInspection) -> Dict[str, Any]:
             "parameters": node.config_params,
             "parameter_resolution": parameter_resolution,
             "created_keys": list(node.created_keys),
-            "required_keys": list(
-                set(node.config_params.keys()) | set(node.context_params.keys())
-            ),
+            "required_keys": list(set(node.context_params.keys())),
             "suppressed_keys": list(node.suppressed_keys),
             "pipelineConfigParams": list(node.config_params.keys()),
             "contextParams": list(node.context_params.keys()),
@@ -299,8 +339,12 @@ def parameter_resolutions(inspection: PipelineInspection) -> List[Dict[str, Any]
     result: List[Dict[str, Any]] = []
 
     for node in inspection.nodes:
-        # Format configuration parameters as strings
-        from_config = {k: str(v) for k, v in node.config_params.items()}
+        # Separate pipeline config-provided and default parameters
+        config_params = {
+            k: v for k, v in node.config_params.items() if k not in node.default_params
+        }
+        from_config = {k: str(v) for k, v in config_params.items()}
+        from_defaults = {k: str(v) for k, v in node.default_params.items()}
 
         # Format context parameters with detailed origin tracking
         from_context: Dict[str, Dict[str, Any]] = {}
@@ -325,6 +369,7 @@ def parameter_resolutions(inspection: PipelineInspection) -> List[Dict[str, Any]
                     set(node.config_params.keys()) | set(node.context_params.keys())
                 ),
                 "from_pipeline_config": from_config,
+                "from_processor_defaults": from_defaults,
                 "from_context": from_context,
             },
         }

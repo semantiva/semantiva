@@ -36,6 +36,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 import inspect
+from semantiva.data_processors.data_processors import ParameterInfo, _NO_DEFAULT
 
 from semantiva.pipeline import Pipeline
 from semantiva.pipeline.nodes.nodes import (
@@ -61,7 +62,8 @@ class NodeInspection:
         component_type: Semantic component type from metadata (e.g., 'data_processor')
         input_type: Expected input data type (None for context-only nodes)
         output_type: Expected output data type (None for context-only nodes)
-        config_params: Parameters explicitly set in pipeline configuration
+        config_params: Parameters resolved from pipeline configuration or defaults
+        default_params: Parameters resolved from operation signature defaults (if not overridden by the context)
         context_params: Parameters resolved from pipeline context, with origin tracking
         created_keys: Context keys that this node adds to the pipeline context
         suppressed_keys: Context keys that this node removes from the pipeline context
@@ -81,6 +83,7 @@ class NodeInspection:
     input_type: Optional[type]
     output_type: Optional[type]
     config_params: Dict[str, Any]
+    default_params: Dict[str, Any]
     context_params: Dict[str, Optional[int]]
     created_keys: set[str]
     suppressed_keys: set[str]
@@ -185,6 +188,7 @@ def build_pipeline_inspection(
                     input_type=None,
                     output_type=None,
                     config_params=node_cfg.get("parameters", {}),
+                    default_params={},
                     context_params={},
                     created_keys=set(),
                     suppressed_keys=set(),
@@ -198,10 +202,27 @@ def build_pipeline_inspection(
         processor = node.processor
         metadata = node.get_metadata()
 
-        # Analyze parameter resolution
-        operation_params = set(processor.get_processing_parameter_names())
-        config_params = set(node.processor_config.keys())
-        context_param_names = operation_params - config_params
+        # Analyze parameter resolution with defaults
+        param_details: Dict[str, ParameterInfo] = {}
+        if hasattr(processor.__class__, "_retrieve_parameter_details"):
+            param_details = processor.__class__._retrieve_parameter_details(
+                processor.__class__._process_logic, ["self", "data"]
+            )
+
+        config_params: Dict[str, Any] = dict(node.processor_config)
+        default_params: Dict[str, Any] = {}
+        context_param_names: set[str] = set()
+        for name, info in param_details.items():
+            if name in config_params:
+                continue
+            if name in key_origin and name not in deleted_keys:
+                context_param_names.add(name)
+                continue
+            if isinstance(info, ParameterInfo) and info.default is not _NO_DEFAULT:
+                config_params[name] = info.default
+                default_params[name] = info.default
+            else:
+                context_param_names.add(name)
 
         # Track parameter origins for context-resolved parameters
         context_params: Dict[str, Optional[int]] = {}
@@ -242,7 +263,7 @@ def build_pipeline_inspection(
 
         # Validate parameter availability against deleted keys
         missing_deleted = (context_param_names & deleted_keys) - suppressed_keys
-        if missing_deleted - config_params:
+        if missing_deleted - set(config_params.keys()):
             node_errors.append(
                 f"Node {index} requires context keys previously deleted: {sorted(missing_deleted)}"
             )
@@ -255,7 +276,8 @@ def build_pipeline_inspection(
             component_type=metadata.get("component_type", "Unknown"),
             input_type=getattr(node, "input_data_type", lambda: None)(),
             output_type=getattr(node, "output_data_type", lambda: None)(),
-            config_params=dict(node.processor_config),
+            config_params=config_params,
+            default_params=default_params,
             context_params=context_params,
             created_keys=created_keys,
             suppressed_keys=suppressed_keys,
