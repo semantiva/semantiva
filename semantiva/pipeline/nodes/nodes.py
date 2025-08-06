@@ -20,6 +20,8 @@ from semantiva.data_processors.data_processors import (
     _BaseDataProcessor,
     DataOperation,
     DataProbe,
+    ParameterInfo,
+    _NO_DEFAULT,
 )
 from semantiva.context_processors.context_observer import _ContextObserver
 
@@ -132,10 +134,23 @@ class _DataNode(_PipelineNode):
         """
         if name in self.processor_config:
             return self.processor_config[name]
-        assert (
-            name in context.keys()
-        ), f"Unable to resolve parameter '{name}' from context or node configuration."
-        return context.get_value(name)
+        if name in context.keys():
+            return context.get_value(name)
+
+        metadata = self.processor.__class__.get_metadata()
+        param_info = metadata.get("parameters", {}).get(name)
+        if isinstance(param_info, ParameterInfo):
+            default = param_info.default
+        elif isinstance(param_info, dict):
+            default = param_info.get("default", _NO_DEFAULT)
+        else:
+            default = _NO_DEFAULT
+
+        if default is not _NO_DEFAULT:
+            return default
+        raise KeyError(
+            f"Unable to resolve parameter '{name}' from context, node configuration, or defaults."
+        )
 
     def __str__(self) -> str:
         """
@@ -260,10 +275,6 @@ class _PayloadSourceNode(_DataNode):
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            assert hasattr(cls.processor, "get_input_parameters")
-            component_metadata["input_parameters"] = (
-                cls.processor.get_input_parameters()
-            )
             component_metadata["output_data_type"] = cls.output_data_type().__name__
             component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
@@ -353,10 +364,6 @@ class _PayloadSinkNode(_DataNode):
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            assert hasattr(cls.processor, "get_input_parameters")
-            component_metadata["input_parameters"] = (
-                cls.processor.get_input_parameters()
-            )
             component_metadata["input_data_type"] = cls.input_data_type().__name__
             component_metadata["output_data_type"] = (
                 cls.input_data_type().__name__
@@ -420,19 +427,12 @@ class _DataSinkNode(_DataNode):
         try:
             excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            component_metadata["input_parameters"] = annotated_parameter_list
             component_metadata["input_data_type"] = cls.input_data_type().__name__
             component_metadata["output_data_type"] = (
                 cls.input_data_type().__name__
@@ -510,19 +510,12 @@ class _DataSourceNode(_DataNode):
         try:
             excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            component_metadata["input_parameters"] = annotated_parameter_list or "None"
             component_metadata["output_data_type"] = cls.output_data_type().__name__
             component_metadata["injected_context_keys"] = cls.get_created_keys()
         except Exception:
@@ -596,19 +589,12 @@ class _DataOperationNode(_DataNode):
         try:
             excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            component_metadata["input_parameters"] = annotated_parameter_list
             component_metadata["input_data_type"] = cls.input_data_type().__name__
             component_metadata["output_data_type"] = cls.output_data_type().__name__
             component_metadata["injected_context_keys"] = cls.get_created_keys()
@@ -673,19 +659,12 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
         try:
             excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            component_metadata["input_parameters"] = annotated_parameter_list
             component_metadata["input_data_type"] = cls.input_data_type().__name__
             component_metadata["output_data_type"] = cls.output_data_type().__name__
             component_metadata["injected_context_keys"] = cls.get_created_keys()
@@ -770,19 +749,12 @@ class _ProbeContextInjectorNode(_ProbeNode):
         try:
             excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            component_metadata["input_parameters"] = annotated_parameter_list
             component_metadata["input_data_type"] = cls.input_data_type().__name__
             # The output data type is the same as the input data type for probe nodes
             component_metadata["output_data_type"] = cls.input_data_type().__name__
@@ -896,19 +868,12 @@ class _ProbeResultCollectorNode(_ProbeNode):
         try:
             excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor._send_data, excluded_parameters
-                )
-            ]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor.__doc__ or ""
             )
-            component_metadata["input_parameters"] = annotated_parameter_list
             component_metadata["input_data_type"] = cls.input_data_type().__name__
             # The output data type is the same as the input data type for probe nodes
             component_metadata["output_data_type"] = cls.input_data_type().__name__
@@ -1023,13 +988,6 @@ class _ContextDataProcessorNode(_PipelineNode):
                 component_metadata["wraps_component_type"] = "DataProbe"
 
             excluded_parameters = ["self", "data"]
-            annotated_parameter_list = [
-                f"{param_name}: {param_type}"
-                for param_name, param_type in cls._retrieve_parameter_signatures(
-                    cls.processor_cls._process_logic,
-                    excluded_parameters,
-                )
-            ]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor_cls,
                 "__name__",
@@ -1038,7 +996,6 @@ class _ContextDataProcessorNode(_PipelineNode):
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor_cls.__doc__ or ""
             )
-            component_metadata["input_parameters"] = annotated_parameter_list or "None"
             component_metadata["required_context_keys"] = [cls.input_context_keyword]
             component_metadata["injected_context_keys"] = cls.get_created_keys()
             if issubclass(cls.processor_cls, DataOperation):

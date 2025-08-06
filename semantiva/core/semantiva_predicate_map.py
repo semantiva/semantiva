@@ -29,7 +29,7 @@ EXPERIMENTAL_PREDICATE_MAP = {
     "class_name": SMTV.className,
     "component_type": SMTV.componentType,
     "docstring": SMTV.docString,
-    "input_parameters": SMTV.inputParameters,
+    "parameters": SMTV.parameters,
     "input_data_type": SMTV.inputDataType,
     "output_data_type": SMTV.outputDataType,
     "wraps_component_type": SMTV.wrapsComponentType,

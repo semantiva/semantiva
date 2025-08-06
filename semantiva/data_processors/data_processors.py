@@ -13,7 +13,18 @@
 # limitations under the License.
 
 import inspect
-from typing import Dict, Any, List, Optional, Type, TypeVar, Generic
+from typing import (
+    Dict,
+    Any,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Generic,
+    Callable,
+)
+from collections import OrderedDict
+from dataclasses import dataclass
 from abc import abstractmethod
 from semantiva.context_processors.context_observer import _ContextObserver
 from semantiva.core.semantiva_component import _SemantivaComponent
@@ -21,6 +32,17 @@ from semantiva.data_types import BaseDataType
 from semantiva.logger import Logger
 
 T = TypeVar("T", bound=BaseDataType)
+
+
+_NO_DEFAULT = object()
+
+
+@dataclass
+class ParameterInfo:
+    """Container for parameter metadata."""
+
+    default: Any = _NO_DEFAULT
+    annotation: str = "Unknown"
 
 
 class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
@@ -121,6 +143,31 @@ class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
         ]
 
     @classmethod
+    def _retrieve_parameter_details(
+        cls, class_attribute: Callable, excluded_parameters: List[str]
+    ) -> "OrderedDict[str, ParameterInfo]":
+        """Retrieve parameter annotations and default values."""
+
+        signatures = cls._retrieve_parameter_signatures(
+            class_attribute, excluded_parameters
+        )
+        sig_map = {name: annotation for name, annotation in signatures}
+        signature = inspect.signature(class_attribute)
+        details: "OrderedDict[str, ParameterInfo]" = OrderedDict()
+        for param in signature.parameters.values():
+            if param.name in excluded_parameters or param.kind in {
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            }:
+                continue
+            default = (
+                param.default if param.default is not inspect._empty else _NO_DEFAULT
+            )
+            annotation = sig_map.get(param.name, "Unknown")
+            details[param.name] = ParameterInfo(default=default, annotation=annotation)
+        return details
+
+    @classmethod
     def __str__(cls) -> str:
         return f"{cls.__name__}"
 
@@ -128,16 +175,13 @@ class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
     def _define_metadata(cls) -> Dict[str, Any]:
         excluded_parameters = ["self", "data"]
 
-        annotated_parameter_list = [
-            f"{param_name}: {param_type}"
-            for param_name, param_type in cls._retrieve_parameter_signatures(
-                cls._process_logic, excluded_parameters
-            )
-        ]
+        details = cls._retrieve_parameter_details(
+            cls._process_logic, excluded_parameters
+        )
 
         component_metadata = {
             "component_type": "BaseDataProcessor",
-            "input_parameters": annotated_parameter_list or "None",
+            "parameters": details,
         }
 
         try:
@@ -158,20 +202,15 @@ class DataOperation(_BaseDataProcessor):
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
-        # Retrieve the parameter signatures for the _process_logic method
-        # and exclude the 'self' and 'data' parameters from the metadata
+        # Retrieve parameter signatures and defaults from _process_logic
         excluded_parameters = ["self", "data"]
-
-        annotated_parameter_list = [
-            f"{param_name}: {param_type}"
-            for param_name, param_type in cls._retrieve_parameter_signatures(
-                cls._process_logic, excluded_parameters
-            )
-        ]
+        details = cls._retrieve_parameter_details(
+            cls._process_logic, excluded_parameters
+        )
 
         component_metadata = {
             "component_type": "DataOperation",
-            "input_parameters": annotated_parameter_list or "None",
+            "parameters": details,
         }
 
         try:
@@ -347,21 +386,16 @@ class DataProbe(_BaseDataProcessor):
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
-        # Retrieve the parameter signatures for the _process_logic method
-        # and exclude the 'self' and 'data' parameters from the metadata
+        # Retrieve parameter signatures and defaults
         excluded_parameters = ["self", "data"]
-
-        annotated_parameter_list = [
-            f"{param_name}: {param_type}"
-            for param_name, param_type in cls._retrieve_parameter_signatures(
-                cls._process_logic, excluded_parameters
-            )
-        ]
+        details = cls._retrieve_parameter_details(
+            cls._process_logic, excluded_parameters
+        )
 
         # Define the metadata for the DataProbe
         component_metadata = {
             "component_type": "DataProbe",
-            "input_parameters": annotated_parameter_list or "None",
+            "parameters": details,
         }
 
         try:

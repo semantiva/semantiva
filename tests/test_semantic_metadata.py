@@ -59,7 +59,7 @@ def test_payloadsink_semantic_metadata():
     print_metadata(FloatPayloadSink)
     assert FloatPayloadSink.get_metadata()["input_data_type"] == "FloatDataType"
     # Verify that 'payload' is not listed as a required parameter
-    assert FloatPayloadSink.get_metadata()["input_parameters"] == "None"
+    assert FloatPayloadSink.get_metadata()["parameters"] == "None"
 
 
 def test_float_multiply_operation_semantic_metadata():
@@ -67,9 +67,9 @@ def test_float_multiply_operation_semantic_metadata():
     print_metadata(FloatMultiplyOperation)
     assert FloatMultiplyOperation.get_metadata()["input_data_type"] == "FloatDataType"
     assert FloatMultiplyOperation.get_metadata()["output_data_type"] == "FloatDataType"
-    assert FloatMultiplyOperation.get_metadata()["input_parameters"] == [
-        "factor: float"
-    ]
+    params = FloatMultiplyOperation.get_metadata()["parameters"]
+    assert "factor" in params
+    assert params["factor"].annotation == "float"
 
 
 # test FloatProbe
@@ -77,7 +77,7 @@ def test_float_probe_semantic_metadata():
     """Test the semantic metadata of the FloatProbe"""
     print_metadata(FloatProbe)
     assert FloatProbe.get_metadata()["input_data_type"] == "FloatDataType"
-    assert FloatProbe.get_metadata()["input_parameters"] == "None"
+    assert FloatProbe.get_metadata()["parameters"] == {}
 
 
 def test_float_collection_sum_operation_semantic_metadata():
@@ -91,4 +91,4 @@ def test_float_collection_sum_operation_semantic_metadata():
         FloatCollectionSumOperation.get_metadata()["output_data_type"]
         == "FloatDataType"
     )
-    assert FloatCollectionSumOperation.get_metadata()["input_parameters"] == "None"
+    assert FloatCollectionSumOperation.get_metadata()["parameters"] == {}

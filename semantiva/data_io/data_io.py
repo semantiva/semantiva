@@ -66,7 +66,7 @@ class DataSource(_SemantivaComponent):
 
         component_metadata = {
             "component_type": "DataSource",
-            "input_parameters": annotated_parameter_list or "None",
+            "parameters": annotated_parameter_list or "None",
         }
 
         try:
@@ -110,7 +110,7 @@ class PayloadSource(_SemantivaComponent):
 
         component_metadata = {
             "component_type": "PayloadSource",
-            "input_parameters": annotated_parameter_list,
+            "parameters": annotated_parameter_list,
             "injected_context_keys": cls.injected_context_keys(),
         }
 
@@ -219,7 +219,7 @@ class DataSink(_SemantivaComponent, Generic[T]):
 
         component_metadata = {
             "component_type": "DataSink",
-            "input_parameters": annotated_parameter_list or "None",
+            "parameters": annotated_parameter_list or "None",
         }
 
         try:
@@ -307,7 +307,7 @@ class PayloadSink(_SemantivaComponent, Generic[T]):
 
         component_metadata = {
             "component_type": "PayloadSink",
-            "input_parameters": annotated_parameter_list or "None",
+            "parameters": annotated_parameter_list or "None",
         }
 
         try:
