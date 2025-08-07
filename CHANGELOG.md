@@ -13,6 +13,7 @@ Here is the updated changelog with the missing items included and the requested 
 ### Added
 - Renamed `payload_operations` → `semantiva.pipeline` and `execution_tools` → `semantiva.execution`
 - Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`
+- **ParametricSweepFactory**: Factory for creating parametric sweep data operations with multi-dimensional parameter ranges
 - New node types  
   - `_DataOperationContextInjectorProbeNode`: runs a `DataOperation`, stores its output in the pipeline context under a specified key, and forwards the original data  
   - `_ContextDataProcessorNode`: applies a `DataOperation` or `DataProbe` to a context value and writes the result back into context  
