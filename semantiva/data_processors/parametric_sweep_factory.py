@@ -70,8 +70,7 @@ class ParametricSweepFactory:
                 return cls._collection_output
 
             @classmethod
-            def get_created_keys(cls) -> list[str]:
-                """Return the keys that this operation creates in the context."""
+            def context_keys(cls):
                 return [f"{var}_values" for var in cls._independent_vars]
 
             def _process_logic(
