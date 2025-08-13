@@ -30,7 +30,7 @@ from semantiva.examples.test_utils import (
     FloatMockDataSink,
 )
 import yaml
-from .test_string_specialization import HelloOperation
+from .test_string_extension import HelloOperation
 
 
 # Start test

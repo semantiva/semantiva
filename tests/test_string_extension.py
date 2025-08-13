@@ -114,7 +114,7 @@ if __name__ == "__main__":
     print("Pipeline completed. Final output:", output_data.data)
 
 
-def test_string_specialization():
+def test_string_extension():
     # 1. Initialize the pipeline with our node configurations
     pipeline = Pipeline(node_configurations)
 

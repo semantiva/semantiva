@@ -29,7 +29,7 @@ fail-under = 7.5
 
 [tool.mypy]
 exclude = [
-    "^tests/test_string_specialization\\.py$",
+    "^tests/test_string_extension\\.py$",
     "docs/", 
 ]
 ignore_missing_imports = true
