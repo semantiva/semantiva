@@ -15,15 +15,15 @@
 import importlib.metadata
 from unittest.mock import patch, MagicMock
 import logging
-from semantiva.registry import load_specializations, SemantivaSpecialization
+from semantiva.registry import load_extensions, SemantivaExtension
 
 
 def test_load_plugins_happy_path():
     """Test that the load_plugins function works as expected"""
 
     # 1) Define a mock plugin class that subclasses SemantivaPlugin
-    class MockSpecialization(SemantivaSpecialization):
-        """Mock specialization for testing"""
+    class MockExtension(SemantivaExtension):
+        """Mock extension for testing"""
 
         def __init__(self):
             super().__init__()
@@ -34,16 +34,16 @@ def test_load_plugins_happy_path():
 
     # patch the class constructor to track how many times it's called
     with (
-        patch.object(MockSpecialization, "__init__", return_value=None) as mock_init,
-        patch.object(MockSpecialization, "register") as mock_register,
+        patch.object(MockExtension, "__init__", return_value=None) as mock_init,
+        patch.object(MockExtension, "register") as mock_register,
         patch("importlib.metadata.entry_points") as mock_entry_points,
     ):
         mock_entry_point = MagicMock()
-        mock_entry_point.name = "mock_specialization"
-        mock_entry_point.load.return_value = MockSpecialization
+        mock_entry_point.name = "mock_extension"
+        mock_entry_point.load.return_value = MockExtension
         mock_entry_points.return_value = [mock_entry_point]
 
-        load_specializations(["mock_specialization"])
+        load_extensions(["mock_extension"])
 
         # Now we check if the constructor was called, and whether register(...) was called
         mock_init.assert_called_once()
@@ -51,29 +51,29 @@ def test_load_plugins_happy_path():
 
 
 def test_load_missing_spec(caplog):
-    """Test that a warning is printed if the user requests a specialization that doesn't exist."""
+    """Test that a warning is printed if the user requests a extension that doesn't exist."""
     with patch.object(importlib.metadata, "entry_points", return_value=[]):
         # Capture output
         with caplog.at_level(logging.WARNING):
-            load_specializations(["non_existent_specialization"])
+            load_extensions(["non_existent_extension"])
 
-    # The loader should warn that 'non_existent_specialization' was not found
+    # The loader should warn that 'non_existent_extension' was not found
 
     # caplog.text is a single string with all captured logs
     assert (
-        "No specialization named 'non_existent_specialization' was found."
+        "No Semantiva extension named 'non_existent_extension' was found."
         in caplog.text
     )
 
 
 def test_load_spec_bad_class(caplog):
     """
-    Test that a warning is printed if the specialization returned by the entry point
-    does not subclass SemantivaSpecialization.
+    Test that a warning is printed if the extension returned by the entry point
+    does not subclass SemantivaExtension.
     """
 
     class MockClassNoSubclass:
-        """Does not subclass SemantivaSpecialization."""
+        """Does not subclass SemantivaExtension."""
 
     mock_entry_point = MagicMock()
     mock_entry_point.name = "bad_spec"
@@ -83,9 +83,9 @@ def test_load_spec_bad_class(caplog):
         importlib.metadata, "entry_points", return_value=[mock_entry_point]
     ):
         with caplog.at_level(logging.WARNING):
-            load_specializations(["bad_spec"])
+            load_extensions(["bad_spec"])
 
     assert (
-        "Specialization bad_spec does not subclass SemantivaSpecialization"
+        "Entry point 'bad_spec' does not reference a SemantivaExtension subclass. Skipping."
         in caplog.text
     )

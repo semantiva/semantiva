@@ -11,6 +11,11 @@ Here is the updated changelog with the missing items included and the requested 
 ## [Unreleased] – TBD
 
 ### Added
+- **YAML Extension Integration**: Enhanced `load_pipeline_from_yaml()` with automatic extension loading
+  - Accepts single extension (string) or multiple extension (list of strings)
+- Enhanced extension plugin registry with improved error handling and documentation
+  - Comprehensive error handling with informative warnings for missing or malformed extensions
+  - Documentation of extension implementation patterns
 - Enable use of data processor parameter defaults with full introspection support
 - Renamed `payload_operations` → `semantiva.pipeline` and `execution_tools` → `semantiva.execution`
 - Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`
@@ -40,8 +45,11 @@ Here is the updated changelog with the missing items included and the requested 
   - **Multiple Report Formats**: Unified data drives `summary_report()`, `extended_report()`, `json_report()`, and `parameter_resolutions()`
   - **Invalid Configuration Support**: Can inspect and analyze partially valid or completely invalid pipeline configurations
   - **Post-Inspection Validation**: New `validate_pipeline()` function operates on inspection data, enabling validation as separate step
-
-### Changed
+- Renamed specialization API to extension API:
+  - `load_specializations()` → `load_extensions()`
+  - `SemantivaSpecialization` → `SemantivaExtension`
+  - Documentation, YAML key alias `extensions` replaces `specializations`
+  - Test module name updated: `test_plugin_loader.py` reflects extension terminology
 - Updated `PayloadSource`, `PayloadSink`, `Pipeline.process`, all node implementations, DataIO wrappers, examples and tests to use `Payload`  
 - Module reorganization:
   - Moved `semantiva/tools/export_ontology.py` → `semantiva/examples/export_ontology.py` and marked as experimental

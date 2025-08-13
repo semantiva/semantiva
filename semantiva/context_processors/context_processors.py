@@ -134,7 +134,7 @@ class ModelFittingContextProcessor(ContextProcessor):
         logger,
         fitting_model,
         independent_var_key,
-        dependent_var_key: Union[str, tuple],
+        dependent_var_key: Union[str, tuple, list],
         context_keyword: str,
     ):
         self.logger = logger if logger else Logger()
@@ -143,7 +143,7 @@ class ModelFittingContextProcessor(ContextProcessor):
         self.independent_var_key = independent_var_key
         self.context_keyword = context_keyword
 
-        if isinstance(dependent_var_key, tuple):
+        if isinstance(dependent_var_key, (tuple, list)):
             self.dependent_var_key = dependent_var_key[0]
             self.dependent_var_subkey = dependent_var_key[1]
         else:

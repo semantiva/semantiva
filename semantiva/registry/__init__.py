@@ -13,13 +13,13 @@
 # limitations under the License.
 
 from .class_registry import ClassRegistry
-from .plugin_registry import SemantivaSpecialization, load_specializations
+from .plugin_registry import SemantivaExtension, load_extensions
 
 # Initialize default modules when the class is loaded
 ClassRegistry.initialize_default_modules()
 
 __all__ = [
     "ClassRegistry",
-    "SemantivaSpecialization",
-    "load_specializations",
+    "SemantivaExtension",
+    "load_extensions",
 ]
