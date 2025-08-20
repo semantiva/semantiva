@@ -29,7 +29,7 @@ class _ContextObserver(_SemantivaComponent):
         Attributes:
             context (dict): A dictionary to store contextual key-value pairs.
         """
-        self.observer_context = ContextType
+        self.observer_context = ContextType()
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:

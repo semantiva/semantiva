@@ -282,6 +282,16 @@ class _PayloadSourceNode(_DataNode):
         return component_metadata
 
     @classmethod
+    def input_data_type(cls):
+        """
+        Retrieve NoDataType.
+
+        Returns:
+            NoDataType: Represents that no data is consumed by this node.
+        """
+        return NoDataType
+
+    @classmethod
     def output_data_type(cls):
         """
         Retrieve the node's output data type.
@@ -296,7 +306,10 @@ class _PayloadSourceNode(_DataNode):
         Returns:
             List[str]: An empty list indicating that no keys will be created.
         """
-        return cls.processor.get_created_keys()
+        # PayloadSource processors have injected_context_keys method
+        if hasattr(cls.processor, "injected_context_keys"):
+            return cls.processor.injected_context_keys()
+        return []
 
     @override
     def _process_single_item_with_context(self, payload: Payload) -> Payload:
@@ -313,9 +326,9 @@ class _PayloadSourceNode(_DataNode):
         data = payload.data
         context = payload.context
         # Save the current context to be used by the processor
-        self.observer_context = context
-        parameters = self._get_processor_parameters(self.observer_context)
-        loaded_data, loaded_context = self.processor.process(data, **parameters)
+        parameters = self._get_processor_parameters(payload.context)
+        loaded_data = self.processor.process(data, **parameters)
+        loaded_context = self.observer_context
 
         # Merge context and loaded_context
         for key, value in loaded_context.items():
@@ -373,6 +386,16 @@ class _PayloadSinkNode(_DataNode):
             # no binding available at this abstract level
             pass
         return component_metadata
+
+    @classmethod
+    def input_data_type(cls):
+        """
+        Retrieve the data type that will be consumed by the processor.
+
+        Returns:
+            Type: The data type that will be consumed by the processor.
+        """
+        return cls.processor.input_data_type()
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
@@ -509,7 +532,7 @@ class _DataSourceNode(_DataNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            assert hasattr(cls.processor, "_get_data")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
@@ -588,7 +611,9 @@ class _DataOperationNode(_DataNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            # DataOperation subclasses expose input/output data type classmethods
+            assert hasattr(cls.processor, "input_data_type")
+            assert hasattr(cls.processor, "output_data_type")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
@@ -700,6 +725,17 @@ class _ProbeNode(_DataNode):
     """
 
     @classmethod
+    def input_data_type(cls):
+        """
+        Provides the input data type for the probe node, which is the same as the processor's input data type..
+
+        Returns:
+            Type: The input data type for the probe node.
+        """
+
+        return cls.processor.input_data_type()
+
+    @classmethod
     def output_data_type(cls):
         """
         Retrieve the node's output data type. The output data type is the same as the input data type for probe nodes.
@@ -748,7 +784,8 @@ class _ProbeContextInjectorNode(_ProbeNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            # Probe processors expose an input_data_type classmethod
+            assert hasattr(cls.processor, "input_data_type")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
@@ -763,23 +800,6 @@ class _ProbeContextInjectorNode(_ProbeNode):
             # no binding available at this abstract level
             pass
         return component_metadata
-
-    @classmethod
-    def input_data_type(cls):
-        """
-        Retrieve the expected input data type for the data processor.
-
-        Returns:
-            Type: The expected input data type for the data processor.
-        """
-        return cls.processor.input_data_type()
-
-    @classmethod
-    def output_data_type(cls):
-        """
-        Retrieve the output data type of the node, which is the same as the input data type for probe nodes.
-        """
-        return cls.processor.input_data_type()
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
@@ -853,7 +873,7 @@ class _ProbeResultCollectorNode(_ProbeNode):
         Args:
             processor (Type[DataProbe]): The data probe class for this node.
             processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
-            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+            logger (Optional[Logger]): A logger instance for diagnostic output. Defaults to None.
         """
         super().__init__(processor, processor_parameters, logger)
         self._probed_data: List[Any] = []
@@ -867,7 +887,8 @@ class _ProbeResultCollectorNode(_ProbeNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            # Probe processors expose an input_data_type classmethod
+            assert hasattr(cls.processor, "input_data_type")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
@@ -882,23 +903,6 @@ class _ProbeResultCollectorNode(_ProbeNode):
             # no binding available at this abstract level
             pass
         return component_metadata
-
-    @classmethod
-    def input_data_type(cls):
-        """
-        Retrieve the expected input data type for the data processor.
-
-        Returns:
-            Type: The expected input data type for the data processor.
-        """
-        return cls.processor.input_data_type()
-
-    @classmethod
-    def output_data_type(cls):
-        """
-        Retrieve the output data type of the node, which is the same as the input data type for probe nodes.
-        """
-        return cls.processor.input_data_type()
 
     def collect(self, data: Any) -> None:
         """

@@ -93,15 +93,20 @@ class _IOOperationFactory:
                     self, data: BaseDataType, *args, **kwargs
                 ) -> BaseDataType:
                     data_io_instance = data_io_class()
-                    loaded_data = data_io_instance._get_payload(*args, **kwargs).data
-                    Logger().warning(
-                        f"Context loading from Wrapped PayloadSource in pipelines is not supported ({data_io_class.__name__})"
-                    )
+                    payload = data_io_instance._get_payload(*args, **kwargs)
+                    loaded_data = payload.data
+                    # If the payload provides a context, notify the DataOperation observer
+                    loaded_context = payload.context
+
+                    for key, value in loaded_context.items():
+                        self._notify_context_update(key, value)
+
+                    # Return only the loaded data (context is injected via notifications)
                     return loaded_data
 
                 def get_processing_parameter_names(cls) -> List[str]:
                     """
-                    Retrieve the names of parameters required by the `_get_data` method.
+                    Retrieve the names of parameters required by the `_get_payload` method.
 
                     Returns:
                         List[str]: A list of parameter names (excluding `self` and `data`).
@@ -117,6 +122,16 @@ class _IOOperationFactory:
                             inspect.Parameter.VAR_KEYWORD,
                         }
                     ]
+
+                def context_keys_method(cls) -> list:
+                    return list(data_io_class.injected_context_keys())
+
+                def get_created_keys_method(cls) -> list:
+                    return cls.context_keys()
+
+                # expose created/context keys so the node metadata and notifications work
+                methods["context_keys"] = classmethod(context_keys_method)
+                methods["get_created_keys"] = classmethod(get_created_keys_method)
 
         elif issubclass(data_io_class, (DataSink, PayloadSink)):
 
