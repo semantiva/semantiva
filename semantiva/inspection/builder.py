@@ -34,11 +34,10 @@ The inspection data structures provide a single source of truth for:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 import inspect
 from semantiva.data_processors.data_processors import ParameterInfo, _NO_DEFAULT
 
-from semantiva.pipeline import Pipeline
 from semantiva.pipeline.nodes.nodes import (
     _PipelineNode,
     _ProbeContextInjectorNode,

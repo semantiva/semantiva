@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple, Type, Sequence
+from typing import Any, Dict, Tuple, Type
 
 import numpy as np
 
