@@ -6,14 +6,8 @@ license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.10.12"
 dependencies = [
-    "black >=24.10.0",
-    "mypy >=1.14.1",
     "numpy >=2.2.1",
-    "pylint >=3.3.3",
-    "pytest >=8.3.4",
     "pyyaml",
-    "types-PyYAML",
-    "coverage",
     "rdflib",
 ]
 distribution = true
@@ -39,6 +33,16 @@ source = ["semantiva"]
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "black >=24.10.0",
+    "mypy >=1.14.1",
+    "pylint >=3.3.3",
+    "pytest >=8.3.4",
+    "coverage",
+    "types-PyYAML",
+]
 
 [tool.pdm.scripts]
 cicheck = "bash ./ci_pipeline.sh"  # Define the shell script as a PDM script
