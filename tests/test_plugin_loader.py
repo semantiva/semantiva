@@ -16,7 +16,8 @@ import importlib.metadata
 from unittest.mock import patch, MagicMock
 import logging
 import pytest
-from semantiva.registry import load_extensions, SemantivaExtension
+from semantiva.logger import Logger
+from semantiva.registry import load_extensions, SemantivaExtension, plugin_registry
 
 
 def test_load_plugins_happy_path():
@@ -51,24 +52,24 @@ def test_load_plugins_happy_path():
         mock_register.assert_called_once()
 
 
-@pytest.mark.xfail(reason="Logger warnings not propagated")
 def test_load_missing_spec(caplog):
     """Test that a warning is printed if the user requests a extension that doesn't exist."""
     with patch.object(importlib.metadata, "entry_points", return_value=[]):
-        # Capture output
-        with caplog.at_level(logging.WARNING):
+        plugin_registry.logger = Logger()
+        with caplog.at_level(
+            logging.WARNING, logger=plugin_registry.logger.logger.name
+        ):
             load_extensions(["non_existent_extension"])
 
     # The loader should warn that 'non_existent_extension' was not found
 
     # caplog.text is a single string with all captured logs
     assert (
-        "No Semantiva extension named 'non_existent_extension' was found."
+        "Warning: No Semantiva extension named 'non_existent_extension' was found."
         in caplog.text
     )
 
 
-@pytest.mark.xfail(reason="Logger warnings not propagated")
 def test_load_spec_bad_class(caplog):
     """
     Test that a warning is printed if the extension returned by the entry point
@@ -85,10 +86,13 @@ def test_load_spec_bad_class(caplog):
     with patch.object(
         importlib.metadata, "entry_points", return_value=[mock_entry_point]
     ):
-        with caplog.at_level(logging.WARNING):
+        plugin_registry.logger = Logger()
+        with caplog.at_level(
+            logging.WARNING, logger=plugin_registry.logger.logger.name
+        ):
             load_extensions(["bad_spec"])
 
     assert (
-        "Entry point 'bad_spec' does not reference a SemantivaExtension subclass. Skipping."
+        "Warning: Entry point 'bad_spec' does not reference a SemantivaExtension subclass. Skipping."
         in caplog.text
     )
