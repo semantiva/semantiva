@@ -16,8 +16,8 @@
 Semantiva Plugin Registry
 =========================
 
-This module provides a safe, lean mechanism for dynamically loading and 
-registering Semantiva extensions. It supports both production deployment 
+This module provides a safe, lean mechanism for dynamically loading and
+registering Semantiva extensions. It supports both production deployment
 via entry points and development environments via module importing.
 
 Key Design Principles:
@@ -39,7 +39,7 @@ class YourExtension(SemantivaExtension):
     def register(self) -> None:
         ClassRegistry.register_modules([
             "your_package.operations",
-            "your_package.probes", 
+            "your_package.probes",
             "your_package.data_io"
         ])
 ```
@@ -52,7 +52,7 @@ def register() -> None:
     ClassRegistry.register_modules([
         "your_package.operations",
         "your_package.probes",
-        "your_package.data_io" 
+        "your_package.data_io"
     ])
 ```
 
