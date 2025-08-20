@@ -28,7 +28,7 @@ from semantiva.execution.executor.executor import SemantivaExecutor
 from semantiva import Pipeline, Payload
 from semantiva.logger.logger import Logger
 from .logging_setup import _setup_log
-import semantiva
+from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
 
 
 def worker_loop(
@@ -68,9 +68,7 @@ def worker_loop(
     or containers while decoupling job submission (by the orchestrator) from execution.
     """
     # Initialize or reuse the logger for this worker
-    worker_logger: semantiva.logger.logger.Logger = logger or _setup_log(
-        f"worker_{worker_id}"
-    )
+    worker_logger: Logger = logger or _setup_log(f"worker_{worker_id}")
     assert worker_logger, "Logger must be provided or created"
     worker_logger.info(f"Worker_{worker_id} starting…")
 
@@ -96,6 +94,19 @@ def worker_loop(
                 try:
                     # 1) Unpack the payload dictionary
                     pcfg = msg.metadata.get("pipeline")
+                    # If pipeline metadata is a path to a YAML file, load it
+                    if isinstance(pcfg, str):
+                        try:
+                            pcfg = load_pipeline_from_yaml(pcfg)
+                        except Exception as e:
+                            worker_logger.error(
+                                f"Failed to load pipeline YAML for job {job_id} from '{pcfg}': {e}"
+                            )
+                            try:
+                                msg.ack()
+                            except Exception:
+                                pass
+                            continue
                     if not isinstance(pcfg, list) or not all(
                         isinstance(step, dict) for step in pcfg
                     ):
