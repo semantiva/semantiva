@@ -196,11 +196,12 @@ class FloatCollectValueProbe(FloatProbe):
 
 
 class FloatMockDataSource(DataSource):
-    """Float DataSource. Always produces the value 42.0."""
+    """Float DataSource. Outputs a fixed FloatDataType value. Defaults to 42.0."""
 
     @classmethod
-    def _get_data(cls, *args, **kwargs) -> FloatDataType:
-        return FloatDataType(42.0)
+    def _get_data(cls, value: float = 42.0, *args, **kwargs) -> FloatDataType:
+        assert isinstance(value, float), "Value must be a float"
+        return FloatDataType(value)
 
     @classmethod
     def output_data_type(cls):
@@ -273,6 +274,29 @@ class FloatDataSink(DataSink[FloatDataType]):
     def _send_data(self, data: FloatDataType, *args, **kwargs):
         # Keep track of the last data we received
         self.last_data_sent = data
+
+    @classmethod
+    def input_data_type(cls):
+        """Return the data type accepted by this sink."""
+        return FloatDataType
+
+
+class FloatTxtFileSaver(DataSink[FloatDataType]):
+    """
+    Saves a float value in a text file.
+    """
+
+    def __init__(self, logger: Optional[Logger] = None):
+        super().__init__(logger)
+
+    def _send_data(self, data: FloatDataType, file_path: str, *args, **kwargs):
+        """Save the float value to a text file."""
+        if not isinstance(data, FloatDataType):
+            raise TypeError("Data must be of type FloatDataType")
+
+        # Save to a file named
+        with open(file_path, "w") as f:
+            f.write(str(data.data))
 
     @classmethod
     def input_data_type(cls):

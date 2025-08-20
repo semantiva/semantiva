@@ -20,6 +20,8 @@ from semantiva.data_types import BaseDataType, NoDataType
 from semantiva.pipeline.payload import Payload
 from semantiva.context_processors.context_types import ContextType
 from semantiva.logger import Logger
+from semantiva.data_processors.data_processors import ParameterInfo, _NO_DEFAULT
+from collections import OrderedDict
 
 
 class _IOOperationFactory:
@@ -222,6 +224,58 @@ class _IOOperationFactory:
         methods["get_processing_parameter_names"] = classmethod(
             get_processing_parameter_names
         )
+
+        # Build parameter metadata from the underlying data-IO method signature
+        try:
+            sig = inspect.signature(
+                # choose the correct method to inspect
+                data_io_class._get_data
+                if issubclass(data_io_class, DataSource)
+                else (
+                    data_io_class._get_payload
+                    if issubclass(data_io_class, PayloadSource)
+                    else (
+                        data_io_class._send_data
+                        if issubclass(data_io_class, DataSink)
+                        else data_io_class._send_payload
+                    )
+                )
+            )
+        except Exception:
+            sig = None
+
+        if sig:
+            details = OrderedDict()
+            for param in sig.parameters.values():
+                if param.name in {"self", "data", "payload"}:
+                    continue
+                if param.kind in {
+                    inspect.Parameter.VAR_POSITIONAL,
+                    inspect.Parameter.VAR_KEYWORD,
+                }:
+                    continue
+                default = (
+                    param.default
+                    if param.default is not inspect._empty
+                    else _NO_DEFAULT
+                )
+                annotation = (
+                    getattr(param.annotation, "__name__", str(param.annotation))
+                    if param.annotation is not inspect._empty
+                    else "Unknown"
+                )
+                details[param.name] = ParameterInfo(
+                    default=default, annotation=annotation
+                )
+
+            def _define_metadata_override(cls):
+                # Start from DataOperation metadata and inject our parameter details
+                # Use super() to invoke the parent class implementation bound to `cls`
+                base = super(DataOperation, cls)._define_metadata()
+                base["parameters"] = details
+                return base
+
+            methods["_define_metadata"] = classmethod(_define_metadata_override)
 
         # Create a new type that extends DataOperation
         class_name = f"{data_io_class.__name__}"
