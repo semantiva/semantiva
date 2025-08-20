@@ -89,7 +89,7 @@ class Pipeline(_PayloadProcessor):
             - Info: Logs the start and completion of the pipeline processing.
             - Debug: Logs a detailed timing report of the pipeline execution.
         """
-        self.logger.debug("Start processing pipeline")
+        self.logger.info("Starting pipeline with %s nodes", len(self.nodes))
         self.stop_watch.start()  # existing pipeline timer start
 
         result_payload = self.orchestrator.execute(
@@ -100,9 +100,9 @@ class Pipeline(_PayloadProcessor):
         )
 
         self.stop_watch.stop()  # existing pipeline timer stop
-        self.logger.debug("Pipeline execution complete.")
-        self.logger.debug(
-            "Pipeline execution timing report: \n\tPipeline %s\n%s",
+        self.logger.info("Pipeline execution complete.")
+        self.logger.info(
+            "Pipeline execution report:\n\n\tPipeline %s\n%s\n",
             str(self.stop_watch),
             self.get_timers(),
         )

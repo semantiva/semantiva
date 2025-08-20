@@ -42,6 +42,9 @@ class FloatDataType(BaseDataType[float]):
             raise TypeError("Data must be a float")
         return True
 
+    def __str__(self):
+        return str(self.data)
+
 
 # Concrete implementation of DataCollectionType for testing
 class FloatDataCollection(DataCollectionType[FloatDataType, list]):
@@ -296,7 +299,8 @@ class FloatTxtFileSaver(DataSink[FloatDataType]):
 
         # Save to a file named
         with open(file_path, "w") as f:
-            f.write(str(data.data))
+            # Let's add a new line at the end for consistency
+            f.write(str(data.data) + "\n")
 
     @classmethod
     def input_data_type(cls):
