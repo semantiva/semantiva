@@ -13,7 +13,9 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, List, Dict
+from typing import Dict, Generic, List, TypeVar
+
+import numpy as np
 
 X = TypeVar("X")  # Domain (annotation) type (e.g., float, tuple[int, float], etc.)
 Y = TypeVar("Y")  # Codomain (extracted features) type (e.g., float, list, dict, etc.)
@@ -61,10 +63,6 @@ class FittingModel(ABC, Generic[X, Y]):
             Dict[str, float]: A dictionary of best-fit parameters.
         """
         pass
-
-
-import numpy as np
-from typing import List, Dict
 
 
 class PolynomialFittingModel(FittingModel[float, float]):

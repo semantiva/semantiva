@@ -13,16 +13,12 @@
 # limitations under the License.
 
 from typing import Any, Dict, List, Optional
-from semantiva.exceptions import (
-    PipelineTopologyError,
-)
 from .payload import Payload
 from semantiva.logger import Logger
 from .payload_processors import _PayloadProcessor
 from .nodes._pipeline_node_factory import _pipeline_node_factory
 from .nodes.nodes import (
     _PipelineNode,
-    _ContextProcessorNode,
     _ProbeResultCollectorNode,
 )
 from semantiva.execution.transport import (

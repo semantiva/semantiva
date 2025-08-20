@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from types import new_class
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, Union
 from semantiva.data_processors.io_operation_factory import _IOOperationFactory
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 from semantiva.data_processors.data_processors import (
@@ -39,6 +39,13 @@ from .nodes import (
     _ProbeResultCollectorNode,
     _DataOperationContextInjectorProbeNode,
 )
+
+
+def _resolve_class(class_name: Union[str, Type, None]) -> Optional[Type]:
+    """Resolve a class name to an actual class using the registry."""
+    if isinstance(class_name, str):
+        return ClassRegistry.get_class(class_name)
+    return class_name
 
 
 class _PipelineNodeFactory:
@@ -85,14 +92,8 @@ class _PipelineNodeFactory:
         processor = node_definition.get("processor")
         parameters = node_definition.get("parameters", {})
 
-        def get_class(class_name):
-            """Helper function to retrieve the class from the loader if the input is a string."""
-            if isinstance(class_name, str):
-                return ClassRegistry.get_class(class_name)
-            return class_name
-
         # Resolve the processor class if provided as a string.
-        processor = get_class(processor)
+        processor = _resolve_class(processor)
 
         if processor is None or not isinstance(processor, type):
             raise ValueError("processor must be a class type or a string, not None.")
@@ -420,12 +421,6 @@ def _pipeline_node_factory(
         ValueError: If the node definition is invalid or if the processor type is unsupported.
     """
 
-    def get_class(class_name):
-        """Helper function to retrieve the class from the loader if the input is a string."""
-        if isinstance(class_name, str):
-            return ClassRegistry.get_class(class_name)
-        return class_name
-
     # DESIGN NOTE: Structured Parametric Sweep Preprocessing
     # ======================================================
     #
@@ -467,7 +462,7 @@ def _pipeline_node_factory(
     context_keyword = node_definition.get("context_keyword")
 
     # Resolve the processor class if provided as a string.
-    processor = get_class(processor)
+    processor = _resolve_class(processor)
 
     if processor is None or not isinstance(processor, type):
         raise ValueError("processor must be a class type or a string, not None.")

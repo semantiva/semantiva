@@ -13,3 +13,7 @@
 # limitations under the License.
 
 from .logger import Logger
+
+__all__ = [
+    "Logger",
+]
