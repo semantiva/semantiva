@@ -32,6 +32,8 @@ from semantiva.data_types import BaseDataType
 from semantiva.logger import Logger
 
 T = TypeVar("T", bound=BaseDataType)
+T_in = TypeVar("T_in", bound=BaseDataType)
+T_out = TypeVar("T_out", bound=BaseDataType)
 
 
 _NO_DEFAULT = object()
@@ -332,33 +334,43 @@ class OperationTopologyFactory:
     @classmethod
     def create_data_operation(
         cls,
-        input_type: Type[BaseDataType],
-        output_type: Type[BaseDataType],
+        input_type: Type[T_in],
+        output_type: Type[T_out],
         class_name: str,
+        _process_logic: Optional[Callable[[Any, T_in], T_out]] = None,
     ) -> type[DataOperation]:
         """
-        Dynamically creates a subclass of DataOperation that expects `input_type`
-        as input and produces `output_type` as output.
+        Dynamically creates a subclass of DataOperation that expects ``input_type``
+        as input and produces ``output_type`` as output. Optionally, the core
+        ``_process_logic`` implementation can be supplied so that the generated
+        class is ready for use without further subclassing.
 
         Args:
-            input_type (Type[BaseDataType]): The expected input data type (subclass of BaseDataType).
-            output_type (Type[BaseDataType]): The output data type (subclass of BaseDataType).
-            class_name (str): The name to give the generated class.
+            input_type: The expected input data type (subclass of ``BaseDataType``).
+            output_type: The output data type (subclass of ``BaseDataType``).
+            class_name: The name to give the generated class.
+            _process_logic: Function implementing ``_process_logic``. When
+                provided, the returned class will include this method and can be
+                used directly as a ``DataOperation``.
 
         Returns:
-            Type[DataOperation]: A new subclass of DataOperation with the specified I/O data types.
+            Type[DataOperation]: A new subclass of ``DataOperation`` with the
+            specified I/O data types.
         """
 
-        methods: dict = {}
+        methods: dict[str, Any] = {}
 
-        def input_data_type_method(cls) -> type[BaseDataType]:
+        def input_data_type_method(cls) -> type[T_in]:
             return input_type
 
-        def output_data_type_method(cls) -> type[BaseDataType]:
+        def output_data_type_method(cls) -> type[T_out]:
             return output_type
 
         methods["input_data_type"] = classmethod(input_data_type_method)
         methods["output_data_type"] = classmethod(output_data_type_method)
+
+        if _process_logic is not None:
+            methods["_process_logic"] = _process_logic
 
         # Create a new type that extends DataOperation
         generated_class = type(class_name, (DataOperation,), methods)
