@@ -15,6 +15,8 @@
 #########################
 # Step 1: Define StringLiteralDataType
 #########################
+from typing import TYPE_CHECKING
+
 from semantiva.data_types import BaseDataType
 from semantiva.context_processors.context_types import ContextType
 
@@ -49,14 +51,28 @@ class StringLiteralDataType(BaseDataType):
 #########################
 # Step 2: Create a Specialized StringLiteralOperation Using OperationTopologyFactory
 #########################
-from semantiva.data_processors import OperationTopologyFactory
+from semantiva.data_processors import DataOperation, OperationTopologyFactory
 
-# Dynamically create a base operation class for (StringLiteralDataType -> StringLiteralDataType)
-StringLiteralOperation = OperationTopologyFactory.create_data_operation(
-    input_type=StringLiteralDataType,
-    output_type=StringLiteralDataType,
-    class_name="StringLiteralOperation",
-)
+if TYPE_CHECKING:
+
+    class StringLiteralOperation(DataOperation):
+        @classmethod
+        def input_data_type(cls) -> type[StringLiteralDataType]: ...
+
+        @classmethod
+        def output_data_type(cls) -> type[StringLiteralDataType]: ...
+
+        def _process_logic(
+            self, data: StringLiteralDataType
+        ) -> StringLiteralDataType: ...
+
+else:
+    # Dynamically create a base operation class for (StringLiteralDataType -> StringLiteralDataType)
+    StringLiteralOperation = OperationTopologyFactory.create_data_operation(
+        input_type=StringLiteralDataType,
+        output_type=StringLiteralDataType,
+        class_name="StringLiteralOperation",
+    )
 
 
 #########################
