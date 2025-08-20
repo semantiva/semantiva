@@ -23,10 +23,17 @@ from typing import Any, List, NoReturn
 
 import yaml
 
+from semantiva.context_processors import ContextType
+from semantiva.data_types import NoDataType
 from semantiva.logger import Logger
 from semantiva.registry import load_extensions
-from semantiva.inspection import build_pipeline_inspection, validate_pipeline
-from semantiva.pipeline import Pipeline
+from semantiva.inspection import (
+    build_pipeline_inspection,
+    extended_report,
+    summary_report,
+    validate_pipeline,
+)
+from semantiva.pipeline import Pipeline, Payload
 
 # Exit code constants
 EXIT_SUCCESS = 0
@@ -145,10 +152,33 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
         help="Override configuration values (dotted paths)",
     )
     run_p.add_argument(
+        "--context",
+        dest="contexts",
+        action="append",
+        default=[],
+        metavar="key=value",
+        help="Inject context key-value pairs",
+    )
+    run_p.add_argument(
         "-v", "--verbose", action="store_true", help="Increase log verbosity"
     )
     run_p.add_argument("-q", "--quiet", action="store_true", help="Only show errors")
     run_p.add_argument("--version", action="version", version=_get_version())
+
+    inspect_p = sub.add_parser(
+        "inspect", help="Inspect a pipeline configuration from a YAML file"
+    )
+    inspect_p.add_argument("pipeline", help="Path to the pipeline YAML file")
+    inspect_p.add_argument(
+        "--extended", action="store_true", help="Show extended inspection report"
+    )
+    inspect_p.add_argument(
+        "-v", "--verbose", action="store_true", help="Increase log verbosity"
+    )
+    inspect_p.add_argument(
+        "-q", "--quiet", action="store_true", help="Only show errors"
+    )
+    inspect_p.add_argument("--version", action="version", version=_get_version())
 
     args = parser.parse_args(argv)
     if args.command is None:
@@ -196,18 +226,41 @@ def _run(args: argparse.Namespace) -> int:
         print(f"Invalid config: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
 
+    ctx_dict: dict[str, Any] = {}
+    for item in args.contexts:
+        if "=" not in item:
+            print(f"Invalid context format: {item}", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+        key, value_str = item.split("=", 1)
+        try:
+            # Parse value using YAML to handle type conversion (1.0 -> float, true -> bool, etc.)
+            value = yaml.safe_load(value_str)
+        except yaml.YAMLError:
+            # Fall back to string if YAML parsing fails
+            value = value_str
+        ctx_dict[key] = value
+    if args.verbose and ctx_dict:
+        logger.debug("Injected context: %s", ctx_dict)
+
     if args.validate:
+        if ctx_dict and args.verbose:
+            logger.debug("Ignoring --context for validation")
         print("Config valid.")
         return EXIT_SUCCESS
 
     try:
         pipeline = Pipeline(nodes, logger=logger)
         if args.dry_run:
+            if ctx_dict and args.verbose:
+                logger.debug("Ignoring --context for dry run")
             print(f"Graph: {len(pipeline.nodes)} nodes.")
             print("Dry run OK (no execution performed).")
             return EXIT_SUCCESS
         start = time.time()
-        pipeline.process()
+        initial_payload = (
+            Payload(NoDataType(), ContextType(ctx_dict)) if ctx_dict else None
+        )
+        pipeline.process(initial_payload)
         duration = time.time() - start
         print(f"✅ Completed in {duration:.2f}s")
         return EXIT_SUCCESS
@@ -226,9 +279,39 @@ def _run(args: argparse.Namespace) -> int:
         return EXIT_RUNTIME_ERROR
 
 
+def _inspect(args: argparse.Namespace) -> int:
+    _configure_logger(args.verbose, args.quiet)
+
+    config = _load_yaml(Path(args.pipeline))
+
+    if isinstance(config, dict):
+        specs = config.get("extensions")
+        if not specs and isinstance(config.get("pipeline"), dict):
+            specs = config["pipeline"].get("extensions")
+        if specs:
+            load_extensions(specs)
+
+    try:
+        nodes = _validate_structure(config)
+        inspection = build_pipeline_inspection(nodes)
+        validate_pipeline(inspection)
+    except Exception as exc:
+        print(f"Invalid config: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+
+    report = (
+        extended_report(inspection) if args.extended else summary_report(inspection)
+    )
+    print(report)
+    return EXIT_SUCCESS
+
+
 def main(argv: List[str] | None = None) -> None:
     args = _parse_args(argv)
-    code = _run(args)
+    if args.command == "run":
+        code = _run(args)
+    else:
+        code = _inspect(args)
     sys.exit(code)
 
 
