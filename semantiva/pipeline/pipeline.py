@@ -41,17 +41,17 @@ class Pipeline(_PayloadProcessor):
         self,
         pipeline_configuration: List[Dict],
         logger: Optional[Logger] = None,
-        transport: SemantivaTransport | None = None,
-        orchestrator: SemantivaOrchestrator | None = None,
+        transport: Optional[SemantivaTransport] = None,
+        orchestrator: Optional[SemantivaOrchestrator] = None,
     ):
         """
         Initializes the pipeline with the given configuration, logger, transport, and orchestrator.
         Args:
             pipeline_configuration (List[Dict]): A list of dictionaries containing the pipeline configuration.
-            logger (Logger | None, optional): An optional logger instance for logging information. Defaults to None.
-            transport (SemantivaTransport | None, optional): An optional transport mechanism for the pipeline.
+            logger (Optional[Logger], optional): An optional logger instance for logging information. Defaults to None.
+            transport (Optional[SemantivaTransport], optional): An optional transport mechanism for the pipeline.
                 If not provided, an InMemorySemantivaTransport instance will be used. Defaults to None.
-            orchestrator (SemantivaOrchestrator | None, optional): An optional orchestrator for managing pipeline execution.
+            orchestrator (Optional[SemantivaOrchestrator], optional): An optional orchestrator for managing pipeline execution.
                 If not provided, a LocalSemantivaOrchestrator instance will be used. Defaults to None.
         Attributes:
             pipeline_configuration (List[Dict]): Stores the pipeline configuration.

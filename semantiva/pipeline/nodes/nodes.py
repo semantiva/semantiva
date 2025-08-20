@@ -37,7 +37,7 @@ from ..payload import Payload
 
 class _PipelineNode(_PayloadProcessor):
     """
-    Base node class for wraping data or context processors.
+    Base node class for wrapping data or context processors.
     """
 
     processor: _BaseDataProcessor | ContextProcessor

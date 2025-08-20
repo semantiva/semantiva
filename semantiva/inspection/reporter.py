@@ -97,7 +97,7 @@ def _format_default_params(default_params: Dict[str, Any]) -> str:
     return ", ".join(parts)
 
 
-def _format_context_params(context_params: Dict[str, int | None]) -> str:
+def _format_context_params(context_params: Dict[str, Optional[int]]) -> str:
     """Format context parameters with origin tracking information.
 
     Args:

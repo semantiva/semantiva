@@ -19,6 +19,7 @@ via a SemantivaTransport, executes them using a SemantivaExecutor, and publishes
 
 import time
 from threading import Event
+from typing import Optional
 
 from semantiva.execution.transport.base import SemantivaTransport
 from semantiva.data_types import NoDataType
@@ -35,7 +36,7 @@ def worker_loop(
     transport: SemantivaTransport,
     executor: SemantivaExecutor,
     stop_event: Event,
-    logger: Logger | None = None,
+    logger: Optional[Logger] = None,
     poll_interval: float = 0.1,
 ):
     """
