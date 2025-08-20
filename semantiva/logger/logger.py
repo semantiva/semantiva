@@ -101,6 +101,7 @@ class Logger:
             self.logger = logging.getLogger(name)
         else:
             self.logger = logger
+        self.name = name
 
         # If the Logger class has not been initialized yet, set default values.
         # This ensures that the default log level and console output are only set once.
