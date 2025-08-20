@@ -46,6 +46,7 @@ class ContextProcessor(_SemantivaComponent):
 
     @classmethod
     def input_data_type(cls):
+        """Return the placeholder data type accepted by context processors."""
         return BaseDataType
 
     def get_processing_parameter_names(self) -> List[str]:

@@ -701,6 +701,7 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
+        """Return context keys injected by this node."""
         return [cls.context_keyword]
 
     @override
@@ -1012,6 +1013,7 @@ class _ContextDataProcessorNode(_PipelineNode):
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
+        """Return context keys produced by this node."""
         return [cls.output_context_keyword]
 
     def _process_single_item_with_context(self, payload: Payload) -> Payload:
