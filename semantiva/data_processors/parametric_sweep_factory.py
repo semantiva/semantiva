@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple, Type
+from typing import Any, Dict, Tuple, Type, Optional
 
 import numpy as np
 
@@ -93,8 +93,8 @@ class ParametricSweepFactory:
         independent_vars: Dict[str, Tuple[float, float]],
         parametric_expressions: Dict[str, str],
         num_steps: int,
-        static_params: Dict[str, Any] | None = None,
-        name: str | None = None,
+        static_params: Optional[Dict[str, Any]] = None,
+        name: Optional[str] = None,
     ) -> Type[DataOperation]:
         """Create a parametric sweep DataOperation class.
 

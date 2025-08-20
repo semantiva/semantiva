@@ -21,7 +21,7 @@ from semantiva.examples.test_utils import (
 from semantiva import Pipeline, Payload
 from semantiva.workflows.fitting_model import PolynomialFittingModel
 from semantiva.context_processors.context_processors import ModelFittingContextProcessor
-from semantiva.data_processors.data_slicer_factory import Slicer
+from semantiva.data_processors.data_slicer_factory import slicer
 
 
 @pytest.fixture
@@ -38,7 +38,7 @@ def test_pipeline_single_string_key(linear_int_data_collection):
     t_values = [i for i in range(len(linear_int_data_collection))]
     node_configurations = [
         {
-            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
             "context_keyword": "data_values",
         },
         {

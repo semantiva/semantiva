@@ -60,8 +60,8 @@ class QueueSemantivaOrchestrator:
     def __init__(
         self,
         transport: SemantivaTransport,
-        stop_event: threading.Event | None = None,
-        logger: Logger | None = None,
+        stop_event: Optional[threading.Event] = None,
+        logger: Optional[Logger] = None,
     ):
         """
         Initialize the orchestrator.
@@ -88,8 +88,8 @@ class QueueSemantivaOrchestrator:
         self,
         pipeline_cfg: PipelineConfig,
         *,
-        data: BaseDataType | None = None,
-        context: ContextType | None = None,
+        data: Optional[BaseDataType] = None,
+        context: Optional[ContextType] = None,
         return_future: bool = False,
     ) -> Optional[Future]:
         """
@@ -108,7 +108,7 @@ class QueueSemantivaOrchestrator:
         job_id: str = str(uuid.uuid4())
 
         # 2) Optionally create a Future to track this job’s completion
-        fut: Future | None = Future() if return_future else None
+        fut: Optional[Future] = Future() if return_future else None
         if fut:
             self.pending_futures[job_id] = fut
 
