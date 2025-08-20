@@ -124,7 +124,7 @@ class _SlicingDataProcessorFactory:
             return SlicingDataProbe
 
 
-def Slicer(
+def slicer(
     processor_cls: Type[_BaseDataProcessor],
     input_data_collection_type: Type[DataCollectionType],
 ):
