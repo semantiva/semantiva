@@ -32,11 +32,15 @@ jobs:
 
       - name: Install dependencies using PDM
         run: |
-          pdm install
+          pdm install --dev
 
       - name: Run pylint
         run: |
           pdm run pylint ${{ env.project_name }} --fail-under=7.5
+
+      - name: Run ruff
+        run: |
+          pdm run ruff check ${{ env.project_name }}
 
       - name: Run mypy
         run: |
@@ -68,7 +72,7 @@ jobs:
 
       - name: Install dependencies using PDM
         run: |
-          pdm install
+          pdm install --dev
 
       - name: Run pytest with coverage report
         run: |

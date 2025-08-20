@@ -15,17 +15,21 @@ pdm install --dev
 echo "Running pylint..."
 pdm run pylint semantiva --fail-under=7.5
 
-# Step 3: Run black (code formatting check)
+# Step 3: Run ruff (PEP 8 checks)
+echo "Running ruff..."
+pdm run ruff check
+
+# Step 4: Run black (code formatting check)
 echo "Running black..."
 pdm run black --check semantiva
 echo "Running license header check..."
 pdm run python scripts/check_license_headers.py
 
-# Step 4: Run mypy
+# Step 5: Run mypy
 echo "Running mypy"
 pdm run mypy .
 
-# Step 5: Run tests using pytest
+# Step 6: Run tests using pytest
 echo "Running pytest..."
 pdm run coverage run -m pytest --maxfail=1 -q -s
 pdm run coverage report

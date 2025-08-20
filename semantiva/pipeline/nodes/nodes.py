@@ -37,7 +37,7 @@ from ..payload import Payload
 
 class _PipelineNode(_PayloadProcessor):
     """
-    Base node class for wraping data or context processors.
+    Base node class for wrapping data or context processors.
     """
 
     processor: _BaseDataProcessor | ContextProcessor
@@ -447,7 +447,6 @@ class _DataSinkNode(_DataNode):
         }
 
         try:
-            excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
@@ -530,7 +529,6 @@ class _DataSourceNode(_DataNode):
         }
 
         try:
-            excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_get_data")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
@@ -609,7 +607,6 @@ class _DataOperationNode(_DataNode):
         }
 
         try:
-            excluded_parameters = ["self", "data"]
             # DataOperation subclasses expose input/output data type classmethods
             assert hasattr(cls.processor, "input_data_type")
             assert hasattr(cls.processor, "output_data_type")
@@ -681,7 +678,6 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
         }
 
         try:
-            excluded_parameters = ["self", "data"]
             assert hasattr(cls.processor, "_send_data")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
@@ -705,6 +701,7 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
+        """Return context keys injected by this node."""
         return [cls.context_keyword]
 
     @override
@@ -782,7 +779,6 @@ class _ProbeContextInjectorNode(_ProbeNode):
         }
 
         try:
-            excluded_parameters = ["self", "data"]
             # Probe processors expose an input_data_type classmethod
             assert hasattr(cls.processor, "input_data_type")
             component_metadata["wrapped_component"] = getattr(
@@ -885,7 +881,6 @@ class _ProbeResultCollectorNode(_ProbeNode):
         }
 
         try:
-            excluded_parameters = ["self", "data"]
             # Probe processors expose an input_data_type classmethod
             assert hasattr(cls.processor, "input_data_type")
             component_metadata["wrapped_component"] = getattr(
@@ -990,7 +985,6 @@ class _ContextDataProcessorNode(_PipelineNode):
             elif issubclass(cls.processor_cls, DataProbe):
                 component_metadata["wraps_component_type"] = "DataProbe"
 
-            excluded_parameters = ["self", "data"]
             component_metadata["wrapped_component"] = getattr(
                 cls.processor_cls,
                 "__name__",
@@ -1019,6 +1013,7 @@ class _ContextDataProcessorNode(_PipelineNode):
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
+        """Return context keys produced by this node."""
         return [cls.output_context_keyword]
 
     def _process_single_item_with_context(self, payload: Payload) -> Payload:

@@ -24,6 +24,7 @@ extensions = [
     "sphinx.ext.napoleon",  # Supports Google-style and NumPy-style docstrings
     "sphinx_autodoc_typehints",  # Adds type hints to your documentation
     "sphinx.ext.autosummary",  # Generates autodoc summaries
+    "sphinx.ext.coverage",  # Enables docstring coverage reporting
 ]
 
 autodoc_typehints = "description"

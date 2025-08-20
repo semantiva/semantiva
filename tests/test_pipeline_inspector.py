@@ -15,11 +15,6 @@
 import yaml
 from semantiva import Pipeline
 from semantiva.inspection import build_pipeline_inspection
-from semantiva.examples.test_utils import (
-    FloatMultiplyOperation,
-    FloatDataCollection,
-)
-from semantiva.data_processors.data_slicer_factory import Slicer
 
 
 def test_inspection_with_slicer_prefix():

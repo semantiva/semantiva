@@ -15,8 +15,7 @@
 from semantiva import Pipeline, Payload, load_pipeline_from_yaml
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import NoDataType
-from semantiva.workflows.fitting_model import PolynomialFittingModel
-from semantiva.context_processors.context_processors import ModelFittingContextProcessor
+from semantiva.workflows import ModelFittingContextProcessor, PolynomialFittingModel
 
 
 def test_pipeline_model_fitting_from_yaml():

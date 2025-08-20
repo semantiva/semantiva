@@ -18,13 +18,12 @@ from .context_processors import (
     ContextType,
     ContextCollectionType,
     ContextProcessor,
-    ModelFittingContextProcessor,
 )
 from .data_processors import (
     DataOperation,
     DataProbe,
     OperationTopologyFactory,
-    Slicer,
+    slicer,
 )
 from .data_io import (
     DataSource,
@@ -47,7 +46,7 @@ from .inspection import (
     parameter_resolutions,
 )
 from .core import get_component_registry
-from .workflows import FittingModel
+from .workflows import FittingModel, ModelFittingContextProcessor
 
 __all__ = [
     "Pipeline",
@@ -59,7 +58,7 @@ __all__ = [
     "DataOperation",
     "DataProbe",
     "OperationTopologyFactory",
-    "Slicer",
+    "slicer",
     "ContextType",
     "ContextCollectionType",
     "ContextProcessor",

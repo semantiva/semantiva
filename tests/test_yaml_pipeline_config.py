@@ -13,11 +13,10 @@
 # limitations under the License.
 
 import pytest
-import os
 from pathlib import Path
 
 from semantiva import Pipeline, load_pipeline_from_yaml
-from semantiva.examples.test_utils import FloatDataType, FloatMockDataSource
+from semantiva.examples.test_utils import FloatDataType
 from semantiva.context_processors import ContextType
 
 

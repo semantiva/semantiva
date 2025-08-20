@@ -49,6 +49,7 @@ LOG_LEVEL = "DEBUG"  # Set to "INFO" for less verbosity
 
 
 def main():
+    """Run a demonstration of the queue-based orchestrator with worker threads."""
     # 1) Prepare transport, executor, orchestrator, and logging
     transport = InMemorySemantivaTransport()
     executor = SequentialSemantivaExecutor()

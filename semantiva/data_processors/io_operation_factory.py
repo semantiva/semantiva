@@ -37,13 +37,15 @@ class _IOOperationFactory:
         ),
     ) -> Type[DataOperation]:
         """
-        Dynamically creates a subclass of DataOperation that wraps a data IO class.
+        Dynamically create a :class:`DataOperation` subclass that wraps a data-IO class.
 
         Args:
-            data_io_class (Type[DataSource] | Type[PayloadSource] | Type[DataSink] | Type[PayloadSink]):
-                The data IO class to wrap in a DataOperation subclass.
+            cls: Factory class reference.
+            data_io_class: The ``DataSource``/``PayloadSource``/``DataSink``/``PayloadSink``
+                class to wrap.
+
         Returns:
-            Type[DataOperation]: A new subclass of DataOperation with the specified I/O data types.
+            Type[DataOperation]: A new subclass of ``DataOperation`` with matching I/O types.
         """
 
         methods: dict = {}
@@ -51,12 +53,15 @@ class _IOOperationFactory:
         if issubclass(data_io_class, (DataSource, PayloadSource)):
 
             def get_no_data_type():
+                """Return ``NoDataType``."""
                 return NoDataType
 
             def input_data_type_method(cls) -> BaseDataType:
+                """Return NoDataType: data sources do not accept input data."""
                 return get_no_data_type()
 
             def output_data_type_method(cls) -> BaseDataType:
+                """Return the data type produced by the underlying source."""
                 return data_io_class.output_data_type()
 
             if issubclass(data_io_class, DataSource):
@@ -124,9 +129,11 @@ class _IOOperationFactory:
                     ]
 
                 def context_keys_method(cls) -> list:
+                    """Return context keys injected by the payload source."""
                     return list(data_io_class.injected_context_keys())
 
                 def get_created_keys_method(cls) -> list:
+                    """Return context keys created by this operation."""
                     return cls.context_keys()
 
                 # expose created/context keys so the node metadata and notifications work
@@ -136,9 +143,11 @@ class _IOOperationFactory:
         elif issubclass(data_io_class, (DataSink, PayloadSink)):
 
             def input_data_type_method(cls) -> BaseDataType:
+                """Return the data type consumed by the underlying sink."""
                 return data_io_class.input_data_type()
 
             def output_data_type_method(cls) -> BaseDataType:
+                """Return the data type passed through by the sink."""
                 return data_io_class.input_data_type()
 
             if issubclass(data_io_class, DataSink):
@@ -152,7 +161,7 @@ class _IOOperationFactory:
 
                 def get_processing_parameter_names(cls) -> List[str]:
                     """
-                    Retrieve the names of parameters required by the `_get_data` method.
+                    Retrieve the names of parameters required by the `_send_data` method.
 
                     Returns:
                         List[str]: A list of parameter names (excluding `self` and `data`).

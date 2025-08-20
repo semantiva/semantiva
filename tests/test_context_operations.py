@@ -14,9 +14,9 @@
 
 import pytest
 from typing import List
-from semantiva.context_processors import ContextProcessor, ModelFittingContextProcessor
+from semantiva.context_processors import ContextProcessor
 from semantiva.context_processors.context_types import ContextType
-from semantiva.workflows.fitting_model import FittingModel
+from semantiva.workflows import FittingModel, ModelFittingContextProcessor
 from semantiva.logger import Logger
 
 

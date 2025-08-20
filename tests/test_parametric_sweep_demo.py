@@ -14,7 +14,6 @@
 
 """Tests for parametric sweep demo YAML files."""
 
-import pytest
 import numpy as np
 from pathlib import Path
 

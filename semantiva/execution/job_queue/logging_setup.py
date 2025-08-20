@@ -22,6 +22,8 @@ and timestamp in the filename.
 import os
 import logging
 from datetime import datetime
+from typing import Optional
+
 from semantiva.logger.logger import Logger
 
 
@@ -29,7 +31,7 @@ def _setup_log(
     role: str,
     level: str = "INFO",
     console_output: bool = True,
-    logs_dir: str | None = None,
+    logs_dir: Optional[str] = None,
 ) -> Logger:
     """
     Initialize and return a role-specific Logger that writes to a timestamped file.

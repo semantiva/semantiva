@@ -21,7 +21,7 @@ import numpy as np
 from semantiva.pipeline import Pipeline, Payload
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import NoDataType
-from semantiva.examples.test_utils import FloatDataCollection, FloatDataType
+from semantiva.examples.test_utils import FloatDataCollection
 
 
 @pytest.fixture

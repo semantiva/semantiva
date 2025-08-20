@@ -142,7 +142,7 @@ class PayloadSource(_SemantivaComponent):
             **kwargs: Keyword arguments for payload retrieval.
 
         Returns:
-            Tuple[BaseDataType, ContextType]: The retrieved payload and its context.
+            Payload: The retrieved payload containing data and context.
         """
         ...
 
@@ -155,7 +155,7 @@ class PayloadSource(_SemantivaComponent):
             **kwargs: Keyword arguments for payload retrieval.
 
         Returns:
-            Tuple[BaseDataType, ContextType]: The retrieved payload and its context
+            Payload: The retrieved payload containing data and context.
         """
         return self._get_payload(*args, **kwargs)
 
@@ -207,6 +207,7 @@ class DataSink(_SemantivaComponent, Generic[T]):
         Abstract method to implement data transmission logic.
 
         Args:
+            data: The data object to transmit.
             *args: Positional arguments for data transmission.
             **kwargs: Keyword arguments for data transmission.
 
@@ -248,6 +249,7 @@ class DataSink(_SemantivaComponent, Generic[T]):
         Send data by invoking the `_send_data` method.
 
         Args:
+            data: The data object to transmit.
             *args: Positional arguments for data transmission.
             **kwargs: Keyword arguments for data transmission.
 
@@ -294,11 +296,10 @@ class PayloadSink(_SemantivaComponent, Generic[T]):
 
     def send_payload(self, payload: Payload, *args, **kwargs) -> None:
         """
-        Consume the provided data and context by invoking the `_send_payload` method.
+        Consume the provided payload by invoking the `_send_payload` method.
 
         Args:
-            data (BaseDataType): The data payload to consume.
-            context (ContextType): The context associated with the data.
+            payload: Payload containing data and context to consume.
             *args: Additional positional arguments for payload consumption.
             **kwargs: Additional keyword arguments for payload consumption.
 

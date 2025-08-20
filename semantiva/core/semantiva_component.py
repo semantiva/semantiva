@@ -36,7 +36,7 @@ if TYPE_CHECKING:
     from semantiva.logger import Logger
 
 
-# A thread‑safe registry mapping category names to component classes
+# A thread-safe registry mapping category names to component classes
 _COMPONENT_REGISTRY: Dict[str, List[Type[_SemantivaComponent]]] = {}
 _REGISTRY_LOCK = threading.Lock()
 

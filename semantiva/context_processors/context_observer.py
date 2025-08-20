@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Any, Optional, Union
 from collections import ChainMap
-from typing import Any
+from typing import Any, Dict, Optional, Union
 from semantiva.core.semantiva_component import _SemantivaComponent
 from semantiva.logger import Logger
 from .context_types import ContextType, ContextCollectionType

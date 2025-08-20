@@ -19,6 +19,7 @@ via a SemantivaTransport, executes them using a SemantivaExecutor, and publishes
 
 import time
 from threading import Event
+from typing import Optional
 
 from semantiva.execution.transport.base import SemantivaTransport
 from semantiva.data_types import NoDataType
@@ -35,7 +36,7 @@ def worker_loop(
     transport: SemantivaTransport,
     executor: SemantivaExecutor,
     stop_event: Event,
-    logger: Logger | None = None,
+    logger: Optional[Logger] = None,
     poll_interval: float = 0.1,
 ):
     """
@@ -89,7 +90,6 @@ def worker_loop(
                 job_id = msg.metadata.get("job_id") or "<unknown>"
                 worker_logger.info(f"Picked up job {job_id}")
 
-                payload = msg.data
                 # Optional debug output of the raw Message
                 worker_logger.debug(f"Worker {job_id} received message: {msg}")
 
