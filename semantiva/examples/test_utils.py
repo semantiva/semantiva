@@ -55,6 +55,14 @@ class FloatDataCollection(DataCollectionType[FloatDataType, list]):
         return iter(self._data)
 
     def append(self, item: FloatDataType) -> None:
+        """Append a FloatDataType item to the collection.
+
+        Args:
+            item (FloatDataType): The element to add to the collection.
+
+        Raises:
+            TypeError: If ``item`` is not a ``FloatDataType`` instance.
+        """
         if not isinstance(item, FloatDataType):
             raise TypeError("Item must be of type FloatDataType")
         self._data.append(item)
@@ -63,6 +71,14 @@ class FloatDataCollection(DataCollectionType[FloatDataType, list]):
         return len(self._data)
 
     def validate(self, data):
+        """Validate that all items in the collection are FloatDataType instances.
+
+        Args:
+            data (Iterable): The collection to validate.
+
+        Raises:
+            TypeError: If any element is not a ``FloatDataType`` instance.
+        """
         for item in data:
             if not isinstance(item, FloatDataType):
                 raise TypeError("Data must be a list of FloatDataType objects")
@@ -74,10 +90,12 @@ class FloatOperation(DataOperation):
 
     @classmethod
     def input_data_type(cls):
+        """Return the expected input data type."""
         return FloatDataType
 
     @classmethod
     def output_data_type(cls):
+        """Return the produced output data type."""
         return FloatDataType
 
 
@@ -86,10 +104,12 @@ class FloatCollectionMergeOperation(DataOperation):
 
     @classmethod
     def input_data_type(cls):
+        """Return the expected collection input type."""
         return FloatDataCollection
 
     @classmethod
     def output_data_type(cls):
+        """Return the merged output data type."""
         return FloatDataType
 
 
@@ -99,6 +119,7 @@ class FloatProbe(DataProbe):
 
     @classmethod
     def input_data_type(cls):
+        """Return the expected input data type for the probe."""
         return FloatDataType
 
 
@@ -183,6 +204,7 @@ class FloatMockDataSource(DataSource):
 
     @classmethod
     def output_data_type(cls):
+        """Return the data type produced by this source."""
         return FloatDataType
 
 
@@ -194,6 +216,7 @@ class FloatMockDataSink(DataSink):
 
     @classmethod
     def input_data_type(cls):
+        """Return the data type accepted by this sink."""
         return FloatDataType
 
 
@@ -214,7 +237,7 @@ class FloatDataSource(DataSource):
 
     @classmethod
     def output_data_type(cls):
-        # Return the type of data we are providing
+        """Return the type of data provided by the source."""
         return FloatDataType
 
 
@@ -229,7 +252,7 @@ class FloatPayloadSource(PayloadSource):
 
     @classmethod
     def output_data_type(cls):
-        # Return the type of data in the payload
+        """Return the data type contained in the payload."""
         return FloatDataType
 
     @classmethod
@@ -253,7 +276,7 @@ class FloatDataSink(DataSink[FloatDataType]):
 
     @classmethod
     def input_data_type(cls):
-        # Return the type of data we accept
+        """Return the data type accepted by this sink."""
         return FloatDataType
 
 
@@ -274,5 +297,5 @@ class FloatPayloadSink(PayloadSink[FloatDataType]):
 
     @classmethod
     def input_data_type(cls):
-        # Return the type of data we accept
+        """Return the data type accepted by this payload sink."""
         return FloatDataType
