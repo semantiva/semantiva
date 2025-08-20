@@ -316,6 +316,6 @@ def test_data_io_node():
 
     # Process the data
     payload = pipeline.process()
-    data, context = payload.data, payload.context
+    data, _ = payload.data, payload.context
 
     assert data.data == FloatMockDataSource().get_data().data * 2.0

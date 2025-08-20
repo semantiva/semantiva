@@ -145,7 +145,7 @@ def test_payloadsink_no_payload_in_context_params():
 
 def test_payloadsink_in_pipeline_metadata():
     """Test that PayloadSink metadata is correctly reported in pipeline inspection."""
-    from semantiva.inspection import build_pipeline_inspection, summary_report
+    from semantiva.inspection import build_pipeline_inspection
 
     # Create a simple pipeline with a source and payload sink
     pipeline_config = [

@@ -75,4 +75,4 @@ def test_linear_fit(linear_data):
     """
     x_values, y_values = linear_data
     model = PolynomialFittingModel(degree=1)
-    params = model.fit(x_values, y_values)
+    _ = model.fit(x_values, y_values)
