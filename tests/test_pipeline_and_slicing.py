@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import pytest
-from semantiva.data_processors.data_slicer_factory import Slicer
+from semantiva.data_processors.data_slicer_factory import slicer
 from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
@@ -119,14 +119,14 @@ def test_pipeline_execution_with_single_context(float_data_collection, empty_con
     # Define node configurations
     node_configurations = [
         {
-            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
             "context_keyword": "mock_keyword",
         },
         {
-            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
         },
         {
-            "processor": Slicer(FloatMultiplyOperation, FloatDataCollection),
+            "processor": slicer(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
     ]
@@ -164,14 +164,14 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
     # Define node configurations
     node_configurations = [
         {
-            "processor": Slicer(FloatMultiplyOperation, FloatDataCollection),
+            "processor": slicer(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
         {
-            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
         },
         {
-            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
             "context_keyword": "mock_keyword",
         },
         {
@@ -213,15 +213,15 @@ def test_pipeline_slicing_with_context_collection(
     # Define node configurations
     node_configurations = [
         {
-            "processor": Slicer(FloatMultiplyOperation, FloatDataCollection),
+            "processor": slicer(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
         {
-            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
             "context_keyword": "mock_keyword",
         },
         {
-            "processor": Slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
         },
     ]
 

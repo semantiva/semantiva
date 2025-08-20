@@ -121,7 +121,7 @@ class _PayloadProcessor(_ContextObserver):
     @abstractmethod
     def _process(self, payload: Payload) -> Payload: ...
 
-    def process(self, payload: Payload | None = None) -> Payload:
+    def process(self, payload: Optional[Payload] = None) -> Payload:
         """Execute a data processor on a payload.
 
         If no payload is provided, a new :class:`~semantiva.pipeline.payload.Payload`
