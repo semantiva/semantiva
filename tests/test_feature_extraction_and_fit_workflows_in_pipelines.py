@@ -19,8 +19,7 @@ from semantiva.examples.test_utils import (
     FloatCollectValueProbe,
 )
 from semantiva import Pipeline, Payload
-from semantiva.workflows.fitting_model import PolynomialFittingModel
-from semantiva.context_processors.context_processors import ModelFittingContextProcessor
+from semantiva.workflows import ModelFittingContextProcessor, PolynomialFittingModel
 from semantiva.data_processors.data_slicer_factory import slicer
 
 

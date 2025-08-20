@@ -18,7 +18,6 @@ from .context_processors import (
     ContextType,
     ContextCollectionType,
     ContextProcessor,
-    ModelFittingContextProcessor,
 )
 from .data_processors import (
     DataOperation,
@@ -47,7 +46,7 @@ from .inspection import (
     parameter_resolutions,
 )
 from .core import get_component_registry
-from .workflows import FittingModel
+from .workflows import FittingModel, ModelFittingContextProcessor
 
 __all__ = [
     "Pipeline",
