@@ -17,7 +17,8 @@ from semantiva.data_types import BaseDataType, DataCollectionType
 from semantiva.data_processors import DataOperation, DataProbe
 from semantiva.data_io import DataSource, PayloadSource, DataSink, PayloadSink
 from semantiva.pipeline import Payload
-
+from typing import Optional
+from semantiva.logger import Logger
 from semantiva.context_processors import ContextType
 
 
@@ -231,9 +232,9 @@ class FloatDataSink(DataSink[FloatDataType]):
     A DataSink for FloatDataType that simply stores the last data sent.
     """
 
-    def __init__(self, logger=None):
-        self.last_data_sent = None
-        self.logger = logger
+    def __init__(self, logger: Optional[Logger] = None):
+        super().__init__(logger)
+        self.last_data_sent: Optional[FloatDataType] = None
 
     def _send_data(self, data: FloatDataType, *args, **kwargs):
         # Keep track of the last data we received
@@ -250,10 +251,10 @@ class FloatPayloadSink(PayloadSink[FloatDataType]):
     A PayloadSink for FloatDataType that simply stores the last payload and context received.
     """
 
-    def __init__(self, logger=None):
-        self.last_payload = None
-        self.last_context = None
-        self.logger = logger
+    def __init__(self, logger: Optional[Logger] = None):
+        super().__init__(logger)
+        self.last_payload: Optional[BaseDataType] = None
+        self.last_context: Optional[ContextType] = None
 
     def _send_payload(self, payload: Payload, *args, **kwargs):
         # Store the payload for inspection

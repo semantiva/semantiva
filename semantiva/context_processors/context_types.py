@@ -31,11 +31,8 @@ class ContextType(_SemantivaComponent):
             context_dict (Optional[Dict], optional): A dictionary of initial context data.
                                                     Defaults to None, resulting in an empty context.
         """
+        super().__init__(logger)
         self._context_container = {} if context_dict is None else context_dict
-        if logger is not None:
-            self.logger = logger
-        else:
-            self.logger = Logger()
 
     def get_value(self, key: str) -> Any:
         """

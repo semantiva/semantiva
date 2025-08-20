@@ -42,7 +42,6 @@ class _PipelineNode(_PayloadProcessor):
 
     processor: _BaseDataProcessor | ContextProcessor
     processor_config: Dict
-    logger: Logger
 
     @abstractmethod
     def _process_single_item_with_context(self, payload: Payload) -> Payload:
@@ -81,7 +80,7 @@ class _DataNode(_PipelineNode):
             f"Initializing {self.__class__.__name__} ({processor.__name__})"
         )
         self.processor_config = {} if processor_config is None else processor_config
-        self.logger.info(f"self = {self}, logger = {self.logger}")
+        self.logger.debug(f"self = {self}, logger = {self.logger}")
         self.processor = (
             processor(self, self.logger)
             if issubclass(processor, DataOperation)
