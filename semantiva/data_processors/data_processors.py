@@ -106,6 +106,16 @@ class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
 
     @classmethod
     def run(cls, data, *args, **kwargs):
+        """Convenience method to instantiate and execute the processor.
+
+        Args:
+            data: The data to process.
+            *args: Additional positional arguments passed to :meth:`process`.
+            **kwargs: Additional keyword arguments passed to :meth:`process`.
+
+        Returns:
+            Any: The processed output.
+        """
         return cls().process(data, *args, **kwargs)
 
     def __call__(self, data: Any, *args, **kwargs) -> Any:
@@ -349,9 +359,9 @@ class OperationTopologyFactory:
             input_type: The expected input data type (subclass of ``BaseDataType``).
             output_type: The output data type (subclass of ``BaseDataType``).
             class_name: The name to give the generated class.
-            _process_logic: Function implementing ``_process_logic``. When
-                provided, the returned class will include this method and can be
-                used directly as a ``DataOperation``.
+            _process_logic: Optional implementation of ``_process_logic``. When
+                supplied, the returned class includes this method and can be used
+                directly as a ``DataOperation``.
 
         Returns:
             Type[DataOperation]: A new subclass of ``DataOperation`` with the
@@ -361,9 +371,11 @@ class OperationTopologyFactory:
         methods: dict[str, Any] = {}
 
         def input_data_type_method(cls) -> type[T_in]:
+            """Return the expected input data type for the generated class."""
             return input_type
 
         def output_data_type_method(cls) -> type[T_out]:
+            """Return the output data type produced by the generated class."""
             return output_type
 
         methods["input_data_type"] = classmethod(input_data_type_method)
