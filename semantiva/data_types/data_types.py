@@ -149,15 +149,16 @@ class DataCollectionType(BaseDataType[S], Generic[E, S]):
         Returns:
             Type[E]: The expected type of elements in the collection.
         """
-        # Attempt get_args(...) first to retrieve type arguments for classes that are
-        # fully parameterized at runtime. This covers most modern Python generics.        args = get_args(cls)
+        # Attempt to retrieve type arguments for classes that are fully
+        # parameterized at runtime. This covers most modern Python generics.
         args = get_args(cls)
         if args:
             return args[0]  # First argument should be `E`
 
-        # If get_args(...) yields no results, fallback to scanning __orig_bases__.
-        # In certain mypy or older Python generics scenarios, type parameters are
-        # registered there rather than in get_args(...).
+        # If ``get_args`` yields no results, fall back to scanning
+        # ``__orig_bases__``. In certain mypy or older Python generics
+        # scenarios, type parameters are registered there rather than in
+        # ``get_args``.
         for base in getattr(cls, "__orig_bases__", []):
             base_args = get_args(base)
             if base_args:
