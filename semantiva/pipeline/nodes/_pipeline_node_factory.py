@@ -61,7 +61,7 @@ class _PipelineNodeFactory:
     ) -> Type:
         """
         Dynamically create a subclass of `base_cls` whose namespace is
-        pre‑populated with `class_attrs`.
+        pre-populated with `class_attrs`.
         """
         return new_class(
             name,
@@ -297,7 +297,7 @@ class _PipelineNodeFactory:
         context_keyword: str,
         **processor_kwargs,
     ) -> _DataOperationContextInjectorProbeNode:
-        """Wrap a :class:`DataOperation` in a context‑injecting probe node."""
+        """Wrap a :class:`DataOperation` in a context-injecting probe node."""
 
         if (
             not isinstance(processor_cls, type)
