@@ -122,21 +122,22 @@ class _PayloadProcessor(_ContextObserver):
     def _process(self, payload: Payload) -> Payload: ...
 
     def process(self, payload: Payload | None = None) -> Payload:
-        """
-        Public method to execute the payload processing logic.
+        """Execute a data processor on a payload.
 
-        This method serves as an entry point to invoke the concrete implementation
-        of the `_process` method, which must be defined in subclasses.
+        If no payload is provided, a new :class:`~semantiva.pipeline.payload.Payload`
+        containing :class:`~semantiva.data_types.NoDataType` and an empty
+        :class:`~semantiva.context_processors.ContextType` is created. Subclasses
+        must implement :meth:`_process`, which receives the normalized payload and
+        returns the processed payload.
 
         Args:
-            *args: Variable-length positional arguments to be passed to the `_process` method.
-            **kwargs: Variable-length keyword arguments to be passed to the `_process` method.
+            payload: Payload to process. If ``None`` an empty payload is created.
 
         Returns:
-            Any: The result of the `_process` method, as determined by the subclass implementation.
+            Payload: The processed payload returned by :meth:`_process`.
 
         Raises:
-            NotImplementedError: If the `_process` method is not implemented in a subclass.
+            NotImplementedError: If :meth:`_process` is not implemented in a subclass.
         """
         if payload is None:
             payload = Payload(NoDataType(), ContextType())
