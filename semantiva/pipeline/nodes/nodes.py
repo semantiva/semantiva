@@ -326,9 +326,9 @@ class _PayloadSourceNode(_DataNode):
         data = payload.data
         context = payload.context
         # Save the current context to be used by the processor
-        self.observer_context = context
-        parameters = self._get_processor_parameters(self.observer_context)
-        loaded_data, loaded_context = self.processor.process(data, **parameters)
+        parameters = self._get_processor_parameters(payload.context)
+        loaded_data = self.processor.process(data, **parameters)
+        loaded_context = self.observer_context
 
         # Merge context and loaded_context
         for key, value in loaded_context.items():
@@ -532,7 +532,7 @@ class _DataSourceNode(_DataNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            assert hasattr(cls.processor, "_get_data")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
@@ -611,7 +611,9 @@ class _DataOperationNode(_DataNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            # DataOperation subclasses expose input/output data type classmethods
+            assert hasattr(cls.processor, "input_data_type")
+            assert hasattr(cls.processor, "output_data_type")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
@@ -782,7 +784,8 @@ class _ProbeContextInjectorNode(_ProbeNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            # Probe processors expose an input_data_type classmethod
+            assert hasattr(cls.processor, "input_data_type")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
@@ -870,7 +873,7 @@ class _ProbeResultCollectorNode(_ProbeNode):
         Args:
             processor (Type[DataProbe]): The data probe class for this node.
             processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
-            logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
+            logger (Optional[Logger]): A logger instance for diagnostic output. Defaults to None.
         """
         super().__init__(processor, processor_parameters, logger)
         self._probed_data: List[Any] = []
@@ -884,7 +887,8 @@ class _ProbeResultCollectorNode(_ProbeNode):
 
         try:
             excluded_parameters = ["self", "data"]
-            assert hasattr(cls.processor, "_send_data")
+            # Probe processors expose an input_data_type classmethod
+            assert hasattr(cls.processor, "input_data_type")
             component_metadata["wrapped_component"] = getattr(
                 cls.processor, "__name__", type(cls.processor).__name__
             )
