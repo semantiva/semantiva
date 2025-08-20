@@ -15,6 +15,7 @@
 from pprint import pprint
 
 from semantiva.examples.test_utils import (
+    FloatDataType,
     FloatDataSource,
     FloatPayloadSource,
     FloatDataSink,
@@ -57,9 +58,20 @@ def test_datasink_semantic_metadata():
 def test_payloadsink_semantic_metadata():
     """Test the semantic metadata of the PayloadSink"""
     print_metadata(FloatPayloadSink)
+
+    # Test the metadata returned by _define_metadata()
+    metadata = FloatPayloadSink._define_metadata()
+    assert metadata is not None
+    assert isinstance(metadata, dict)
+    assert "component_type" in metadata
+
+    # Test the metadata returned by get_metadata()
     assert FloatPayloadSink.get_metadata()["input_data_type"] == "FloatDataType"
     # Verify that 'payload' is not listed as a required parameter
     assert FloatPayloadSink.get_metadata()["parameters"] == "None"
+
+    # Verify that the component properly reports its data type capabilities
+    assert FloatPayloadSink.input_data_type() == FloatDataType
 
 
 def test_float_multiply_operation_semantic_metadata():
