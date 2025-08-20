@@ -18,7 +18,6 @@ This repository houses the Semantiva framework, a dual-channel pipeline system t
   * **logger/** - Configurable logging helpers.
   * **pipeline/** - Pipeline orchestration, node definitions, and `NodeFactory` for dynamic node creation.
   * **tools/** - Command-line utilities (e.g., ontology export, pipeline inspector).
-  * **utils/** - General-purpose helper functions.
   * **workflows/** - Predefined workflow examples (e.g., model fitting).
 * **tests/** - Pytest suite covering processors, nodes, and pipeline behaviors.
 
