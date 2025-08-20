@@ -47,6 +47,7 @@ Here is the updated changelog with the missing items included and the requested 
   - **Multiple Report Formats**: Unified data drives `summary_report()`, `extended_report()`, `json_report()`, and `parameter_resolutions()`
   - **Invalid Configuration Support**: Can inspect and analyze partially valid or completely invalid pipeline configurations
   - **Post-Inspection Validation**: New `validate_pipeline()` function operates on inspection data, enabling validation as separate step
+- Moved `ModelFittingContextProcessor` from `semantiva/context_processors` to `semantiva/workflows` to separate generic context-processor logic from domain-specific workflows.
 - Renamed specialization API to extension API:
   - `load_specializations()` → `load_extensions()`
   - `SemantivaSpecialization` → `SemantivaExtension`

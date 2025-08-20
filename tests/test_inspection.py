@@ -16,7 +16,7 @@
 
 This test suite validates the new modular inspection architecture including:
 - Error-resilient inspection building
-- Multiple report format generation  
+- Multiple report format generation
 - Parameter origin tracking and resolution
 - Validation of invalid configurations
 - Integration between builder, reporter, and validator components
