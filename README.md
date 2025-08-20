@@ -74,6 +74,14 @@ Semantiva pipelines are defined declaratively via YAML. Users implement processo
 
 ## Getting Started with Semantiva
 
+### Run from CLI
+
+```bash
+semantiva run semantiva/examples/simple_pipeline.yaml
+semantiva run semantiva/examples/simple_pipeline.yaml --validate
+semantiva run semantiva/examples/simple_pipeline.yaml --dry-run
+```
+
 To quickly dive into Semantiva, explore the following resources:
 
 - **Advanced Workflow Demo:**  

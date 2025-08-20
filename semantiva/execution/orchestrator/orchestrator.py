@@ -119,8 +119,8 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
         context = payload.context
         for index, node in enumerate(nodes, start=1):
             # Log which processor is being executed
-            logger.debug(
-                f"Orchestrator executing node {index}: {node.processor.__class__.__name__}"
+            logger.info(
+                f"Running node {index}: {node.processor.__class__.__name__}"
             )
             # Run the node’s processing logic (possibly via executor)
             # Note: default implementation ignores executor and calls node.process directly
