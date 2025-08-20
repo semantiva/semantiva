@@ -64,11 +64,12 @@ def load_pipeline_from_yaml(yaml_file: str) -> List[Dict[str, Any]]:
         yaml_file: Path to the YAML file containing the pipeline configuration.
 
     Returns:
-        A list of dictionaries, where each dictionary represents a single
-        pipeline node configuration. Each node dict typically contains:
-        - 'processor': The name/type of the processor to instantiate
-        - 'parameters': Optional dict of parameters for the processor
-        - Other node-specific configuration keys
+        List[Dict[str, Any]]: A list of dictionaries, where each dictionary
+            represents a single pipeline node configuration. Each node dict
+            typically contains:
+            - 'processor': The name/type of the processor to instantiate
+            - 'parameters': Optional dict of parameters for the processor
+            - Other node-specific configuration keys
 
     Raises:
         ValueError: If the YAML file is missing required structure:
@@ -81,8 +82,8 @@ def load_pipeline_from_yaml(yaml_file: str) -> List[Dict[str, Any]]:
     YAML Structure:
         The function expects this structure:
         ```yaml
-        # Optional extension (top-level or under pipeline)
-        extension: ["package1", "package2"] | "single_package"
+        # Optional extensions (top-level or under pipeline)
+        extensions: ["package1", "package2"] | "single_package"
 
         pipeline:
           nodes:
