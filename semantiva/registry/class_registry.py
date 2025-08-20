@@ -29,8 +29,8 @@ Custom Resolver System
 The registry supports pluggable resolvers via the `register_resolver` API. A
 resolver is a callable that takes a class name string and returns a class type
 (or None if it does not handle the name). This allows the registry to support
-arbitrary prefixes (e.g., `rename:`, `delete:`, `slicer:`, `sweep:`) without 
-modifying core logic. New resolvers can be registered at runtime, enabling 
+arbitrary prefixes (e.g., `rename:`, `delete:`, `slicer:`, `sweep:`) without
+modifying core logic. New resolvers can be registered at runtime, enabling
 extensibility for future processor types or domain-specific behaviors.
 
 How Resolution Works
@@ -96,7 +96,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, cast
 
 from semantiva.logger import Logger
 from semantiva.data_processors.data_processors import _BaseDataProcessor
-from semantiva.data_processors.data_slicer_factory import Slicer
+from semantiva.data_processors.data_slicer_factory import slicer
 from semantiva.data_processors.parametric_sweep_factory import ParametricSweepFactory
 from semantiva.data_io.data_io import DataSource
 from semantiva.data_types.data_types import DataCollectionType
@@ -121,7 +121,7 @@ class ClassRegistry:
     _registered_paths: Set[Path] = set()
     _registered_modules: Set[str] = set()
     _custom_resolvers: List[Callable[[str], Optional[type]]] = []
-    _param_resolvers: List[Callable[[Any], Any | None]] = []
+    _param_resolvers: List[Callable[[Any], Optional[Any]]] = []
 
     @classmethod
     def initialize_default_modules(cls) -> None:
@@ -151,7 +151,9 @@ class ClassRegistry:
         cls._custom_resolvers.append(resolver_fn)
 
     @classmethod
-    def register_param_resolver(cls, resolver_fn: Callable[[Any], Any | None]) -> None:
+    def register_param_resolver(
+        cls, resolver_fn: Callable[[Any], Optional[Any]]
+    ) -> None:
         """Register a resolver for parameter values.
 
         Resolvers are called for every string parameter encountered while
@@ -448,7 +450,7 @@ class ClassRegistry:
     @classmethod
     def _get_class_from_module(
         cls, module_name: str, class_name: str
-    ) -> type[ContextProcessor] | type[_BaseDataProcessor] | None:
+    ) -> Optional[type[ContextProcessor | _BaseDataProcessor]]:
         """Lookup in registered modules for the class and
         return its type. If module is not found, return None.
 
@@ -457,7 +459,7 @@ class ClassRegistry:
             class_name (str): The class name of the context processor or base data processor.
 
         Returns:
-            ContextProcessor | _BaseDataProcessor | None: The type of the ContextProcessor or _BaseDataProcessor. If not found, returns None.
+            Optional[type[ContextProcessor | _BaseDataProcessor]]: The type of the ContextProcessor or _BaseDataProcessor. If not found, returns None.
 
         """
 
@@ -471,7 +473,7 @@ class ClassRegistry:
     @classmethod
     def _get_class_from_file(
         cls, file_path: Path, class_name: str
-    ) -> type[ContextProcessor] | type[_BaseDataProcessor] | None:
+    ) -> Optional[type[ContextProcessor | _BaseDataProcessor]]:
         """Lookup in registered paths for the class and return its type.
 
         Args:
@@ -541,7 +543,7 @@ def _slicer_resolver(name: str) -> Optional[type]:
                 )
             processor_t = cast(type[_BaseDataProcessor], processor_cls)
             collection_t = cast(type[DataCollectionType], collection_cls)
-            return Slicer(processor_t, collection_t)
+            return slicer(processor_t, collection_t)
     return None
 
 
@@ -559,7 +561,7 @@ def _parse_scalar(value: str) -> Any:
             return value
 
 
-def _model_param_resolver(spec: Any) -> FittingModel | None:
+def _model_param_resolver(spec: Any) -> Optional[FittingModel]:
     """Instantiate fitting models from ``model:``-prefixed specs.
 
     The expected format is ``model:ClassName:k1=v1,k2=v2``.  The class name is

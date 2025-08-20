@@ -24,7 +24,7 @@ or distributed orchestrators.
 """
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from semantiva.pipeline.payload import Payload
 from semantiva.execution.executor.executor import (
@@ -80,7 +80,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
     but you can inject any SemantivaExecutor (e.g. thread pool, Ray).
     """
 
-    def __init__(self, executor: SemantivaExecutor | None = None):
+    def __init__(self, executor: Optional[SemantivaExecutor] = None):
         """
         Initialize the orchestrator.
 

@@ -21,6 +21,15 @@ distribution = true
 max-line-length = 120  
 fail-under = 7.5
 
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F"]
+extend-ignore = ["E501"]
+
 [tool.mypy]
 exclude = [
     "docs/", 
@@ -40,6 +49,7 @@ dev = [
     "mypy >=1.14.1",
     "pylint >=3.3.3",
     "pytest >=8.3.4",
+    "ruff >=0.1.13",
     "coverage",
     "types-PyYAML",
 ]

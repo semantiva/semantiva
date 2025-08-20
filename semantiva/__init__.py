@@ -24,7 +24,7 @@ from .data_processors import (
     DataOperation,
     DataProbe,
     OperationTopologyFactory,
-    Slicer,
+    slicer,
 )
 from .data_io import (
     DataSource,
@@ -59,7 +59,7 @@ __all__ = [
     "DataOperation",
     "DataProbe",
     "OperationTopologyFactory",
-    "Slicer",
+    "slicer",
     "ContextType",
     "ContextCollectionType",
     "ContextProcessor",
