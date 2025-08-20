@@ -27,6 +27,17 @@ class FloatDataType(BaseDataType[float]):
     """A simple data type that holds a float value."""
 
     def validate(self, data: float) -> bool:
+        """Check that ``data`` is a ``float``.
+
+        Args:
+            data: Value to validate.
+
+        Returns:
+            bool: ``True`` if the value is a float.
+
+        Raises:
+            TypeError: If ``data`` is not a float.
+        """
         if not isinstance(data, float):
             raise TypeError("Data must be a float")
         return True
