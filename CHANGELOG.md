@@ -39,6 +39,9 @@ Here is the updated changelog with the missing items included and the requested 
 - **Documentation**: Added a docstring audit to the documentation build to track coverage
 
 - Introduced `semantiva` command-line interface with a `run` subcommand for executing pipeline YAML files
+- New CLI capabilities:
+  - `inspect` subcommand for summary or extended pipeline reports
+  - `--context` flag on `run` for injecting initial context key–value pairs
 ### Changed
 - **Refactored Pipeline Introspection System**: Replaced `PipelineInspector` with modular inspection architecture
   - **New Inspection Module** (`semantiva.inspection`): Introduces builder/reporter/validator separation of concerns
