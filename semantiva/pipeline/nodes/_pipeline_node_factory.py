@@ -106,9 +106,13 @@ class _PipelineNodeFactory:
                 processor, parameters, logger
             )
         if issubclass(processor, DataSink):
-            return _PipelineNodeFactory.create_data_sink_node(processor, parameters)
+            return _PipelineNodeFactory.create_data_sink_node(
+                processor, parameters, logger
+            )
         if issubclass(processor, PayloadSink):
-            return _PipelineNodeFactory.create_payload_sink_node(processor, parameters)
+            return _PipelineNodeFactory.create_payload_sink_node(
+                processor, parameters, logger
+            )
 
         raise ValueError(
             "Unsupported processor. Processor must be of type DataOperation, DataProbe, DataSource, PayloadSource, DataSink, or PayloadSink."
@@ -146,7 +150,9 @@ class _PipelineNodeFactory:
 
     @staticmethod
     def create_payload_sink_node(
-        data_io_class: Type[PayloadSink], parameters: Optional[Dict] = None
+        data_io_class: Type[PayloadSink],
+        parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
     ) -> _PayloadSinkNode:
         """Factory function to create an extended _PayloadSinkNode.
         This function dynamically creates a subclass of _PayloadSinkNode
@@ -165,11 +171,15 @@ class _PipelineNodeFactory:
             base_cls=_PayloadSinkNode,
             processor=data_io_class,
         )
-        return node_class(processor=processor, processor_parameters=parameters)
+        return node_class(
+            processor=processor, processor_parameters=parameters, logger=logger
+        )
 
     @staticmethod
     def create_data_sink_node(
-        data_io_class: Type[DataSink], parameters: Optional[Dict] = None
+        data_io_class: Type[DataSink],
+        parameters: Optional[Dict] = None,
+        logger: Optional[Logger] = None,
     ) -> _DataSinkNode:
         """Factory function to create an extended _DataSinkNode.
         This function dynamically creates a subclass of _DataSinkNode
@@ -189,7 +199,9 @@ class _PipelineNodeFactory:
             processor=data_io_class,
         )
 
-        return node_class(processor=processor, processor_parameters=parameters)
+        return node_class(
+            processor=processor, processor_parameters=parameters, logger=logger
+        )
 
     @staticmethod
     def create_data_source_node(
