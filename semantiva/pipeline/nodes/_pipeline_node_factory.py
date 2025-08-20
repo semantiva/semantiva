@@ -136,7 +136,7 @@ class _PipelineNodeFactory:
         processor = _IOOperationFactory.create_data_operation(data_io_class)
 
         node_class = _PipelineNodeFactory._create_class(
-            name="_PayloadSourceNode",
+            name=f"{data_io_class.__name__}_PayloadSourceNode",
             base_cls=_PayloadSourceNode,
             processor=data_io_class,
         )
@@ -211,7 +211,7 @@ class _PipelineNodeFactory:
         processor = _IOOperationFactory.create_data_operation(data_io_class)
 
         node_class = _PipelineNodeFactory._create_class(
-            name="_DataSourceNode",
+            name=f"{data_io_class.__name__}_DataSourceNode",
             base_cls=_DataSourceNode,
             processor=data_io_class,
         )
