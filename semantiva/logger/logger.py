@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Logging utilities for Semantiva.
+
+All `_SemantivaComponent` subclasses accept an optional ``logger`` argument. When
+omitted, a new :class:`Logger` from this module is created automatically.
+"""
+
 import sys
 import logging
 from typing import Optional
@@ -91,8 +97,10 @@ class Logger:
         """
 
         self.formatter = formatter or DEFAULT_FORMATTER
+        # Persist the intended logger name so pickling roundtrip can restore identically
+        self.name = name or "Semantiva"
         if logger is None:
-            self.logger = logging.getLogger(name)
+            self.logger = logging.getLogger(self.name)
         else:
             self.logger = logger
 
@@ -203,6 +211,8 @@ class Logger:
         """
         state = self.__dict__.copy()
         state["logger"] = None
+        # Ensure name is included explicitly
+        state.setdefault("name", getattr(self.logger, "name", "Semantiva"))
         return state
 
     def __setstate__(self, state):
@@ -212,6 +222,5 @@ class Logger:
         The logger is recreated using the stored name (or "Semantiva" by default).
         """
         self.__dict__.update(state)
-        # Use __dict__ to get name, fallback to "Semantiva"
         logger_name = self.__dict__.get("name", "Semantiva")
         self.__dict__["logger"] = logging.getLogger(logger_name)

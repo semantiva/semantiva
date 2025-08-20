@@ -15,6 +15,7 @@
 from abc import abstractmethod
 from typing import Dict, Any, Type, TypeVar, Generic, Iterator, get_args, Optional
 from semantiva.core.semantiva_component import _SemantivaComponent
+from semantiva.logger import Logger
 
 T = TypeVar("T")
 
@@ -32,13 +33,15 @@ class BaseDataType(_SemantivaComponent, Generic[T]):
 
     _data: T
 
-    def __init__(self, data: T):
+    def __init__(self, data: T, logger: Optional[Logger] = None):
         """
         Initialize the BaseDataType with the provided data.
 
         Args:
             data (T): The data to be encapsulated by this data type.
+            logger (Optional[Logger]): Optional logger instance.
         """
+        super().__init__(logger)
         self.validate(data)
         self._data = data
 
