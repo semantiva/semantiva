@@ -12,8 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .fitting_model import FittingModel
+from .fitting_model import (
+    FittingModel,
+    ModelFittingContextProcessor,
+    PolynomialFittingModel,
+)
 
 __all__ = [
     "FittingModel",
+    "ModelFittingContextProcessor",
+    "PolynomialFittingModel",
 ]

@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .context_processors import ContextProcessor, ModelFittingContextProcessor
+from .context_processors import ContextProcessor
 from .context_types import ContextType, ContextCollectionType
 
 __all__ = [
     "ContextProcessor",
-    "ModelFittingContextProcessor",
     "ContextType",
     "ContextCollectionType",
 ]
