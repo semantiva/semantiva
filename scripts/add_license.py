@@ -17,7 +17,6 @@
 and report a summary of changes."""
 
 import os
-import re
 from scripts import HEADER, HEADER_PATTERN, INCLUDE_DIRS, EXTENSIONS
 
 

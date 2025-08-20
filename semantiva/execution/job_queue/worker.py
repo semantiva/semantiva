@@ -89,7 +89,6 @@ def worker_loop(
                 job_id = msg.metadata.get("job_id") or "<unknown>"
                 worker_logger.info(f"Picked up job {job_id}")
 
-                payload = msg.data
                 # Optional debug output of the raw Message
                 worker_logger.debug(f"Worker {job_id} received message: {msg}")
 
