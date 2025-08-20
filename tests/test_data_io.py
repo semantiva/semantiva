@@ -141,3 +141,36 @@ def test_payloadsink_no_payload_in_context_params():
     assert (
         "payload" not in context_params
     ), "PayloadSink should not require 'payload' as a context parameter"
+
+
+def test_payloadsink_in_pipeline_metadata():
+    """Test that PayloadSink metadata is correctly reported in pipeline inspection."""
+    from semantiva.inspection import build_pipeline_inspection, summary_report
+
+    # Create a simple pipeline with a source and payload sink
+    pipeline_config = [
+        {"processor": FloatPayloadSource, "parameters": {}},
+        {"processor": FloatPayloadSink, "parameters": {}},
+    ]
+
+    # Get pipeline inspection
+    inspection = build_pipeline_inspection(pipeline_config)
+
+    # Find the sink node in inspection
+    sink_node = None
+    for node in inspection.nodes:
+        if "FloatPayloadSink" in node.processor_class:
+            sink_node = node
+            break
+
+    assert sink_node is not None, "PayloadSink node not found in pipeline inspection"
+
+    # Verify metadata contains correct input data type
+    assert (
+        sink_node.input_type == FloatDataType
+    ), f"Expected FloatDataType as input data type, got: {sink_node.input_type}"
+
+    # Verify that input data type is not None
+    assert (
+        sink_node.input_type is not None
+    ), "Input data type should not be None for FloatPayloadSink"
