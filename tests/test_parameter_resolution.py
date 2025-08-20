@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-from semantiva import Pipeline
 from semantiva.inspection import (
     build_pipeline_inspection,
     parameter_resolutions,

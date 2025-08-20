@@ -18,7 +18,9 @@
 from typing import TYPE_CHECKING
 
 from semantiva.data_types import BaseDataType
+from semantiva.pipeline import Pipeline, Payload
 from semantiva.context_processors.context_types import ContextType
+from semantiva.data_processors import DataOperation, OperationTopologyFactory
 
 
 class StringLiteralDataType(BaseDataType):
@@ -51,7 +53,6 @@ class StringLiteralDataType(BaseDataType):
 #########################
 # Step 2: Create a Specialized StringLiteralOperation Using OperationTopologyFactory
 #########################
-from semantiva.data_processors import DataOperation, OperationTopologyFactory
 
 if TYPE_CHECKING:
 
@@ -113,7 +114,6 @@ node_configurations = [
 #########################
 # Step 5: Instantiate and Use the Pipeline
 #########################
-from semantiva.pipeline import Pipeline, Payload
 
 if __name__ == "__main__":
     # 1. Initialize the minimal pipeline with our node configurations
