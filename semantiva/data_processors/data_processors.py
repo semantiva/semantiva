@@ -48,13 +48,8 @@ class ParameterInfo:
 class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
     """Abstract base class for data processing algorithms in Semantiva."""
 
-    logger: Optional[Logger]
-
     def __init__(self, logger: Optional[Logger] = None):
-        if logger:
-            self.logger = logger
-        else:
-            self.logger = Logger()
+        super().__init__(logger)
 
     @classmethod
     @abstractmethod

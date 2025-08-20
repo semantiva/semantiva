@@ -26,10 +26,8 @@ class ContextProcessor(_SemantivaComponent):
     Base class for performing context operations.
     """
 
-    logger: Logger
-
     def __init__(self, logger: Optional[Logger] = None):
-        self.logger = logger if logger else Logger()
+        super().__init__(logger)
 
     @abstractmethod
     def _process_logic(self, context: ContextType) -> ContextType:
@@ -137,8 +135,8 @@ class ModelFittingContextProcessor(ContextProcessor):
         dependent_var_key: Union[str, Tuple[str, str], List[str]],
         context_keyword: str,
     ) -> None:
-        self.logger = logger if logger else Logger()
-        self.logger.info(f"Initializing {self.__class__.__name__}")
+        super().__init__(logger)
+        self.logger.debug(f"Initializing {self.__class__.__name__}")
         self.fitting_model: FittingModel = fitting_model
         self.independent_var_key = independent_var_key
         self.context_keyword = context_keyword

@@ -112,18 +112,11 @@ class Stopwatch:
 class _PayloadProcessor(_ContextObserver):
     """Base class for payload processing operations with integrated data and context management."""
 
-    logger: Logger
     stop_watch: Stopwatch
 
     def __init__(self, logger: Optional[Logger] = None):
-        super().__init__()
+        super().__init__(logger)
         self.stop_watch = Stopwatch()
-        if logger:
-            # If a logger instance is provided, use it
-            self.logger = logger
-        else:
-            # If no logger is provided, create a new Logger instance
-            self.logger = Logger()
 
     @abstractmethod
     def _process(self, payload: Payload) -> Payload: ...
@@ -149,6 +142,15 @@ class _PayloadProcessor(_ContextObserver):
             payload = Payload(NoDataType(), ContextType())
         elif isinstance(payload.context, dict):
             payload = Payload(payload.data, ContextType(payload.context))
+        # Normalize None data to NoDataType if the expected input type is NoDataType.
+        # This provides ergonomic semantics where callers can pass `None` in place of an explicit
+        # `NoDataType()` instance when invoking sources or operations that declare they consume no data.
+        try:
+            expected_input_type = getattr(self, "input_data_type", lambda: None)()
+        except Exception:  # pragma: no cover - defensive
+            expected_input_type = None
+        if payload.data is None and expected_input_type is NoDataType:
+            payload = Payload(NoDataType(), payload.context)
         self.stop_watch.start()
         result = self._process(payload)
         self.stop_watch.stop()

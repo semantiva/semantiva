@@ -91,6 +91,11 @@ Here is the updated changelog with the missing items included and the requested 
   - File `Semantiva/specializations/specialization_loader.py` → `semantiva/registry/plugin_registry.py`
   - File `Semantiva/component_loader/component_loader.py` → `semantiva/registry/class_registry.py`
   - Moved `context_renamer_factory` and `context_deleter_factory` functions from `component_loader.py` to `context_processor/factory.py`
+- Centralized logger initialization in `_SemantivaComponent` and updated subclasses to call `super().__init__(logger)`
+  - Factory propagation fixes: pipeline node factories were updated to forward explicit `Logger` instances to all generated node types (including `DataSink` / `PayloadSink`) so node and wrapped processor share the same logger instance.
+- Payload processing ergonomics: `_PayloadProcessor.process()` now normalizes `None` into a `NoDataType()` instance when the expected input type is `NoDataType`, simplifying callers and tests.
+- Logger pickling behavior: `Logger` persists an explicit `name` attribute and restores the underlying stdlib logger by name during unpickling so roundtrips preserve configured identity and level.
+
 
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories
