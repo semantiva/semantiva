@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from abc import abstractmethod
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, Tuple
 from semantiva.context_processors.context_types import ContextType
 from semantiva.workflows.fitting_model import FittingModel
 from semantiva.data_types.data_types import BaseDataType
@@ -131,12 +131,12 @@ class ModelFittingContextProcessor(ContextProcessor):
 
     def __init__(
         self,
-        logger,
-        fitting_model,
-        independent_var_key,
-        dependent_var_key: Union[str, tuple, list],
+        logger: Optional[Logger],
+        fitting_model: FittingModel,
+        independent_var_key: str,
+        dependent_var_key: Union[str, Tuple[str, str], List[str]],
         context_keyword: str,
-    ):
+    ) -> None:
         self.logger = logger if logger else Logger()
         self.logger.info(f"Initializing {self.__class__.__name__}")
         self.fitting_model: FittingModel = fitting_model
@@ -145,7 +145,7 @@ class ModelFittingContextProcessor(ContextProcessor):
 
         if isinstance(dependent_var_key, (tuple, list)):
             self.dependent_var_key = dependent_var_key[0]
-            self.dependent_var_subkey = dependent_var_key[1]
+            self.dependent_var_subkey: Optional[str] = dependent_var_key[1]
         else:
             self.dependent_var_key = dependent_var_key
             self.dependent_var_subkey = None

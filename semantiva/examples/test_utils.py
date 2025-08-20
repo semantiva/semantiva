@@ -149,14 +149,14 @@ class FloatBasicProbe(FloatProbe):
 
 
 class FloatCollectionSumOperation(FloatCollectionMergeOperation):
-    """Sum all FloatDataType items in a FloatDataCollection."""
+    """Sum all items in a FloatDataCollection."""
 
     def _process_logic(self, data, *args, **kwargs):
         return FloatDataType(sum(item.data for item in data.data))
 
 
 class FloatCollectValueProbe(FloatProbe):
-    """Collect the value of the input."""
+    """A probe that collects the value of the input."""
 
     def _process_logic(self, data, *args, **kwargs):
         return data.data
@@ -175,7 +175,7 @@ class FloatMockDataSource(DataSource):
 
 
 class FloatMockDataSink(DataSink):
-    """A Mock Datasink for FloatDataType data."""
+    """A Mock Datasink for FloatDataType data that does nothing."""
 
     def _send_data(self, data: BaseDataType, path: str, *args, **kwargs):
         return
@@ -192,8 +192,7 @@ class FloatMockDataSink(DataSink):
 
 class FloatDataSource(DataSource):
     """
-    Concrete implementation of DataSource
-    providing FloatDataType data.
+    A DataSource that outputs 123.0 as a FloatDataType.
     """
 
     @classmethod
@@ -209,8 +208,7 @@ class FloatDataSource(DataSource):
 
 class FloatPayloadSource(PayloadSource):
     """
-    Concrete implementation of PayloadSource
-    providing (FloatDataType, ContextType) as payload.
+    A PayloadSource for FloatDataType that provides 456.0 and an empty context as payload.
     """
 
     def _get_payload(self, *args, **kwargs) -> Payload:
@@ -230,12 +228,12 @@ class FloatPayloadSource(PayloadSource):
 
 class FloatDataSink(DataSink[FloatDataType]):
     """
-    Concrete implementation of DataSink
-    accepting FloatDataType data.
+    A DataSink for FloatDataType that simply stores the last data sent.
     """
 
-    def __init__(self):
+    def __init__(self, logger=None):
         self.last_data_sent = None
+        self.logger = logger
 
     def _send_data(self, data: FloatDataType, *args, **kwargs):
         # Keep track of the last data we received
@@ -249,13 +247,13 @@ class FloatDataSink(DataSink[FloatDataType]):
 
 class FloatPayloadSink(PayloadSink[FloatDataType]):
     """
-    Concrete implementation of PayloadSink
-    accepting (FloatDataType, ContextType).
+    A PayloadSink for FloatDataType that simply stores the last payload and context received.
     """
 
-    def __init__(self):
+    def __init__(self, logger=None):
         self.last_payload = None
         self.last_context = None
+        self.logger = logger
 
     def _send_payload(self, payload: Payload, *args, **kwargs):
         # Store the payload for inspection
