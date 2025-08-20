@@ -38,6 +38,7 @@ Here is the updated changelog with the missing items included and the requested 
 - Introduced metadata and node interface contract tests to enforce component expectations
 - **Documentation**: Added a docstring audit to the documentation build to track coverage
 
+- Introduced `semantiva` command-line interface with a `run` subcommand for executing pipeline YAML files
 ### Changed
 - **Refactored Pipeline Introspection System**: Replaced `PipelineInspector` with modular inspection architecture
   - **New Inspection Module** (`semantiva.inspection`): Introduces builder/reporter/validator separation of concerns

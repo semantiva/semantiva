@@ -97,10 +97,8 @@ class Logger:
         """
 
         self.formatter = formatter or DEFAULT_FORMATTER
-        # Persist the intended logger name so pickling roundtrip can restore identically
-        self.name = name or "Semantiva"
         if logger is None:
-            self.logger = logging.getLogger(self.name)
+            self.logger = logging.getLogger(name)
         else:
             self.logger = logger
 
@@ -139,11 +137,12 @@ class Logger:
             return
         previous_level = self.logger.level
         self.logger.setLevel(self.verbosity_map[verbosity_level])
-        self.logger.info(
-            "Logger verbosity level changed from %s to %s.",
-            logging.getLevelName(previous_level),
-            verbosity_level,
-        )
+        if previous_level != self.logger.level:
+            self.logger.info(
+                "Logger verbosity level changed from %s to %s.",
+                logging.getLevelName(previous_level),
+                verbosity_level,
+            )
 
     def set_console_output(self, enable=True) -> None:
         """
@@ -211,8 +210,6 @@ class Logger:
         """
         state = self.__dict__.copy()
         state["logger"] = None
-        # Ensure name is included explicitly
-        state.setdefault("name", getattr(self.logger, "name", "Semantiva"))
         return state
 
     def __setstate__(self, state):
@@ -222,5 +219,6 @@ class Logger:
         The logger is recreated using the stored name (or "Semantiva" by default).
         """
         self.__dict__.update(state)
+        # Use __dict__ to get name, fallback to "Semantiva"
         logger_name = self.__dict__.get("name", "Semantiva")
         self.__dict__["logger"] = logging.getLogger(logger_name)

@@ -12,6 +12,9 @@ dependencies = [
 ]
 distribution = true
 
+[project.scripts]
+semantiva = "semantiva.cli:main"
+
 [tool.black]
 # Configuration for the black code formatter
 
