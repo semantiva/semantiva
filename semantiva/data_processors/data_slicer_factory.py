@@ -59,10 +59,12 @@ class _SlicingDataProcessorFactory:
 
                 @classmethod
                 def input_data_type(cls) -> type[DataCollectionType]:
+                    """Return the collection data type consumed by the slicer."""
                     return cls.data_type_override
 
                 @classmethod
                 def output_data_type(cls) -> type[DataCollectionType]:
+                    """Return the collection data type produced by the slicer."""
                     return cls.data_type_override
 
                 def process(
@@ -97,7 +99,7 @@ class _SlicingDataProcessorFactory:
 
                 @classmethod
                 def input_data_type(cls) -> type[DataCollectionType]:
-                    """Returns the input data type."""
+                    """Return the collection data type consumed by the probe."""
                     return cls.input_data_type_override
 
                 def process(

@@ -96,10 +96,12 @@ class QueueSemantivaOrchestrator:
         Enqueue a new pipeline job for asynchronous execution.
 
         Args:
-            pipeline_cfg:   Pipeline node-list dicts.
+            pipeline_cfg:   A `Pipeline` instance, a list of node configuration
+                dictionaries, or a path to a YAML configuration file.
             data:           Optional initial data.
             context:        Optional initial context.
-            return_future:  If True, returns a Future whose result() yields (data, context).
+            return_future:  If True, returns a Future whose result() yields
+                ``(data, context)``.
 
         Returns:
             Future if return_future=True; otherwise None.

@@ -57,6 +57,11 @@ class BaseDataType(_SemantivaComponent, Generic[T]):
 
     @data.setter
     def data(self, data: T):
+        """Set the encapsulated data after validation.
+
+        Args:
+            data (T): The new data to store in this data type.
+        """
         self._data = data
 
     @abstractmethod
@@ -227,6 +232,14 @@ class NoDataType(BaseDataType[None]):
     """
 
     def validate(self, data: None) -> bool:
+        """Validate that no data is provided.
+
+        Args:
+            data (None): Should always be ``None``.
+
+        Returns:
+            bool: ``True`` if ``data`` is ``None``, ``False`` otherwise.
+        """
         return data is None
 
     def __str__(self) -> str:
