@@ -12,21 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Semantiva pipeline API.
+"""Semantiva tracing (v1).
 
-Includes:
-  • Pipeline: execution wrapper around configured nodes.
-  • Payload: (data, context) pair.
-  • build_graph / compute_pipeline_id: Canonical GraphV1 + deterministic PipelineId.
+This package provides the core tracing infrastructure for Semantiva pipelines.
+It implements a contract-based system for capturing execution events with
+configurable detail levels and pluggable storage backends.
+
+Core Components:
+- NodeTraceEvent: Standard envelope for all node execution events
+- TraceDriver: Protocol for implementing custom storage backends
+- JSONLTrace: Default append-only JSONL driver with background buffering
 """
-
-from .pipeline import Pipeline
-from .payload import Payload
-from .graph_builder import build_graph, compute_pipeline_id
-
-__all__ = [
-    "Pipeline",
-    "Payload",
-    "build_graph",
-    "compute_pipeline_id",
-]

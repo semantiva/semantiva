@@ -20,6 +20,7 @@ import sys
 import time
 from pathlib import Path
 from typing import Any, List, NoReturn
+import importlib
 
 import yaml
 
@@ -34,6 +35,7 @@ from semantiva.inspection import (
     validate_pipeline,
 )
 from semantiva.pipeline import Pipeline, Payload
+from semantiva.trace.drivers.jsonl import JSONLTrace
 
 # Exit code constants
 EXIT_SUCCESS = 0
@@ -163,6 +165,23 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
         "-v", "--verbose", action="store_true", help="Increase log verbosity"
     )
     run_p.add_argument("-q", "--quiet", action="store_true", help="Only show errors")
+    run_p.add_argument(
+        "--trace-driver",
+        choices=["none", "jsonl", "pythonpath"],
+        default="none",
+        help="Tracing driver to use",
+    )
+    run_p.add_argument(
+        "--trace-output",
+        default=None,
+        help="Trace output path or driver spec",
+    )
+    run_p.add_argument(
+        "--trace-detail",
+        choices=["timings", "hash", "repr", "all"],
+        default="timings",
+        help="Trace detail level (timings only by default)",
+    )
     run_p.add_argument("--version", action="version", version=_get_version())
 
     inspect_p = sub.add_parser(
@@ -249,7 +268,22 @@ def _run(args: argparse.Namespace) -> int:
         return EXIT_SUCCESS
 
     try:
-        pipeline = Pipeline(nodes, logger=logger)
+        trace_driver = None
+        if args.trace_driver != "none":
+            if args.trace_driver == "jsonl":
+                trace_driver = JSONLTrace(args.trace_output, detail=args.trace_detail)
+            else:
+                if not args.trace_output:
+                    print(
+                        "--trace-output must specify driver class for pythonpath",
+                        file=sys.stderr,
+                    )
+                    return EXIT_CONFIG_ERROR
+                module_path, _, cls_name = args.trace_output.partition(":")
+                mod = importlib.import_module(module_path)
+                trace_cls = getattr(mod, cls_name)
+                trace_driver = trace_cls()
+        pipeline = Pipeline(nodes, logger=logger, trace=trace_driver)
         if args.dry_run:
             if ctx_dict and args.verbose:
                 logger.debug("Ignoring --context for dry run")

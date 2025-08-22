@@ -20,6 +20,7 @@ If you're looking for tutorials and theoretical explanations, please visit https
    :caption: How-To & Workflows
 
    pipeline
+   graph
    registry_and_extensions
    data_types
    data_processors
@@ -30,6 +31,7 @@ If you're looking for tutorials and theoretical explanations, please visit https
    data_io
    logger
    examples_index
+   tracing
 
 .. toctree::
    :maxdepth: 2
@@ -38,3 +40,4 @@ If you're looking for tutorials and theoretical explanations, please visit https
    api_reference
    exceptions
    glossary
+   trace_graph_alignment
