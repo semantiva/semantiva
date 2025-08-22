@@ -1,14 +1,13 @@
 name: Deploy Sphinx Docs
 
-# Trigger the workflow on push to the main branch or on tag creation
 on:
   push:
     tags:
-      - "*"  # Trigger on any tag
-  workflow_dispatch:  # Allow manual trigger
+      - "*"
+  workflow_dispatch:
 
 env:
-  project_name: semantiva # Define a global variable for the project name
+  project_name: semantiva
   python_version: '3.10.12'
 
 jobs:
@@ -26,31 +25,22 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
 
-      - name: Install dependencies from pyproject.toml
+      - name: Install project and docs dependencies
         run: |
-          pip install .
-          pip install -e '.[dev]'  # Install dev dependencies if needed
+          pip install -e .
+          pip install sphinx sphinx-autobuild sphinx-autodoc-typehints sphinxcontrib-mermaid furo myst-parser
 
-      - name: Install dependencies
+      - name: Build HTML docs (warnings as errors)
         run: |
-          pip install sphinx sphinx-autodoc-typehints sphinx-rtd-theme  # Add your Sphinx theme or plugins here
+          make -C docs html SPHINXOPTS=-W
 
-      - name: Create missing directories
+      - name: Run doctests
         run: |
-          mkdir -p docs/_static
-          mkdir -p docs/_templates
-
-      - name: Generate API Documentation
-        run: |
-          sphinx-apidoc -o docs/source/ -f semantiva/
-
-      - name: Build Sphinx Documentation
-        run: |
-          sphinx-build -b html docs/source docs/build
+          sphinx-build -b doctest docs/source docs/_build/doctest || true
 
       - name: Verify build directory
         run: ls -l docs/build || echo "Build directory not found!"
-      
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
