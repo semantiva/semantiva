@@ -37,6 +37,9 @@ Here is the updated changelog with the missing items included and the requested 
     pipeline definitions
 - Introduced metadata and node interface contract tests to enforce component expectations
 - **Documentation**: Added a docstring audit to the documentation build to track coverage
+- **Tracing**: canonical graph builder with deterministic `PipelineId` and `node_uuid`
+- **Trace API** with JSONL driver and CLI wiring
+- **Docs** for tracing and graph alignment
 
 - Introduced `semantiva` command-line interface with a `run` subcommand for executing pipeline YAML files
 - New CLI capabilities:
