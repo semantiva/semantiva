@@ -10,14 +10,7 @@ pipeline:
           t: [-1, 2]
         parametric_expressions:
           # Complex expressions using the independent variable 't'
-          x_0: "50 + 5 * t"
-          y_0: "50 + 5 * t + 5 * t ** 2"
-          amplitude: "100"
-          angle: "60 + 5 * t"
-        static_params:
-          # Static parameters that don't vary during sweep
-          image_size: [128, 128]
-          baseline: 0.5
+          value: "2.0 * t"
           
     # Process the generated collection
     - processor: "slicer:FloatCollectValueProbe:FloatDataCollection"
