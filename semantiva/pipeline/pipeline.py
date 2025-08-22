@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Mapping, cast
 from .payload import Payload
 from semantiva.logger import Logger
 from .payload_processors import _PayloadProcessor
@@ -29,6 +29,7 @@ from semantiva.execution.orchestrator.orchestrator import (
     SemantivaOrchestrator,
     LocalSemantivaOrchestrator,
 )
+from semantiva.trace.model import TraceDriver
 
 
 class Pipeline(_PayloadProcessor):
@@ -43,6 +44,7 @@ class Pipeline(_PayloadProcessor):
         logger: Optional[Logger] = None,
         transport: Optional[SemantivaTransport] = None,
         orchestrator: Optional[SemantivaOrchestrator] = None,
+        trace: Optional[TraceDriver] = None,
     ):
         """
         Initializes the pipeline with the given configuration, logger, transport, and orchestrator.
@@ -64,6 +66,7 @@ class Pipeline(_PayloadProcessor):
         self.pipeline_configuration = pipeline_configuration
         self.transport = transport or InMemorySemantivaTransport()
         self.orchestrator = orchestrator or LocalSemantivaOrchestrator()
+        self.trace = trace
 
         # Use inspection system for validation
         from semantiva.inspection import build_pipeline_inspection, validate_pipeline
@@ -97,6 +100,8 @@ class Pipeline(_PayloadProcessor):
             payload=payload,
             transport=self.transport,
             logger=self.logger,
+            trace=self.trace,
+            pipeline_spec=cast(List[Mapping[str, Any]], self.pipeline_configuration),
         )
 
         self.stop_watch.stop()  # existing pipeline timer stop
