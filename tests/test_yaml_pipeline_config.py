@@ -15,9 +15,10 @@
 import pytest
 from pathlib import Path
 
-from semantiva import Pipeline, load_pipeline_from_yaml
+from semantiva import Pipeline, load_pipeline_from_yaml, Payload
 from semantiva.examples.test_utils import FloatDataType
 from semantiva.context_processors import ContextType
+from semantiva.data_types import NoDataType
 
 
 def test_load_pipeline_from_yaml():
@@ -123,8 +124,9 @@ def test_yaml_string_class_resolution():
     # Load configuration
     node_configurations = load_pipeline_from_yaml(str(yaml_file))
 
-    # Create pipeline - this tests that all string class names can be resolved
+    # Create pipeline and run once to instantiate nodes
     pipeline = Pipeline(node_configurations)
+    pipeline.process(Payload(NoDataType(), ContextType()))
 
     # Verify that the pipeline nodes were created successfully
     assert len(pipeline.nodes) > 0, "Pipeline should have nodes"
@@ -133,7 +135,6 @@ def test_yaml_string_class_resolution():
     for i, node_config in enumerate(node_configurations):
         processor = node_config["processor"]
         if isinstance(processor, str):
-            # The pipeline creation should have resolved this string to a class
             node = pipeline.nodes[i]
             assert hasattr(
                 node, "processor"

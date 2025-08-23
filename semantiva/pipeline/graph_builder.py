@@ -12,10 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Pipeline graph construction utilities.
+"""GraphV1: build and canonicalize pipeline graphs for tracing.
 
-This module provides functionality for building and canonicalizing pipeline graphs.
-It implements the GraphV1 canonical format used by the trace system.
+What this module does
+    - Parses a pipeline spec (YAML path/string, list of node dicts, or Pipeline) into
+        a canonical GraphV1 mapping: {"version": 1, "nodes": [...], "edges": [...]}.
+    - Produces deterministic identifiers:
+            - node_uuid: UUIDv5 derived from a canonical node mapping (see _canonical_node).
+            - pipeline_id: "plid-<sha256>" of the canonical graph (see compute_pipeline_id).
+
+Stability guarantees
+    - Cosmetic changes (YAML whitespace, mapping key order) do not alter identities.
+    - declaration_index/subindex are included in node canonical form to disambiguate
+        otherwise-identical nodes declared in different positions.
+
+Scope
+    - Edges are emitted as a simple linear chain for demo/CLI pipelines; this preserves
+        UUID semantics and can be extended later without breaking IDs.
 """
 
 from __future__ import annotations
@@ -27,13 +40,24 @@ from pathlib import Path
 from typing import Any, List
 
 import yaml
+from semantiva.registry import ClassRegistry
+from semantiva.registry.descriptors import descriptor_to_json
 
 # Namespace used for deterministic node UUID generation
 _NODE_NAMESPACE = uuid.UUID("00000000-0000-0000-0000-000000000000")
 
 
 def _load_spec(pipeline_or_spec: Any) -> List[dict[str, Any]]:
-    """Normalize input into a list of node specification dictionaries."""
+    """Normalize input into a list of node specification dictionaries.
+
+    Accepts:
+      - Pipeline-like object with ``pipeline_configuration``
+      - List/Tuple of node dicts
+      - YAML path or YAML content (string). Supports top-level {pipeline: {nodes: [...]}}.
+
+    Raises:
+      TypeError: When input type is not supported.
+    """
     if hasattr(pipeline_or_spec, "pipeline_configuration"):
         return list(pipeline_or_spec.pipeline_configuration)
     if isinstance(pipeline_or_spec, (list, tuple)):
@@ -60,9 +84,9 @@ def _canonical_node(
     """Return canonical node mapping used to derive node_uuid.
 
     Canonical fields:
-        • role, fqn, params (shallow), ports (declared), declaration_index, declaration_subindex
+        - role, fqn, params (shallow), ports (declared), declaration_index, declaration_subindex
     Canonicalization rules:
-        • Sort mapping keys; strip whitespace/ordering artifacts; ignore cosmetic YAML noise.
+        - Sort mapping keys; strip whitespace/ordering artifacts; ignore cosmetic YAML noise.
 
     Note: declaration_index and declaration_subindex provide a stable positional
     discriminator so that nodes with identical configuration but different
@@ -70,6 +94,8 @@ def _canonical_node(
     """
     role = defn.get("role") or "processor"
     processor = defn.get("processor")
+    if isinstance(processor, type):
+        processor = f"{processor.__module__}.{processor.__qualname__}"
     params = defn.get("parameters") or {}
     ports = defn.get("ports") or {}
     canon = {
@@ -83,34 +109,37 @@ def _canonical_node(
     return canon
 
 
-def build_graph(pipeline_or_spec: Any) -> dict[str, Any]:
-    """Build GraphV1 from YAML path, dict spec, or Pipeline object.
+def build_canonical_spec(
+    pipeline_or_spec: Any,
+) -> tuple[dict[str, Any], List[dict[str, Any]]]:
+    """Return canonical GraphV1 spec and resolved node descriptors.
+
+    This function normalizes the input pipeline specification, applies any
+    configuration preprocessors, resolves parameters into descriptors (never
+    instantiating runtime objects), and produces a JSON-serializable canonical
+    graph with stable positional identities.
 
     Args:
-      pipeline_or_spec: Path[str] | Mapping | Pipeline.
+        pipeline_or_spec: YAML path, mapping, or Pipeline-like object.
 
     Returns:
-      dict: {"version": 1, "nodes": [{"node_uuid": str, ...}, ...], "edges": [{"source": str, "target": str}, ...]}
-
-    Notes:
-      • Node UUIDs are deterministic (UUIDv5) from _canonical_node JSON.
-      • Edge construction is a linear chain for demo pipelines; future ODO will extend topology
-        without breaking node_uuid semantics.
+        tuple (canonical_spec, resolved_spec):
+            canonical_spec: JSON-serializable GraphV1 mapping.
+            resolved_spec:  List of node configs with descriptors for later
+                            instantiation.
     """
     spec = _load_spec(pipeline_or_spec)
     nodes: List[dict[str, Any]] = []
+    resolved: List[dict[str, Any]] = []
     node_uuids: List[str] = []
-    # Track declaration indices and subindices. Current loader returns a list
-    # of top-level declarations; each declaration may conceptually expand into
-    # multiple nodes (subindex). The current implementation treats each
-    # declaration as producing a single node (subindex=0). We record the
-    # declaration_index for deterministic identities.
     for declaration_index, raw in enumerate(spec):
-        # If a declaration would expand into multiple nodes, production code
-        # should emit multiple entries at this point; for now we assign
-        # declaration_subindex=0 to the single produced node.
         declaration_subindex = 0
-        canon = _canonical_node(raw, declaration_index, declaration_subindex)
+        cfg = ClassRegistry.preprocess_node_config(dict(raw))
+        params = ClassRegistry.resolve_parameters(cfg.get("parameters", {}))
+        cfg["parameters"] = params
+        resolved.append(cfg)
+        canon = _canonical_node(cfg, declaration_index, declaration_subindex)
+        canon["params"] = descriptor_to_json(params)
         node_json = json.dumps(canon, sort_keys=True, separators=(",", ":"))
         node_uuid = str(uuid.uuid5(_NODE_NAMESPACE, node_json))
         canon_with_uuid = dict(canon)
@@ -121,7 +150,12 @@ def build_graph(pipeline_or_spec: Any) -> dict[str, Any]:
         {"source": node_uuids[i], "target": node_uuids[i + 1]}
         for i in range(len(node_uuids) - 1)
     ]
-    return {"version": 1, "nodes": nodes, "edges": edges}
+    return ({"version": 1, "nodes": nodes, "edges": edges}, resolved)
+
+
+def build_graph(pipeline_or_spec: Any) -> dict[str, Any]:
+    canonical, _ = build_canonical_spec(pipeline_or_spec)
+    return canonical
 
 
 def compute_pipeline_id(canonical_spec: dict[str, Any]) -> str:
