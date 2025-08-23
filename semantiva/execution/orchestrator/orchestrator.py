@@ -28,7 +28,7 @@ from typing import List, Optional, Mapping, Any
 
 from semantiva.pipeline.payload import Payload
 from semantiva.trace.model import NodeAddress, NodeTraceEvent, TraceDriver
-from semantiva.pipeline.graph_builder import build_graph, compute_pipeline_id
+from semantiva.pipeline.graph_builder import build_canonical_spec, compute_pipeline_id
 import time
 from datetime import datetime
 import uuid
@@ -38,6 +38,8 @@ from semantiva.execution.executor.executor import (
 )
 from semantiva.execution.transport import SemantivaTransport
 from semantiva.pipeline.nodes.nodes import _PipelineNode
+from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
+from semantiva.registry.descriptors import instantiate_from_descriptor
 from semantiva.logger import Logger
 
 
@@ -53,15 +55,21 @@ class SemantivaOrchestrator(ABC):
         execute(nodes, data, context, transport, logger) -> (data, context)
     """
 
+    _last_nodes: List[_PipelineNode] = []
+
+    @property
+    def last_nodes(self) -> List[_PipelineNode]:
+        return self._last_nodes
+
     @abstractmethod
     def execute(
         self,
-        nodes: List[_PipelineNode],
+        pipeline_spec: List[dict[str, Any]],
         payload: Payload,
         transport: SemantivaTransport,
         logger: Logger,
         trace: TraceDriver | None = None,
-        pipeline_spec: List[Mapping[str, Any]] | None = None,
+        canonical_spec: dict[str, Any] | None = None,
     ) -> Payload:
         """
         Walk the pipeline DAG, process each node, and publish intermediate results.
@@ -70,12 +78,12 @@ class SemantivaOrchestrator(ABC):
         Zero overhead when trace is None (no run_id, no canonicalization, no timings).
 
         Args:
-            nodes:     Ordered list of _PipelineNode instances forming the pipeline.
+            pipeline_spec: Resolved node configurations with descriptors.
             payload:   Initial payload for the first node.
             transport: Transport for publishing each node's output.
             logger:    Logger for debug/info messages.
             trace:     Optional TraceDriver to emit trace records.
-            pipeline_spec: Canonical node specifications when tracing is enabled.
+            canonical_spec: Optional precomputed canonical spec for tracing.
 
         Returns:
             Payload after the final node has executed.
@@ -101,15 +109,20 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                       uses SequentialSemantivaExecutor for in-thread execution.
         """
         self.executor = executor or SequentialSemantivaExecutor()
+        self._last_nodes: List[_PipelineNode] = []
+
+    @property
+    def last_nodes(self) -> List[_PipelineNode]:
+        return self._last_nodes
 
     def execute(
         self,
-        nodes: List[_PipelineNode],
+        pipeline_spec: List[dict[str, Any]],
         payload: Payload,
         transport: SemantivaTransport,
         logger: Logger,
         trace: TraceDriver | None = None,
-        pipeline_spec: List[Mapping[str, Any]] | None = None,
+        canonical_spec: dict[str, Any] | None = None,
     ) -> Payload:
         """
         Execute each node in the provided pipeline in order.
@@ -124,12 +137,12 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
         No tracing overhead is incurred when ``trace`` is ``None``.
 
         Args:
-            nodes:     List of pipeline nodes to execute sequentially.
+            pipeline_spec: List of node configs with descriptors.
             payload:   Input payload for the first node.
             transport: Transport used to publish intermediate outputs.
             logger:    Logger for orchestration debug/info messages.
             trace:     Optional TraceDriver to emit trace records.
-            pipeline_spec: Canonical node specifications when tracing is enabled.
+            canonical_spec: Optional precomputed canonical spec.
 
         Returns:
             The final (data, context) after all nodes have run.
@@ -138,24 +151,34 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
         data = payload.data
         context = payload.context
 
+        canonical = canonical_spec
+        if canonical is None:
+            canonical, pipeline_spec = build_canonical_spec(pipeline_spec)
+
         run_id = None
         pipeline_id = None
         node_uuids: List[str] = []
         if trace is not None:
-            assert pipeline_spec is not None, "pipeline_spec required when tracing"
-            canonical = build_graph(pipeline_spec)
             pipeline_id = compute_pipeline_id(canonical)
             node_uuids = [n["node_uuid"] for n in canonical["nodes"]]
             run_id = f"run-{uuid.uuid4().hex}"
             meta = {"num_nodes": len(node_uuids)}
-            # provide optional pipeline input snapshot (backward compatible)
             try:
                 trace.on_pipeline_start(
                     pipeline_id, run_id, canonical, meta, pipeline_input=payload
                 )
             except TypeError:
-                # Older drivers/tests without the new parameter
                 trace.on_pipeline_start(pipeline_id, run_id, canonical, meta)
+
+        nodes: List[_PipelineNode] = []
+        for node_def in pipeline_spec:
+            params = instantiate_from_descriptor(node_def.get("parameters", {}))
+            nd = dict(node_def)
+            nd["parameters"] = params
+            node = _pipeline_node_factory(nd, logger)
+            nodes.append(node)
+
+        self._last_nodes = nodes
 
         try:
             for index, node in enumerate(nodes, start=1):

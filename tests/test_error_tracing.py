@@ -108,19 +108,10 @@ def test_error_tracing_captures_events():
     transport = InMemorySemantivaTransport()
     logger = Logger()
 
-    # Create a failing node
-    failing_node = _pipeline_node_factory(
-        {
-            "processor": FailingFloatOperation,
-            "parameters": {"error_message": "Test error message"},
-        },
-        logger,
-    )
-
-    # Mock pipeline spec for tracing
+    # Pipeline specification referencing the failing operation
     pipeline_spec = [
         {
-            "processor": "FailingFloatOperation",
+            "processor": FailingFloatOperation,
             "parameters": {"error_message": "Test error message"},
         }
     ]
@@ -130,12 +121,11 @@ def test_error_tracing_captures_events():
 
     with pytest.raises(ValueError, match="Test error message"):
         orchestrator.execute(
-            nodes=[failing_node],
+            pipeline_spec=pipeline_spec,
             payload=initial_payload,
             transport=transport,
             logger=logger,
             trace=trace,
-            pipeline_spec=pipeline_spec,
         )
 
     # Verify trace events were captured
@@ -178,18 +168,9 @@ def test_jsonl_error_tracing_writes_to_file():
         transport = InMemorySemantivaTransport()
         logger = Logger()
 
-        # Create a failing node
-        failing_node = _pipeline_node_factory(
-            {
-                "processor": FailingFloatOperation,
-                "parameters": {"error_message": "JSONL test error"},
-            },
-            logger,
-        )
-
         pipeline_spec = [
             {
-                "processor": "FailingFloatOperation",
+                "processor": FailingFloatOperation,
                 "parameters": {"error_message": "JSONL test error"},
             }
         ]
@@ -199,12 +180,11 @@ def test_jsonl_error_tracing_writes_to_file():
 
         with pytest.raises(ValueError, match="JSONL test error"):
             orchestrator.execute(
-                nodes=[failing_node],
+                pipeline_spec=pipeline_spec,
                 payload=initial_payload,
                 transport=transport,
                 logger=logger,
                 trace=trace,
-                pipeline_spec=pipeline_spec,
             )
 
         # Give the background thread a moment to write files
@@ -253,41 +233,24 @@ def test_multiple_nodes_error_in_middle():
     # Create pipeline: working -> failing -> working
     from semantiva.examples.test_utils import FloatMultiplyOperation
 
-    working_node1 = _pipeline_node_factory(
-        {"processor": FloatMultiplyOperation, "parameters": {"factor": 2.0}}, logger
-    )
-
-    failing_node = _pipeline_node_factory(
+    pipeline_spec = [
+        {"processor": FloatMultiplyOperation, "parameters": {"factor": 2.0}},
         {
             "processor": FailingFloatOperation,
             "parameters": {"error_message": "Middle node failure"},
         },
-        logger,
-    )
-
-    working_node2 = _pipeline_node_factory(
-        {"processor": FloatMultiplyOperation, "parameters": {"factor": 3.0}}, logger
-    )
-
-    pipeline_spec = [
-        {"processor": "FloatMultiplyOperation", "parameters": {"factor": 2.0}},
-        {
-            "processor": "FailingFloatOperation",
-            "parameters": {"error_message": "Middle node failure"},
-        },
-        {"processor": "FloatMultiplyOperation", "parameters": {"factor": 3.0}},
+        {"processor": FloatMultiplyOperation, "parameters": {"factor": 3.0}},
     ]
 
     initial_payload = Payload(FloatDataType(5.0), {})
 
     with pytest.raises(ValueError, match="Middle node failure"):
         orchestrator.execute(
-            nodes=[working_node1, failing_node, working_node2],
+            pipeline_spec=pipeline_spec,
             payload=initial_payload,
             transport=transport,
             logger=logger,
             trace=trace,
-            pipeline_spec=pipeline_spec,
         )
 
     # Should have: node1(before+after), node2(before+error), no node3 events
@@ -344,21 +307,16 @@ def test_error_tracing_with_different_exception_types():
             def _process_logic(self, data: FloatDataType, **kwargs) -> FloatDataType:
                 raise exc
 
-        failing_node = _pipeline_node_factory(
-            {"processor": CustomFailingOperation, "parameters": {}}, logger
-        )
-
-        pipeline_spec = [{"processor": "CustomFailingOperation", "parameters": {}}]
+        pipeline_spec = [{"processor": CustomFailingOperation, "parameters": {}}]
         initial_payload = Payload(FloatDataType(1.0), {})
 
         with pytest.raises(type(exc)):
             orchestrator.execute(
-                nodes=[failing_node],
+                pipeline_spec=pipeline_spec,
                 payload=initial_payload,
                 transport=transport,
                 logger=logger,
                 trace=trace,
-                pipeline_spec=pipeline_spec,
             )
 
         # Verify error event captures correct exception details

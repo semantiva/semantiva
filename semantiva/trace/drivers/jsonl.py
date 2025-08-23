@@ -12,13 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Append-only JSON trace driver (v1).
+"""Append-only JSONL trace driver (v1).
 
-Writes ``pipeline_start``, ``node`` and ``pipeline_end`` envelopes to a file
-with a background thread. Output is always pretty-printed JSON (indent=2,
-sorted keys) with a blank line separating each record. File naming follows the
-convention ``{YYYYMMDD-HHMMSS}_{RUNID}.jsonl`` when the configured output path
-is a directory.
+Purpose
+    - Persist ``pipeline_start``, ``node``, and ``pipeline_end`` envelopes to disk.
+    - Low overhead: enqueue records; a background thread writes pretty JSON.
+
+Behavior
+    - Output is pretty-printed JSON (indent=2, sorted keys), separated by a blank line.
+    - When ``output_path`` is a directory or None, files are auto-named as
+        ``{YYYYMMDD-HHMMSS}_{RUNID}.jsonl`` within that directory.
+    - Detail flags (``timings``, ``hash``, ``repr``, ``context``) control driver-side
+        summaries for output data and post-execution context (hashes and readable reprs).
+
+Resilience
+    - Snapshot errors are swallowed; tracing must not break pipeline execution.
+    - ``flush`` drains the queue and fsyncs; ``close`` terminates the writer thread.
 """
 
 from __future__ import annotations
@@ -29,6 +38,8 @@ from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, IO
+import json
+import logging
 
 from .._utils import (
     safe_repr,
@@ -44,7 +55,15 @@ from ..model import NodeTraceEvent, TraceDriver
 
 
 class JSONLTrace(TraceDriver):
-    """Append-only JSON trace driver with background writer."""
+    """Append-only JSON trace driver with background writer.
+
+    Use ``detail`` to enable optional summaries:
+      - timings (default): include t_wall/t_cpu when available
+      - hash: sha256 fingerprints of output data and context
+      - repr: human-friendly repr of output data
+      - context: include human-friendly key→value context when combined with ``repr``
+        (i.e., ``detail="repr,context"``)
+    """
 
     _VALID_FLAGS = {"timings", "hash", "repr", "context"}
 
@@ -116,8 +135,8 @@ class JSONLTrace(TraceDriver):
         """Write trace "pipeline_start" record (schema_version=1).
 
         Accepts optional pipeline_input via args/kwargs:
-          • May emit driver-side fields: pipeline_input_repr, pipeline_input_hash.
-          • Errors during snapshotting are swallowed to avoid impacting pipeline.
+          - May emit driver-side fields: pipeline_input_repr, pipeline_input_hash.
+          - Errors during snapshotting are swallowed to avoid impacting pipeline.
         """
         self._open_file(run_id)
         record = {
@@ -125,10 +144,13 @@ class JSONLTrace(TraceDriver):
             "schema_version": 1,
             "pipeline_id": pipeline_id,
             "run_id": run_id,
-            "canonical_spec": canonical_spec,
             "meta": meta,
-            # omit plan_id when None; plan_epoch not emitted by default unless advanced plans are used
         }
+        try:
+            json.dumps(canonical_spec)
+            record["canonical_spec"] = canonical_spec
+        except TypeError:
+            logging.warning("canonical_spec not JSON serializable; omitting")
         # include plan_epoch only if non-zero
         try:
             if getattr(self, "_plan_epoch", 0):
@@ -175,7 +197,10 @@ class JSONLTrace(TraceDriver):
         self._queue.put(record)
 
     def on_node_event(self, event: NodeTraceEvent) -> None:
-        """Write trace "node" record (before/after/error) with timings and error info."""
+        """Write trace "node" record (before/after/error) with timings and error info.
+
+        Output summaries (repr/hash/context) are emitted only for ``phase == 'after'``.
+        """
         record = {
             "type": "node",
             "schema_version": 1,
