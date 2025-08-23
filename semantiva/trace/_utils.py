@@ -14,32 +14,34 @@
 
 """Internal utilities for trace drivers.
 
-Helpers for safe string/byte representations and canonical JSON serialization.
-Not part of the public API; subject to change between minor versions.
+Centralizes helpers for safe representations, deterministic JSON, and context
+formatting. These functions are not part of the public API and may change
+between minor versions.
 """
 
 from __future__ import annotations
 
 import json
 import hashlib
-from typing import Any
+from typing import Any, Mapping
 
 
-def safe_repr(obj: Any, maxlen: int = 120) -> str:
-    """Return a truncated repr for human inspection.
+def safe_repr(obj: Any, maxlen: int = 200) -> str:
+    """Return a truncated ``repr`` string with an ellipsis suffix.
 
-    Ensures the returned string is at most ``maxlen`` characters.
-    Handles unrepresentable objects gracefully.
+    Attempts ``repr(obj)`` and falls back to a placeholder for
+    unrepresentable objects. If the resulting string exceeds ``maxlen``
+    characters, it is truncated and suffixed with ``"…"``.
     """
+
     try:
         s = repr(obj)
-    except Exception:
+    except Exception:  # pragma: no cover - defensive
         s = f"<unreprable {type(obj).__name__}>"
     if len(s) <= maxlen:
         return s
-    # keep head only (simple, cheap)
-    head = max(0, maxlen - 3)
-    return s[:head] + "..."
+    head = max(0, maxlen - 1)
+    return s[:head] + "…"
 
 
 def _bytes_from_known_interfaces(obj: Any) -> bytes | None:
@@ -55,7 +57,8 @@ def _bytes_from_known_interfaces(obj: Any) -> bytes | None:
       bytes if a known strategy succeeds; otherwise None.
 
     Note:
-      Internal helper; callers should fall back to canonical_json() or repr().
+      Internal helper; callers should fall back to ``canonical_json_bytes`` or
+      ``repr``.
     """
     # Priority: to_bytes
     try:
@@ -75,14 +78,14 @@ def _bytes_from_known_interfaces(obj: Any) -> bytes | None:
     try:
         if hasattr(obj, "to_json") and callable(getattr(obj, "to_json")):
             j = obj.to_json()  # type: ignore[misc]
-            return canonical_json(j)
+            return canonical_json_bytes(j)
     except Exception:
         pass
     return None
 
 
-def canonical_json(obj: Any) -> bytes:
-    """Serialize obj to canonical JSON bytes (UTF-8), for hashing or logging.
+def canonical_json_bytes(obj: Any) -> bytes:
+    """Serialize ``obj`` to canonical JSON bytes (UTF-8).
 
     Guarantees:
       • Deterministic key ordering (sort_keys=True) and compact separators.
@@ -99,13 +102,13 @@ def canonical_json(obj: Any) -> bytes:
             ensure_ascii=False,
             default=_json_default,
         ).encode("utf-8")
-    except Exception:
+    except Exception:  # pragma: no cover - defensive
         # Last resort: not ideal for hashing, but better than failing
         return repr(obj).encode("utf-8")
 
 
 def _json_default(o: Any):
-    """Default serializer for canonical_json().
+    """Default serializer for :func:`canonical_json_bytes`.
 
     Supports:
       • dataclasses (as dict)
@@ -113,21 +116,19 @@ def _json_default(o: Any):
       • mapping/sequence fallbacks
 
     Raises:
-      TypeError when object cannot be represented; callers catch and fallback to repr().
+      TypeError when object cannot be represented; callers catch and fallback to
+      ``repr``.
     """
-    # Provide limited support for common types by looking for to_json
     if hasattr(o, "to_json") and callable(getattr(o, "to_json")):
         try:
             return o.to_json()
-        except Exception:
+        except Exception:  # pragma: no cover - defensive
             pass
-    # As a last resort, try to use __dict__ if present
     if hasattr(o, "__dict__"):
         try:
             return o.__dict__
-        except Exception:
+        except Exception:  # pragma: no cover - defensive
             pass
-    # Otherwise raise and let dumps handle it (will be caught)
     raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
 
 
@@ -137,9 +138,9 @@ def serialize(obj: Any) -> bytes:
     Tries in order:
     - to_bytes() method
     - buffer protocol (bytes/bytearray/memoryview)
-    - to_json() method -> canonical_json
-    - canonical_json(obj) directly
-    - repr(obj).encode() as last resort
+    - to_json() method -> :func:`canonical_json_bytes`
+    - :func:`canonical_json_bytes` directly
+    - ``repr(obj).encode()`` as last resort
 
     Used for generating stable hashes of arbitrary Python objects.
     """
@@ -147,8 +148,8 @@ def serialize(obj: Any) -> bytes:
     if b is not None:
         return b
     try:
-        return canonical_json(obj)
-    except Exception:
+        return canonical_json_bytes(obj)
+    except Exception:  # pragma: no cover - defensive
         return repr(obj).encode("utf-8")
 
 
@@ -161,3 +162,24 @@ def sha256_bytes(data: bytes) -> str:
     h = hashlib.sha256()
     h.update(data)
     return "sha256-" + h.hexdigest()
+
+
+def context_to_kv_repr(mapping: Mapping[str, object], *, max_pairs: int = 50) -> str:
+    """Return a deterministic ``k=v`` comma-separated string for ``mapping``.
+
+    Keys are sorted alphabetically for reproducible output. If more than
+    ``max_pairs`` items are present the result is truncated with an ``"…"``
+    suffix.
+    """
+
+    items = sorted(mapping.items(), key=lambda kv: kv[0])
+    parts = [f"{k}={safe_repr(v)}" for k, v in items[:max_pairs]]
+    if len(items) > max_pairs:
+        parts.append("…")
+    return ", ".join(parts)
+
+
+def json_dumps_human(obj: object) -> str:
+    """Dump ``obj`` to pretty JSON with indentation and sorted keys."""
+
+    return json.dumps(obj, ensure_ascii=False, indent=2, sort_keys=True)

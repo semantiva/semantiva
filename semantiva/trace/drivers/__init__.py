@@ -15,8 +15,9 @@
 """TraceDriver implementations for Semantiva tracing.
 
 This package contains concrete implementations of the TraceDriver protocol.
-Each driver provides a different storage/output strategy for trace events.
+Each driver provides a different storage/output strategy for trace events,
+including comprehensive error handling and resource cleanup.
 
 Available Drivers:
-- JSONLTrace: Append-only JSONL files with background buffering
+- JSONLTrace: Append-only JSONL files with background buffering and error event capture
 """
