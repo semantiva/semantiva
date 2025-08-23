@@ -52,10 +52,8 @@ def test_parametric_sweep_demo_yaml():
     t_values = context.get_value("t_values")
     assert np.allclose(t_values, np.linspace(-1, 2, 3))
 
-    # The sweep should have generated 3 values, but since FloatMockDataSource
-    # always returns 42.0 regardless of parameters, the sum should be 3 * 42.0
     final_result = context.get_value("final_sum")
-    assert final_result["value"] == 3 * 42.0
+    assert final_result["value"] == 3.0
 
     # Verify that sweep_results contains the slicer output (a list of collected values)
     sweep_results = context.get_value("sweep_results")

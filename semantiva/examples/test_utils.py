@@ -42,9 +42,6 @@ class FloatDataType(BaseDataType[float]):
             raise TypeError("Data must be a float")
         return True
 
-    def __str__(self):
-        return str(self.data)
-
 
 # Concrete implementation of DataCollectionType for testing
 class FloatDataCollection(DataCollectionType[FloatDataType, list]):

@@ -11,3 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Semantiva execution engine.
+
+This package provides the core execution infrastructure for running Semantiva pipelines.
+It includes orchestrators for managing pipeline execution, transports for inter-node
+communication, and integration with the tracing system for comprehensive error handling
+and execution monitoring.
+
+Key Components:
+- LocalSemantivaOrchestrator: Sequential pipeline execution with error tracing
+- Transport implementations: In-memory and other data passing strategies
+- Error handling: Comprehensive exception capture and trace resource management
+"""

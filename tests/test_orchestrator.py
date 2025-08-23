@@ -59,7 +59,6 @@ def fake_pipeline():
         },
     ]
 
-    # Build the Pipeline, which constructs _PipelineNodes internally
     pipeline = Pipeline(node_configurations)
     return pipeline
 
@@ -84,10 +83,11 @@ def test_orchestrator_applies_each_node_and_publishes(fake_pipeline):
     # - transport: in-memory transport captures published intermediates
     # - Logger(): dummy logger for debugging internal steps
     payload_output = orch.execute(
-        fake_pipeline.nodes,
+        fake_pipeline.resolved_spec,
         Payload(initial, ctx),
         InMemorySemantivaTransport(),
         Logger(),
+        canonical_spec=fake_pipeline.canonical_spec,
     )
     data_output, context_output = payload_output.data, payload_output.context
 

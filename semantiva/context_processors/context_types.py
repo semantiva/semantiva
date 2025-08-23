@@ -158,8 +158,8 @@ class ContextCollectionType(ContextType):
             for parallel storage and iteration of separate contexts.
 
         The global_context parameter can be provided in two forms:
-        • As a dictionary, which will be used directly.
-        • As a ContextType, in which case its internal _context_container is extracted.
+        - As a dictionary, which will be used directly.
+        - As a ContextType, in which case its internal _context_container is extracted.
         If global_context is None, an empty dictionary will be used.
 
         Args:

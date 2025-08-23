@@ -29,9 +29,23 @@ Run from Python
    result = p.run()  # Returns a Payload
    print("Pipeline executed")
 
+Run from CLI
+------------
+
+.. code-block:: bash
+
+   semantiva run tests/simple_pipeline.yaml
+
+With tracing enabled:
+
+.. code-block:: bash
+
+   semantiva run tests/simple_pipeline.yaml --trace-driver jsonl --trace-output traces/
+
 Next Steps
 ----------
 
 - :doc:`concepts`
 - :doc:`pipeline`
 - :doc:`studio_viewer`
+- :doc:`tracing`

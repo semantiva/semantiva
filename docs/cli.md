@@ -21,9 +21,22 @@ If a future `--json` flag is provided alongside `--extended`, JSON output takes 
 - `--dry-run`: build the pipeline graph without executing nodes.
 - `--validate`: parse and validate configuration only.
 - `--set key=value`: override configuration values using dotted paths. Can be used multiple times.
-- `--context key=value`: inject context key–value pairs at runtime. May be supplied multiple times; later flags override earlier ones.
+- `--context key=value`: inject context key-value pairs at runtime. May be supplied multiple times; later flags override earlier ones.
 - `-v`, `--verbose`: enable debug logging.
 - `-q`, `--quiet`: show errors only.
+- `--trace-driver`: choose tracing backend (`jsonl` writes pretty JSON).
+- `--trace-output`: file or directory for trace output.
+- `--trace-detail`: comma-separated flags controlling trace summaries:
+  - `timings` *(default)*
+  - `hash`
+  - `repr`
+  - `context`
+  - `all` (expands to the above)
+  Using `repr,context` emits a human-readable `post_context_repr` string on node after-events.
+
+All trace drivers output indented, sorted JSON records by default.
+Error events are automatically captured when pipeline execution fails, providing
+complete trace records including timing data and exception details.
 
 ## Exit Codes
 

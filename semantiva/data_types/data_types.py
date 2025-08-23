@@ -86,6 +86,12 @@ class BaseDataType(_SemantivaComponent, Generic[T]):
 
         return component_metadata
 
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.data})"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.data})"
+
 
 E = TypeVar("E", bound=BaseDataType)
 S = TypeVar("S")  # The preferred storage format for the collection

@@ -10,6 +10,7 @@ API Reference
    data_processors
    context_processors
    execution
+   tracing
    introspection_validation
    data_io
    exceptions

@@ -13,8 +13,9 @@
 # limitations under the License.
 
 import yaml
-from semantiva import Pipeline
+from semantiva import Pipeline, Payload
 from semantiva.inspection import build_pipeline_inspection
+from semantiva.context_processors import ContextType
 
 
 def test_inspection_with_slicer_prefix():
@@ -31,7 +32,10 @@ pipeline:
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
     pipeline = Pipeline(node_configs)
+    from semantiva.examples.test_utils import FloatDataCollection, FloatDataType
 
+    payload = Payload(FloatDataCollection([FloatDataType(1.0)]), ContextType())
+    pipeline.process(payload)
     assert (
         pipeline.nodes[0].processor.__class__.__name__
         == "SlicerForFloatMultiplyOperation"
