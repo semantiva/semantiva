@@ -178,9 +178,8 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
     )
     run_p.add_argument(
         "--trace-detail",
-        choices=["timings", "hash", "repr", "all"],
         default="timings",
-        help="Trace detail level (timings only by default)",
+        help=("Comma-separated trace detail flags: timings, hash, repr, context, all"),
     )
     run_p.add_argument("--version", action="version", version=_get_version())
 
