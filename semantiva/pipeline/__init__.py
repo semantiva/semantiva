@@ -15,9 +15,9 @@
 """Semantiva pipeline API.
 
 Includes:
-  • Pipeline: execution wrapper around configured nodes.
-  • Payload: (data, context) pair.
-  • build_graph / compute_pipeline_id: Canonical GraphV1 + deterministic PipelineId.
+  - Pipeline: execution wrapper around configured nodes.
+  - Payload: (data, context) pair.
+  - build_graph / compute_pipeline_id: Canonical GraphV1 + deterministic PipelineId.
 """
 
 from .pipeline import Pipeline
