@@ -13,6 +13,16 @@ Public API Surface
 - :py:class:`semantiva.registry.plugin_registry.SemantivaExtension`
 - :py:func:`semantiva.registry.plugin_registry.load_extensions`
 
+Descriptors
+-----------
+
+Declarative way to reference constructible classes and recursively resolve them.
+
+.. automodule:: semantiva.registry.descriptors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Resolvers
 ---------
 
