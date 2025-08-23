@@ -16,6 +16,10 @@ Here is the updated changelog with the missing items included and the requested 
 - Enhanced extension plugin registry with improved error handling and documentation
   - Comprehensive error handling with informative warnings for missing or malformed extensions
   - Documentation of extension implementation patterns
+- Introduced `semantiva` command-line interface with subcommands:
+  - `run` subcommand for executing pipeline YAML files
+  - `inspect` subcommand for summary or extended pipeline reports
+  - `--context` flag on `run` for injecting initial context key-value pairs
 - Enable use of data processor parameter defaults with full introspection support
 - Renamed `payload_operations` → `semantiva.pipeline` and `execution_tools` → `semantiva.execution`
 - Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`
@@ -37,14 +41,14 @@ Here is the updated changelog with the missing items included and the requested 
     pipeline definitions
 - Introduced metadata and node interface contract tests to enforce component expectations
 - **Documentation**: Added a docstring audit to the documentation build to track coverage
-- **Tracing**: canonical graph builder with deterministic `PipelineId` and `node_uuid`
 - **Trace API** with JSONL driver and CLI wiring
-- **Docs** for tracing and graph alignment
+- **Tracing (v1)**: Canonical GraphV1, deterministic IDs, JSONL driver, CLI wiring, and human-friendly output
+  - Canonical graph builder (`build_graph`) produces a GraphV1 canonical spec used as the single source of truth.
+  - Zero-cost when disabled: tracing is opt-in;
+  - Trace record v1 envelopes are minimal and stable: `pipeline_start`, `node` (phase=`before|after|error`) and `pipeline_end`. 
+  - `JSONLTrace` driver: append-only, asynchronous background writer.
+  - CLI wiring added: `--trace-driver`, `--trace-output`, and `--trace-detail` control trace backend, output location, and which semantic summaries are emitted.
 
-- Introduced `semantiva` command-line interface with a `run` subcommand for executing pipeline YAML files
-- New CLI capabilities:
-  - `inspect` subcommand for summary or extended pipeline reports
-  - `--context` flag on `run` for injecting initial context key–value pairs
 ### Changed
 - **Refactored Pipeline Introspection System**: Replaced `PipelineInspector` with modular inspection architecture
   - **New Inspection Module** (`semantiva.inspection`): Introduces builder/reporter/validator separation of concerns
