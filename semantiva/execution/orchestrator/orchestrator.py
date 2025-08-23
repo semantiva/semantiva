@@ -24,7 +24,7 @@ or distributed orchestrators.
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Mapping, Any
+from typing import List, Optional, Any
 
 from semantiva.pipeline.payload import Payload
 from semantiva.trace.model import NodeAddress, NodeTraceEvent, TraceDriver

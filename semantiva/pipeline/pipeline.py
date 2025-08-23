@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, List, Optional, Mapping
+from typing import Any, Dict, List, Optional
 from .payload import Payload
 from semantiva.logger import Logger
 from .payload_processors import _PayloadProcessor
@@ -166,24 +166,6 @@ class Pipeline(_PayloadProcessor):
 
         # Return the dictionary of probe results
         return probe_results
-
-    def _initialize_nodes(self):
-        """
-        Initialize all nodes in the pipeline.
-
-        This method uses the `_pipeline_node_factory` function to create nodes from the provided
-        pipeline configuration. Each node is then added to the pipeline.
-
-        Note: Validation is now handled by the inspection system before this method is called.
-        """
-        nodes = []
-
-        for index, node_config in enumerate(self.pipeline_configuration, start=1):
-            node = _pipeline_node_factory(node_config, self.logger)
-            self.logger.debug(f"Initialized Node {index}: {type(node).__name__}")
-            nodes.append(node)
-
-        return nodes
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
