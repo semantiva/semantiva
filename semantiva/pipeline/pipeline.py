@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, List, Optional, Mapping, cast
+from typing import Any, Dict, List, Optional, Mapping
 from .payload import Payload
 from semantiva.logger import Logger
 from .payload_processors import _PayloadProcessor
-from .nodes._pipeline_node_factory import _pipeline_node_factory
 from .nodes.nodes import (
     _PipelineNode,
     _ProbeResultCollectorNode,
 )
+from .graph_builder import build_canonical_spec
 from semantiva.execution.transport import (
     SemantivaTransport,
     InMemorySemantivaTransport,
@@ -70,13 +70,12 @@ class Pipeline(_PayloadProcessor):
         self.orchestrator = orchestrator or LocalSemantivaOrchestrator()
         self.trace = trace
 
-        # Use inspection system for validation
-        from semantiva.inspection import build_pipeline_inspection, validate_pipeline
+        # Precompute canonical spec and resolved descriptors for validation
+        canonical, resolved = build_canonical_spec(pipeline_configuration)
+        self.canonical_spec = canonical
+        self.resolved_spec = resolved
 
-        inspection = build_pipeline_inspection(pipeline_configuration)
-        validate_pipeline(inspection)  # This will raise if there are any errors
-
-        self.nodes = self._initialize_nodes()  # existing initialization logic
+        self.nodes = []
         if self.logger:
             self.logger.debug(f"Initialized {self.__class__.__name__}")
 
@@ -98,13 +97,15 @@ class Pipeline(_PayloadProcessor):
         self.stop_watch.start()  # existing pipeline timer start
 
         result_payload = self.orchestrator.execute(
-            nodes=self.nodes,
+            pipeline_spec=self.resolved_spec,
             payload=payload,
             transport=self.transport,
             logger=self.logger,
             trace=self.trace,
-            pipeline_spec=cast(List[Mapping[str, Any]], self.pipeline_configuration),
+            canonical_spec=self.canonical_spec,
         )
+
+        self.nodes = self.orchestrator.last_nodes
 
         self.stop_watch.stop()  # existing pipeline timer stop
         self.logger.info("Pipeline execution complete.")
