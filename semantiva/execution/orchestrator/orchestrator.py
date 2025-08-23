@@ -118,7 +118,9 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
         Zero overhead when trace is None (no run_id, no canonicalization, no timings).
 
         When ``trace`` is provided, the orchestrator emits ``pipeline_start`` and
-        ``pipeline_end`` records along with per-node ``before``/``after`` events.
+        ``pipeline_end`` records along with per-node ``before``/``after``/``error`` events.
+        Error events capture timing data and exception details for failed nodes.
+        Trace resources (flush/close) are properly managed even when execution fails.
         No tracing overhead is incurred when ``trace`` is ``None``.
 
         Args:
@@ -155,77 +157,93 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                 # Older drivers/tests without the new parameter
                 trace.on_pipeline_start(pipeline_id, run_id, canonical, meta)
 
-        for index, node in enumerate(nodes, start=1):
-            logger.info(f"Running node {index}: {node.processor.__class__.__name__}")
-            if trace is not None and run_id and pipeline_id:
-                addr = NodeAddress(run_id, pipeline_id, node_uuids[index - 1])
-                before = NodeTraceEvent(
-                    phase="before",
-                    address=addr,
-                    params=None,
-                    input_payload=None,
-                    output_payload=None,
-                    error_type=None,
-                    error_msg=None,
-                    event_time_utc=datetime.utcnow().isoformat(timespec="milliseconds")
-                    + "Z",
-                    t_wall=None,
-                    t_cpu=None,
+        try:
+            for index, node in enumerate(nodes, start=1):
+                logger.info(
+                    f"Running node {index}: {node.processor.__class__.__name__}"
                 )
-                trace.on_node_event(before)
-                start_wall = time.time()
-                start_cpu = time.process_time()
-
-            try:
-                payload = node.process(Payload(data, context))
-                data, context = payload.data, payload.context
                 if trace is not None and run_id and pipeline_id:
-                    t_wall = time.time() - start_wall
-                    t_cpu = time.process_time() - start_cpu
-                    after = NodeTraceEvent(
-                        phase="after",
+                    addr = NodeAddress(run_id, pipeline_id, node_uuids[index - 1])
+                    before = NodeTraceEvent(
+                        phase="before",
                         address=addr,
                         params=None,
                         input_payload=None,
-                        output_payload=Payload(data, context),
+                        output_payload=None,
                         error_type=None,
                         error_msg=None,
                         event_time_utc=datetime.utcnow().isoformat(
                             timespec="milliseconds"
                         )
                         + "Z",
-                        t_wall=t_wall,
-                        t_cpu=t_cpu,
+                        t_wall=None,
+                        t_cpu=None,
                     )
-                    trace.on_node_event(after)
-            except Exception as exc:
-                if trace is not None and run_id and pipeline_id:
-                    t_wall = time.time() - start_wall
-                    t_cpu = time.process_time() - start_cpu
-                    err = NodeTraceEvent(
-                        phase="error",
-                        address=addr,
-                        params=None,
-                        input_payload=None,
-                        output_payload=None,
-                        error_type=type(exc).__name__,
-                        error_msg=str(exc),
-                        event_time_utc=datetime.utcnow().isoformat(
-                            timespec="milliseconds"
+                    trace.on_node_event(before)
+                    start_wall = time.time()
+                    start_cpu = time.process_time()
+
+                try:
+                    payload = node.process(Payload(data, context))
+                    data, context = payload.data, payload.context
+                    if trace is not None and run_id and pipeline_id:
+                        t_wall = time.time() - start_wall
+                        t_cpu = time.process_time() - start_cpu
+                        after = NodeTraceEvent(
+                            phase="after",
+                            address=addr,
+                            params=None,
+                            input_payload=None,
+                            output_payload=Payload(data, context),
+                            error_type=None,
+                            error_msg=None,
+                            event_time_utc=datetime.utcnow().isoformat(
+                                timespec="milliseconds"
+                            )
+                            + "Z",
+                            t_wall=t_wall,
+                            t_cpu=t_cpu,
                         )
-                        + "Z",
-                        t_wall=t_wall,
-                        t_cpu=t_cpu,
-                    )
-                    trace.on_node_event(err)
-                raise
+                        trace.on_node_event(after)
+                except Exception as exc:
+                    if trace is not None and run_id and pipeline_id:
+                        t_wall = time.time() - start_wall
+                        t_cpu = time.process_time() - start_cpu
+                        err = NodeTraceEvent(
+                            phase="error",
+                            address=addr,
+                            params=None,
+                            input_payload=None,
+                            output_payload=None,
+                            error_type=type(exc).__name__,
+                            error_msg=str(exc),
+                            event_time_utc=datetime.utcnow().isoformat(
+                                timespec="milliseconds"
+                            )
+                            + "Z",
+                            t_wall=t_wall,
+                            t_cpu=t_cpu,
+                        )
+                        trace.on_node_event(err)
+                    raise
 
-            transport.publish(
-                channel=node.processor.semantic_id(), data=data, context=context
-            )
+                transport.publish(
+                    channel=node.processor.semantic_id(), data=data, context=context
+                )
 
-        if trace is not None and run_id:
-            trace.on_pipeline_end(run_id, {"status": "ok"})
-            trace.flush()
-            trace.close()
+            if trace is not None and run_id:
+                trace.on_pipeline_end(run_id, {"status": "ok"})
+        except Exception as exc:
+            # Ensure trace is properly closed even on error
+            if trace is not None and run_id:
+                trace.on_pipeline_end(run_id, {"status": "error", "error": str(exc)})
+                trace.flush()
+                trace.close()
+            raise
+        else:
+            # Normal completion path
+            if trace is not None and run_id:
+                trace.flush()
+                trace.close()
+
         return Payload(data, context)
