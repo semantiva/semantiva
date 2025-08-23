@@ -48,10 +48,10 @@ def _bytes_from_known_interfaces(obj: Any) -> bytes | None:
     """Try to obtain bytes from known object interfaces.
 
     Strategies in order:
-      • obj.to_bytes() → bytes
-      • obj.dumps() → bytes/str (encoded as UTF-8)
-      • obj.to_json() / obj.json() → str (encoded)
-      • memoryview / buffer protocol → bytes
+      - obj.to_bytes() → bytes
+      - obj.dumps() → bytes/str (encoded as UTF-8)
+      - obj.to_json() / obj.json() → str (encoded)
+      - memoryview / buffer protocol → bytes
 
     Returns:
       bytes if a known strategy succeeds; otherwise None.
@@ -88,11 +88,11 @@ def canonical_json_bytes(obj: Any) -> bytes:
     """Serialize ``obj`` to canonical JSON bytes (UTF-8).
 
     Guarantees:
-      • Deterministic key ordering (sort_keys=True) and compact separators.
-      • Falls back to _json_default for non-serializable types.
+      - Deterministic key ordering (sort_keys=True) and compact separators.
+      - Falls back to _json_default for non-serializable types.
 
     Intended use:
-      • Driver-side summaries (e.g., content hashes) without heavy payload copies.
+      - Driver-side summaries (e.g., content hashes) without heavy payload copies.
     """
     try:
         return json.dumps(
@@ -111,9 +111,9 @@ def _json_default(o: Any):
     """Default serializer for :func:`canonical_json_bytes`.
 
     Supports:
-      • dataclasses (as dict)
-      • numpy/pandas types (basic scalars) when available
-      • mapping/sequence fallbacks
+      - dataclasses (as dict)
+      - numpy/pandas types (basic scalars) when available
+      - mapping/sequence fallbacks
 
     Raises:
       TypeError when object cannot be represented; callers catch and fallback to
