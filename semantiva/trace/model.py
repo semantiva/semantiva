@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Trace model for Semantiva (v1).
+"""Trace model (v1): stable event payloads and driver contract.
 
-Defines stable types used by tracing:
-  - NodeAddress: (pipeline_run_id, pipeline_id, node_uuid)
-  - NodeTraceEvent: Trace "node" envelope payload (phase, timings, error, etc.)
-  - TraceDriver: driver protocol; Requires on_pipeline_start/node_event/pipeline_end, flush, close.
+Includes:
+  - NodeAddress: triplet identifying a node within a specific run.
+  - NodeTraceEvent: "node" envelope payload (phase, timings, errors, optional summaries).
+  - TraceDriver: protocol for trace sinks; must implement start/node/end, flush, close.
 
-Notes:
-  • V1 consumers must switch on "type" and ignore unknown fields.
-  • Reserved ODO fields: plan_id (None), plan_epoch (0).
-  • Orchestrator may pass pipeline_input to on_pipeline_start (optional, drivers MAY ignore).
+Notes for consumers:
+  - Switch on "type" and ignore unknown fields for forward compatibility.
+  - Reserved ODO fields: plan_id (None), plan_epoch (0).
+  - Orchestrator may pass ``pipeline_input`` to ``on_pipeline_start``; drivers may ignore.
 """
 
 from __future__ import annotations
@@ -69,8 +69,8 @@ class NodeTraceEvent:
       post_context_repr: Human-readable key→value context string when ``repr`` and ``context`` details are both enabled.
 
     Notes:
-      • Drivers may add summaries (hashes, reprs); consumers must ignore unknown fields.
-      • Orchestrator sets input/output payload to None for v1 minimal cost.
+      - Drivers may add summaries (hashes, reprs); consumers must ignore unknown fields.
+      - Orchestrator sets input/output payload to None for v1 minimal cost.
     """
 
     phase: Literal["before", "after", "error"]
@@ -118,10 +118,10 @@ class TraceDriver(Protocol):
           pipeline_input: Optional payload snapshot (drivers MAY ignore).
 
         Notes:
-          • This optional parameter extends the Epic's minimal interface.
+          - This optional parameter extends the Epic's minimal interface.
             Orchestrator passes it when available; drivers without this parameter
             remain runtime-compatible (the orchestrator catches TypeError).
-          • Consumers should NOT rely on snapshots; Trace v1 guarantees are in the envelopes.
+          - Consumers should NOT rely on snapshots; Trace v1 guarantees are in the envelopes.
         """
         ...
 

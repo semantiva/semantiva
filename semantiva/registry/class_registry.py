@@ -108,6 +108,7 @@ from semantiva.context_processors.factory import (
     _context_renamer_factory,
 )
 from semantiva.workflows.fitting_model import FittingModel
+from .descriptors import ModelDescriptor
 
 
 class ClassRegistry:
@@ -561,12 +562,14 @@ def _parse_scalar(value: str) -> Any:
             return value
 
 
-def _model_param_resolver(spec: Any) -> Optional[FittingModel]:
-    """Instantiate fitting models from ``model:``-prefixed specs.
+def _model_param_resolver(spec: Any) -> Optional[ModelDescriptor]:
+    """Return a :class:`ModelDescriptor` from ``model:``-prefixed specs.
 
     The expected format is ``model:ClassName:k1=v1,k2=v2``.  The class name is
     resolved using :meth:`ClassRegistry.get_class` and keyword arguments are
-    parsed as simple scalars.
+    parsed as simple scalars, but **not** instantiated.  This keeps the
+    canonical specification free of live objects while retaining enough
+    information to construct the model later.
     """
 
     if isinstance(spec, str) and spec.startswith("model:"):
@@ -582,5 +585,6 @@ def _model_param_resolver(spec: Any) -> Optional[FittingModel]:
                     continue
                 key, _, val = item.partition("=")
                 kwargs[key] = _parse_scalar(val)
-        return model_cls(**kwargs)
+        class_path = f"{model_cls.__module__}.{model_cls.__qualname__}"
+        return ModelDescriptor(class_path, kwargs)
     return None
