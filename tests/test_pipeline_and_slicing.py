@@ -18,10 +18,7 @@ from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
 )
-from semantiva.exceptions import PipelineConfigurationError
 from semantiva.pipeline import Pipeline, Payload
-from semantiva.data_types import NoDataType
-from semantiva.examples.test_utils import FloatDataType
 from semantiva.examples.test_utils import (
     FloatDataType,
     FloatDataCollection,

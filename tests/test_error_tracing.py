@@ -28,7 +28,6 @@ from typing import List
 from semantiva.trace.drivers.jsonl import JSONLTrace
 from semantiva.trace.model import NodeTraceEvent
 from semantiva.execution.orchestrator.orchestrator import LocalSemantivaOrchestrator
-from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
 from semantiva.data_processors.data_processors import DataOperation
 from semantiva.examples.test_utils import FloatDataType
 from semantiva import Payload

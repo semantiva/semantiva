@@ -177,7 +177,6 @@ pipeline:
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
     # Should fail during pipeline creation
-    from semantiva.exceptions import PipelineConfigurationError
 
     with pytest.raises(ValueError, match="num_steps must be an integer greater than 1"):
         Pipeline(node_configs)
@@ -199,7 +198,6 @@ pipeline:
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
     # Should fail during pipeline creation
-    from semantiva.exceptions import PipelineConfigurationError
 
     with pytest.raises(ValueError, match="must have range format"):
         Pipeline(node_configs)
@@ -221,7 +219,6 @@ pipeline:
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
     # Should fail with standard class resolution error since structured processing fails
-    from semantiva.exceptions import PipelineConfigurationError
 
     with pytest.raises(ValueError, match="not found"):
         Pipeline(node_configs).process(Payload(NoDataType(), empty_context))
