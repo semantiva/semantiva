@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Append-only JSONL trace driver (v1).
+"""Append-only JSON trace driver (v1).
 
-Writes "pipeline_start", "node", "pipeline_end" envelopes to a file with a
-background thread. File naming follows the convention
-``{YYYYMMDD-HHMMSS}_{RUNID}.jsonl`` when the configured output path is a
-directory.
+Writes ``pipeline_start``, ``node`` and ``pipeline_end`` envelopes to a file
+with a background thread. Output is always pretty-printed JSON (indent=2,
+sorted keys) with a blank line separating each record. File naming follows the
+convention ``{YYYYMMDD-HHMMSS}_{RUNID}.jsonl`` when the configured output path
+is a directory.
 """
 
 from __future__ import annotations
 
-import json
 import queue
 import threading
 from dataclasses import asdict
@@ -30,34 +30,50 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, IO
 
-from .._utils import safe_repr, serialize, canonical_json, sha256_bytes
+from .._utils import (
+    safe_repr,
+    serialize,
+    canonical_json_bytes,
+    context_to_kv_repr,
+    json_dumps_human,
+    sha256_bytes,
+)
 from semantiva.data_types import NoDataType
 
 from ..model import NodeTraceEvent, TraceDriver
 
 
 class JSONLTrace(TraceDriver):
-    """Append-only JSONL trace driver with background writer.
+    """Append-only JSON trace driver with background writer."""
 
-    Extras (driver-side, optional):
-      • params_sig / input_summary / output_summary / pipeline_input_* fields MAY be added.
-      • Consumers must ignore unknown fields per trace v1 rules.
-    """
+    _VALID_FLAGS = {"timings", "hash", "repr", "context"}
 
     def __init__(self, output_path: str | None = None, detail: str = "timings"):
         """Initialize driver.
 
         Args:
           output_path: Directory or file path. If directory/None, auto-name files per convention.
-          detail: "timings" (default) - emit only trace v1 timings; future-friendly for summary levels.
+          detail: Comma-separated detail flags. Legacy single values ("timings",
+            "hash", "repr", "all") are accepted for backward compatibility.
         """
         self._path = Path(output_path) if output_path else Path(".")
         self._file: Optional[IO[str]] = None
         self._queue: queue.Queue[dict | None] = queue.Queue()
         self._thread = threading.Thread(target=self._worker, daemon=True)
         self._thread.start()
-        # detail: one of timings, hash, repr, all
-        self._detail = detail
+        self._detail = self._parse_detail(detail)
+
+    def _parse_detail(self, detail: str) -> set[str]:
+        parts = [p.strip() for p in detail.split(",") if p.strip()]
+        if not parts:
+            return {"timings"}
+        flags: set[str] = set()
+        for p in parts:
+            if p == "all":
+                return {"timings", "hash", "repr", "context"}
+            if p in self._VALID_FLAGS:
+                flags.add(p)
+        return flags or {"timings"}
 
     # Internal -----------------------------------------------------------------
     def _open_file(self, run_id: str) -> None:
@@ -75,13 +91,13 @@ class JSONLTrace(TraceDriver):
         self._file = path.open("a", encoding="utf-8")
 
     def _worker(self) -> None:
-        """Background queue consumer; writes one JSON line per record; exits on sentinel None."""
+        """Background queue consumer; pretty-prints each record."""
         while True:
             item = self._queue.get()
             if item is None:
                 break
             assert self._file is not None
-            self._file.write(json.dumps(item) + "\n")
+            self._file.write(json_dumps_human(item) + "\n\n")
             self._queue.task_done()
         if self._file:
             self._file.flush()
@@ -137,17 +153,15 @@ class JSONLTrace(TraceDriver):
                 pass
             if pipeline_input is not None:
                 try:
-                    if self._detail in ("repr", "all"):
+                    if "repr" in self._detail:
                         try:
                             record["pipeline_input_repr"] = safe_repr(
-                                getattr(pipeline_input, "data", pipeline_input),
-                                maxlen=120,
+                                getattr(pipeline_input, "data", pipeline_input)
                             )
                         except Exception:
                             pass
-                    if self._detail in ("hash", "all"):
+                    if "hash" in self._detail:
                         try:
-                            # compute hash from real serialization of the data
                             record["pipeline_input_hash"] = sha256_bytes(
                                 serialize(
                                     getattr(pipeline_input, "data", pipeline_input)
@@ -192,33 +206,36 @@ class JSONLTrace(TraceDriver):
             outp = getattr(event, "output_payload", None)
             if outp is not None:
                 data = getattr(outp, "data", None)
-                if self._detail in ("repr", "all"):
+                if "repr" in self._detail:
                     try:
-                        record["out_data_repr"] = safe_repr(data, maxlen=120)
+                        record["out_data_repr"] = safe_repr(data)
                     except Exception:
                         pass
-                if self._detail in ("hash", "all"):
+                if "hash" in self._detail:
                     try:
                         record["out_data_hash"] = sha256_bytes(serialize(data))
                     except Exception:
                         pass
-            # post-context hash if available
             try:
                 ctx = None
                 if outp is not None and hasattr(outp, "context"):
                     ctx = getattr(outp, "context")
-                if ctx is not None and self._detail in ("hash", "all"):
-                    try:
-                        payload_ctx = ctx.to_dict() if hasattr(ctx, "to_dict") else ctx
-                        record["post_context_hash"] = sha256_bytes(
-                            canonical_json(payload_ctx)
-                        )
-                    except Exception:
-                        # fallback try raw ctx
+                if ctx is not None:
+                    if "hash" in self._detail:
                         try:
+                            ctx_view = ctx.to_dict() if hasattr(ctx, "to_dict") else ctx
                             record["post_context_hash"] = sha256_bytes(
-                                canonical_json(ctx)
+                                canonical_json_bytes(ctx_view)
                             )
+                        except Exception:
+                            pass
+                    if "repr" in self._detail and "context" in self._detail:
+                        try:
+                            ctx_view = ctx.to_dict() if hasattr(ctx, "to_dict") else ctx
+                            if isinstance(ctx_view, dict):
+                                record["post_context_repr"] = context_to_kv_repr(
+                                    ctx_view
+                                )
                         except Exception:
                             pass
             except Exception:
