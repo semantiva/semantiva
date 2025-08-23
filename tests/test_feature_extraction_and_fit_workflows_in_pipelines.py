@@ -43,7 +43,7 @@ def test_pipeline_single_string_key(linear_int_data_collection):
         {
             "processor": ModelFittingContextProcessor,
             "parameters": {
-                "fitting_model": PolynomialFittingModel(degree=1),
+                "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "t_values",
                 "dependent_var_key": "data_values",
                 "context_keyword": "fit_coefficients",

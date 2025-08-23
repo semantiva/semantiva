@@ -20,6 +20,8 @@ from semantiva.context_processors.context_types import (
 )
 from semantiva.exceptions import PipelineConfigurationError
 from semantiva.pipeline import Pipeline, Payload
+from semantiva.data_types import NoDataType
+from semantiva.examples.test_utils import FloatDataType
 from semantiva.examples.test_utils import (
     FloatDataType,
     FloatDataCollection,
@@ -261,19 +263,19 @@ pipeline:
 
     pipeline = Pipeline(node_configs)
 
+    payload = pipeline.process(Payload(float_data_collection, empty_context))
+
     assert (
         pipeline.nodes[0].processor.__class__.__name__
         == "SlicerForFloatMultiplyOperation"
     )
-
-    payload = pipeline.process(Payload(float_data_collection, empty_context))
     data, _ = payload.data, payload.context
 
     assert isinstance(data, FloatDataCollection)
     assert [item.data for item in data] == [2.0, 4.0, 6.0]
 
 
-def test_image_pipeline_invalid_configuration():
+def test_image_pipeline_invalid_configuration(empty_context):
     """
     Test that an invalid pipeline configuration raises an AssertionError.
     """
@@ -289,9 +291,11 @@ def test_image_pipeline_invalid_configuration():
         },
     ]
 
-    # Check that initializing the pipeline raises an AssertionError
-    with pytest.raises(PipelineConfigurationError):
-        _ = Pipeline(node_configurations)
+    # Check that pipeline execution raises an error
+    with pytest.raises(TypeError):
+        Pipeline(node_configurations).process(
+            Payload(FloatDataType(1.0), empty_context)
+        )
 
 
 def test_data_io_node():
