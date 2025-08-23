@@ -164,7 +164,7 @@ def sha256_bytes(data: bytes) -> str:
     return "sha256-" + h.hexdigest()
 
 
-def context_to_kv_repr(mapping: Mapping[str, object], *, max_pairs: int = 50) -> str:
+def context_to_kv_repr(mapping: Mapping[str, object], *, max_pairs: int = 150) -> str:
     """Return a deterministic ``k=v`` comma-separated string for ``mapping``.
 
     Keys are sorted alphabetically for reproducible output. If more than
@@ -173,7 +173,7 @@ def context_to_kv_repr(mapping: Mapping[str, object], *, max_pairs: int = 50) ->
     """
 
     items = sorted(mapping.items(), key=lambda kv: kv[0])
-    parts = [f"{k}={safe_repr(v)}" for k, v in items[:max_pairs]]
+    parts = [f"{k}={safe_repr(v, maxlen=9999)}" for k, v in items[:max_pairs]]
     if len(items) > max_pairs:
         parts.append("…")
     return ", ".join(parts)
