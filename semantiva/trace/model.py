@@ -62,6 +62,12 @@ class NodeTraceEvent:
       t_wall / t_cpu: Wall/CPU seconds; None on "before".
       plan_id / plan_epoch: Reserved for ODO; v1 sets None/0.
 
+    Optional output-only summaries (emitted on ``phase == 'after'``):
+      out_data_repr: Human-readable ``repr`` of output data when ``repr`` detail is enabled.
+      out_data_hash: Content fingerprint of output data when ``hash`` detail is enabled.
+      post_context_hash: Context fingerprint after node execution when ``hash`` detail is enabled.
+      post_context_repr: Human-readable key→value context string when ``repr`` and ``context`` details are both enabled.
+
     Notes:
       • Drivers may add summaries (hashes, reprs); consumers must ignore unknown fields.
       • Orchestrator sets input/output payload to None for v1 minimal cost.
@@ -83,12 +89,15 @@ class NodeTraceEvent:
     out_data_repr: str | None = None
     out_data_hash: str | None = None
     post_context_hash: str | None = None
+    post_context_repr: str | None = None
 
 
 class TraceDriver(Protocol):
     """Driver API for Semantiva tracing (v1).
 
     Implementations should be resilient to extra fields and ignore unknown kwargs.
+    Drivers must properly handle error events and ensure resource cleanup (flush/close)
+    is performed even when pipeline execution fails.
     """
 
     def on_pipeline_start(
