@@ -55,6 +55,8 @@ class Pipeline(_PayloadProcessor):
                 If not provided, an InMemorySemantivaTransport instance will be used. Defaults to None.
             orchestrator (Optional[SemantivaOrchestrator], optional): An optional orchestrator for managing pipeline execution.
                 If not provided, a LocalSemantivaOrchestrator instance will be used. Defaults to None.
+            trace (Optional[TraceDriver], optional): An optional trace driver for capturing execution events.
+                When provided, captures complete execution records including error events with timing data.
         Attributes:
             pipeline_configuration (List[Dict]): Stores the pipeline configuration.
             transport (SemantivaTransport): The transport mechanism used by the pipeline.

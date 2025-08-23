@@ -54,24 +54,33 @@ def _load_spec(pipeline_or_spec: Any) -> List[dict[str, Any]]:
     )
 
 
-def _canonical_node(defn: dict[str, Any]) -> dict[str, Any]:
+def _canonical_node(
+    defn: dict[str, Any], declaration_index: int = 0, declaration_subindex: int = 0
+) -> dict[str, Any]:
     """Return canonical node mapping used to derive node_uuid.
 
     Canonical fields:
-      • role, fqn, params (shallow), ports (declared)
+        • role, fqn, params (shallow), ports (declared), declaration_index, declaration_subindex
     Canonicalization rules:
-      • Sort mapping keys; strip whitespace/ordering artifacts; ignore cosmetic YAML noise.
+        • Sort mapping keys; strip whitespace/ordering artifacts; ignore cosmetic YAML noise.
+
+    Note: declaration_index and declaration_subindex provide a stable positional
+    discriminator so that nodes with identical configuration but different
+    declaration positions receive distinct UUIDs.
     """
     role = defn.get("role") or "processor"
     processor = defn.get("processor")
     params = defn.get("parameters") or {}
     ports = defn.get("ports") or {}
-    return {
+    canon = {
         "role": role,
         "fqn": processor,
         "params": params,
         "ports": ports,
+        "declaration_index": declaration_index,
+        "declaration_subindex": declaration_subindex,
     }
+    return canon
 
 
 def build_graph(pipeline_or_spec: Any) -> dict[str, Any]:
@@ -91,8 +100,17 @@ def build_graph(pipeline_or_spec: Any) -> dict[str, Any]:
     spec = _load_spec(pipeline_or_spec)
     nodes: List[dict[str, Any]] = []
     node_uuids: List[str] = []
-    for raw in spec:
-        canon = _canonical_node(raw)
+    # Track declaration indices and subindices. Current loader returns a list
+    # of top-level declarations; each declaration may conceptually expand into
+    # multiple nodes (subindex). The current implementation treats each
+    # declaration as producing a single node (subindex=0). We record the
+    # declaration_index for deterministic identities.
+    for declaration_index, raw in enumerate(spec):
+        # If a declaration would expand into multiple nodes, production code
+        # should emit multiple entries at this point; for now we assign
+        # declaration_subindex=0 to the single produced node.
+        declaration_subindex = 0
+        canon = _canonical_node(raw, declaration_index, declaration_subindex)
         node_json = json.dumps(canon, sort_keys=True, separators=(",", ":"))
         node_uuid = str(uuid.uuid5(_NODE_NAMESPACE, node_json))
         canon_with_uuid = dict(canon)
