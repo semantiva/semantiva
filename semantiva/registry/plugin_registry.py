@@ -74,7 +74,7 @@ load_extensions(["pkg1", "pkg2"])         # Multiple
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Type
+from typing import List, Type, Dict, Iterable, cast
 import importlib
 import importlib.metadata
 from types import ModuleType
@@ -183,19 +183,27 @@ def load_extensions(specs_to_load: str | List[str]) -> None:
     else:
         specs = specs_to_load
 
-    # Collect entry points once for efficiency
+    # Collect entry points once for efficiency.
+    # importlib.metadata.entry_points() changed across Python versions:
+    # - Newer versions accept a 'group' kwarg and return an EntryPoints object.
+    # - Older versions return a dict mapping group->list of EntryPoint objects.
+    # Use a runtime TypeError guard and typing.cast in the fallback so mypy
+    # doesn't assume the return value has a .get attribute.
+    eps: Dict[str, importlib.metadata.EntryPoint]
     try:
+        # Build mapping directly from the returned collection. This avoids
+        # assigning the return value to a variable with an incompatible
+        # static type between Python versions.
         eps = {
             ep.name: ep
             for ep in importlib.metadata.entry_points(group="semantiva.extensions")
         }
     except TypeError:
-        # Python < 3.10 compatibility: entry_points() returns a dict-like object
-        eps = {}
-        for entry_point in importlib.metadata.entry_points().get(
-            "semantiva.extensions", []
-        ):
-            eps[entry_point.name] = entry_point
+        all_eps = importlib.metadata.entry_points()
+        # all_eps should be a mapping from group name to iterable of EntryPoint
+        groups = cast(Dict[str, Iterable[importlib.metadata.EntryPoint]], all_eps)
+        entries = groups.get("semantiva.extensions", [])
+        eps = {ep.name: ep for ep in entries}
 
     for name in specs:
         # Strategy 1: Try entry point resolution
