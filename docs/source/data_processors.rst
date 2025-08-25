@@ -4,10 +4,10 @@ Data Processors
 Overview
 --------
 
-- ``DataOperation``: transforms data
-- ``DataProbe``: inspects/records
-- ``OperationTopologyFactory`` and slicing utilities
-- ``ParametricSweepFactory``: generate collections by sweeping parameters
+- :py:class:`semantiva.data_processors.data_processors.DataOperation`: transforms data
+- :py:class:`semantiva.data_processors.data_processors.DataProbe`: inspects/records
+- :py:class:`semantiva.data_processors.data_processors.OperationTopologyFactory` and slicing utilities
+- :py:class:`semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory`: generate collections by sweeping parameters
 
 Examples
 --------
