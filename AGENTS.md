@@ -56,9 +56,25 @@ Key concepts include:
 
    For significant changes, add or update tests in the `tests/` directory. Use the existing tests as examples of how to create dummy data types, operations, and probes.
 
-2. **Documentation**
-   Update `README.md` or the documentation under `docs/` if the public API changes or if new features require explanation.
+2. **Documentation (REQUIRED)**
+   Every PR that touches public APIs, processors, nodes, or CLI **must** keep the documentation build green.
+   - **Install docs deps**: `pdm install --dev -G docs`
+   - **Build locally (fail on warnings)**:
+     ```sh
+     export SPHINXOPTS="-W --keep-going -n"
+     make -C docs clean html
+     ```
+     The HTML output is generated in `docs/build/html`.
+   - **Docstring coverage (optional locally, enforced periodically)**:
+     ```sh
+     make -C docs coverage
+     ```
+   - **PR checklist** (mandatory):
+     - [ ] Sphinx builds without warnings
+     - [ ] New/changed symbols have docstrings (module, class, methods)
+     - [ ] Cross‑refs (`:py:class:`, `:py:meth:`, `:py:data:`) resolve (no nitpicky errors)
+     - [ ] Tutorials/concepts updated if behavior or CLI UX changed
+   - **CI**: Docs are built in CI via `./ci_docs.sh` and must pass.
+
+3. **Changelog**
    Report changes in `CHANGELOG.md` under the appropriate section.
-
-
-Following these guidelines ensures that agents maintain consistency across the project and that the pipeline remains introspectable and reliable.

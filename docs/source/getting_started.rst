@@ -1,20 +1,51 @@
 Getting Started
 ===============
 
-Install
--------
+Installation
+------------
+
+To install Semantiva, use pip:
 
 .. code-block:: bash
 
-   pip install -e .
-   pip install sphinx
+   pip install semantiva
 
-Hello, Pipeline (YAML)
-----------------------
+This installs the core Semantiva framework and its dependencies.
 
-.. literalinclude:: ../../tests/simple_pipeline.yaml
-   :language: yaml
-   :caption: Example YAML pipeline (tests/simple_pipeline.yaml)
+Quickstart - Hello Pipeline
+-----------------------------
+
+Save the following minimal pipeline definition to a file (e.g. ``hello_pipeline.yaml``):
+
+.. code-block:: yaml
+
+   pipeline:
+     nodes:
+       - processor: FloatValueDataSource
+         parameters:
+           value: 1.0
+       - processor: FloatMultiplyOperation
+         parameters:
+           factor: 2.0
+       - processor: FloatTxtFileSaver
+         parameters:
+           path: "output_float.txt"
+
+Run it with:
+
+.. code-block:: bash
+
+   semantiva run hello_pipeline.yaml
+
+This command executes the pipeline and prints out pipeline execution logs.
+
+You can also run the pipeline with tracing enabled.
+
+.. code-block:: bash
+
+   semantiva run hello_pipeline.yaml --trace-driver jsonl --trace-detail all --trace-output traces/
+
+This command will produce detailed execution traces.
 
 Run from Python
 ---------------
@@ -24,23 +55,11 @@ Run from Python
    from semantiva import Pipeline
    from semantiva.configurations import load_pipeline_from_yaml
 
-   nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
+   nodes = load_pipeline_from_yaml("hello_pipeline.yaml")
    p = Pipeline(nodes)
-   result = p.run()  # Returns a Payload
+   result = p.process()  # Returns a Payload object with data and context
    print("Pipeline executed")
-
-Run from CLI
-------------
-
-.. code-block:: bash
-
-   semantiva run tests/simple_pipeline.yaml
-
-With tracing enabled:
-
-.. code-block:: bash
-
-   semantiva run tests/simple_pipeline.yaml --trace-driver jsonl --trace-output traces/
+   print(f"Output data: {result.data}") # Prints `Output data: FloatDataType(2.0)`
 
 Next Steps
 ----------
