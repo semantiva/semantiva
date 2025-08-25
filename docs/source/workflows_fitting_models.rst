@@ -1,5 +1,5 @@
 Workflows — Fitting Models via ``model:``
-========================================
+=========================================
 
 - :py:class:`semantiva.workflows.fitting_model.FittingModel`
 - :py:class:`semantiva.workflows.fitting_model.PolynomialFittingModel`
@@ -17,3 +17,4 @@ Autodoc
 .. automodule:: semantiva.workflows.fitting_model
    :members:
    :undoc-members:
+   :show-inheritance:
