@@ -8,7 +8,7 @@ on:
 
 env:
   project_name: semantiva
-  python_version: '3.10.12'
+  python_version: '3.12'
 
 jobs:
   build-and-deploy:
