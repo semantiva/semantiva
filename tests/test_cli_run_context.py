@@ -24,14 +24,14 @@ def test_cli_run_context(tmp_path: Path):
         """
         pipeline:
           nodes:
-            - processor: FloatMockDataSource
+            - processor: FloatValueDataSource
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0
             - processor: FloatTxtFileSaver
         """,
     )
-    res = run_cli(["run", str(yaml_path), "--context", f"file_path={output_file}"])
+    res = run_cli(["run", str(yaml_path), "--context", f"path={output_file}"])
     assert res.returncode == 0
     assert output_file.read_text().strip() == "84.0"
 
@@ -42,7 +42,7 @@ def test_cli_run_context_invalid(tmp_path: Path):
         """
         pipeline:
           nodes:
-            - processor: FloatMockDataSource
+            - processor: FloatValueDataSource
         """,
     )
     res = run_cli(["run", str(yaml_path), "--context", "bad"])

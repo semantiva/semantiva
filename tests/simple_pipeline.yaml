@@ -1,6 +1,6 @@
 pipeline:
   nodes:
-    - processor: "FloatMockDataSource"
+    - processor: "FloatValueDataSource"
       # parameters:
       #  value: 1.0
 
@@ -17,4 +17,4 @@ pipeline:
 
     - processor: "FloatTxtFileSaver"
       parameters:
-        file_path: "output.txt"
+        path: "output.txt"
