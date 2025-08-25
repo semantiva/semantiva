@@ -351,10 +351,10 @@ class ClassRegistry:
     ) -> None:
         """Register a configuration processor for future extensibility.
 
-        FUTURE IMPROVEMENT PATHWAY:
-        ==========================
-        The current preprocessing approach could be generalized into a more flexible
-        configuration processor system. This would allow:
+        Future improvement pathway
+        --------------------------
+        The current preprocessing approach could be generalized into a more
+        flexible configuration processor system. This would allow:
 
         1. Multiple configuration transformers
         2. Ordered processing pipeline
@@ -362,22 +362,22 @@ class ClassRegistry:
         4. Easier testing and maintenance
 
         Example usage:
+
             @ClassRegistry.register_config_processor
             def structured_sweep_processor(config):
                 # Handle sweep: prefix with parameters
                 return transformed_config
 
             @ClassRegistry.register_config_processor
-            def other_structured_processor(config):
-                # Handle other complex configurations
-                return transformed_config
+            def other_processor(config):
+                ...
 
-        This would replace the current hardcoded preprocessing with a pluggable system
-        similar to how resolvers work for simple string-to-class mappings.
+        This would replace the current hardcoded preprocessing with a pluggable
+        system similar to how resolvers work for simple string-to-class mappings.
 
         Args:
             processor_fn: Function that takes a node configuration dict and returns
-                         a potentially modified configuration dict
+                a potentially modified configuration dict
         """
         # Implementation would add to a _config_processors list
         # and iterate through them in preprocess_node_config
