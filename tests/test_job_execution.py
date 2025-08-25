@@ -40,7 +40,7 @@ from semantiva.execution.job_queue.worker import worker_loop
 from semantiva.examples.test_utils import (
     FloatMultiplyOperation,
     FloatCollectValueProbe,
-    FloatMockDataSource,
+    FloatValueDataSource,
 )
 
 
@@ -111,8 +111,8 @@ def test_job_execution():
         },
     ]
 
-    # 5) Enqueue two jobs with initial data from FloatMockDataSource
-    input_data = FloatMockDataSource().get_data()
+    # 5) Enqueue two jobs with initial data from FloatValueDataSource
+    input_data = FloatValueDataSource().get_data()
     future1 = orchestrator.enqueue(
         node_configurations, return_future=True, data=input_data
     )
