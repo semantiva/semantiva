@@ -23,7 +23,7 @@ import json
 import tempfile
 import pytest
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from semantiva.trace.drivers.jsonl import JSONLTrace
 from semantiva.trace.model import NodeTraceEvent
@@ -55,10 +55,10 @@ class FailingFloatOperation(DataOperation):
 class MockTraceCapture:
     """Test driver that captures all trace events in memory."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.events: List[dict] = []
-        self.pipeline_start_event = None
-        self.pipeline_end_event = None
+        self.pipeline_start_event: Optional[dict] = None
+        self.pipeline_end_event: Optional[dict] = None
 
     def on_pipeline_start(
         self, pipeline_id: str, run_id: str, canonical_spec: dict, meta: dict, **kwargs
