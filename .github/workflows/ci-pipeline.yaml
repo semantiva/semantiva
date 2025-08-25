@@ -12,7 +12,7 @@ on:
 
 env:
   project_name: semantiva # Define a global variable for the project name
-  python_version: '3.10.12'
+  python_version: '3.12'
 
 jobs:
   linting:
