@@ -69,7 +69,7 @@ by varying independent parameters over specified ranges. Only the structured YAM
         param_name: value
 
 Example:
-    processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    processor: "sweep:FloatValueDataSource:FloatDataCollection"
     parameters:
       num_steps: 5
       independent_vars:
