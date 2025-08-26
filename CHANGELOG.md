@@ -36,9 +36,11 @@ Here is the updated changelog with the missing items included and the requested 
   - Added package `registry` to gather plugin and class/module registry.
   - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
   - Pluggable class name resolvers in `ClassRegistry` with built-in support for `slicer:` YAML prefixes.
-- Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in
-    support for a ``model:`` prefix to instantiate fitting models from YAML
-    pipeline definitions
+  - Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in
+      support for a ``model:`` prefix to instantiate fitting models from YAML
+
+### Changed
+- Rewrote the ``Concepts`` documentation into a narrative overview highlighting type safety, dual-channel execution, and semantic transparency
 - Introduced metadata and node interface contract tests to enforce component expectations
 - **Documentation**: Added a docstring audit to the documentation build to track coverage
 - **Trace API** with JSONL driver and CLI wiring
