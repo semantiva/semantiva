@@ -58,17 +58,11 @@ Key concepts include:
 
 2. **Documentation (REQUIRED)**
    Every PR that touches public APIs, processors, nodes, or CLI **must** keep the documentation build green.
-   - **Install docs deps**: `pdm install --dev -G docs`
    - **Build locally (fail on warnings)**:
      ```sh
-     export SPHINXOPTS="-W --keep-going -n"
-     make -C docs clean html
+     ./make_docs.sh
      ```
      The HTML output is generated in `docs/build/html`.
-   - **Docstring coverage (optional locally, enforced periodically)**:
-     ```sh
-     make -C docs coverage
-     ```
    - **PR checklist** (mandatory):
      - [ ] Sphinx builds without warnings
      - [ ] New/changed symbols have docstrings (module, class, methods)
