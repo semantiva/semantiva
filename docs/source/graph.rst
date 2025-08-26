@@ -6,6 +6,18 @@ The :py:mod:`semantiva.pipeline.graph_builder` module normalizes a pipeline defi
 into a canonical *GraphV1* representation. Each node receives a deterministic
 ``node_uuid`` and the entire graph hashes to a ``PipelineId`` using SHA-256.
 
+Graph and Identity
+------------------
+
+When Semantiva loads a YAML pipeline, it is converted into a canonical ``GraphV1``.
+From this graph Semantiva derives stable identifiers:
+
+* ``node_uuid`` - a positional identifier for each node.
+* ``PipelineId`` - a deterministic identifier for the whole pipeline.
+
+These identities are embedded in trace records and introspection outputs, ensuring
+that pipelines can be compared, cached, and reproduced across environments.
+
 GraphV1 guarantees:
 
 * **version: 1** in all canonical specifications
