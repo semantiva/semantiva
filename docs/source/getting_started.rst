@@ -47,19 +47,23 @@ You can also run the pipeline with tracing enabled.
 
 This command will produce detailed execution traces.
 
-Run from Python
----------------
+Running a Pipeline from Python
+------------------------------
+
+You can load a pipeline from YAML and execute it programmatically.
 
 .. code-block:: python
 
-   from semantiva import Pipeline
-   from semantiva.configurations import load_pipeline_from_yaml
+   from semantiva.pipeline import Pipeline, load_pipeline_from_yaml
 
    nodes = load_pipeline_from_yaml("hello_pipeline.yaml")
    p = Pipeline(nodes)
-   result = p.process()  # Returns a Payload object with data and context
-   print("Pipeline executed")
-   print(f"Output data: {result.data}") # Prints `Output data: FloatDataType(2.0)`
+   result = p.process()  # -> :term:`Payload`
+
+   print(result.data)     # e.g., FloatDataType(2.0)
+   print(result.context)  # dict-like context object
+
+Note that :py:meth:`~semantiva.pipeline.pipeline.Pipeline.process` always returns a :term:`Payload`.
 
 Next Steps
 ----------
