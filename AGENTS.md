@@ -60,7 +60,9 @@ Key concepts include:
    Every PR that touches public APIs, processors, nodes, or CLI **must** keep the documentation build green.
    - **Build locally (fail on warnings)**:
      ```sh
-     ./make_docs.sh
+     export SPHINXOPTS="-W --keep-going -n"
+     make -C docs clean
+     make -C docs html
      ```
      The HTML output is generated in `docs/build/html`.
    - **PR checklist** (mandatory):
@@ -68,7 +70,7 @@ Key concepts include:
      - [ ] New/changed symbols have docstrings (module, class, methods)
      - [ ] Cross‑refs (`:py:class:`, `:py:meth:`, `:py:data:`) resolve (no nitpicky errors)
      - [ ] Tutorials/concepts updated if behavior or CLI UX changed
-   - **CI**: Docs are built in CI via `./ci_docs.sh` and must pass.
+   - **CI**: Docs are built and must pass.
 
 3. **Changelog**
    Report changes in `CHANGELOG.md` under the appropriate section.
