@@ -1,0 +1,11 @@
+pipeline:
+  nodes:
+    - processor: FloatValueDataSource
+      parameters:
+        value: 1.0
+    - processor: FloatMultiplyOperation
+      parameters:
+        factor: 2.0
+    - processor: FloatTxtFileSaver
+      parameters:
+        path: "output_float.txt"
