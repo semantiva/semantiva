@@ -14,6 +14,8 @@ If you're looking for tutorials and theoretical explanations, please visit https
    getting_started
    concepts
    studio_viewer
+   tracing
+   introspection_validation
 
 .. toctree::
    :maxdepth: 2
@@ -26,12 +28,10 @@ If you're looking for tutorials and theoretical explanations, please visit https
    data_processors
    context_processors
    execution
-   introspection_validation
    workflows_fitting_models
    data_io
    logger
    examples_index
-   tracing
 
 .. toctree::
    :maxdepth: 2
