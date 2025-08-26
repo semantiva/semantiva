@@ -39,3 +39,9 @@ Canonical fields that feed UUIDv5:
 - ports: Declared input/output port specifications
 
 See :doc:`trace_graph_alignment` for how this graph aligns with tracing.
+
+See also
+--------
+
+For how these identities appear in inspection outputs and error messages,
+see :doc:`introspection_validation`.
