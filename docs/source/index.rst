@@ -13,8 +13,8 @@ If you're looking for tutorials and theoretical explanations, please visit https
 
    getting_started
    cli
-   concepts
    studio_viewer
+   concepts
    tracing
    introspection_validation
 
