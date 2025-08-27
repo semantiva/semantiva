@@ -39,10 +39,14 @@ jobs:
           sphinx-build -b doctest docs/source docs/_build/doctest || true
 
       - name: Verify build directory
-        run: ls -l docs/build || echo "Build directory not found!"
+        run: ls -l docs/_build || echo "Build directory not found!"
+
+      - name: Ensure CNAME for GitHub Pages
+        run: |
+          echo "api.semantiva.org" > docs/_build/html/CNAME
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/
+          publish_dir: docs/_build/html
