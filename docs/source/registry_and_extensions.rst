@@ -31,7 +31,7 @@ computes GC content for DNA sequences.
            gc = (seq.count("G") + seq.count("C")) / max(1, len(seq))
            return DNASequence(f"GC={gc:.2f}")
 
-Programmatic usage (note the ``Payload`` return):
+Programmatic usage (note the :term:`Payload` return):
 
 .. code-block:: python
 
@@ -39,7 +39,7 @@ Programmatic usage (note the ``Payload`` return):
    from mypkg.bio import DNASequence, GCContentOperation
 
    p = Pipeline([GCContentOperation()])
-   result = p.process()  # -> Payload(data=..., context=...)
+   result = p.process()  # -> :term:`Payload`
    # In a real pipeline the upstream node would create the DNASequence.
    # For a minimal demo, call the operation's inner function directly:
    out = GCContentOperation()._operation(DNASequence("ACGT"))
@@ -121,6 +121,22 @@ Common resolver prefixes:
 
 Resolvers keep pipeline configs **declarative** while allowing reuse and safe
 transformation of parameters.
+
+.. _modeldescriptor:
+
+ModelDescriptor
+---------------
+
+A descriptor object describing how to construct a model at realization time
+(e.g., ``model:PolynomialFittingModel:degree=2``). See :ref:`objects-in-pipeline-configurations`.
+
+.. _plan-then-realize-optional:
+
+Plan then realize (optional)
+----------------------------
+
+Factories may first **plan** nodes (validate/spec) and later **realize** them (materialize classes).
+This two-step pattern aids validation and caching but is not required for simple pipelines.
 
 Best Practices
 --------------
