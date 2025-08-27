@@ -63,7 +63,7 @@ You can load a pipeline from YAML and execute it programmatically.
    print(result.data)     # e.g., FloatDataType(2.0)
    print(result.context)  # dict-like context object
 
-Note that :py:meth:`~semantiva.pipeline.pipeline.Pipeline.process` always returns a :term:`Payload`.
+Note that ``Pipeline.process`` always returns a :term:`Payload`.
 
 Next Steps
 ----------
