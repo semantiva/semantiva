@@ -8,7 +8,7 @@
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
-BUILDDIR      = build
+BUILDDIR      = _build
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -25,3 +25,14 @@ docstring-audit:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+.PHONY: html doctest linkcheck
+
+html:
+	@sphinx-build $(SPHINXOPTS) -b html source _build/html
+
+doctest:
+	@sphinx-build $(SPHINXOPTS) -b doctest source _build/doctest
+
+linkcheck:
+	@sphinx-build $(SPHINXOPTS) -b linkcheck source _build/linkcheck

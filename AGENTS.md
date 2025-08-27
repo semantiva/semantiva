@@ -64,7 +64,7 @@ Key concepts include:
      make -C docs clean
      make -C docs html
      ```
-     The HTML output is generated in `docs/build/html`.
+     The HTML output is generated in `docs/_build/html`.
    - **PR checklist** (mandatory):
      - [ ] Sphinx builds without warnings
      - [ ] New/changed symbols have docstrings (module, class, methods)
