@@ -435,7 +435,7 @@ def _pipeline_node_factory(
     #
     # EXAMPLE OF THE PROBLEM:
     # YAML Input:
-    #   processor: "sweep:FloatMockDataSource:FloatDataCollection"  # <- Resolver sees this
+    #   processor: "sweep:FloatValueDataSource:FloatDataCollection"  # <- Resolver sees this
     #   parameters:                                                 # <- Resolver cannot see this
     #     num_steps: 5
     #     independent_vars: { t: [0, 10] }

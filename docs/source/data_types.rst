@@ -4,7 +4,9 @@ Data Types
 Public API Surface
 ------------------
 
-- :py:mod:`semantiva.data_types.data_types` (``BaseDataType``, ``DataCollectionType``, ``NoDataType``)
+- :py:class:`semantiva.data_types.data_types.BaseDataType`
+- :py:class:`semantiva.data_types.data_types.DataCollectionType`
+- :py:class:`semantiva.data_types.data_types.NoDataType`
 
 Autodoc
 -------

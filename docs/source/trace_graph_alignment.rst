@@ -72,3 +72,8 @@ Why UUIDs, not indices?
 * Node indices can drift (YAML order, insertion, adaptation).
 * UUIDs are deterministic from spec → stable over time.
 * Simplifies joining trace + graph, even under future multi-channel DAGs.
+
+See also
+--------
+
+For field-by-field examples of Trace v1 records, see :doc:`tracing` (Record Schema).

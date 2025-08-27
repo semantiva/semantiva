@@ -3,17 +3,17 @@ Semantiva Documentation
 
 Semantiva is a semantic execution framework focused on **typed, transparent, inspectable** pipelines.
 
-**Looking for Tutorials and Theoretical Concepts?**
-
-If you're looking for tutorials and theoretical explanations, please visit https://semantiva.github.io/.
 
 .. toctree::
    :maxdepth: 2
    :caption: Start Here
 
    getting_started
-   concepts
+   cli
    studio_viewer
+   concepts
+   tracing
+   introspection_validation
 
 .. toctree::
    :maxdepth: 2
@@ -26,18 +26,23 @@ If you're looking for tutorials and theoretical explanations, please visit https
    data_processors
    context_processors
    execution
-   introspection_validation
    workflows_fitting_models
    data_io
    logger
    examples_index
-   tracing
 
 .. toctree::
    :maxdepth: 2
-   :caption: Reference & Glossary
+   :caption: Reference
 
    api_reference
    exceptions
    glossary
    trace_graph_alignment
+
+Index & Search
+--------------
+
+* :ref:`genindex` — Global index of terms and pages
+* :ref:`modindex` — Python module index
+* :ref:`search` — Full-text search

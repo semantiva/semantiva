@@ -36,7 +36,7 @@ def test_parametric_sweep_yaml(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 5
         independent_vars:
@@ -71,7 +71,7 @@ def test_multi_variable_sweep(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 4
         independent_vars:
@@ -108,7 +108,7 @@ def test_sweep_with_static_params(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 3
         independent_vars:
@@ -142,7 +142,7 @@ def test_sweep_no_expressions(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 3
         independent_vars:
@@ -167,7 +167,7 @@ def test_sweep_invalid_num_steps():
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 1
         independent_vars:
@@ -188,7 +188,7 @@ def test_sweep_invalid_vars_format():
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 3
         independent_vars:
@@ -209,7 +209,7 @@ def test_sweep_missing_required_params():
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         # Missing num_steps and independent_vars
         parametric_expressions:
@@ -230,7 +230,7 @@ def test_complex_sweep_example(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 3
         independent_vars:

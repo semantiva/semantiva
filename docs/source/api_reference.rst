@@ -1,16 +1,15 @@
 API Reference
 =============
 
-.. toctree::
-   :maxdepth: 2
+See the following sections for detailed APIs:
 
-   pipeline
-   registry_and_extensions
-   data_types
-   data_processors
-   context_processors
-   execution
-   tracing
-   introspection_validation
-   data_io
-   exceptions
+- :doc:`pipeline`
+- :doc:`registry_and_extensions`
+- :doc:`data_types`
+- :doc:`data_processors`
+- :doc:`context_processors`
+- :doc:`execution`
+- :doc:`tracing`
+- :doc:`introspection_validation`
+- :doc:`data_io`
+- :doc:`exceptions`

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from semantiva.data_processors.io_operation_factory import _IOOperationFactory
-from semantiva.examples.test_utils import FloatMockDataSource
+from semantiva.examples.test_utils import FloatValueDataSource
 from semantiva.data_processors.data_processors import ParameterInfo, _NO_DEFAULT
 
 
@@ -25,7 +25,7 @@ def test_io_operation_factory_exposes_defaults():
     parameters in its metadata so pipeline nodes can resolve defaults.
     """
 
-    generated = _IOOperationFactory.create_data_operation(FloatMockDataSource)
+    generated = _IOOperationFactory.create_data_operation(FloatValueDataSource)
 
     # Metadata should include parameter info for 'value'
     meta = generated.get_metadata()

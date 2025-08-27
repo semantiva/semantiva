@@ -22,4 +22,4 @@ def test_cli_inspect_summary():
     res = run_cli(["inspect", str(yaml_path)])
     assert res.returncode == 0
     assert "Pipeline Structure" in res.stdout
-    assert "FloatMockDataSource" in res.stdout
+    assert "FloatValueDataSource" in res.stdout

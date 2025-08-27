@@ -3,7 +3,7 @@
 pipeline:
   nodes:
     # Parametric sweep with configuration
-    - processor: "sweep:FloatMockDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
         num_steps: 3
         independent_vars:

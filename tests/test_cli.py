@@ -36,13 +36,13 @@ def test_cli_run_success(tmp_path: Path):
         f"""
         pipeline:
           nodes:
-            - processor: FloatMockDataSource
+            - processor: FloatValueDataSource
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0
             - processor: FloatTxtFileSaver
               parameters:
-                file_path: "{output_file}"
+                path: "{output_file}"
         """,
     )
     res = run_cli(["run", str(yaml_path)])
@@ -62,7 +62,7 @@ def test_cli_validate(tmp_path: Path):
         """
         pipeline:
           nodes:
-            - processor: FloatMockDataSource
+            - processor: FloatValueDataSource
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0
@@ -85,10 +85,10 @@ def test_cli_dry_run(tmp_path: Path):
         f"""
         pipeline:
           nodes:
-            - processor: FloatMockDataSource
+            - processor: FloatValueDataSource
             - processor: FloatTxtFileSaver
               parameters:
-                file_path: "{output_file}"
+                path: "{output_file}"
         """,
     )
     res = run_cli(["run", str(yaml_path), "--dry-run"])
@@ -102,7 +102,7 @@ def test_cli_runtime_fail(tmp_path: Path):
         """
         pipeline:
           nodes:
-            - processor: FloatMockDataSource
+            - processor: FloatValueDataSource
             - processor: FloatDivideOperation
               parameters:
                 divisor: 0
@@ -119,13 +119,13 @@ def test_cli_overrides(tmp_path: Path):
         f"""
         pipeline:
           nodes:
-            - processor: FloatMockDataSource
+            - processor: FloatValueDataSource
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0
             - processor: FloatTxtFileSaver
               parameters:
-                file_path: "{output_file}"
+                path: "{output_file}"
         """,
     )
     res_ok = run_cli(

@@ -38,8 +38,8 @@ def test_load_pipeline_from_yaml():
     assert isinstance(node_configurations, list), "Configuration should be a list"
     assert len(node_configurations) > 0, "Configuration should not be empty"
 
-    # Check that the first node is our FloatMockDataSource
-    assert node_configurations[0]["processor"] == "FloatMockDataSource"
+    # Check that the first node is our FloatValueDataSource
+    assert node_configurations[0]["processor"] == "FloatValueDataSource"
 
     # Create and execute the pipeline
     pipeline = Pipeline(node_configurations)
@@ -59,7 +59,7 @@ def test_load_pipeline_from_yaml():
     ), "Context should not contain deleted key 'initial_float'"
 
     # Verify the mathematical pipeline progression
-    # Starting value from FloatMockDataSource: 42.0
+    # Starting value from FloatValueDataSource: 42.0
     # FloatCollectValueProbe: collects 42.0 as "initial_float"
     # rename:initial_float:addend: renames "initial_float" to "addend" (value still 42.0)
     # After FloatMultiplyOperation (factor=2.5): 42.0 * 2.5 = 105.0

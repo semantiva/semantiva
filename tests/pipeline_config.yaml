@@ -1,6 +1,6 @@
 pipeline:
   nodes:
-    - processor: "FloatMockDataSource"
+    - processor: "FloatValueDataSource"
 
     - processor: "FloatCollectValueProbe"
       context_keyword: "initial_float"

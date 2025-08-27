@@ -25,7 +25,7 @@ from semantiva.examples.test_utils import (
     FloatMultiplyOperation,
     FloatCollectValueProbe,
     FloatCollectionSumOperation,
-    FloatMockDataSource,
+    FloatValueDataSource,
     FloatMockDataSink,
 )
 import yaml
@@ -300,7 +300,7 @@ def test_data_io_node():
     # Define node configurations
     node_configurations = [
         {
-            "processor": FloatMockDataSource,
+            "processor": FloatValueDataSource,
         },
         {
             "processor": FloatMultiplyOperation,
@@ -319,4 +319,4 @@ def test_data_io_node():
     payload = pipeline.process()
     data, _ = payload.data, payload.context
 
-    assert data.data == FloatMockDataSource().get_data().data * 2.0
+    assert data.data == FloatValueDataSource().get_data().data * 2.0
