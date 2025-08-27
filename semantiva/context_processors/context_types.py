@@ -388,6 +388,26 @@ class ContextCollectionType(ContextType):
         # Update or set the key-value pair in that context.
         target_context.set_value(key, value)
 
+    def delete_item_value(self, index: int, key: str):
+        """
+        Delete a key-value pair from a specific item in the collection.
+
+        This method removes the specified key from an individual context at the given index.
+        It does not affect the global collection context.
+
+        Args:
+            index (int): The index of the individual context to modify.
+            key (str): The key to be removed from the individual context.
+
+        Raises:
+            IndexError: If the index is out of range.
+            KeyError: If the key is not found in the individual context.
+        """
+        # Retrieve the target individual context.
+        target_context = self._context_list[index]
+        # Delete the key from that context.
+        target_context.delete_value(key)
+
     def delete_value(self, key: str):
         """
         Remove a key-value pair from the context collection.

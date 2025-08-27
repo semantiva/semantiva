@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re, sys, pathlib, importlib
+import re
+import sys
+import pathlib
+import importlib
 
 RST_DIR = pathlib.Path(__file__).resolve().parents[1] / "source"
 PROC_RE = re.compile(r"^[ \t]*processor:\s*([A-Za-z0-9_\.]+)\s*$", re.M)
