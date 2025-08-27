@@ -36,9 +36,16 @@ If you're looking for tutorials and theoretical explanations, please visit https
 
 .. toctree::
    :maxdepth: 2
-   :caption: Reference & Glossary
+   :caption: Reference
 
    api_reference
    exceptions
    glossary
    trace_graph_alignment
+
+Index & Search
+--------------
+
+* :ref:`genindex` — Global index of terms and pages
+* :ref:`modindex` — Python module index
+* :ref:`search` — Full-text search
