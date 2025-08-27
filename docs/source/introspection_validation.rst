@@ -22,7 +22,7 @@ Use the CLI to parse and validate a pipeline before executing it.
 
 .. code-block:: bash
 
-   # Basic inspection: parse YAML, build canonical GraphV1, run basic checks
+   # Basic inspection: parse YAML, build canonical :term:`GraphV1`, run basic checks
    semantiva inspect my_pipeline.yaml
 
    # Extended inspection: include node identities, ports, inferred types (where available)
@@ -32,10 +32,10 @@ What to expect
 ~~~~~~~~~~~~~~
 
 * A summary of the pipeline (number of nodes, topological order).
-* The canonical **PipelineId** (deterministic across formatting changes).
+* The canonical :term:`PipelineId` (deterministic across formatting changes).
 * For ``--extended``:
-  * Each node’s **processor** (FQCN or registered name).
-  * The positional **node_uuid** from GraphV1.
+  * Each node’s processor (FQCN or registered name).
+  * The positional :term:`node_uuid` from :term:`GraphV1`.
   * Declared **ports** (if any) and parameter snapshot.
   * Any inferred or declared **input/output** types the validator can derive.
 
@@ -55,9 +55,9 @@ For programmatic use, generate a JSON summary from a :class:`~semantiva.pipeline
 
 Typical fields present in the JSON summary:
 
-* ``pipeline_id`` - the deterministic **PipelineId** (see :doc:`graph`).
+* ``pipeline_id`` - the deterministic :term:`PipelineId` (see :doc:`graph`).
 * ``nodes`` - list of nodes with:
-  * ``node_uuid`` - positional identity from GraphV1
+  * ``node_uuid`` - positional identity from :term:`GraphV1`
   * ``processor`` - fully qualified class name
   * ``parameters`` - normalized parameter map
   * ``ports`` - declared input/output ports (if present)
@@ -108,7 +108,7 @@ Linking Reports to GraphV1 Identities
 -------------------------------------
 
 Inspection always works over the canonical :term:`GraphV1` representation.
-That means the **PipelineId** and every node’s **node_uuid** shown in
+That means the :term:`PipelineId` and every node’s ``node_uuid`` shown in
 inspection output match the values in:
 
 * the canonical spec (see :doc:`graph`), and
@@ -145,12 +145,14 @@ Tips
 * If resolving classes from your own packages, ensure they are importable (installed in the environment).
 * Increase verbosity with ``-v`` to see more details during inspection (see :doc:`logger`).
 
+.. _spec-phase-vs-runtime-vs-execution:
+
 Validation Phases
 -----------------
 
 Semantiva applies checks at three moments:
 
-* **Spec-phase (pre-run)** - when parsing YAML and building GraphV1:
+* **Spec-phase (pre-run)** - when parsing YAML and building :term:`GraphV1`:
   * missing parameters, unknown processors, invalid ports/topology.
   * surfaced via ``semantiva inspect`` and during pipeline load.
 
@@ -160,7 +162,7 @@ Semantiva applies checks at three moments:
 
 * **Execution (process)** - during node operation on a :class:`~semantiva.pipeline.payload.Payload`:
   * actual input/output type contracts, context key requirements, invariant checks.
-  * surfaced with node identity (``node_uuid``) to support precise debugging and tracing.
+  * surfaced with node identity (:term:`node_uuid`) to support precise debugging and tracing.
 
 Troubleshooting Checklist
 ~~~~~~~~~~~~~~~~~~~~~~~~~

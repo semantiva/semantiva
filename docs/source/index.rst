@@ -3,9 +3,6 @@ Semantiva Documentation
 
 Semantiva is a semantic execution framework focused on **typed, transparent, inspectable** pipelines.
 
-**Looking for Tutorials and Theoretical Concepts?**
-
-If you're looking for tutorials and theoretical explanations, please visit https://semantiva.github.io/.
 
 .. toctree::
    :maxdepth: 2
