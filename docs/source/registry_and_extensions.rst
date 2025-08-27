@@ -108,7 +108,7 @@ this example). Use :doc:`pipeline` to connect processors into complete flows.
 Resolvers Overview
 ------------------
 
-Resolvers provide indirection inside configurations. They are applied during
+:term:`Resolver`\s provide indirection inside configurations. They are applied during
 spec parsing/realization. See :ref:`objects-in-pipeline-configurations` for details.
 
 Common resolver prefixes:

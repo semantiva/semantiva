@@ -75,7 +75,7 @@ The Viewer renders the canonical graph. To inspect execution traces alongside
 the diagram:
 
 1. Open your pipeline YAML in the Viewer.
-2. Click a node to see its details (including **node_uuid**).
+2. Click a node to see its details (including :term:`node_uuid`).
 3. In your trace file (JSONL), filter node events by that ``node_uuid`` to review
    timings, summaries, or errors for the selected node.
 

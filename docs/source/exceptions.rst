@@ -11,5 +11,7 @@ Exceptions
 See also
 --------
 
-For where and when errors are raised across the pipeline lifecycle,
-see :doc:`introspection_validation` (Validation Phases).
+For when errors are raised during the pipeline lifecycle, see
+:doc:`introspection_validation` (Validation Phases).
+Identity terms used in messages (:term:`PipelineId`, :term:`node_uuid`) are
+defined in the :doc:`glossary`.
