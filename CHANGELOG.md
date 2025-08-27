@@ -38,6 +38,7 @@ Here is the updated changelog with the missing items included and the requested 
   - Pluggable class name resolvers in `ClassRegistry` with built-in support for `slicer:` YAML prefixes.
   - Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in
       support for a ``model:`` prefix to instantiate fitting models from YAML
+- Comprehensive tracing documentation covering CLI options, record schema, detail levels, examples, and troubleshooting
 
 ### Changed
 - Rewrote the ``Concepts`` documentation into a narrative overview highlighting type safety, dual-channel execution, and semantic transparency
