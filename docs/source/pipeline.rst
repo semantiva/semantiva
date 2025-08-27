@@ -78,8 +78,10 @@ Extension Points
 ----------------
 - Provide processors (see :doc:`data_processors`) and register via :doc:`registry_and_extensions`.
 
-Parameter & Context Resolution
-------------------------------
+.. _objects-in-pipeline-configurations:
+
+Objects in Pipeline Configurations
+----------------------------------
 
 - YAML → ClassRegistry (class resolvers) + parameter resolvers.
 - Context keys can be injected/renamed/deleted.
