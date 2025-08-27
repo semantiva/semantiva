@@ -107,7 +107,7 @@ see :doc:`trace_graph_alignment`.
 Linking Reports to GraphV1 Identities
 -------------------------------------
 
-Inspection always works over the canonical **GraphV1** representation.
+Inspection always works over the canonical :term:`GraphV1` representation.
 That means the **PipelineId** and every node’s **node_uuid** shown in
 inspection output match the values in:
 
