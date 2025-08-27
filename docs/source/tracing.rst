@@ -26,7 +26,7 @@ Run tracing from the terminal with :doc:`cli` (see subcommand **run**).
 Options & Drivers
 ~~~~~~~~~~~~~~~~~
 
-Tracing is disabled by default. Enable it with a driver and output path.
+Tracing is disabled by default. Enable it with a driver and output path. The JSONL driver is the built-in :term:`Trace Driver`.
 
 +---------------------+-----------------------+---------------------------+-----------------------------------------------------------+
 | Option              | Type                  | Default                   | Description                                               |
