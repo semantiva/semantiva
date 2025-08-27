@@ -1,6 +1,7 @@
 # Minimal makefile for Sphinx documentation
 #
 # TODO: integrate shell snippet linting (e.g., via shellcheck) for code examples.
+# TODO: add a doctest target (sphinx-build -b doctest) to verify examples.
 
 # You can set these variables from the command line, and also
 # from the environment for the first two.
