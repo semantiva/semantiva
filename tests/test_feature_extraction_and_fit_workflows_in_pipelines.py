@@ -38,20 +38,18 @@ def test_pipeline_single_string_key(linear_int_data_collection):
     node_configurations = [
         {
             "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
-            "context_keyword": "data_values",
+            "context_keyword": "y_values",
         },
         {
             "processor": ModelFittingContextProcessor,
             "parameters": {
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
-                "independent_var_key": "t_values",
-                "dependent_var_key": "data_values",
                 "context_keyword": "fit_coefficients",
             },
         },
     ]
     pipeline = Pipeline(node_configurations)
-    context_dict = {"t_values": t_values}
+    context_dict = {"x_values": t_values}
     payload = pipeline.process(Payload(linear_int_data_collection, context_dict))
     output_context = payload.context
     assert "fit_coefficients" in output_context.keys()
