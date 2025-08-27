@@ -11,8 +11,8 @@ Quick view
 .. code-block:: bash
 
    semantiva --help
-   semantiva run <pipeline.yaml> [OPTIONS]
-   semantiva inspect <pipeline.yaml> [--extended] [OPTIONS]
+   semantiva run <pipeline.yaml> [--dry-run] [--validate] [--set key=value ...] [--context key=value ...] [--trace-*] [-v|--verbose] [-q|--quiet]
+   semantiva inspect <pipeline.yaml> [--extended] [-v|--verbose] [-q|--quiet]
 
 Subcommands
 -----------
@@ -34,6 +34,9 @@ Execute a pipeline defined in YAML.
 
 - ``-v`` / ``--verbose``: increase log verbosity (enables DEBUG-level logging).
 - ``-q`` / ``--quiet``: reduce log verbosity (sets ERROR-level logging — errors only).
+- ``--dry-run``: build the pipeline graph without executing nodes.
+- ``--validate``: parse and validate configuration only.
+- ``--set``: override configuration values using dotted paths (e.g., ``--set pipeline.param=value``). Can be used multiple times. Values are parsed using YAML semantics.
 - ``--context``: inject initial payload context as one or more ``key=value`` pairs. Values are parsed using YAML semantics (for example, ``1.0`` -> float, ``true`` -> bool). This option may be repeated to supply multiple keys.
 - Tracing options (see :doc:`tracing`):
    - ``--trace-driver``: e.g. ``jsonl``
@@ -86,6 +89,11 @@ Exit codes
 ~~~~~~~~~~
 
 - **0** — success.
+- **1** — CLI argument error.
+- **2** — file not found.
+- **3** — configuration or validation error.
+- **4** — runtime execution error.
+- **5** — keyboard interrupt.
 - **non-zero** — a validation or runtime error occurred; see stderr for details.
 
 Error surface
@@ -118,15 +126,6 @@ See :doc:`tracing` for the driver matrix, detail flags, and output format.
    Tracing options: see :ref:`trace-detail-and-format` and :ref:`pretty-vs-compact-json`
    for driver selection, detail flags, and output naming.
 
-Planned: context injection
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. note::
-
-   A ``--context key=value`` option may be added in a future release for
-   initializing the payload context from the CLI. Until it lands, set
-   initial context via your pipeline definition or programmatic API.
-
 Ecosystem
 ---------
 
@@ -144,6 +143,9 @@ Run with verbose logs
 .. code-block:: bash
 
    semantiva run hello_pipeline.yaml -v
+   
+   # Alternative: direct Python execution
+   python -m semantiva.semantiva run hello_pipeline.yaml -v
 
 Inspect with identities (pre-flight)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,6 +163,19 @@ Run with JSONL tracing (hash summaries)
      --trace-driver jsonl \
      --trace-output traces/ \
      --trace-detail hash
+
+Override configuration values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # Override pipeline parameters
+   semantiva run hello_pipeline.yaml --set pipeline.nodes.0.parameters.value=5.0
+   
+   # Multiple overrides
+   semantiva run hello_pipeline.yaml \
+     --set pipeline.nodes.0.parameters.value=5.0 \
+     --set pipeline.nodes.1.parameters.factor=3.0
 
 Minimal failure demonstration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
