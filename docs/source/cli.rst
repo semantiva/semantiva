@@ -32,12 +32,13 @@ Execute a pipeline defined in YAML.
 
 **Options**
 
-- ``-v``, ``-vv`` / ``--verbose``: increase log verbosity.
-- ``-q`` / ``--quiet``: reduce log verbosity.
+- ``-v`` / ``--verbose``: increase log verbosity (enables DEBUG-level logging).
+- ``-q`` / ``--quiet``: reduce log verbosity (sets ERROR-level logging — errors only).
+- ``--context``: inject initial payload context as one or more ``key=value`` pairs. Values are parsed using YAML semantics (for example, ``1.0`` -> float, ``true`` -> bool). This option may be repeated to supply multiple keys.
 - Tracing options (see :doc:`tracing`):
-  - ``--trace-driver``: e.g. ``jsonl``
-  - ``--trace-output``: directory or file path
-  - ``--trace-detail``: ``hash``, ``repr``, ``context``, ``all``
+   - ``--trace-driver``: e.g. ``jsonl``
+   - ``--trace-output``: directory or file path
+   - ``--trace-detail``: ``hash``, ``repr``, ``context``, ``all``
 
 **Examples**
 
@@ -66,7 +67,7 @@ Parse YAML, build the canonical graph, and run pre-execution checks.
 **Options**
 
 - ``--extended``: include node identities (``node_uuid``), ports, parameters, inferred types (where available).
-- Verbosity: ``-v`` / ``-vv`` / ``-q`` analogous to ``run``.
+- Verbosity: ``-v`` / ``--verbose`` and ``-q`` analogous to ``run``.
 
 **Examples**
 
@@ -99,9 +100,9 @@ Error surface
 Logs & verbosity
 ~~~~~~~~~~~~~~~~
 
-- ``-q`` sets a quieter mode (warnings and above).
-- ``-v`` enables INFO-level execution messages.
-- ``-vv`` enables DEBUG-level detail (parameters, timing summaries).
+- ``-q`` sets ERROR-level logging (errors only).
+- ``-v`` enables DEBUG-level logging.
+- By default the CLI runs at INFO level.
 
 By default, logs are written to stderr; configure handlers in your ``logging`` policy.
 See :doc:`logger` for examples.
