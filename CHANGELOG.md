@@ -39,6 +39,7 @@ Here is the updated changelog with the missing items included and the requested 
   - Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in
       support for a ``model:`` prefix to instantiate fitting models from YAML
 - Comprehensive tracing documentation covering CLI options, record schema, detail levels, examples, and troubleshooting
+- Documented Studio Viewer quick start, modes, export, trace inspection anchors, limitations, and troubleshooting
 
 ### Changed
 - Rewrote the ``Concepts`` documentation into a narrative overview highlighting type safety, dual-channel execution, and semantic transparency
