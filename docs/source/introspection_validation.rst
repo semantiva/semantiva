@@ -94,7 +94,7 @@ stable; values are illustrative.
 *Note:* If you need to reference these identities elsewhere (e.g., in trace logs),
 see :doc:`trace_graph_alignment`.
 
-.. testcode::
+.. code-block:: python
 
    from semantiva.pipeline import Pipeline, load_pipeline_from_yaml
    from semantiva.inspection.reporter import json_report
