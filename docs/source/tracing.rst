@@ -19,14 +19,14 @@ programmatic pipeline construction.
 CLI Usage
 ---------
 
+Run tracing from the terminal with :doc:`cli` (see subcommand **run**).
+
+.. _trace-detail-and-format:
+
 Options & Drivers
 ~~~~~~~~~~~~~~~~~
 
 Tracing is disabled by default. Enable it with a driver and output path.
-
-.. _trace-detail-and-format:
-
-**CLI options**
 
 +---------------------+-----------------------+---------------------------+-----------------------------------------------------------+
 | Option              | Type                  | Default                   | Description                                               |
