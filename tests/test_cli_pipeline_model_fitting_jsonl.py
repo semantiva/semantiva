@@ -37,9 +37,9 @@ def test_cli_pipeline_model_fitting_jsonl(tmp_path: Path):
             "--trace-output",
             str(output_dir),
             "--context",
-            "t_values=[0,1,2]",
+            "x_values=[0,1,2]",
             "--context",
-            "data_values=[1,3,7]",
+            "y_values=[1,3,7]",
         ]
     )
     assert res.returncode == 0

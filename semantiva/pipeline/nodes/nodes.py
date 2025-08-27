@@ -23,7 +23,10 @@ from semantiva.data_processors.data_processors import (
     ParameterInfo,
     _NO_DEFAULT,
 )
-from semantiva.context_processors.context_observer import _ContextObserver
+from semantiva.context_processors.context_observer import (
+    _ContextObserver,
+    _ValidatingContextObserver,
+)
 
 from semantiva.context_processors.context_types import (
     ContextType,
@@ -1057,9 +1060,9 @@ class _ContextProcessorNode(_PipelineNode):
         self.logger.debug(
             f"Initializing {self.__class__.__name__} ({processor.__name__})"
         )
-        processor_config = processor_config or {}
-        self.processor = processor(logger, **processor_config)
-        self.processor_config = processor_config
+        self.processor_config = processor_config or {}
+        # Stateless processors: never receive business args in __init__
+        self.processor = processor(logger)
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
@@ -1080,9 +1083,15 @@ class _ContextProcessorNode(_PipelineNode):
             # The output data type is the same as the input data type for probe nodes
             component_metadata["injected_context_keys"] = cls.get_created_keys()
 
-        except Exception:
-            # no binding available at this abstract level
-            pass
+        except Exception as e:
+            # no binding available at this abstract level or configuration error
+            # Provide graceful fallback information for inspection
+            component_metadata["wrapped_component"] = "Unknown"
+            component_metadata["wrapped_component_docstring"] = ""
+            component_metadata["required_context_keys"] = []
+            component_metadata["suppressed_context_keys"] = []
+            component_metadata["injected_context_keys"] = []
+            component_metadata["metadata_error"] = str(e)
         return component_metadata
 
     def __str__(self) -> str:
@@ -1109,8 +1118,11 @@ class _ContextProcessorNode(_PipelineNode):
         Returns:
             List[str]: A list of context keys that the processor will add or modify during its execution.
         """
-
-        return cls.processor.get_created_keys()
+        try:
+            return cls.processor.get_created_keys()
+        except (AttributeError, TypeError):
+            # Fallback for processors that don't implement this method
+            return []
 
     @classmethod
     def get_required_keys(cls) -> List[str]:
@@ -1120,7 +1132,15 @@ class _ContextProcessorNode(_PipelineNode):
         Returns:
             List[str]: A list of context keys.
         """
-        return cls.processor.get_required_keys()
+        try:
+            return cls.processor.get_required_keys()
+        except (AttributeError, TypeError):
+            # Fallback: derive from processor parameter names if possible
+            try:
+                param_names = cls.processor.get_processing_parameter_names()
+                return param_names
+            except (AttributeError, TypeError):
+                return []
 
     @classmethod
     def get_suppressed_keys(cls) -> List[str]:
@@ -1130,7 +1150,11 @@ class _ContextProcessorNode(_PipelineNode):
         Returns:
             List[str]: A list of context keys that the processor will remove during its execution.
         """
-        return cls.processor.get_suppressed_keys()
+        try:
+            return cls.processor.get_suppressed_keys()
+        except (AttributeError, TypeError):
+            # Fallback for processors that don't implement this method
+            return []
 
     def _process(self, payload: Payload) -> Payload:
         """
@@ -1145,6 +1169,54 @@ class _ContextProcessorNode(_PipelineNode):
 
         data = payload.data
         context = payload.context
-        updated_context = self.processor.operate_context(context)
+        self.observer_context = context
+
+        # Create validating observer with processor's allowed keys
+        try:
+            context_keys = self.processor.get_created_keys()
+            suppressed_keys = self.get_suppressed_keys()
+        except (AttributeError, TypeError):
+            # Fallback for processors that don't implement these methods
+            context_keys = []
+            suppressed_keys = []
+
+        validating_observer = _ValidatingContextObserver(
+            context_keys=context_keys,
+            suppressed_keys=suppressed_keys,
+            logger=self.logger,
+        )
+        validating_observer.observer_context = context
+
+        # Resolve runtime parameters
+        param_names = self.processor.get_processing_parameter_names()
+        params: Dict[str, Any] = {}
+        for name in param_names:
+            params[name] = self._fetch_parameter_value(name, context)
+
+        updated_context = self.processor.operate_context(
+            context=context, context_observer=validating_observer, **params
+        )
 
         return Payload(data, updated_context)
+
+    def _fetch_parameter_value(self, name: str, context: ContextType) -> Any:
+        """Resolve parameter value from node config, context, or defaults."""
+        if name in self.processor_config:
+            return self.processor_config[name]
+        if name in context.keys():
+            return context.get_value(name)
+
+        metadata = self.processor.__class__.get_metadata()
+        param_info = metadata.get("parameters", {}).get(name)
+        if isinstance(param_info, ParameterInfo):
+            default = param_info.default
+        elif isinstance(param_info, dict):  # pragma: no cover - defensive
+            default = param_info.get("default", _NO_DEFAULT)
+        else:
+            default = _NO_DEFAULT
+
+        if default is not _NO_DEFAULT:
+            return default
+        raise KeyError(
+            f"Unable to resolve parameter '{name}' from context, node configuration, or defaults."
+        )
