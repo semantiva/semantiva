@@ -349,7 +349,7 @@ class _PipelineNodeFactory:
         """Factory helper for wrapping :class:`ContextProcessor` classes."""
 
         parameters = parameters or {}
-        context_processor_instance = processor_class(logger, **parameters)
+        context_processor_instance = processor_class(logger)
 
         node_class = _PipelineNodeFactory._create_class(
             name=f"{processor_class.__name__}_ContextProcessorNode",
@@ -468,8 +468,12 @@ def _pipeline_node_factory(
         raise ValueError("processor must be a class type or a string, not None.")
 
     if issubclass(processor, ContextProcessor):
+        params = dict(parameters or {})
+        if "context_keyword" in params and hasattr(processor, "with_context_keyword"):
+            key = params.pop("context_keyword")
+            processor = processor.with_context_keyword(key)
         return _PipelineNodeFactory.create_context_processor_wrapper_node(
-            processor, parameters, logger
+            processor, params, logger
         )
 
     if issubclass(processor, DataOperation):
