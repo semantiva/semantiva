@@ -225,6 +225,7 @@ def _run(args: argparse.Namespace) -> int:
             return EXIT_CONFIG_ERROR
         key, value_str = item.split("=", 1)
         try:
+            print("trying yaml.safe_load")
             value = yaml.safe_load(value_str)
         except yaml.YAMLError:
             value = value_str
@@ -324,12 +325,43 @@ def _inspect(args: argparse.Namespace) -> int:
         if specs:
             load_extensions(specs)
 
+    # For inspection, use error-resilient builder directly
     try:
-        nodes = _validate_structure(config)
+        # Try to extract node configs, but fall back gracefully if structure is invalid
+        try:
+            nodes = _validate_structure(config)
+        except Exception as validation_error:
+            # If config structure is invalid, try to provide partial information
+            print(f"Configuration structure error: {validation_error}", file=sys.stderr)
+            if (
+                isinstance(config, dict)
+                and "pipeline" in config
+                and isinstance(config["pipeline"], dict)
+                and "nodes" in config["pipeline"]
+            ):
+                nodes = config["pipeline"]["nodes"]
+            else:
+                # Cannot proceed with inspection
+                return EXIT_CONFIG_ERROR
+
+        # Build inspection - this is designed to be error-resilient
         inspection = build_pipeline_inspection(nodes)
-        validate_pipeline(inspection)
+
+        # Only validate if requested, as inspection should work even with invalid configs
+        if not getattr(args, "skip_validation", False):
+            try:
+                validate_pipeline(inspection)
+            except Exception as validation_error:
+                print(
+                    f"Pipeline validation warnings: {validation_error}", file=sys.stderr
+                )
+                print(
+                    "Proceeding with inspection despite validation issues...\n",
+                    file=sys.stderr,
+                )
+
     except Exception as exc:
-        print(f"Invalid config: {exc}", file=sys.stderr)
+        print(f"Failed to build inspection: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
 
     report = (
