@@ -1,6 +1,12 @@
 Getting Started
 ===============
 
+.. _install-run-your-first-pipeline:
+
+Install & run your first pipeline
+---------------------------------
+(See the steps below to install Semantiva and execute a sample pipeline.)
+
 Installation
 ------------
 

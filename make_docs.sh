@@ -28,4 +28,4 @@ echo '==> Building Sphinx docs (warnings treated as errors)'
 export SPHINXOPTS="-W --keep-going -n"
 make -C docs clean
 make -C docs html
-echo '==> Done. Output: docs/build/html'
+echo '==> Done. Output: docs/_build/html'

@@ -76,3 +76,11 @@ and the **context channel**. Data holds your domain objects; context carries the
 metadata explaining *how* and *why* each step executes. This dual-channel design
 embodies the Epistemic Computing Paradigm (ECP) where computation produces both
 results and rationale.
+
+.. _minimal-epistemic-unit-meu:
+
+Minimal Epistemic Unit (MEU)
+----------------------------
+
+Every computation produces an epistemic tuple: **Claim**, **Justification**, **Context**, **Trace**.
+See :doc:`glossary` and :doc:`tracing` for how context/trace surface in practice.
