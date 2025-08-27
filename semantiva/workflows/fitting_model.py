@@ -13,13 +13,11 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Dict, Generic, List, Optional, Tuple, TypeVar, Union
+from typing import Dict, Generic, List, TypeVar
 
 import numpy as np
 
 from semantiva.context_processors.context_processors import ContextProcessor
-from semantiva.context_processors.context_types import ContextType
-from semantiva.logger import Logger
 
 X = TypeVar("X")  # Domain (annotation) type (e.g., float, tuple[int, float], etc.)
 Y = TypeVar("Y")  # Codomain (extracted features) type (e.g., float, list, dict, etc.)
@@ -115,86 +113,37 @@ class PolynomialFittingModel(FittingModel[float, float]):
 
 
 class ModelFittingContextProcessor(ContextProcessor):
-    """ContextProcessor that fits extracted features using a specified model."""
+    """Fit a model to ``x_values``/``y_values`` and publish results to a context key."""
 
-    def __init__(
+    CONTEXT_OUTPUT_KEY: str = "fit.parameters"
+
+    @classmethod
+    def with_context_keyword(cls, key: str) -> type["ModelFittingContextProcessor"]:
+        """Return a subclass with :data:`CONTEXT_OUTPUT_KEY` bound to ``key``."""
+        safe = key.replace(".", "_").replace("[", "_").replace("]", "_")
+        name = f"{cls.__name__}_OUT_{safe}"
+        attrs = {
+            "CONTEXT_OUTPUT_KEY": key,
+            "__doc__": (cls.__doc__ or "") + f"\n\nBound output key: '{key}'.",
+            "context_keys": classmethod(lambda kls: [kls.CONTEXT_OUTPUT_KEY]),
+        }
+        return type(name, (cls,), attrs)
+
+    def _process_logic(  # type: ignore[override]
         self,
-        logger: Optional[Logger],
-        fitting_model: FittingModel,
-        independent_var_key: str,
-        dependent_var_key: Union[str, Tuple[str, str], List[str]],
-        context_keyword: str,
+        *,
+        x_values: List[float],
+        y_values: List[float],
+        fitting_model: "FittingModel",
     ) -> None:
-        super().__init__(logger)
-        self.logger.debug(f"Initializing {self.__class__.__name__}")
-        self.fitting_model: FittingModel = fitting_model
-        self.independent_var_key = independent_var_key
-        self.context_keyword = context_keyword
+        if x_values is None or y_values is None:
+            raise ValueError("Missing x_values or y_values for model fitting.")
+        fit_results = fitting_model.fit(x_values, y_values)
+        self._notify_context_update(self.__class__.CONTEXT_OUTPUT_KEY, fit_results)
 
-        if isinstance(dependent_var_key, (tuple, list)):
-            self.dependent_var_key = dependent_var_key[0]
-            self.dependent_var_subkey: Optional[str] = dependent_var_key[1]
-        else:
-            self.dependent_var_key = dependent_var_key
-            self.dependent_var_subkey = None
-
-        if not isinstance(independent_var_key, str):
-            raise TypeError(
-                f"independent_var_key must be a string, got {type(independent_var_key).__name__} with value {independent_var_key}"
-            )
-
-    def _process_logic(self, context: ContextType) -> ContextType:
-        """Fit extracted features to the model using context data."""
-
-        # Retrieve independent and dependent variables from context
-        independent_variable = context.get_value(self.independent_var_key)
-        dependent_variable = context.get_value(self.dependent_var_key)
-
-        # Ensure required parameters exist
-        if independent_variable is None or dependent_variable is None:
-            missing_params = [
-                p for p in self.get_required_keys() if context.get_value(p) is None
-            ]
-            raise ValueError(
-                f"Missing required context parameters: {', '.join(str(missing_params))}"
-            )
-
-        # Extract dependent_variable from dictionary if needed
-        if isinstance(self.dependent_var_subkey, tuple):
-            dependent_variable_ = tuple(
-                dependent_variable[key] for key in self.dependent_var_subkey
-            )
-        elif isinstance(self.dependent_var_subkey, str):
-            dependent_variable_ = [
-                item[self.dependent_var_subkey] for item in dependent_variable
-            ]
-        elif isinstance(dependent_variable, list):
-            dependent_variable_ = dependent_variable
-        else:
-            raise ValueError("Invalid type for dependent_variable")
-
-        # Fit the model using extracted features
-        self.logger.debug("\tRunning model %s", self.fitting_model)
-        self.logger.debug(f"\t\tindependent_variable = {independent_variable}")
-        self.logger.debug(f"\t\tdependent_variable = {dependent_variable_}")
-        fit_results = self.fitting_model.fit(independent_variable, dependent_variable_)
-
-        # Store the results back in context under the dependent variable name
-        context.set_value(self.context_keyword, fit_results)
-
-        return context
-
-    def get_required_keys(self) -> List[str]:
-        """Retrieve the list of required keys for the context operation."""
-        return [self.independent_var_key, self.dependent_var_key]
-
-    def get_created_keys(self) -> List[str]:
-        """Retrieves the list of keys created in the context."""
-        return [self.context_keyword]
-
-    def get_suppressed_keys(self) -> List[str]:
-        """This operation does not suppress any keys."""
-        return []
+    @classmethod
+    def context_keys(cls) -> List[str]:
+        return [cls.CONTEXT_OUTPUT_KEY]
 
 
 # Example Usage:

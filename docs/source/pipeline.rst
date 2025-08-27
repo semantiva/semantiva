@@ -97,11 +97,9 @@ Example:
 
    pipeline:
      nodes:
-       - processor: semantiva.workflows.fitting_model.FittingModel
+       - processor: ModelFittingContextProcessor
          parameters:
            fitting_model: "model:PolynomialFittingModel:degree=2"
-           independent_var_key: "t_values"
-           dependent_var_key: "data_values"
            context_keyword: "fit_coefficients"
 
 See :doc:`registry_and_extensions` for resolver overview and best practices.

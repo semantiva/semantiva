@@ -18,20 +18,15 @@ from semantiva.logger import Logger
 from semantiva.examples.test_utils import FloatMultiplyOperation
 from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
 from semantiva.context_processors.context_processors import ContextProcessor
-from semantiva.context_processors.context_types import ContextType
 
 
 class DummyContextProcessor(ContextProcessor):
-    def _process_logic(self, context: ContextType) -> ContextType:
-        return context
+    def _process_logic(self, **kwargs) -> None:  # type: ignore[override]
+        # Dummy processor does nothing
+        pass
 
-    def get_required_keys(self) -> List[str]:
-        return []
-
-    def get_created_keys(self) -> List[str]:
-        return []
-
-    def get_suppressed_keys(self) -> List[str]:
+    @classmethod
+    def context_keys(cls) -> List[str]:
         return []
 
 

@@ -16,8 +16,10 @@ import pytest
 from typing import List
 from semantiva.context_processors import ContextProcessor
 from semantiva.context_processors.context_types import ContextType
+from semantiva.data_types import NoDataType
+from semantiva.pipeline import Payload
+from semantiva.pipeline.nodes._pipeline_node_factory import _PipelineNodeFactory
 from semantiva.workflows import FittingModel, ModelFittingContextProcessor
-from semantiva.logger import Logger
 
 
 class MockFittingModel(FittingModel):
@@ -26,44 +28,36 @@ class MockFittingModel(FittingModel):
 
 
 class MockContextProcessor(ContextProcessor):
-    def _process_logic(self, context: ContextType) -> ContextType:
-        context.set_value("operation_result", "success")
-        return context
-
-    def get_required_keys(self) -> List[str]:
-        return ["required_key"]
+    def _process_logic(self, *, required_key: str) -> None:  # type: ignore[override]
+        self._notify_context_update("operation_result", required_key)
 
     @classmethod
-    def get_created_keys(cls) -> List[str]:
+    def context_keys(cls) -> List[str]:
         return ["operation_result"]
-
-    def get_suppressed_keys(self) -> List[str]:
-        return []
 
 
 def test_mock_context_processor():
     context = ContextType({"required_key": "value"})
-    operation = MockContextProcessor()
-    result_context = operation.operate_context(context)
-    assert result_context.get_value("operation_result") == "success"
+    node = _PipelineNodeFactory.create_context_processor_wrapper_node(
+        MockContextProcessor, {}
+    )
+    payload = node.process(Payload(NoDataType(), context))
+    assert payload.context.get_value("operation_result") == "value"
 
 
 def test_model_fitting_context_processor():
-    context = ContextType({"independent_var": [1, 2, 3], "dependent_var": [4, 5, 6]})
+    context = ContextType({"x_values": [1, 2, 3], "y_values": [4, 5, 6]})
     fitting_model = MockFittingModel()
-    operation = ModelFittingContextProcessor(
-        logger=Logger(),
-        fitting_model=fitting_model,
-        independent_var_key="independent_var",
-        dependent_var_key="dependent_var",
-        context_keyword="fit_results",
+    Bound = ModelFittingContextProcessor.with_context_keyword("fit_results")
+    node = _PipelineNodeFactory.create_context_processor_wrapper_node(
+        Bound, {"fitting_model": fitting_model}
     )
-    result_context = operation.operate_context(context)
-    assert result_context.get_value("fit_results") == {"fit_results": "mock_results"}
+    result = node.process(Payload(NoDataType(), context))
+    assert result.context.get_value("fit_results") == {"fit_results": "mock_results"}
 
     with pytest.raises(ValueError):
-        incomplete_context = ContextType({"independent_var": [1, 2, 3]})
-        operation.operate_context(incomplete_context)
+        incomplete_context = ContextType({"x_values": None, "y_values": [1, 2, 3]})
+        node.process(Payload(NoDataType(), incomplete_context))
 
 
 if __name__ == "__main__":

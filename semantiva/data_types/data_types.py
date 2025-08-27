@@ -64,7 +64,6 @@ class BaseDataType(_SemantivaComponent, Generic[T]):
         """
         self._data = data
 
-    @abstractmethod
     def validate(self, data: T) -> bool:
         """
         Abstract method to validate the encapsulated data.
@@ -75,6 +74,7 @@ class BaseDataType(_SemantivaComponent, Generic[T]):
         Returns:
             bool: True if the data is valid, False otherwise.
         """
+        return True
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:

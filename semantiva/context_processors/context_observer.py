@@ -23,12 +23,7 @@ class _ContextObserver(_SemantivaComponent):
     """Base class for all nodes in semantiva pipelines responsible for context propagation and updates."""
 
     def __init__(self, logger: Optional[Logger] = None):
-        """
-        Initialize the _ContextObserver with an empty context.
-
-        Attributes:
-            context (dict): A dictionary to store contextual key-value pairs.
-        """
+        """Initialize the observer with an empty context."""
         super().__init__(logger)
         self.observer_context = ContextType()
 
@@ -44,6 +39,41 @@ class _ContextObserver(_SemantivaComponent):
             "component_type": "ContextObserver",
         }
         return component_metadata
+
+    @staticmethod
+    def delete_context(
+        context: Union[ContextType, ContextCollectionType, ChainMap],
+        key: str,
+        index: Optional[int] = None,
+    ):
+        """
+        Deletes a context key in either a single or collection context.
+
+        - If `context` is a `ChainMap`, deletion must be done on the **local context** (first mapping).
+        - If `context` is `ContextCollectionType`, deletion is applied globally or to a slice.
+
+        Args:
+            context (Union[ContextType, ContextCollectionType, ChainMap]): The context to update.
+            key (str): The key to delete.
+            index (Optional[int]): The index of the slice to update (if context is a collection).
+
+        Raises:
+            ValueError: If attempting to delete from a collection without specifying an index.
+            KeyError: If the key does not exist in the context.
+        """
+        if isinstance(context, ContextCollectionType):
+            if index is None:
+                context.delete_value(key)
+            else:
+                context.delete_item_value(index, key)
+        elif isinstance(context, ChainMap):
+            # ChainMap deletion from the first mapping (local context)
+            if key in context.maps[0]:
+                del context.maps[0][key]
+            else:
+                raise KeyError(f"Key '{key}' not found in local context")
+        else:
+            context.delete_value(key)
 
     @staticmethod
     def update_context(
@@ -79,3 +109,51 @@ class _ContextObserver(_SemantivaComponent):
             context.maps[0][key] = value
         else:
             context.set_value(key, value)
+
+    def update(self, key: str, value: Any, index: Optional[int] = None) -> None:
+        """Update the stored context via :meth:`update_context`."""
+        self.update_context(self.observer_context, key, value, index)
+
+    def delete(self, key: str, index: Optional[int] = None) -> None:
+        """Delete a key from the stored context via :meth:`delete_context`."""
+        self.delete_context(self.observer_context, key, index)
+
+
+class _ValidatingContextObserver(_ContextObserver):
+    """Context observer that validates updates and deletions against registered keys."""
+
+    def __init__(
+        self,
+        context_keys: list[str],
+        suppressed_keys: list[str],
+        logger: Optional[Logger] = None,
+    ):
+        """
+        Initialize the validating observer with allowed keys.
+
+        Args:
+            context_keys: List of keys that can be updated by the processor
+            suppressed_keys: List of keys that can be deleted by the processor
+            logger: Optional logger instance
+        """
+        super().__init__(logger)
+        self._allowed_context_keys = set(context_keys)
+        self._allowed_suppressed_keys = set(suppressed_keys)
+
+    def update(self, key: str, value: Any, index: Optional[int] = None) -> None:
+        """Update context with validation against registered context keys."""
+        if key not in self._allowed_context_keys:
+            raise KeyError(
+                f"Invalid context key '{key}' for processor. "
+                f"Allowed keys: {sorted(self._allowed_context_keys)}"
+            )
+        super().update(key, value, index)
+
+    def delete(self, key: str, index: Optional[int] = None) -> None:
+        """Delete context key with validation against registered suppressed keys."""
+        if key not in self._allowed_suppressed_keys:
+            raise KeyError(
+                f"Invalid suppressed key '{key}' for processor. "
+                f"Allowed suppressed keys: {sorted(self._allowed_suppressed_keys)}"
+            )
+        super().delete(key, index)

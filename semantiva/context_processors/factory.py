@@ -14,7 +14,6 @@
 from typing import List
 from semantiva.context_processors.context_processors import (
     ContextProcessor,
-    ContextType,
 )
 
 
@@ -33,26 +32,62 @@ def _context_renamer_factory(
                                   with a name of the form "Rename_<original_key>_to_<destination_key>_Operation".
     """
 
-    def _process_logic(self, context: ContextType) -> ContextType:
+    def _process_logic(self, **kwargs) -> None:
         """
-        Rename a context key.
-
-        Args:
-            context (ContextType): The context to modify.
-
-        Returns:
-            ContextType: The updated context with the key renamed.
+        Get the value for the original key from the resolved parameters,
+        and updates the destination key through the context observer.
         """
-        if original_key in context.keys():
-            value = context.get_value(original_key)
-            context.set_value(destination_key, value)
-            context.delete_value(original_key)
+        # Get the original key value from kwargs - it will be injected by parameter resolution
+        value = kwargs.get(original_key)
+        if value is not None:
+            self._notify_context_update(destination_key, value)
+            self._notify_context_deletion(original_key)
             self.logger.debug(
                 f"Renamed context key '{original_key}' -> '{destination_key}'"
             )
         else:
-            self.logger.warning(f"Key '{original_key}' not found in context.")
-        return context
+            self.logger.warning(
+                f"Key '{original_key}' not found in resolved parameters."
+            )
+
+    # Create a closure that captures both keys
+    def create_process_logic_with_signature():
+        # Create a function with the proper signature using a different approach
+        import inspect
+
+        # Create the function code manually with the correct signature
+        def _process_logic_with_signature(self, **kwargs):
+            # Extract the original key value from kwargs
+            value = kwargs.get(original_key)
+            if value is not None:
+                self._notify_context_update(destination_key, value)
+                self._notify_context_deletion(original_key)
+                self.logger.debug(
+                    f"Renamed context key '{original_key}' -> '{destination_key}'"
+                )
+            else:
+                self.logger.warning(
+                    f"Key '{original_key}' not found in resolved parameters."
+                )
+
+        # Create a new signature with the original_key as a parameter
+        old_sig = inspect.signature(_process_logic_with_signature)
+        new_params = [
+            inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+            inspect.Parameter(original_key, inspect.Parameter.POSITIONAL_OR_KEYWORD),
+        ]
+        # Add remaining parameters
+        for param in old_sig.parameters.values():
+            if param.name not in ["self"]:
+                new_params.append(param)
+
+        new_sig = inspect.Signature(new_params)
+        _process_logic_with_signature.__signature__ = new_sig
+        _process_logic_with_signature.__name__ = "_process_logic_with_signature"
+        return _process_logic_with_signature
+        return _process_logic_with_signature
+
+    _process_logic = create_process_logic_with_signature()
 
     def get_required_keys(cls) -> List[str]:
         """
@@ -72,6 +107,12 @@ def _context_renamer_factory(
         """
         return [original_key]
 
+    def context_keys(cls) -> List[str]:
+        """
+        Return a list containing the destination key, which this processor can modify.
+        """
+        return [destination_key]
+
     # Create a dynamic class name that clearly shows the renaming transformation
     dynamic_class_name = f"Rename_{original_key}_to_{destination_key}"
 
@@ -82,6 +123,7 @@ def _context_renamer_factory(
         "get_required_keys": classmethod(get_required_keys),
         "get_created_keys": classmethod(get_created_keys),
         "get_suppressed_keys": classmethod(get_suppressed_keys),
+        "context_keys": classmethod(context_keys),
     }
 
     # Add docstring to the dynamically generated class
@@ -105,22 +147,55 @@ def _context_deleter_factory(key: str) -> type[ContextProcessor]:
                                  of the form "Delete_<key>_Operation".
     """
 
-    def _process_logic(self, context: ContextType) -> ContextType:
+    def _process_logic(self, **kwargs) -> None:
         """
-        Remove a key/value pair from the context.
+        Remove a key/value pair from the context using the context observer.
 
-        Args:
-            context (ContextType): The input context.
-
-        Returns:
-            ContextType: The updated context with the key removed.
+        The key to delete must be provided as a parameter (resolved by the node).
         """
-        if key in context.keys():
-            context.delete_value(key)
+        # Get the key value from parameters (resolved by node) to verify it exists
+        value = kwargs.get(key)
+        if value is not None:
+            # We have the key value, so we can delete the key
+            self._notify_context_deletion(key)
             self.logger.debug(f"Deleted context key '{key}'")
         else:
             self.logger.warning(f"Unable to delete non-existing '{key}' from context.")
-        return context
+
+    # Create a closure that captures the key parameter
+    def create_process_logic_with_signature():
+        # Create a function with the proper signature using a different approach
+        import inspect
+
+        def _process_logic_with_signature(self, **kwargs):
+            # Extract the key from kwargs using its name
+            key_value = kwargs.get(key)
+            if key_value is not None:
+                self._notify_context_deletion(key)
+                self.logger.debug(f"Deleted context key '{key}'")
+            else:
+                self.logger.warning(
+                    f"Unable to delete non-existing '{key}' from context."
+                )
+
+        # Create a new signature with the key as a parameter
+        old_sig = inspect.signature(_process_logic_with_signature)
+        new_params = [
+            inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+            inspect.Parameter(key, inspect.Parameter.POSITIONAL_OR_KEYWORD),
+        ]
+        # Add remaining parameters
+        for param in old_sig.parameters.values():
+            if param.name not in ["self"]:
+                new_params.append(param)
+
+        new_sig = inspect.Signature(new_params)
+        _process_logic_with_signature.__signature__ = new_sig
+        _process_logic_with_signature.__name__ = "_process_logic_with_signature"
+        return _process_logic_with_signature
+        return _process_logic_with_signature
+
+    _process_logic = create_process_logic_with_signature()
 
     def get_required_keys(cls) -> List[str]:
         """
@@ -140,12 +215,19 @@ def _context_deleter_factory(key: str) -> type[ContextProcessor]:
         """
         return [key]
 
+    def context_keys(cls) -> List[str]:
+        """
+        This operation does not modify any persistent keys.
+        """
+        return []
+
     # Define the class attributes and methods in a dictionary
     class_attrs = {
         "_process_logic": _process_logic,
-        "get_required_keys": get_required_keys,
+        "get_required_keys": classmethod(get_required_keys),
         "get_created_keys": classmethod(get_created_keys),
-        "get_suppressed_keys": get_suppressed_keys,
+        "get_suppressed_keys": classmethod(get_suppressed_keys),
+        "context_keys": classmethod(context_keys),
     }
 
     # Create a dynamic class name

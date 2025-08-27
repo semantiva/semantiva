@@ -24,8 +24,8 @@ def test_pipeline_model_fitting_from_yaml():
 
     context = ContextType(
         {
-            "t_values": [0.0, 1.0, 2.0],
-            "data_values": [1.0, 3.0, 7.0],
+            "x_values": [0.0, 1.0, 2.0],
+            "y_values": [1.0, 3.0, 7.0],
         }
     )
     payload = Payload(NoDataType(), context)
@@ -33,6 +33,6 @@ def test_pipeline_model_fitting_from_yaml():
 
     node = pipeline.nodes[0]
     assert isinstance(node.processor, ModelFittingContextProcessor)
-    assert isinstance(node.processor.fitting_model, PolynomialFittingModel)
-    assert node.processor.fitting_model.degree == 2
+    assert isinstance(node.processor_config["fitting_model"], PolynomialFittingModel)
+    assert node.processor_config["fitting_model"].degree == 2
     assert "fit_coefficients" in result.context.keys()

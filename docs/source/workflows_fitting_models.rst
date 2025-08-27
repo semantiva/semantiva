@@ -20,9 +20,8 @@ The example config uses the ``model:`` resolver to describe and instantiate a fi
 model in a single, declarative string:
 
 - ``fitting_model: "model:PolynomialFittingModel:degree=2"`` → a 2nd-degree polynomial
-- ``independent_var_key: "t_values"`` and ``dependent_var_key: "data_values"`` → names
-  of context keys that must contain the x/y arrays
 - ``context_keyword: "fit_coefficients"`` → where results are stored in the context
+  (the context must provide ``x_values`` and ``y_values`` arrays)
 
 At runtime, :py:class:`~semantiva.workflows.fitting_model.ModelFittingContextProcessor`
 reads the arrays from ``payload.context``, fits the model, and stores the coefficients
@@ -51,16 +50,16 @@ seed them programmatically:
    from semantiva.pipeline import Pipeline
    from semantiva.pipeline.payload import Payload
 
-   # Toy data: y = 1 + 2 t + 0.5 t^2 (noisy-free for demo)
-   t_values = [-1.0, 0.0, 1.0, 2.0]
-   data_values = [1 + 2*t + 0.5*(t**2) for t in t_values]
+   # Toy data: y = 1 + 2 t + 0.5 t^2 (noise-free for demo)
+   x_values = [-1.0, 0.0, 1.0, 2.0]
+   y_values = [1 + 2*t + 0.5*(t**2) for t in x_values]
 
    nodes = load_pipeline_from_yaml("tests/pipeline_model_fitting.yaml")
    p = Pipeline(nodes)
 
    initial = Payload(data=None, context={
-       "t_values": t_values,
-       "data_values": data_values,
+       "x_values": x_values,
+       "y_values": y_values,
    })
    result = p.process(initial)   # -> Payload(data=..., context=...)
 
