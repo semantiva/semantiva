@@ -12,8 +12,11 @@ Glossary
    Processor
      A single-responsibility unit of computation (DataOperation, DataProbe, IO, ContextProcessor).
 
-   Data Type
-     Contract object declaring input/output types (e.g., BaseDataType, DataCollectionType, NoDataType).
+   DataType
+     A typed wrapper for domain data; used to enforce contracts between operations.
+
+   DataOperation
+     A processor that transforms one typed ``data`` value into another within a Payload.
 
    Context
      Execution key/value store with safe mutation (required/created/suppressed keys).
@@ -25,7 +28,19 @@ Glossary
      when executed.
 
    Resolver
-     Mechanism to resolve classes/parameters from YAML (e.g., ``slicer:``, ``rename:``, ``model:``).
+     A mechanism that rewrites or resolves parts of a configuration during spec parsing.
+
+   Class Resolver
+     Resolves a ``processor`` reference to an importable class (usually by FQCN).
+
+   Parameter Resolver
+     Transforms parameter maps (e.g., ``slicer:``, ``rename:``, ``delete:``, ``model:``).
 
    Studio Viewer
      Read-only UI for YAML pipeline visualization.
+
+See also
+--------
+
+For examples of resolver usage, see :ref:`objects-in-pipeline-configurations`
+and the *Resolvers Overview* in :doc:`registry_and_extensions`.
