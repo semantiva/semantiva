@@ -3,6 +3,8 @@ Introspection & Validation
 
 - Build inspections, summarize, export JSON, validate.
 
+You can perform pre-execution checks from the terminal; see :doc:`cli` (subcommand **inspect**).
+
 Examples
 --------
 
