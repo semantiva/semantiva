@@ -12,6 +12,7 @@ If you're looking for tutorials and theoretical explanations, please visit https
    :caption: Start Here
 
    getting_started
+   cli
    concepts
    studio_viewer
    tracing

@@ -72,3 +72,8 @@ Next Steps
 - :doc:`pipeline`
 - :doc:`studio_viewer`
 - :doc:`tracing`
+
+See also
+--------
+
+For terminal usage, see :doc:`cli` for the full CLI reference.
