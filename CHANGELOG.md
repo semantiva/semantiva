@@ -40,7 +40,11 @@ Here is the updated changelog with the missing items included and the requested 
       support for a ``model:`` prefix to instantiate fitting models from YAML
 - Comprehensive tracing documentation covering CLI options, record schema, detail levels, examples, and troubleshooting
 - Documented Studio Viewer quick start, modes, export, trace inspection anchors, limitations, and troubleshooting
-- Documentation: added model fitting tutorial, parametric sweep walkthrough, and example run instructions
+  - Documentation: added model fitting tutorial, parametric sweep walkthrough, and example run instructions
+- ContextProcessor now supports observer-mediated, stateless processing with
+  runtime parameter introspection
+- `ModelFittingContextProcessor.with_context_keyword()` factory binds output
+  keys for stateless model fitting
 
 ### Changed
 - Rewrote the ``Concepts`` documentation into a narrative overview highlighting type safety, dual-channel execution, and semantic transparency
@@ -114,6 +118,13 @@ Here is the updated changelog with the missing items included and the requested 
 - Payload processing ergonomics: `_PayloadProcessor.process()` now normalizes `None` into a `NoDataType()` instance when the expected input type is `NoDataType`, simplifying callers and tests.
 - Logger pickling behavior: `Logger` persists an explicit `name` attribute and restores the underlying stdlib logger by name during unpickling so roundtrips preserve configured identity and level.
 - Updated docstrings for `load_pipeline_from_yaml`, `_PayloadProcessor.process`, and `FloatDataType` to reflect their current signatures and return types
+- `_ContextProcessorNode` resolves runtime parameters and mediates all context
+  updates through `_ContextObserver`
+- `ModelFittingContextProcessor` no longer accepts business parameters in
+  ``__init__``
+
+### Deprecated
+- Legacy ``_process_logic(self, context, ...)`` pattern retained temporarily
 
 
 ### Removed
