@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+CLI context injection tests.
+
+Tests that the `semantiva run --context` flag properly injects context
+values, verifying injection via the specific "Injected context:" debug message.
+"""
+
 from pathlib import Path
 from .test_utils import run_cli
 
@@ -35,6 +42,9 @@ pipeline:
             "x_values=[0.0,1.0]",
             "--context",
             "y_values=[1.0,2.0]",
+            "-v",  # Enable verbose logging to see context injection
         ]
     )
     assert res.returncode == 0
+    # Verify context injection worked by checking for the specific debug message
+    assert "Injected context:" in res.stdout and "[0.0, 1.0]" in res.stdout

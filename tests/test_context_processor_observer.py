@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Observer pattern tests for context processors.
+
+Tests stateless context processor operation via observer-mediated updates,
+parameter resolution precedence (config > context > defaults), and
+metadata extraction from processor signatures.
+"""
+
 from semantiva.context_processors.context_processors import ContextProcessor
 from semantiva.context_processors.context_types import ContextType
 from semantiva.pipeline.nodes._pipeline_node_factory import _PipelineNodeFactory

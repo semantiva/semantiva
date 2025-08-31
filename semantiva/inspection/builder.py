@@ -36,7 +36,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 import inspect
-from semantiva.data_processors.data_processors import ParameterInfo, _NO_DEFAULT
+from semantiva.data_processors.data_processors import ParameterInfo
 
 from semantiva.pipeline.nodes.nodes import (
     _PipelineNode,
@@ -44,6 +44,7 @@ from semantiva.pipeline.nodes.nodes import (
     _ContextProcessorNode,
 )
 from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
+from semantiva.pipeline._param_resolution import inspect_origin
 
 
 @dataclass
@@ -210,26 +211,29 @@ def build_pipeline_inspection(
 
         config_params: Dict[str, Any] = dict(node.processor_config)
         default_params: Dict[str, Any] = {}
-        context_param_names: set[str] = set()
-        for name, info in param_details.items():
-            if name in config_params:
-                continue
-            if name in key_origin and name not in deleted_keys:
-                context_param_names.add(name)
-                continue
-            if isinstance(info, ParameterInfo) and info.default is not _NO_DEFAULT:
-                config_params[name] = info.default
-                default_params[name] = info.default
-            else:
-                context_param_names.add(name)
-
-        # Track parameter origins for context-resolved parameters
         context_params: Dict[str, Optional[int]] = {}
-        for param in context_param_names:
-            # Record which node created this parameter (or None for initial context)
-            context_params[param] = key_origin.get(param)
+        required_params: set[str] = set()
+        for name in param_details.keys():
+            origin, origin_idx, default_value = inspect_origin(
+                name=name,
+                processor_cls=processor.__class__,
+                processor_config=node.processor_config,
+                key_origin=key_origin,
+                deleted_keys=deleted_keys,
+            )
+            if origin == "config":
+                continue
+            if origin == "context":
+                context_params[name] = origin_idx
+                required_params.add(name)
+            elif origin == "default":
+                config_params[name] = default_value
+                default_params[name] = default_value
+            elif origin == "required":
+                context_params[name] = origin_idx
+                required_params.add(name)
 
-        all_required_params.update(context_param_names)
+        all_required_params.update(required_params)
 
         # Analyze context key creation
         created_keys = set(node.processor.get_created_keys())
@@ -253,15 +257,8 @@ def build_pipeline_inspection(
             suppressed_keys = set(node.get_suppressed_keys())
             deleted_keys.update(suppressed_keys)
 
-            # Handle additional required keys for context processors
-            if hasattr(node, "get_required_keys"):
-                required = set(node.get_required_keys())
-                for key in required:
-                    context_params[key] = key_origin.get(key)
-                all_required_params.update(required)
-
         # Validate parameter availability against deleted keys
-        missing_deleted = (context_param_names & deleted_keys) - suppressed_keys
+        missing_deleted = (required_params & deleted_keys) - suppressed_keys
         if missing_deleted - set(config_params.keys()):
             node_errors.append(
                 f"Node {index} requires context keys previously deleted: {sorted(missing_deleted)}"
@@ -295,4 +292,3 @@ def build_pipeline_inspection(
         key_origin={k: v for k, v in key_origin.items()},
         errors=errors,
     )
-    required_context_keys = all_required_params - all_created_keys

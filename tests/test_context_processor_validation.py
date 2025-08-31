@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Validation tests for context processor observer pattern.
+
+Tests that ValidatingContextObserver enforces declared keys for updates
+and deletions, preventing unauthorized context modifications.
+"""
+
 from semantiva.context_processors.context_observer import _ValidatingContextObserver
 from semantiva.context_processors.context_types import ContextType
 
