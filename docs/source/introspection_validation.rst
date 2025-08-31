@@ -135,8 +135,25 @@ Example output (truncated):
      node_index: 2
      node_uuid: "eb3e87c0-97b7-5097-8214-b53b4ba0fd6e"
      processor: "TransformData"
-     reason: "Incompatible types: expected ImageType, received TextType from previous node"
-     hint: "Check the output of node 1 or insert a converter operation."
+    reason: "Incompatible types: expected ImageType, received TextType from previous node"
+    hint: "Check the output of node 1 or insert a converter operation."
+
+Unknown / Unused Parameters
+---------------------------
+
+Semantiva validates node configuration keys against the processor signature.
+Parameters present in YAML ``parameters`` that are not accepted by the processor
+are reported during inspection under ``invalid_parameters``:
+
+.. code-block:: text
+
+   invalid_parameters:
+     - name: facotr
+       reason: unknown_parameter
+
+The GUI and CLI can highlight these entries. When using ``inspect --strict``,
+the command exits non-zero if any node contains invalid parameters. During
+execution, invalid configuration causes a validation error before running.
 
 Tips
 ----

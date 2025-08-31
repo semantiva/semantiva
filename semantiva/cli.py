@@ -196,6 +196,11 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
     inspect_p.add_argument(
         "-q", "--quiet", action="store_true", help="Only show errors"
     )
+    inspect_p.add_argument(
+        "--strict",
+        action="store_true",
+        help="Exit non-zero if configuration contains invalid parameters",
+    )
     inspect_p.add_argument("--version", action="version", version=_get_version())
 
     args = parser.parse_args(argv)
@@ -360,6 +365,20 @@ def _inspect(args: argparse.Namespace) -> int:
                     file=sys.stderr,
                 )
 
+        invalid_lines: List[str] = []
+        strict_fail = False
+        for node in inspection.nodes:
+            for issue in node.invalid_parameters:
+                invalid_lines.append(
+                    f"- node #{node.index} ({node.processor_class}): {issue['name']}"
+                )
+        if invalid_lines:
+            print("Invalid configuration parameters:")
+            for line in invalid_lines:
+                print(line)
+            if args.strict:
+                strict_fail = True
+
     except Exception as exc:
         print(f"Failed to build inspection: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
@@ -368,7 +387,7 @@ def _inspect(args: argparse.Namespace) -> int:
         extended_report(inspection) if args.extended else summary_report(inspection)
     )
     print(report)
-    return EXIT_SUCCESS
+    return 1 if strict_fail else EXIT_SUCCESS
 
 
 def main(argv: List[str] | None = None) -> None:

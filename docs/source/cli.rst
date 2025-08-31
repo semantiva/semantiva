@@ -70,6 +70,7 @@ Parse YAML, build the canonical graph, and run pre-execution checks.
 **Options**
 
 - ``--extended``: include node identities (``node_uuid``), ports, parameters, inferred types (where available).
+- ``--strict``: exit non-zero if configuration contains invalid parameters.
 - Verbosity: ``-v`` / ``--verbose`` and ``-q`` analogous to ``run``.
 
 Inspection degrades gracefully for malformed configs and prints validation warnings, continuing to emit a report (see "Error-Resilient Inspection" in the CLI source).
@@ -83,6 +84,15 @@ Inspection degrades gracefully for malformed configs and prints validation warni
 
    # Extended inspection (identities & details)
    semantiva inspect hello_pipeline.yaml --extended
+
+**Strict validation**
+
+.. code-block:: bash
+
+   semantiva inspect my_pipeline.yaml --strict
+
+If any node contains configuration parameters that are not accepted by its processor,
+the command will exit non-zero and list the offending parameters.
 
 Common behaviors
 ----------------

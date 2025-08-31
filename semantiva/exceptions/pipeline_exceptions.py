@@ -14,6 +14,8 @@
 
 # Description: Custom exceptions for the semantiva package.
 
+from typing import Dict, List
+
 
 class PipelineConfigurationError(Exception):
     """Raised when the pipeline configuration is invalid."""
@@ -29,3 +31,22 @@ class PipelineTopologyError(Exception):
     def __init__(self, message):
         super().__init__(message)
         self.message = message
+
+
+class InvalidNodeParameterError(ValueError):
+    """Raised when a node's configuration contains unsupported parameters."""
+
+    def __init__(
+        self,
+        *,
+        processor_fqcn: str,
+        node_uuid: str,
+        invalid: Dict[str, List[str]],
+    ) -> None:
+        super().__init__(
+            f"Invalid parameters for {processor_fqcn} (node_uuid={node_uuid}): "
+            f"{', '.join(invalid.keys())}"
+        )
+        self.processor_fqcn = processor_fqcn
+        self.node_uuid = node_uuid
+        self.invalid = invalid

@@ -34,7 +34,11 @@ from semantiva.data_types import NoDataType
 from semantiva.logger import Logger
 from ..payload_processors import _PayloadProcessor
 from ..payload import Payload
-from semantiva.pipeline._param_resolution import resolve_runtime_value
+from semantiva.pipeline._param_resolution import (
+    resolve_runtime_value,
+    classify_unknown_config_params,
+)
+from semantiva.exceptions import InvalidNodeParameterError
 
 
 class _PipelineNode(_PayloadProcessor):
@@ -88,6 +92,17 @@ class _DataNode(_PipelineNode):
             if issubclass(processor, DataOperation)
             else processor(logger=self.logger)
         )
+
+        issues = classify_unknown_config_params(
+            processor_cls=self.processor.__class__,
+            processor_config=self.processor_config,
+        )
+        if issues:
+            raise InvalidNodeParameterError(
+                processor_fqcn=f"{self.processor.__class__.__module__}.{self.processor.__class__.__name__}",
+                node_uuid=getattr(self, "node_uuid", "unknown"),
+                invalid={i["name"]: [] for i in issues},
+            )
 
     @classmethod
     @abstractmethod
@@ -1039,6 +1054,17 @@ class _ContextProcessorNode(_PipelineNode):
         self.processor_config = processor_config or {}
         # Stateless processors: never receive business args in __init__
         self.processor = processor(logger)
+
+        issues = classify_unknown_config_params(
+            processor_cls=self.processor.__class__,
+            processor_config=self.processor_config,
+        )
+        if issues:
+            raise InvalidNodeParameterError(
+                processor_fqcn=f"{self.processor.__class__.__module__}.{self.processor.__class__.__name__}",
+                node_uuid=getattr(self, "node_uuid", "unknown"),
+                invalid={i["name"]: [] for i in issues},
+            )
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:

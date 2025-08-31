@@ -1,0 +1,40 @@
+# Copyright 2025 Semantiva authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from semantiva.configurations import load_pipeline_from_yaml
+from semantiva.inspection import build_pipeline_inspection
+from semantiva.registry import ClassRegistry
+
+
+def test_inspection_reports_unknown_param(tmp_path):
+    yaml = """
+pipeline:
+  nodes:
+    - processor: FloatMultiplyOperationWithDefault
+      parameters:
+        factor: 2.0
+        facotr: 3.0
+"""
+    p = tmp_path / "bad.yaml"
+    p.write_text(yaml)
+
+    ClassRegistry.register_modules(["semantiva.examples.test_utils"])
+    nodes = load_pipeline_from_yaml(str(p))
+    insp = build_pipeline_inspection(nodes)
+
+    node0 = insp.nodes[0] if hasattr(insp, "nodes") else insp[0]
+    invalid = getattr(node0, "invalid_parameters", [])
+    assert any(
+        i["name"] == "facotr" and i["reason"] == "unknown_parameter" for i in invalid
+    )
