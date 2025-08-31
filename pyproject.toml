@@ -9,6 +9,7 @@ dependencies = [
     "numpy >=2.2.1",
     "pyyaml",
     "rdflib",
+    "typing_extensions",
 ]
 distribution = true
 
