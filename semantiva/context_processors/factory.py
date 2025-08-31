@@ -109,18 +109,31 @@ def _context_renamer_factory(
 def _context_deleter_factory(key: str) -> type[ContextProcessor]:
     """Create a ContextProcessor subclass that deletes a context key."""
 
+    param_name = key.replace(".", "_")
+
     def create_process_logic_with_signature():
         import inspect
 
-        def _process_logic_with_signature(self):
+        def _process_logic_with_signature(self, **kwargs):
             """Delete key '{key}' from context via the observer."""
-            self._notify_context_deletion(key)
-            self.logger.debug(f"Deleted context key '{key}'")
+            # The key should be available in resolved parameters if it exists
+            if param_name in kwargs:
+                self._notify_context_deletion(key)
+                self.logger.debug(f"Deleted context key '{key}'")
+            else:
+                self.logger.debug(f"Key '{key}' not found, nothing to delete")
 
-        sig = inspect.Signature(
-            [inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)]
-        )
-        _process_logic_with_signature.__signature__ = sig
+        old_sig = inspect.signature(_process_logic_with_signature)
+        new_params = [
+            inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+            inspect.Parameter(param_name, inspect.Parameter.POSITIONAL_OR_KEYWORD),
+        ]
+        for param in old_sig.parameters.values():
+            if param.name not in ["self"]:
+                new_params.append(param)
+
+        new_sig = inspect.Signature(new_params)
+        _process_logic_with_signature.__signature__ = new_sig
         _process_logic_with_signature.__name__ = "_process_logic_with_signature"
         return _process_logic_with_signature
 
@@ -136,7 +149,7 @@ def _context_deleter_factory(key: str) -> type[ContextProcessor]:
         return []
 
     def get_processing_parameter_names(cls) -> List[str]:
-        return []
+        return [key]
 
     class_attrs = {
         "_process_logic": _process_logic,
