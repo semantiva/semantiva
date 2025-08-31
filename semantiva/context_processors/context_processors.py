@@ -84,7 +84,7 @@ class ContextProcessor(_SemantivaComponent):
         return context
 
     @abstractmethod
-    def _process_logic(self, **kwargs) -> None:
+    def _process_logic(self, *args, **kwargs) -> None:
         """Implement stateless logic using only runtime parameters.
 
         All context interactions must be done through _notify_context_update().
