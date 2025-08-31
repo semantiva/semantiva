@@ -39,39 +39,17 @@ Run it (inspect, then execute)
 You should see the canonical identities (``PipelineId``, per-node ``node_uuid``) and
 the configured parameters for the fitting step. See :doc:`introspection_validation`.
 
-**2) Execute programmatically with initial context**
+**2) Execute from the CLI with initial context**
 
-This workflow expects two arrays in the context. Until CLI context injection is added,
-seed them programmatically:
+Provide arrays via ``--context`` (multiple flags allowed):
 
-.. code-block:: python
+.. code-block:: bash
 
-   from semantiva.configurations import load_pipeline_from_yaml
-   from semantiva.pipeline import Pipeline
-   from semantiva.pipeline.payload import Payload
+   semantiva run tests/pipeline_model_fitting.yaml \
+     --context x_values=[-1.0,0.0,1.0,2.0] \
+     --context y_values="[1.0,1.0,2.5,5.0]"
 
-   # Toy data: y = 1 + 2 t + 0.5 t^2 (noise-free for demo)
-   x_values = [-1.0, 0.0, 1.0, 2.0]
-   y_values = [1 + 2*t + 0.5*(t**2) for t in x_values]
-
-   nodes = load_pipeline_from_yaml("tests/pipeline_model_fitting.yaml")
-   p = Pipeline(nodes)
-
-   initial = Payload(data=None, context={
-       "x_values": x_values,
-       "y_values": y_values,
-   })
-   result = p.process(initial)   # -> Payload(data=..., context=...)
-
-   print("Coefficients:", result.context.get("fit_coefficients"))
-
-The coefficients are written under ``fit_coefficients`` in the **context**. The data
-channel for this step is pass-through.
-
-.. note::
-
-   A CLI flag for context injection (``--context key=value``) is **planned**; until
-   then, initialize context via pipeline steps or programmatically.
+The resulting coefficients are written to ``fit_coefficients`` in the **context**.
 
 **3) Visualize the config**
 
@@ -90,6 +68,14 @@ Example YAML
 
 .. literalinclude:: ../../tests/pipeline_model_fitting.yaml
    :language: yaml
+
+.. code-block:: python
+
+   >>> from semantiva.configurations import load_pipeline_from_yaml
+   >>> from semantiva.pipeline import Pipeline
+   >>> nodes = load_pipeline_from_yaml("tests/pipeline_model_fitting.yaml")
+   >>> p = Pipeline(nodes)
+   >>> result = p.process(payload=None)  # will fail unless you provide x_values/y_values at CLI
 
 Autodoc
 -------
