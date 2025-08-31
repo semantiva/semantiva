@@ -12,17 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Test utilities for CLI invocation.
-
-Provides helper functions for running the semantiva CLI in subprocess tests.
-"""
-
-import subprocess
-import sys
-from pathlib import Path
+from semantiva.inspection import build_pipeline_inspection
 
 
-def run_cli(args, cwd: Path | None = None):
-    cmd = [sys.executable, "-m", "semantiva.semantiva", *args]
-    return subprocess.run(cmd, capture_output=True, text=True, cwd=cwd)
+def test_inspection_does_not_use_processor_get_required_keys():
+    # A configuration with no explicit required-keys exposure on processors
+    cfg = [{"processor": "delete:obsolete"}]  # the factory defines no get_required_keys
+    insp = build_pipeline_inspection(cfg)
+    # Ensure required_context_keys is computed solely from param precedence
+    assert hasattr(insp, "required_context_keys")
+    # No spurious keys added from get_required_keys()
+    assert insp.required_context_keys == set()
