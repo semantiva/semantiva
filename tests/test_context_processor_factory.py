@@ -16,7 +16,7 @@
 Factory-generated context processor tests.
 
 Tests dynamically created rename and delete processors via factory functions,
-verifying signature introspection and actual runtime behavior through observers.
+verifying signature introspection, actual runtime behavior, and inspection compliance.
 """
 
 from semantiva.registry import ClassRegistry
@@ -28,10 +28,10 @@ def test_rename_factory_signature_exposes_original_key():
     assert "alpha.beta" in names  # parameter comes from original key
 
 
-def test_delete_factory_signature_is_empty():
+def test_delete_factory_signature_exposes_deleted_key():
     cls = ClassRegistry.get_class("delete:temp.key")
     names = cls.get_processing_parameter_names()
-    assert names == []  # no inputs required to delete
+    assert names == ["temp.key"]  # reports the key that will be consumed/deleted
 
 
 def test_rename_factory_behavior():
@@ -67,6 +67,20 @@ def test_delete_factory_behavior():
     )
     obs.observer_context = ctx
     proc._set_context_observer(obs)
-    proc._process_logic()
+    proc._process_logic(**{"temp": 42})  # Pass the key value as parameter
     assert "temp" not in ctx.keys()
     assert ctx.get_value("keep") == 1  # Other keys preserved
+
+
+def test_delete_factory_inspection_reports_required_key():
+    """Test that delete operations are properly detected as requiring context keys."""
+    from semantiva.inspection import build_pipeline_inspection
+    from semantiva.inspection.reporter import parameter_resolutions
+
+    cfg = [{"processor": "delete:mykey"}]
+    insp = build_pipeline_inspection(cfg)
+    res = parameter_resolutions(insp)
+
+    # The delete operation should require 'mykey' from context
+    assert "mykey" in insp.required_context_keys
+    assert "mykey" in res[0]["parameter_resolution"]["from_context"]
