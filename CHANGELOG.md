@@ -18,6 +18,10 @@ Here is the updated changelog with the missing items included and the requested 
   - Documentation of extension implementation patterns
 - Introduced `semantiva` command-line interface with subcommands:
   - `run` subcommand for executing pipeline YAML files
+- ContextProcessor v2 documentation and migration guide covering observer pattern, validation, factories, and YAML usage
+- Architecture deep dive for context processing and glossary additions
+- CLI `--context` flag usage documented and tested
+- Unit and integration tests for validating context processors, factories, error scenarios, and CLI context injection
   - `inspect` subcommand for summary or extended pipeline reports
   - `--context` flag on `run` for injecting initial context key-value pairs
 - Enable use of data processor parameter defaults with full introspection support
