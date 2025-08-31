@@ -1,5 +1,5 @@
-Context Processing Architecture (v2)
-====================================
+Context Processing Architecture
+===============================
 
 Rationale
 ---------
