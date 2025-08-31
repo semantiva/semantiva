@@ -20,8 +20,6 @@ from semantiva.data_processors.data_processors import (
     _BaseDataProcessor,
     DataOperation,
     DataProbe,
-    ParameterInfo,
-    _NO_DEFAULT,
 )
 from semantiva.context_processors.context_observer import (
     _ContextObserver,
@@ -36,6 +34,7 @@ from semantiva.data_types import NoDataType
 from semantiva.logger import Logger
 from ..payload_processors import _PayloadProcessor
 from ..payload import Payload
+from semantiva.pipeline._param_resolution import resolve_runtime_value
 
 
 class _PipelineNode(_PayloadProcessor):
@@ -124,34 +123,11 @@ class _DataNode(_PipelineNode):
         return parameters
 
     def _fetch_parameter_value(self, name: str, context: ContextType) -> Any:
-        """
-        Retrieve a parameter value based on the node's processor configuration or the context.
-
-        Args:
-            name (str): The name of the parameter to retrieve.
-            context (ContextType): Contextual information used to resolve parameter values.
-
-        Returns:
-            Any: The value of the parameter, with `processor_config` taking precedence over the context.
-        """
-        if name in self.processor_config:
-            return self.processor_config[name]
-        if name in context.keys():
-            return context.get_value(name)
-
-        metadata = self.processor.__class__.get_metadata()
-        param_info = metadata.get("parameters", {}).get(name)
-        if isinstance(param_info, ParameterInfo):
-            default = param_info.default
-        elif isinstance(param_info, dict):
-            default = param_info.get("default", _NO_DEFAULT)
-        else:
-            default = _NO_DEFAULT
-
-        if default is not _NO_DEFAULT:
-            return default
-        raise KeyError(
-            f"Unable to resolve parameter '{name}' from context, node configuration, or defaults."
+        return resolve_runtime_value(
+            name=name,
+            processor_cls=self.processor.__class__,
+            processor_config=self.processor_config,
+            context=context,
         )
 
     def __str__(self) -> str:
@@ -1200,23 +1176,10 @@ class _ContextProcessorNode(_PipelineNode):
         return Payload(data, updated_context)
 
     def _fetch_parameter_value(self, name: str, context: ContextType) -> Any:
-        """Resolve parameter value from node config, context, or defaults."""
-        if name in self.processor_config:
-            return self.processor_config[name]
-        if name in context.keys():
-            return context.get_value(name)
-
-        metadata = self.processor.__class__.get_metadata()
-        param_info = metadata.get("parameters", {}).get(name)
-        if isinstance(param_info, ParameterInfo):
-            default = param_info.default
-        elif isinstance(param_info, dict):  # pragma: no cover - defensive
-            default = param_info.get("default", _NO_DEFAULT)
-        else:
-            default = _NO_DEFAULT
-
-        if default is not _NO_DEFAULT:
-            return default
-        raise KeyError(
-            f"Unable to resolve parameter '{name}' from context, node configuration, or defaults."
+        """Resolve parameter value using single-source-of-truth policy."""
+        return resolve_runtime_value(
+            name=name,
+            processor_cls=self.processor.__class__,
+            processor_config=self.processor_config,
+            context=context,
         )
