@@ -21,5 +21,6 @@ def test_inspection_does_not_use_processor_get_required_keys():
     insp = build_pipeline_inspection(cfg)
     # Ensure required_context_keys is computed solely from param precedence
     assert hasattr(insp, "required_context_keys")
-    # No spurious keys added from get_required_keys()
-    assert insp.required_context_keys == set()
+    # The 'obsolete' key should be detected as required through parameter resolution,
+    # not through any deprecated get_required_keys() method
+    assert insp.required_context_keys == {"obsolete"}
