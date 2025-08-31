@@ -46,35 +46,31 @@ def _context_renamer_factory(
     param_name = original_key.replace(".", "_")
 
     def create_process_logic_with_signature():
-        import inspect
 
-        def _process_logic_with_signature(self, **kwargs):
-            """Rename the resolved '{original_key}' value to '{destination_key}'."""
-            value = kwargs.get(param_name)
-            if value is not None:
-                self._notify_context_update(destination_key, value)
-                self._notify_context_deletion(original_key)
-                self.logger.debug(
-                    f"Renamed context key '{original_key}' -> '{destination_key}'"
-                )
-            else:
-                self.logger.warning(
-                    f"Key '{original_key}' not found in resolved parameters."
-                )
+        # Create a function with dynamic parameter name for provenance tracking
+        func_code = f"""
+def _process_logic_with_signature(self, {param_name}):
+    \"\"\"Rename the resolved '{original_key}' value to '{destination_key}'.\"\"\"
+    value = {param_name}
+    if value is not None:
+        self._notify_context_update(destination_key, value)
+        self._notify_context_deletion(original_key)
+        self.logger.debug(
+            f"Renamed context key '{original_key}' -> '{destination_key}'"
+        )
+    else:
+        self.logger.warning(
+            f"Key '{original_key}' not found in resolved parameters."
+        )
+"""
 
-        old_sig = inspect.signature(_process_logic_with_signature)
-        new_params = [
-            inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
-            inspect.Parameter(param_name, inspect.Parameter.POSITIONAL_OR_KEYWORD),
-        ]
-        for param in old_sig.parameters.values():
-            if param.name not in ["self"]:
-                new_params.append(param)
-
-        new_sig = inspect.Signature(new_params)
-        _process_logic_with_signature.__signature__ = new_sig
-        _process_logic_with_signature.__name__ = "_process_logic_with_signature"
-        return _process_logic_with_signature
+        # Create the function with proper local context
+        local_context = {
+            "destination_key": destination_key,
+            "original_key": original_key,
+        }
+        exec(func_code, local_context)
+        return local_context["_process_logic_with_signature"]
 
     _process_logic = create_process_logic_with_signature()
 
@@ -112,30 +108,23 @@ def _context_deleter_factory(key: str) -> type[ContextProcessor]:
     param_name = key.replace(".", "_")
 
     def create_process_logic_with_signature():
-        import inspect
 
-        def _process_logic_with_signature(self, **kwargs):
-            """Delete key '{key}' from context via the observer."""
-            # The key should be available in resolved parameters if it exists
-            if param_name in kwargs:
-                self._notify_context_deletion(key)
-                self.logger.debug(f"Deleted context key '{key}'")
-            else:
-                self.logger.debug(f"Key '{key}' not found, nothing to delete")
+        # Create a function with dynamic parameter name for provenance tracking
+        func_code = f"""
+def _process_logic_with_signature(self, {param_name}):
+    \"\"\"Delete key '{key}' from context via the observer.\"\"\"
+    # The key should be available in resolved parameters if it exists
+    if {param_name} is not None:
+        self._notify_context_deletion(key)
+        self.logger.debug(f"Deleted context key '{key}'")
+    else:
+        self.logger.debug(f"Key '{key}' not found, nothing to delete")
+"""
 
-        old_sig = inspect.signature(_process_logic_with_signature)
-        new_params = [
-            inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
-            inspect.Parameter(param_name, inspect.Parameter.POSITIONAL_OR_KEYWORD),
-        ]
-        for param in old_sig.parameters.values():
-            if param.name not in ["self"]:
-                new_params.append(param)
-
-        new_sig = inspect.Signature(new_params)
-        _process_logic_with_signature.__signature__ = new_sig
-        _process_logic_with_signature.__name__ = "_process_logic_with_signature"
-        return _process_logic_with_signature
+        # Create the function with proper local context
+        local_context = {"key": key}
+        exec(func_code, local_context)
+        return local_context["_process_logic_with_signature"]
 
     _process_logic = create_process_logic_with_signature()
 

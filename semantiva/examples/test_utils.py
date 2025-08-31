@@ -126,7 +126,7 @@ class FloatProbe(DataProbe):
 class FloatMultiplyOperation(FloatOperation):
     """Multiply FloatDataType data by a factor."""
 
-    def _process_logic(self, data, factor: float, *args, **kwargs):
+    def _process_logic(self, data, factor: float):
         return FloatDataType(data.data * factor)
 
 
@@ -140,21 +140,21 @@ class FloatMultiplyOperationWithDefault(FloatOperation):
 class FloatAddOperation(FloatOperation):
     """Add a constant to FloatDataType data."""
 
-    def _process_logic(self, data, addend: float, *args, **kwargs):
+    def _process_logic(self, data, addend: float):
         return FloatDataType(data.data + addend)
 
 
 class FloatSquareOperation(FloatOperation):
     """Square the value of FloatDataType data."""
 
-    def _process_logic(self, data, *args, **kwargs):
+    def _process_logic(self, data):
         return FloatDataType(data.data**2)
 
 
 class FloatSqrtOperation(FloatOperation):
     """Extract the square root of FloatDataType data."""
 
-    def _process_logic(self, data, *args, **kwargs):
+    def _process_logic(self, data):
         import math
 
         return FloatDataType(math.sqrt(abs(data.data)))
@@ -163,7 +163,7 @@ class FloatSqrtOperation(FloatOperation):
 class FloatDivideOperation(FloatOperation):
     """Divide FloatDataType data by a divisor."""
 
-    def _process_logic(self, data, divisor: float, *args, **kwargs):
+    def _process_logic(self, data, divisor: float):
         if divisor == 0:
             raise ValueError("Division by zero is not allowed")
         return FloatDataType(data.data / divisor)
@@ -172,7 +172,7 @@ class FloatDivideOperation(FloatOperation):
 class FloatBasicProbe(FloatProbe):
     """A probe that inspects a FloatDataType data and returns a dictionary with `value`, `type`, and `is_positive` and `abs_value` keys."""
 
-    def _process_logic(self, data, *args, **kwargs):
+    def _process_logic(self, data):
         return {
             "value": data.data,
             "type": type(data.data).__name__,
@@ -184,14 +184,14 @@ class FloatBasicProbe(FloatProbe):
 class FloatCollectionSumOperation(FloatCollectionMergeOperation):
     """Sum all items in a FloatDataCollection."""
 
-    def _process_logic(self, data, *args, **kwargs):
+    def _process_logic(self, data):
         return FloatDataType(sum(item.data for item in data.data))
 
 
 class FloatCollectValueProbe(FloatProbe):
     """A probe that collects the value of the input."""
 
-    def _process_logic(self, data, *args, **kwargs):
+    def _process_logic(self, data):
         return data.data
 
 
@@ -199,7 +199,7 @@ class FloatValueDataSource(DataSource):
     """Outputs a FloatDataType value. Defaults to 42.0."""
 
     @classmethod
-    def _get_data(cls, value: float = 42.0, *args, **kwargs) -> FloatDataType:
+    def _get_data(cls, value: float = 42.0) -> FloatDataType:
         assert isinstance(value, float), "Value must be a float"
         return FloatDataType(value)
 
@@ -212,7 +212,7 @@ class FloatValueDataSource(DataSource):
 class FloatMockDataSink(DataSink):
     """A Mock Datasink for FloatDataType data that does nothing."""
 
-    def _send_data(self, data: BaseDataType, path: str, *args, **kwargs):
+    def _send_data(self, data: BaseDataType, path: str):
         return
 
     @classmethod
@@ -232,7 +232,7 @@ class FloatDataSource(DataSource):
     """
 
     @classmethod
-    def _get_data(cls, *args, **kwargs) -> FloatDataType:
+    def _get_data(cls) -> FloatDataType:
         # Return a fixed FloatDataType for testing
         return FloatDataType(123.0)
 
@@ -247,7 +247,7 @@ class FloatPayloadSource(PayloadSource):
     A PayloadSource for FloatDataType that provides 456.0 and an empty context as payload.
     """
 
-    def _get_payload(self, *args, **kwargs) -> Payload:
+    def _get_payload(self) -> Payload:
         # Return a Payload object with data and context
         return Payload(FloatDataType(456.0), ContextType())
 
@@ -271,7 +271,7 @@ class FloatDataSink(DataSink[FloatDataType]):
         super().__init__(logger)
         self.last_data_sent: Optional[FloatDataType] = None
 
-    def _send_data(self, data: FloatDataType, *args, **kwargs):
+    def _send_data(self, data: FloatDataType):
         # Keep track of the last data we received
         self.last_data_sent = data
 
@@ -289,7 +289,7 @@ class FloatTxtFileSaver(DataSink[FloatDataType]):
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__(logger)
 
-    def _send_data(self, data: FloatDataType, path: str, *args, **kwargs):
+    def _send_data(self, data: FloatDataType, path: str):
         """Save the float value to a text file."""
         if not isinstance(data, FloatDataType):
             raise TypeError("Data must be of type FloatDataType")
@@ -315,7 +315,7 @@ class FloatPayloadSink(PayloadSink[FloatDataType]):
         self.last_payload: Optional[BaseDataType] = None
         self.last_context: Optional[ContextType] = None
 
-    def _send_payload(self, payload: Payload, *args, **kwargs):
+    def _send_payload(self, payload: Payload):
         # Store the payload for inspection
         self.last_payload = payload.data
         self.last_context = payload.context

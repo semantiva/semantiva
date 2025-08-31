@@ -28,7 +28,7 @@ class MockFittingModel(FittingModel):
 
 
 class MockContextProcessor(ContextProcessor):
-    def _process_logic(self, *, required_key: str) -> None:  # type: ignore[override]
+    def _process_logic(self, *, required_key: str) -> None:
         self._notify_context_update("operation_result", required_key)
 
     @classmethod

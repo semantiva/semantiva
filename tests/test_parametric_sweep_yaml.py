@@ -114,10 +114,7 @@ pipeline:
         independent_vars:
           t: [0.0, 2.0]
         parametric_expressions:
-          value: "t"
-        static_params:
-          offset: 10.0
-          gain: 2.5
+          value: "t + 10.0"
 """
 
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
@@ -130,10 +127,8 @@ pipeline:
     assert isinstance(data, FloatDataCollection)
     assert len(data) == 3
 
-    # Check that only sweep variables are in context (not static params)
+    # Check that sweep variables are in context
     assert "t_values" in context.keys()
-    assert "offset_values" not in context.keys()
-    assert "gain_values" not in context.keys()
 
 
 def test_sweep_no_expressions(empty_context):
@@ -236,12 +231,7 @@ pipeline:
         independent_vars:
           t: [-1, 2]
         parametric_expressions:
-          x_0: "50 + 5 * t"
-          y_0: "50 + 5 * t + 5 * t ** 2"
-          amplitude: "100"
-          angle: "60 + 5 * t"
-        static_params:
-          image_size: [128, 128]
+          value: "50 + 5 * t + 5 * t ** 2"
 """
 
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]

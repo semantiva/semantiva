@@ -11,6 +11,9 @@ Here is the updated changelog with the missing items included and the requested 
 ## [Unreleased] – TBD
 
 ### Added
+- Unknown/unused configuration parameter detection: inspection now reports
+  `invalid_parameters` per node (with suggestions). Validation/execution fail
+  fast with `InvalidNodeParameterError` when processors do not accept those keys.
 - **YAML Extension Integration**: Enhanced `load_pipeline_from_yaml()` with automatic extension loading
   - Accepts single extension (string) or multiple extension (list of strings)
 - Enhanced extension plugin registry with improved error handling and documentation

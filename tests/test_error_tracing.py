@@ -47,7 +47,7 @@ class FailingFloatOperation(DataOperation):
         return FloatDataType
 
     def _process_logic(
-        self, data: FloatDataType, error_message: str = "Test failure", **kwargs
+        self, data: FloatDataType, error_message: str = "Test failure"
     ) -> FloatDataType:
         raise ValueError(error_message)
 
@@ -303,7 +303,7 @@ def test_error_tracing_with_different_exception_types():
             def output_data_type(cls):
                 return FloatDataType
 
-            def _process_logic(self, data: FloatDataType, **kwargs) -> FloatDataType:
+            def _process_logic(self, data: FloatDataType) -> FloatDataType:
                 raise exc
 
         pipeline_spec = [{"processor": CustomFailingOperation, "parameters": {}}]
