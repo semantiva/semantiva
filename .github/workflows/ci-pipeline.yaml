@@ -1,14 +1,12 @@
 name: CI Pipeline
 
 on:
+  pull_request:
   push:
     branches:
       - main
     tags:
       - 'v*'  # Trigger the build job only on version tags (e.g., v1.0.0, v2.0.0)
-  pull_request:
-    branches:
-      - main
 
 env:
   project_name: semantiva # Define a global variable for the project name
