@@ -50,6 +50,7 @@ def test_node_parameter_resolution_precedence():
     assert ctx.get_value("pair.a") == 10
     assert ctx.get_value("pair.b") == 6
 
+
 def test_factory_binding_model_fitting():
     Bound = ModelFittingContextProcessor.with_context_keyword("fit.coeff")
     model = PolynomialFittingModel(1)

@@ -5,3 +5,4 @@ version.txt
 launch.json
 docs/_build
 *.log
+*.jsonl
