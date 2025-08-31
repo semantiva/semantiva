@@ -195,9 +195,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                         output_payload=None,
                         error_type=None,
                         error_msg=None,
-                        event_time_utc=datetime.utcnow().isoformat(
-                            timespec="milliseconds"
-                        )
+                        event_time_utc=datetime.now().isoformat(timespec="milliseconds")
                         + "Z",
                         t_wall=None,
                         t_cpu=None,
@@ -220,7 +218,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                             output_payload=Payload(data, context),
                             error_type=None,
                             error_msg=None,
-                            event_time_utc=datetime.utcnow().isoformat(
+                            event_time_utc=datetime.now().isoformat(
                                 timespec="milliseconds"
                             )
                             + "Z",
@@ -240,7 +238,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                             output_payload=None,
                             error_type=type(exc).__name__,
                             error_msg=str(exc),
-                            event_time_utc=datetime.utcnow().isoformat(
+                            event_time_utc=datetime.now().isoformat(
                                 timespec="milliseconds"
                             )
                             + "Z",

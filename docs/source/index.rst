@@ -25,11 +25,13 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    data_types
    data_processors
    context_processors
+   architecture/context_processing
    execution
    workflows_fitting_models
    data_io
    logger
    examples_index
+   migration/context_processors_v2
 
 .. toctree::
    :maxdepth: 2

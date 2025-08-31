@@ -102,7 +102,7 @@ class JSONLTrace(TraceDriver):
         path = self._path
         if path.is_dir() or path.suffix == "":
             path.mkdir(parents=True, exist_ok=True)
-            timestamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
             filename = f"{timestamp}_{run_id}.jsonl"
             path = path / filename
         else:
