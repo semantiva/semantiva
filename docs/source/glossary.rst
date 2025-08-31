@@ -59,6 +59,21 @@ Glossary
      Positional, stable identifier for a node within GraphV1. Used to align inspection,
      tracing, and Viewer node details. See :doc:`graph`.
 
+   Context Observer
+     Mediates context writes/deletes from processors to the active context.
+
+   Validating Observer
+     Observer that enforces declared created/suppressed keys.
+
+   Required keys
+     Keys that must exist before the processor runs.
+
+   Created keys
+     Keys a processor may create/update.
+
+   Suppressed keys
+     Keys a processor may delete.
+
    Studio Viewer
      Read-only UI for YAML pipeline visualization.
 
