@@ -31,6 +31,21 @@ Each ``processor`` entry references a component (by fully qualified class name o
 short name if registered). The ``parameters`` map configures that processor. Nodes
 may also define ``ports`` if they connect to non-default inputs/outputs.
 
+.. _pipeline-yaml-parameters-precedence:
+
+Parameter resolution (precedence)
+---------------------------------
+
+At runtime, node parameters are resolved as:
+
+1. Node ``parameters:`` in YAML
+2. Existing ``payload.context`` values
+3. Python defaults in the processor’s ``_process_logic`` signature
+
+Missing required parameters raise:
+
+``KeyError: Unable to resolve parameter 'name' from context, node configuration, or defaults.``
+
 .. _canonical-spec-and-identity:
 
 Canonical spec & identity
