@@ -37,7 +37,7 @@ Execute a pipeline defined in YAML.
 - ``--dry-run``: build the pipeline graph without executing nodes.
 - ``--validate``: parse and validate configuration only.
 - ``--set``: override configuration values using dotted paths (e.g., ``--set pipeline.param=value``). Can be used multiple times. Values are parsed using YAML semantics.
-- ``--context``: inject initial payload context as one or more ``key=value`` pairs. Values are parsed using YAML semantics (for example, ``1.0`` -> float, ``true`` -> bool). This option may be repeated to supply multiple keys.
+- ``--context key=value``: inject initial payload context. Multiple ``--context`` flags are allowed; quote lists for shells. Values are parsed using YAML semantics (for example, ``1.0`` -> float, ``true`` -> bool).
 - Tracing options (see :doc:`tracing`):
    - ``--trace-driver``: e.g. ``jsonl``
    - ``--trace-output``: directory or file path
@@ -71,6 +71,8 @@ Parse YAML, build the canonical graph, and run pre-execution checks.
 
 - ``--extended``: include node identities (``node_uuid``), ports, parameters, inferred types (where available).
 - Verbosity: ``-v`` / ``--verbose`` and ``-q`` analogous to ``run``.
+
+Inspection degrades gracefully for malformed configs and prints validation warnings, continuing to emit a report (see "Error-Resilient Inspection" in the CLI source).
 
 **Examples**
 

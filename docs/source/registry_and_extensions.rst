@@ -105,22 +105,24 @@ directly in your pipeline:
 The upstream node must produce the expected input ``DataType`` (``DNASequence`` in
 this example). Use :doc:`pipeline` to connect processors into complete flows.
 
-Resolvers Overview
-------------------
+Resolvers (class & parameter)
+-----------------------------
 
-:term:`Resolver`\s provide indirection inside configurations. They are applied during
-spec parsing/realization. See :ref:`objects-in-pipeline-configurations` for details.
+**Class resolvers** let YAML reference dynamic processors without writing classes:
 
-Common resolver prefixes:
+.. code-block:: yaml
 
-* ``slicer:`` — reference or slice a value from context or parameters.
-  Example: ``parameters: { window: "slicer:/context/roi/window" }``
-* ``rename:`` — rename keys according to a mapping.
-* ``delete:`` — remove keys or subtrees from a parameter map.
-* ``model:`` — wrap a live object behind a serializable descriptor.
+   - processor: "rename:metrics.a:features.a"  # move key
+   - processor: "delete:metrics.temp"          # drop key
 
-Resolvers keep pipeline configs **declarative** while allowing reuse and safe
-transformation of parameters.
+**Parameter resolvers** normalize special parameter values:
+
+.. code-block:: yaml
+
+   parameters:
+     model: "model:PolynomialFittingModel:degree=2"
+
+See :mod:`semantiva.registry.class_registry` for the built-ins: ``rename:``, ``delete:``, ``slicer:``, ``sweep:``, and the ``model:`` parameter resolver.
 
 .. _modeldescriptor:
 
