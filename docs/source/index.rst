@@ -31,7 +31,6 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    data_io
    logger
    examples_index
-   migration/context_processors_v2
 
 .. toctree::
    :maxdepth: 2
@@ -41,6 +40,12 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    exceptions
    glossary
    trace_graph_alignment
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Development
+
+   development/testing
 
 Index & Search
 --------------
