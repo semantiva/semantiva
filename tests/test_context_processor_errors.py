@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Error handling tests for context processors.
+
+Tests error conditions: missing observer runtime errors, parameter
+resolution failures, and observer validation errors.
+"""
+
 from semantiva.context_processors.context_processors import ContextProcessor
 
 
@@ -53,3 +60,22 @@ def test_parameter_resolution_keyerror_via_node(tmp_path):
         assert "Unable to resolve parameter 'v'" in str(e)
     else:
         assert False
+
+
+def test_observer_validation_error():
+    """Test that observer validation errors are properly raised."""
+    from semantiva.context_processors.context_observer import _ValidatingContextObserver
+    from semantiva.context_processors.context_types import ContextType
+
+    ctx = ContextType({})
+    obs = _ValidatingContextObserver(
+        context_keys=["allowed"], suppressed_keys=[], logger=None
+    )
+    obs.observer_context = ctx
+
+    try:
+        obs.update("forbidden", 1)
+    except KeyError as e:
+        assert "Invalid context key 'forbidden'" in str(e)
+    else:
+        assert False, "Expected validation error"
