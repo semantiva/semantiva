@@ -1,12 +1,12 @@
 Context Processors
 ==================
 
-Observer Pattern & Lifecycle
-----------------------------
+Overview
+--------
 
-``ContextProcessor`` now uses a stateless, observer-mediated pattern. Processors
-declare parameters in ``_process_logic`` and **never** mutate context directly;
-all writes/deletes go through the active observer.
+A ContextProcessor is **stateless**: it implements ``_process_logic(**kwargs)`` and
+never mutates context directly. All writes/deletes are **mediated** through the node’s
+observer via ``_notify_context_update(key, value)`` and ``_notify_context_deletion(key)``.
 
 .. code-block:: python
 
@@ -14,16 +14,15 @@ all writes/deletes go through the active observer.
    from semantiva.context_processors.context_processors import ContextProcessor
 
    class AdvancedProcessor(ContextProcessor):
-       """Write a couple of keys based on runtime parameters."""
+       """Writes two output keys based on input_value and threshold."""
 
        @classmethod
        def get_created_keys(cls) -> List[str]:
            return ["result.status", "result.confidence"]
 
        @classmethod
-       def get_required_keys(cls) -> List[str]:
-           # Required keys must exist in context (or be provided via params)
-           return ["input_value"]
+       def get_suppressed_keys(cls) -> List[str]:
+           return []  # nothing deleted here
 
        def _process_logic(self, *, input_value: float, threshold: float = 0.5) -> None:
            if input_value > threshold:
@@ -33,9 +32,17 @@ all writes/deletes go through the active observer.
                self._notify_context_update("result.status", "low")
                self._notify_context_update("result.confidence", 0.3)
 
-**Runtime parameter resolution**: Parameters are resolved by the node as:
-``node parameters > context values > default in signature``. See
-:ref:`pipeline-yaml-parameters-precedence` for details.
+Where do required keys come from?
+---------------------------------
+
+Required inputs are determined at **node level** by the
+:ref:`pipeline-yaml-parameters-precedence` policy:
+
+1. Node ``parameters`` in YAML
+2. Existing values in ``payload.context``
+3. Python defaults in ``_process_logic`` signature
+
+If a name cannot be resolved by any of the above, it is a **required context key** for the pipeline.
 
 Validation & Safe Mutation
 --------------------------
@@ -79,34 +86,6 @@ also participate in validation:
 
 * ``rename:a:b`` — requires ``a``, creates ``b``, suppresses ``a``.
 * ``delete:k`` — suppresses ``k``.
-
-Legacy pattern (deprecated)
----------------------------
-
-Legacy processors that returned a modified context are supported but deprecated.
-
-.. code-block:: python
-
-   # OLD (deprecated)
-   def _process_logic(self, context, threshold: float = 0.5):
-       context.set_value("result", threshold > 0.5)
-       return context
-
-   # NEW (recommended)
-   def _process_logic(self, *, threshold: float = 0.5) -> None:
-       self._notify_context_update("result", threshold > 0.5)
-
-``operate_context`` injects a validating observer and calls your ``_process_logic``;
-the method must be **side-effect free** except via ``_notify_*``.
-
-.. seealso::
-
-   :doc:`architecture/context_processing` — deep dive into the architecture.
-
-Migrating from legacy
----------------------
-
-See :doc:`migration/context_processors_v2`.
 
 Autodoc
 -------
