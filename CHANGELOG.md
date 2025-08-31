@@ -47,6 +47,13 @@ Here is the updated changelog with the missing items included and the requested 
   runtime parameter introspection
 - `ModelFittingContextProcessor.with_context_keyword()` factory binds output
   keys for stateless model fitting
+- **Flexible Parameter Mapping for ModelFittingContextProcessor**: Added `_model_fitting_processor_factory` to enable custom parameter names and nested path extraction
+  - Supports both single dictionaries and lists of dictionaries (e.g., from slicer operations)
+  - Enables dot notation for nested data access (e.g., `"gaussian_fit_parameters.std_dev_x"`)
+  - Automatically detects and handles variable mapping via pipeline node factory
+  - Comprehensive test coverage with 9 new documentation example tests
+  - Enhanced RST documentation with examples, data structure guides, and integration patterns
+  - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
 
 ### Changed
 - ContextProcessor design aligned with DataProcessor mechanics:

@@ -145,6 +145,22 @@ Tips
 * If resolving classes from your own packages, ensure they are importable (installed in the environment).
 * Increase verbosity with ``-v`` to see more details during inspection (see :doc:`logger`).
 
+Component Documentation in Introspection
+-----------------------------------------
+
+Semantiva components (subclasses of :class:`~semantiva.core.semantiva_component._SemantivaComponent`) 
+automatically include their class docstrings in introspection metadata. Docstrings are extracted using 
+``inspect.getdoc()`` and appear in:
+
+* **Component metadata** - accessible via ``get_metadata()["docstring"]``
+* **Semantic identity** - formatted in ``semantic_id()`` output for debugging and LLM queries  
+* **Pipeline inspection** - included in both summary and extended reports
+* **Tracing and orchestration** - used for channel identification in transport systems
+
+**Best Practice**: Keep component docstrings lean and concise (one-liner preferred) since they become 
+part of the semantic identity used throughout the pipeline introspection system. Detailed documentation 
+should be placed in dedicated RST files.
+
 .. _spec-phase-vs-runtime-vs-execution:
 
 Validation Phases

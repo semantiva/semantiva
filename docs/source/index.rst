@@ -45,8 +45,6 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    :maxdepth: 2
    :caption: Development
 
-   development/testing
-
 Index & Search
 --------------
 

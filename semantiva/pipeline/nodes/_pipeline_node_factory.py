@@ -468,10 +468,32 @@ def _pipeline_node_factory(
         raise ValueError("processor must be a class type or a string, not None.")
 
     if issubclass(processor, ContextProcessor):
+        # pylint: disable=import-outside-toplevel
+        from semantiva.workflows.fitting_model import (
+            ModelFittingContextProcessor,
+            _model_fitting_processor_factory,
+        )
+
         params = dict(parameters or {})
-        if "context_keyword" in params and hasattr(processor, "with_context_keyword"):
+
+        # Handle ModelFittingContextProcessor with variable mapping
+        if (
+            processor is ModelFittingContextProcessor
+            and "independent_var_key" in params
+            and "dependent_var_key" in params
+        ):
+            independent_var_key = params.pop("independent_var_key")
+            dependent_var_key = params.pop("dependent_var_key")
+            context_keyword = params.pop("context_keyword", None)
+            processor = _model_fitting_processor_factory(
+                independent_var_key=independent_var_key,
+                dependent_var_key=dependent_var_key,
+                context_keyword=context_keyword,
+            )
+        elif "context_keyword" in params and hasattr(processor, "with_context_keyword"):
             key = params.pop("context_keyword")
             processor = processor.with_context_keyword(key)
+
         return _PipelineNodeFactory.create_context_processor_wrapper_node(
             processor, params, logger
         )

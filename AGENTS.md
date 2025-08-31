@@ -40,6 +40,7 @@ Key concepts include:
 ## Working with the Codebase
 
 - Tests rely heavily on small example processors defined in `semantiva/examples/test_utils.py`. Reviewing these utilities provides a good starting point for understanding how data and context types are used.
+- **Semantiva Component Docstrings**: Keep top-level class docstrings for `_SemantivaComponent` subclasses lean and concise (one-liner preferred) since they become part of component metadata used in pipeline introspection, tracing, and semantic identity reporting.
 
 ## Contribution Workflow
 
