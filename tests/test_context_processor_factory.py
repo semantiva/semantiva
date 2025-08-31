@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Factory-generated context processor tests.
+
+Tests dynamically created rename and delete processors via factory functions,
+verifying signature introspection and actual runtime behavior through observers.
+"""
+
 from semantiva.registry import ClassRegistry
 
 
@@ -44,3 +51,22 @@ def test_rename_factory_behavior():
     proc._process_logic(**{"a": 10})
     assert ctx.get_value("b") == 10
     assert "a" not in ctx.keys()
+
+
+def test_delete_factory_behavior():
+    cls = ClassRegistry.get_class("delete:temp")
+    proc = cls()
+    from semantiva.context_processors.context_observer import _ValidatingContextObserver
+    from semantiva.context_processors.context_types import ContextType
+
+    ctx = ContextType({"temp": 42, "keep": 1})
+    obs = _ValidatingContextObserver(
+        context_keys=cls.get_created_keys(),
+        suppressed_keys=cls.get_suppressed_keys(),
+        logger=None,
+    )
+    obs.observer_context = ctx
+    proc._set_context_observer(obs)
+    proc._process_logic()
+    assert "temp" not in ctx.keys()
+    assert ctx.get_value("keep") == 1  # Other keys preserved
