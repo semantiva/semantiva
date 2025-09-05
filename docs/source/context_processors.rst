@@ -5,8 +5,45 @@ Overview
 --------
 
 A ContextProcessor is **stateless**: it implements ``_process_logic(**kwargs)`` and
-never mutates context directly. All writes/deletes are **mediated** through the node’s
+never mutates context directly. All writes/deletes are **mediated** through the node's
 observer via ``_notify_context_update(key, value)`` and ``_notify_context_deletion(key)``.
+
+**Important**: All parameters must be explicitly declared in the ``_process_logic`` signature.
+`**kwargs` is not allowed for reliable provenance tracking.
+
+Parameter Validation Examples
+-----------------------------
+
+Valid Parameter Patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from typing import List
+   from semantiva.context_processors.context_processors import ContextProcessor
+
+   class ValidContextProcessor(ContextProcessor):
+       """Writes result based on input_value and threshold."""
+
+       @classmethod
+       def get_created_keys(cls) -> List[str]:
+           return ["result"]
+       
+       def _process_logic(self, *, input_value: float, threshold: float = 0.5) -> None:
+           # ✅ All parameters explicitly declared
+           result = "high" if input_value > threshold else "low"
+           self._notify_context_update("result", result)
+
+Invalid Parameter Patterns (Rejected)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # ❌ This will also raise ValueError
+   class InvalidMixedProcessor(ContextProcessor):
+       def _process_logic(self, *, param1: float, **kwargs):
+           # Even mixed explicit + kwargs is rejected
+           pass
 
 .. code-block:: python
 

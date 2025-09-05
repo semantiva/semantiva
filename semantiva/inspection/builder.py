@@ -37,6 +37,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 import inspect
 from semantiva.data_processors.data_processors import ParameterInfo
+from semantiva.exceptions import InvalidNodeParameterError
 
 from semantiva.pipeline.nodes.nodes import (
     _PipelineNode,
@@ -44,7 +45,10 @@ from semantiva.pipeline.nodes.nodes import (
     _ContextProcessorNode,
 )
 from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
-from semantiva.pipeline._param_resolution import inspect_origin
+from semantiva.pipeline._param_resolution import (
+    inspect_origin,
+    classify_unknown_config_params,
+)
 
 
 @dataclass
@@ -68,6 +72,8 @@ class NodeInspection:
         created_keys: Context keys that this node adds to the pipeline context
         suppressed_keys: Context keys that this node removes from the pipeline context
         docstring: Documentation string from the processor class
+        invalid_parameters: Issues for parameters not accepted by the processor
+        is_configuration_valid: False if invalid parameters were detected
         errors: List of error messages encountered during node inspection
 
     Parameter Resolution Tracking:
@@ -88,6 +94,8 @@ class NodeInspection:
     created_keys: set[str]
     suppressed_keys: set[str]
     docstring: str
+    invalid_parameters: List[Dict[str, Any]]
+    is_configuration_valid: bool
     errors: List[str] = field(default_factory=list)
 
 
@@ -175,6 +183,32 @@ def build_pipeline_inspection(
         try:
             node = _pipeline_node_factory(node_cfg)
             nodes.append(node)
+        except InvalidNodeParameterError as exc:
+            msg = str(exc)
+            errors.append(f"Node {index}: {msg}")
+            issues = [
+                {"name": k, "reason": "unknown_parameter"} for k in exc.invalid.keys()
+            ]
+            inspection_nodes.append(
+                NodeInspection(
+                    index=index,
+                    node_class="Invalid",
+                    processor_class=exc.processor_fqcn.split(".")[-1],
+                    component_type="Unknown",
+                    input_type=None,
+                    output_type=None,
+                    config_params=node_cfg.get("parameters", {}),
+                    default_params={},
+                    context_params={},
+                    created_keys=set(),
+                    suppressed_keys=set(),
+                    docstring="",
+                    invalid_parameters=issues,
+                    is_configuration_valid=False,
+                    errors=[msg],
+                )
+            )
+            continue
         except Exception as exc:  # pragma: no cover - defensive
             # Node construction failed - create placeholder inspection data
             msg = str(exc)
@@ -193,6 +227,8 @@ def build_pipeline_inspection(
                     created_keys=set(),
                     suppressed_keys=set(),
                     docstring="",
+                    invalid_parameters=[],
+                    is_configuration_valid=False,
                     errors=[msg],
                 )
             )
@@ -201,6 +237,11 @@ def build_pipeline_inspection(
         # Extract node and processor information
         processor = node.processor
         metadata = node.get_metadata()
+
+        issues = classify_unknown_config_params(
+            processor_cls=processor.__class__,
+            processor_config=node.processor_config,
+        )
 
         # Analyze parameter resolution with defaults
         param_details: Dict[str, ParameterInfo] = {}
@@ -278,6 +319,8 @@ def build_pipeline_inspection(
             created_keys=created_keys,
             suppressed_keys=suppressed_keys,
             docstring=inspect.getdoc(processor.__class__) or "No description provided.",
+            invalid_parameters=issues,
+            is_configuration_valid=(len(issues) == 0),
             errors=node_errors,
         )
         inspection_nodes.append(node_inspection)

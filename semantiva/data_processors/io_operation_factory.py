@@ -68,12 +68,35 @@ class _IOOperationFactory:
 
             if issubclass(data_io_class, DataSource):
 
+                # Generate _process_logic with exact signature from _get_data
+                source_sig = inspect.signature(data_io_class._get_data)
+                source_params = [
+                    p for name, p in source_sig.parameters.items() if name != "self"
+                ]
+
+                # Create parameter list for the new method
+                new_params = [
+                    inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                    inspect.Parameter(
+                        "data",
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        annotation=BaseDataType,
+                    ),
+                ] + source_params
+
+                new_sig = inspect.Signature(
+                    parameters=new_params, return_annotation=BaseDataType
+                )
+
                 def _process_logic_method(
-                    self, data: BaseDataType, *args, **kwargs
+                    self, data: BaseDataType, **kwargs
                 ) -> BaseDataType:
                     data_io_instance = data_io_class()
-                    loaded_data = data_io_instance.get_data(*args, **kwargs)
+                    loaded_data = data_io_instance.get_data(**kwargs)
                     return loaded_data
+
+                # Apply the exact signature
+                setattr(_process_logic_method, "__signature__", new_sig)
 
                 def get_processing_parameter_names(cls) -> List[str]:
                     """
@@ -96,11 +119,31 @@ class _IOOperationFactory:
 
             elif issubclass(data_io_class, PayloadSource):
 
+                # Generate _process_logic with exact signature from _get_payload
+                source_sig = inspect.signature(data_io_class._get_payload)
+                source_params = [
+                    p for name, p in source_sig.parameters.items() if name != "self"
+                ]
+
+                # Create parameter list for the new method
+                new_params = [
+                    inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                    inspect.Parameter(
+                        "data",
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        annotation=BaseDataType,
+                    ),
+                ] + source_params
+
+                new_sig = inspect.Signature(
+                    parameters=new_params, return_annotation=BaseDataType
+                )
+
                 def _process_logic_method(
-                    self, data: BaseDataType, *args, **kwargs
+                    self, data: BaseDataType, **kwargs
                 ) -> BaseDataType:
                     data_io_instance = data_io_class()
-                    payload = data_io_instance._get_payload(*args, **kwargs)
+                    payload = data_io_instance._get_payload(**kwargs)
                     loaded_data = payload.data
                     # If the payload provides a context, notify the DataOperation observer
                     loaded_context = payload.context
@@ -110,6 +153,9 @@ class _IOOperationFactory:
 
                     # Return only the loaded data (context is injected via notifications)
                     return loaded_data
+
+                # Apply the exact signature
+                setattr(_process_logic_method, "__signature__", new_sig)
 
                 def get_processing_parameter_names(cls) -> List[str]:
                     """
@@ -154,12 +200,37 @@ class _IOOperationFactory:
 
             if issubclass(data_io_class, DataSink):
 
+                # Generate _process_logic with exact signature from _send_data
+                source_sig = inspect.signature(data_io_class._send_data)
+                source_params = [
+                    p
+                    for name, p in source_sig.parameters.items()
+                    if name not in {"self", "data"}
+                ]
+
+                # Create parameter list for the new method
+                new_params = [
+                    inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                    inspect.Parameter(
+                        "data",
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        annotation=BaseDataType,
+                    ),
+                ] + source_params
+
+                new_sig = inspect.Signature(
+                    parameters=new_params, return_annotation=BaseDataType
+                )
+
                 def _process_logic_method(
-                    self, data: BaseDataType, *args, **kwargs
+                    self, data: BaseDataType, **kwargs
                 ) -> BaseDataType:
                     data_io_instance = data_io_class()
-                    data_io_instance.send_data(data, *args, **kwargs)
+                    data_io_instance.send_data(data, **kwargs)
                     return data
+
+                # Apply the exact signature
+                setattr(_process_logic_method, "__signature__", new_sig)
 
                 def get_processing_parameter_names(cls) -> List[str]:
                     """
@@ -183,17 +254,42 @@ class _IOOperationFactory:
 
             elif issubclass(data_io_class, PayloadSink):
 
+                # Generate _process_logic with exact signature from _send_payload
+                source_sig = inspect.signature(data_io_class._send_payload)
+                source_params = [
+                    p
+                    for name, p in source_sig.parameters.items()
+                    if name not in {"self", "payload"}
+                ]
+
+                # Create parameter list for the new method
+                new_params = [
+                    inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                    inspect.Parameter(
+                        "data",
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        annotation=BaseDataType,
+                    ),
+                ] + source_params
+
+                new_sig = inspect.Signature(
+                    parameters=new_params, return_annotation=BaseDataType
+                )
+
                 def _process_logic_method(
-                    self, data: BaseDataType, *args, **kwargs
+                    self, data: BaseDataType, **kwargs
                 ) -> BaseDataType:
                     data_io_instance = data_io_class()
                     data_io_instance._send_payload(
-                        Payload(data, ContextType()), *args, **kwargs
+                        Payload(data, ContextType()), **kwargs
                     )
                     Logger().warning(
                         f"Context sending from Wrapped PayloadSink in pipelines is not supported ({data_io_class.__name__})"
                     )
                     return data
+
+                # Apply the exact signature
+                setattr(_process_logic_method, "__signature__", new_sig)
 
                 def get_processing_parameter_names(cls) -> List[str]:
                     """

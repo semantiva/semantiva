@@ -21,7 +21,7 @@ from semantiva.context_processors.context_processors import ContextProcessor
 
 
 class DummyContextProcessor(ContextProcessor):
-    def _process_logic(self, **kwargs) -> None:  # type: ignore[override]
+    def _process_logic(self) -> None:
         # Dummy processor does nothing
         pass
 

@@ -12,9 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .pipeline_exceptions import PipelineTopologyError, PipelineConfigurationError
+from .pipeline_exceptions import (
+    PipelineTopologyError,
+    PipelineConfigurationError,
+    InvalidNodeParameterError,
+)
 
 __all__ = [
     "PipelineTopologyError",
     "PipelineConfigurationError",
+    "InvalidNodeParameterError",
 ]

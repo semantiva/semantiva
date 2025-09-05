@@ -85,7 +85,7 @@ class ModelFittingContextProcessor(ContextProcessor):
         }
         return type(name, (cls,), attrs)
 
-    def _process_logic(  # type: ignore[override]
+    def _process_logic(
         self,
         *,
         x_values: List[float],

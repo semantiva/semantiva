@@ -120,6 +120,16 @@ Export it first:
 ``semantiva-studio-viewer export-components --output semantiva_components.ttl``.
 See :doc:`registry_and_extensions` for extension discovery/registration.
 
+Inspection schema note (GUI)
+----------------------------
+
+Each node record now includes:
+
+- ``invalid_parameters`` — list of ``{name, reason}``
+- ``is_configuration_valid`` — false if invalid parameters exist
+
+These allow the viewer to flag and annotate misconfigured nodes precisely.
+
 Large Graphs
 ------------
 

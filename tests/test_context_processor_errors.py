@@ -27,8 +27,8 @@ class BrokenCP(ContextProcessor):
     def get_created_keys(cls):
         return ["x"]
 
-    def _process_logic(self, *, v: int) -> None:  # type: ignore[override]
-        # No observer set → should raise
+    def _process_logic(self, *, v: int) -> None:
+        # This should trigger the missing observer error when called directly
         self._notify_context_update("x", v)
 
 
@@ -50,8 +50,8 @@ def test_parameter_resolution_keyerror_via_node(tmp_path):
     from semantiva.pipeline.payload import Payload
 
     class NeedV(ContextProcessor):
-        def _process_logic(self, *, v: int) -> None:  # type: ignore[override]
-            pass
+        def _process_logic(self, *, v: int) -> None:
+            self._notify_context_update("w", v + 1)
 
     node = _PipelineNodeFactory.create_context_processor_wrapper_node(NeedV, {})
     try:

@@ -29,7 +29,7 @@ from semantiva.pipeline import Payload
 
 
 class SetPair(ContextProcessor):
-    def _process_logic(self, *, a: int = 1, b: int = 2) -> None:  # type: ignore[override]
+    def _process_logic(self, *, a: int = 1, b: int = 2) -> None:
         self._notify_context_update("pair.a", a)
         self._notify_context_update("pair.b", b)
 

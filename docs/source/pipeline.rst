@@ -46,7 +46,55 @@ Missing required parameters raise:
 
 ``KeyError: Unable to resolve parameter 'name' from context, node configuration, or defaults.``
 
-.. _canonical-spec-and-identity:
+Unknown configuration parameters that are not accepted by the processor are
+reported during inspection and raise an error before execution.
+
+Parameter Validation in YAML Configuration
+-------------------------------------------
+
+Invalid Parameters Detected
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Parameters in YAML configuration are validated against processor signatures:
+
+.. code-block:: yaml
+
+   # ❌ This will be detected as invalid
+   pipeline:
+     nodes:
+       - processor: FloatMultiplyOperation
+         parameters:
+           factor: 2.0      # ✅ Valid parameter
+           facotr: 3.0      # ❌ Invalid (typo)
+           unknown: "test"  # ❌ Invalid (not accepted by processor)
+
+CLI Inspection with --strict
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # Report invalid parameters and exit non-zero
+   semantiva inspect bad_pipeline.yaml --strict
+
+   # Output:
+   # Invalid configuration parameters:
+   # - node #0 (FloatMultiplyOperation): facotr
+   # - node #0 (FloatMultiplyOperation): unknown
+
+Runtime Validation
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # This will raise InvalidNodeParameterError at pipeline construction
+   from semantiva.pipeline import Pipeline
+   from semantiva.exceptions import InvalidNodeParameterError
+
+   try:
+       pipeline = Pipeline(configs_with_invalid_params)
+   except InvalidNodeParameterError as e:
+       print(f"Invalid parameters: {e.invalid}")
+
 
 Canonical spec & identity
 -------------------------

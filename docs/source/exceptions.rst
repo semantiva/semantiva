@@ -3,6 +3,7 @@ Exceptions
 
 - :py:class:`semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError`
 - :py:class:`semantiva.exceptions.pipeline_exceptions.PipelineTopologyError`
+- :py:class:`semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError`
 
 .. automodule:: semantiva.exceptions.pipeline_exceptions
    :members:

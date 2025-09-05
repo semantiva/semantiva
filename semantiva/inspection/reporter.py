@@ -158,6 +158,10 @@ def summary_report(inspection: PipelineInspection) -> str:
             f"\t\t\tFrom context: {_format_context_params(node.context_params)}"
         )
         lines.append(f"\t\tContext additions: {_format_set(node.created_keys)}")
+        lines.append(
+            f"\t\tInvalid parameters: {_format_set(i['name'] for i in node.invalid_parameters)}"
+        )
+        lines.append(f"\t\tConfiguration valid: {node.is_configuration_valid}")
 
         # Show context deletions only when present
         if node.suppressed_keys:
@@ -168,6 +172,16 @@ def summary_report(inspection: PipelineInspection) -> str:
         # Include any node-level errors
         for err in node.errors:
             lines.append(f"\t\tError: {err}")
+
+    problems: List[str] = []
+    for node in inspection.nodes:
+        for issue in node.invalid_parameters:
+            problems.append(
+                f"- node #{node.index} ({node.processor_class}): {issue['name']}"
+            )
+    if problems:
+        lines.append("\nInvalid configuration parameters:")
+        lines.extend(problems)
 
     return "\n".join(lines)
 
@@ -211,6 +225,8 @@ def extended_report(inspection: PipelineInspection) -> str:
                 f"    - Parameters from context: {_format_context_params(node.context_params)}",
                 f"    - Context additions: {_format_set(node.created_keys)}",
                 f"    - Context suppressions: {_format_set(node.suppressed_keys)}",
+                f"    - Invalid parameters: {_format_set(i['name'] for i in node.invalid_parameters)}",
+                f"    - Configuration valid: {node.is_configuration_valid}",
             ]
         )
 
@@ -225,6 +241,16 @@ def extended_report(inspection: PipelineInspection) -> str:
     lines.append("\nFootnotes:")
     for name, doc in footnotes.items():
         lines.extend([f"[{name}]", doc, ""])
+
+    problems: List[str] = []
+    for node in inspection.nodes:
+        for issue in node.invalid_parameters:
+            problems.append(
+                f"- node #{node.index} ({node.processor_class}): {issue['name']}"
+            )
+    if problems:
+        lines.append("\nInvalid configuration parameters:")
+        lines.extend(problems)
 
     return "\n".join(lines)
 
@@ -299,6 +325,8 @@ def json_report(inspection: PipelineInspection) -> Dict[str, Any]:
             "suppressed_keys": list(node.suppressed_keys),
             "pipelineConfigParams": list(node.config_params.keys()),
             "contextParams": list(node.context_params.keys()),
+            "invalid_parameters": node.invalid_parameters,
+            "is_configuration_valid": node.is_configuration_valid,
             "errors": node.errors,  # Include error information for web GUI
         }
         nodes.append(node_info)

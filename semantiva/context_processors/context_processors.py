@@ -89,6 +89,12 @@ class ContextProcessor(_SemantivaComponent):
 
         All context interactions must be done through _notify_context_update().
         Direct context parameter access is not supported.
+
+        Args:
+            *args, **kwargs: Runtime parameters resolved from pipeline configuration and context.
+                           Implementations should declare specific parameters instead of using
+                           *args, **kwargs for reliable provenance tracking. The base signature
+                           uses *args, **kwargs only for type compatibility.
         """
 
     @classmethod
