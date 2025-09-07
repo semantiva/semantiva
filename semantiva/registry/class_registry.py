@@ -117,6 +117,9 @@ class ClassRegistry:
     supporting both standard and custom resolution strategies.
 
     It maintains lists of registered file paths, modules, and pluggable resolver
+    functions for extensible class name resolution. When components are resolved,
+    they are automatically imported which triggers registration in the global
+    component registry via the SemantivaComponent metaclass.
     """
 
     _registered_paths: Set[Path] = set()
@@ -127,9 +130,14 @@ class ClassRegistry:
     @classmethod
     def initialize_default_modules(cls) -> None:
         """Initialize default modules at the class level"""
-        cls._registered_modules.add("semantiva.context_processors.context_processors")
-        cls._registered_modules.add("semantiva.examples.test_utils")
-        cls._registered_modules.add("semantiva.workflows.fitting_model")
+        default_modules = [
+            "semantiva.context_processors.context_processors",
+            "semantiva.examples.test_utils",
+            "semantiva.workflows.fitting_model",
+        ]
+
+        # Register and import all default modules
+        cls.register_modules(default_modules)
 
         cls._custom_resolvers = []
         cls._param_resolvers = []
@@ -394,12 +402,24 @@ class ClassRegistry:
 
     @classmethod
     def register_modules(cls, modules: str | List[str]) -> None:
-        """Register a module or a list of modules"""
+        """Register a module or a list of modules.
+
+        This method not only adds modules to the registry but also imports them
+        to ensure that any SemantivaComponent subclasses in the modules are
+        registered via their metaclass.
+        """
+        logger = Logger()
         if isinstance(modules, str):
             modules = [modules]
 
         for module in modules:
             cls._registered_modules.add(module)
+            # Import the module to trigger component registration via metaclass
+            try:
+                import_module(module)
+                logger.debug(f"Successfully imported and registered module: {module}")
+            except Exception as e:
+                logger.warning(f"Failed to import module '{module}': {e}")
 
     @classmethod
     def get_registered_paths(cls) -> Set[Path]:

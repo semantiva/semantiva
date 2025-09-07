@@ -154,6 +154,58 @@ Best Practices
 Testing Extensions
 ------------------
 
+**Recommended**: Test components through pipeline infrastructure for better integration coverage.
+
+Pipeline-based testing:
+
+.. code-block:: python
+
+   import pytest
+   from semantiva.pipeline.pipeline import Pipeline
+   from semantiva.pipeline.payload import Payload
+   from semantiva.context_processors.context_types import ContextType
+
+   def test_my_extension_processor():
+       """Test ContextProcessor through pipeline (recommended)."""
+       config = {
+           "extensions": ["my_extension"],
+           "pipeline": {
+               "nodes": [
+                   {
+                       "processor": "MyContextProcessor", 
+                       "parameters": {"input_param": "test_value"}
+                   }
+               ]
+           }
+       }
+       
+       pipeline = Pipeline.from_dict(config)
+       payload = Payload(data=None, context=ContextType())
+       result = pipeline.process(payload)
+       
+       # Verify context updates
+       assert result.context.get_value("output_key") == "expected_value"
+
+Direct component testing (for simple cases):
+
+.. code-block:: python
+
+   def test_data_operation():
+       """Test DataOperation directly."""
+       from mypkg.bio import DNASequence, GCContentOperation
+       
+       operation = GCContentOperation()
+       input_data = DNASequence("ACGT")
+       result = operation._operation(input_data)
+       
+       assert result.data == "GC=0.50"
+
+.. note::
+   
+   **Context Processor Testing**: Avoid direct instantiation of ``_ContextObserver``.
+   Use pipeline-based tests for context processors to ensure proper observer setup
+   and validation. See :doc:`context_processors` for detailed testing patterns.
+
 Doctest snippet (keeps examples truthful):
 
 .. code-block:: python
@@ -162,7 +214,7 @@ Doctest snippet (keeps examples truthful):
    >>> GCContentOperation()._operation(DNASequence("ACGT")).data
    'GC=0.50'
 
-Pytest example:
+Legacy pytest example:
 
 .. code-block:: python
 

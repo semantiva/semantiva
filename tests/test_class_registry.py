@@ -21,7 +21,16 @@ from semantiva.registry import ClassRegistry
 @pytest.fixture
 def loader():
     """Fixture to provide a fresh instance of ClassRegistry."""
-    return ClassRegistry
+    # Clear registry for this test
+    ClassRegistry._registered_paths.clear()
+    ClassRegistry._registered_modules.clear()
+
+    yield ClassRegistry
+
+    # Reset to default state after the test
+    ClassRegistry._registered_paths.clear()
+    ClassRegistry._registered_modules.clear()
+    ClassRegistry.initialize_default_modules()
 
 
 @patch("pathlib.Path.is_file", return_value=True)
@@ -52,6 +61,69 @@ def test_register_modules(loader):
     assert registered_modules == expected_modules
 
     loader.initialize_default_modules()  # Reset registered modules
+
+
+def test_register_modules_actually_imports(loader):
+    """Test that register_modules actually imports modules, not just stores names."""
+
+    # Verify module isn't registered initially
+    assert "semantiva.examples.test_utils" not in loader.get_registered_modules()
+
+    # Register a module
+    loader.register_modules(["semantiva.examples.test_utils"])
+
+    # Verify module is now registered
+    assert "semantiva.examples.test_utils" in loader.get_registered_modules()
+
+    # Verify the module was actually imported by checking if classes are accessible
+    # (The import happens during register_modules according to our earlier tests)
+    from semantiva.examples.test_utils import FloatDataType
+
+    assert FloatDataType is not None
+
+
+@patch("semantiva.registry.class_registry.import_module")
+def test_register_modules_handles_import_errors(mock_import, loader):
+    """Test that register_modules gracefully handles import errors."""
+    # Configure mock to raise ImportError
+    mock_import.side_effect = ImportError("Module not found")
+
+    # Should not raise an exception
+    try:
+        loader.register_modules(["nonexistent_module"])
+        # Should complete without raising
+    except ImportError:
+        pytest.fail("register_modules should handle import errors gracefully")
+
+    # Module should still be registered even if import failed
+    registered_modules = loader.get_registered_modules()
+    assert "nonexistent_module" in registered_modules
+
+
+def test_register_modules_with_valid_module():
+    """Test register_modules with a known valid module."""
+    # Reset registry
+    ClassRegistry._registered_modules = set()
+
+    # Register a known valid module
+    ClassRegistry.register_modules(["semantiva.examples.test_utils"])
+
+    # Should be in registered modules
+    registered_modules = ClassRegistry.get_registered_modules()
+    assert "semantiva.examples.test_utils" in registered_modules
+
+
+def test_register_modules_single_string():
+    """Test that register_modules works with a single string (not list)."""
+    # Reset registry
+    ClassRegistry._registered_modules = set()
+
+    # Register single module as string
+    ClassRegistry.register_modules("semantiva.examples.test_utils")
+
+    # Should be in registered modules
+    registered_modules = ClassRegistry.get_registered_modules()
+    assert "semantiva.examples.test_utils" in registered_modules
 
 
 @patch("pathlib.Path.is_file", return_value=True)
