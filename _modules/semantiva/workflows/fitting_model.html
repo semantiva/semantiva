@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>semantiva.workflows.fitting_model - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=25af2a20" />
@@ -214,6 +214,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -226,6 +227,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -275,14 +281,20 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
+<span class="sd">&quot;&quot;&quot;Model fitting workflow components for Semantiva pipelines.</span>
+
+<span class="sd">Provides FittingModel interface, PolynomialFittingModel implementation, and</span>
+<span class="sd">ModelFittingContextProcessor with flexible parameter mapping support.</span>
+
+<span class="sd">See documentation: workflows_fitting_models.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors.context_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextProcessor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors.context_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>  <span class="c1"># Domain (annotation) type (e.g., float, tuple[int, float], etc.)</span>
 <span class="n">Y</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>  <span class="c1"># Codomain (extracted features) type (e.g., float, list, dict, etc.)</span>
@@ -291,24 +303,7 @@
 <div class="viewcode-block" id="FittingModel">
 <a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.FittingModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FittingModel</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstract base class for function-fitting models.</span>
-
-<span class="sd">    This class defines an interface for fitting a mathematical model to data.</span>
-<span class="sd">    Subclasses must implement the `fit` method, which computes optimal parameters</span>
-<span class="sd">    based on observed features.</span>
-
-<span class="sd">    The fitting model takes annotation values (domain) and extracted features (codomain)</span>
-<span class="sd">    and returns estimated parameters.</span>
-
-<span class="sd">    Type Parameters:</span>
-<span class="sd">        X: The domain type (annotation values such as lens positions).</span>
-<span class="sd">        Y: The codomain type (extracted features such as image sharpness).</span>
-
-<span class="sd">    Methods:</span>
-<span class="sd">        fit(x_values: List[X], y_values: List[Y]) -&gt; Dict[str, float]:</span>
-<span class="sd">            Fits a function to data and returns estimated parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for function-fitting models.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -323,16 +318,7 @@
 <a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.FittingModel.fit">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="n">y_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Y</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fits a function to data and returns estimated parameters.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x_values (List[X]): The annotation values (domain, e.g., lens positions).</span>
-<span class="sd">            y_values (List[Y]): The extracted features (codomain, e.g., sharpness scores).</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Dict[str, float]: A dictionary of best-fit parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit model to data and return estimated parameters.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 </div>
 
@@ -341,37 +327,16 @@
 <div class="viewcode-block" id="PolynomialFittingModel">
 <a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.PolynomialFittingModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PolynomialFittingModel</span><span class="p">(</span><span class="n">FittingModel</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Polynomial fitting model using least squares regression.</span>
-
-<span class="sd">    This model fits a polynomial function to a given dataset and returns</span>
-<span class="sd">    the estimated coefficients as a dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Polynomial fitting model using least squares regression.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">degree</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the polynomial fitting model.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            degree (int): The degree of the polynomial to be fitted.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize polynomial fitting model with specified degree.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span>
 
 <div class="viewcode-block" id="PolynomialFittingModel.fit">
 <a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.PolynomialFittingModel.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fits a polynomial function to data and returns estimated parameters.</span>
-
-<span class="sd">        Ensures type consistency by converting NumPy float64 values to Python floats.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x_values (List[float]): The annotation values (domain, e.g., lens positions).</span>
-<span class="sd">            y_values (List[float]): The extracted features (codomain, e.g., sharpness scores).</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Dict[str, float]: A dictionary containing polynomial coefficients.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit polynomial to data and return coefficients.&quot;&quot;&quot;</span>
         <span class="n">coefficients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">y_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="sa">f</span><span class="s2">&quot;coeff_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">coefficients</span><span class="p">))</span>
@@ -379,12 +344,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the class name of the fitting model along with the polynomial degree.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            str: The class name and polynomial degree.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string representation with degree.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(degree=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="si">}</span><span class="s2">)&quot;</span></div>
 
 
@@ -392,95 +352,194 @@
 <div class="viewcode-block" id="ModelFittingContextProcessor">
 <a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelFittingContextProcessor</span><span class="p">(</span><span class="n">ContextProcessor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;ContextProcessor that fits extracted features using a specified model.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context processor that fits mathematical models to x/y data and stores results.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="n">CONTEXT_OUTPUT_KEY</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;fit.parameters&quot;</span>
+
+<div class="viewcode-block" id="ModelFittingContextProcessor.with_context_keyword">
+<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor.with_context_keyword">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">with_context_keyword</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="s2">&quot;ModelFittingContextProcessor&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a subclass with :data:`CONTEXT_OUTPUT_KEY` bound to ``key``.&quot;&quot;&quot;</span>
+        <span class="n">safe</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_OUT_</span><span class="si">{</span><span class="n">safe</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;CONTEXT_OUTPUT_KEY&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+            <span class="s2">&quot;__doc__&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Bound output key: &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;context_keys&quot;</span><span class="p">:</span> <span class="nb">classmethod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">kls</span><span class="p">:</span> <span class="p">[</span><span class="n">kls</span><span class="o">.</span><span class="n">CONTEXT_OUTPUT_KEY</span><span class="p">]),</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="n">attrs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Logger</span><span class="p">],</span>
-        <span class="n">fitting_model</span><span class="p">:</span> <span class="n">FittingModel</span><span class="p">,</span>
-        <span class="n">independent_var_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">dependent_var_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-        <span class="n">context_keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">x_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">y_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">fitting_model</span><span class="p">:</span> <span class="s2">&quot;FittingModel&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initializing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitting_model</span><span class="p">:</span> <span class="n">FittingModel</span> <span class="o">=</span> <span class="n">fitting_model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">independent_var_key</span> <span class="o">=</span> <span class="n">independent_var_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context_keyword</span> <span class="o">=</span> <span class="n">context_keyword</span>
+        <span class="k">if</span> <span class="n">x_values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">y_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing x_values or y_values for model fitting.&quot;</span><span class="p">)</span>
+        <span class="n">fit_results</span> <span class="o">=</span> <span class="n">fitting_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">y_values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">CONTEXT_OUTPUT_KEY</span><span class="p">,</span> <span class="n">fit_results</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dependent_var_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_key</span> <span class="o">=</span> <span class="n">dependent_var_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_subkey</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependent_var_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_key</span> <span class="o">=</span> <span class="n">dependent_var_key</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_subkey</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">independent_var_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;independent_var_key must be a string, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">independent_var_key</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with value </span><span class="si">{</span><span class="n">independent_var_key</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit extracted features to the model using context data.&quot;&quot;&quot;</span>
-
-        <span class="c1"># Retrieve independent and dependent variables from context</span>
-        <span class="n">independent_variable</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">independent_var_key</span><span class="p">)</span>
-        <span class="n">dependent_variable</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_key</span><span class="p">)</span>
-
-        <span class="c1"># Ensure required parameters exist</span>
-        <span class="k">if</span> <span class="n">independent_variable</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dependent_variable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">missing_params</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_required_keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="p">]</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Missing required context parameters: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">missing_params</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Extract dependent_variable from dictionary if needed</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_subkey</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="n">dependent_variable_</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-                <span class="n">dependent_variable</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_subkey</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_subkey</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">dependent_variable_</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_subkey</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dependent_variable</span>
-            <span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">dependent_variable_</span> <span class="o">=</span> <span class="n">dependent_variable</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid type for dependent_variable&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Fit the model using extracted features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Running model </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_model</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">independent_variable = </span><span class="si">{</span><span class="n">independent_variable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">dependent_variable = </span><span class="si">{</span><span class="n">dependent_variable_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">fit_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">independent_variable</span><span class="p">,</span> <span class="n">dependent_variable_</span><span class="p">)</span>
-
-        <span class="c1"># Store the results back in context under the dependent variable name</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_keyword</span><span class="p">,</span> <span class="n">fit_results</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">context</span>
-
-<div class="viewcode-block" id="ModelFittingContextProcessor.get_required_keys">
-<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_required_keys">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_required_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the list of required keys for the context operation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">independent_var_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependent_var_key</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="ModelFittingContextProcessor.get_created_keys">
-<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_created_keys">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the list of keys created in the context.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">context_keyword</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="ModelFittingContextProcessor.get_suppressed_keys">
-<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_suppressed_keys">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_suppressed_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This operation does not suppress any keys.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[]</span></div>
+<div class="viewcode-block" id="ModelFittingContextProcessor.context_keys">
+<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor.context_keys">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">context_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CONTEXT_OUTPUT_KEY</span><span class="p">]</span></div>
 </div>
+
+
+
+<div class="viewcode-block" id="_model_fitting_processor_factory">
+<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model._model_fitting_processor_factory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_model_fitting_processor_factory</span><span class="p">(</span>
+    <span class="n">independent_var_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dependent_var_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">context_keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelFittingContextProcessor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create ModelFittingContextProcessor with custom parameter mapping.</span>
+
+<span class="sd">    Creates specialized processor class for custom parameter names and nested paths.</span>
+<span class="sd">    Supports both single dictionaries and lists of dictionaries (e.g., from slicers).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        independent_var_key: Parameter name for x-axis data</span>
+<span class="sd">        dependent_var_key: Parameter name/path for y-axis data (supports &quot;nested.path&quot;)</span>
+<span class="sd">        context_keyword: Output key for fit results</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dynamically created processor subclass with custom parameter mapping</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+
+    <span class="c1"># Determine output key</span>
+    <span class="n">output_key</span> <span class="o">=</span> <span class="n">context_keyword</span> <span class="ow">or</span> <span class="n">ModelFittingContextProcessor</span><span class="o">.</span><span class="n">CONTEXT_OUTPUT_KEY</span>
+
+    <span class="c1"># Parse dependent variable key to separate parameter name from nested path</span>
+    <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">dependent_var_key</span><span class="p">:</span>
+        <span class="n">dependent_param_name</span> <span class="o">=</span> <span class="n">dependent_var_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dependent_path</span> <span class="o">=</span> <span class="n">dependent_var_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dependent_param_name</span> <span class="o">=</span> <span class="n">dependent_var_key</span>
+        <span class="n">dependent_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Create safe class name</span>
+    <span class="n">safe_name</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">independent_var_key</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dependent_var_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ModelFittingContextProcessor_MAPPED_</span><span class="si">{</span><span class="n">safe_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_process_logic</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic_mapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Process logic with custom parameter mapping.&quot;&quot;&quot;</span>
+            <span class="c1"># Get parameters using the configured names</span>
+            <span class="n">x_values</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">independent_var_key</span><span class="p">)</span>
+            <span class="n">y_source</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dependent_param_name</span><span class="p">)</span>
+            <span class="n">fitting_model</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fitting_model&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Validate required parameters</span>
+            <span class="k">if</span> <span class="n">x_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required parameter: </span><span class="si">{</span><span class="n">independent_var_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">y_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required parameter: </span><span class="si">{</span><span class="n">dependent_param_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fitting_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing required parameter: fitting_model&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Extract y_values from nested path if needed</span>
+            <span class="k">if</span> <span class="n">dependent_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_source</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="c1"># Handle list of dictionaries (e.g., from slicer operations)</span>
+                    <span class="n">y_values</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">y_source</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Expected list of dictionaries for </span><span class="si">{</span><span class="n">dependent_param_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;got list containing </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+
+                        <span class="c1"># Navigate the nested path for each item</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">item</span>
+                        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dependent_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Cannot access path &#39;</span><span class="si">{</span><span class="n">dependent_path</span><span class="si">}</span><span class="s2">&#39; in item </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">)</span>
+                        <span class="n">y_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_source</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="c1"># Handle single dictionary</span>
+                    <span class="n">y_values</span> <span class="o">=</span> <span class="n">y_source</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dependent_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_values</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">y_values</span><span class="p">:</span>
+                            <span class="n">y_values</span> <span class="o">=</span> <span class="n">y_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Cannot access path &#39;</span><span class="si">{</span><span class="n">dependent_path</span><span class="si">}</span><span class="s2">&#39; in </span><span class="si">{</span><span class="n">dependent_param_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Expected dictionary or list of dictionaries for </span><span class="si">{</span><span class="n">dependent_param_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">y_source</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y_values</span> <span class="o">=</span> <span class="n">y_source</span>
+
+            <span class="c1"># Perform the model fitting</span>
+            <span class="n">fit_results</span> <span class="o">=</span> <span class="n">fitting_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">y_values</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span>
+                <span class="n">output_key</span><span class="p">,</span> <span class="n">fit_results</span>
+            <span class="p">)</span>  <span class="c1"># pylint: disable=protected-access</span>
+
+        <span class="c1"># Create proper signature with the configured parameter names</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">),</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">independent_var_key</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span>
+            <span class="p">),</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">dependent_param_name</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span>
+            <span class="p">),</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">&quot;fitting_model&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">_process_logic_mapped</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
+        <span class="n">_process_logic_mapped</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s2">&quot;_process_logic&quot;</span>
+        <span class="k">return</span> <span class="n">_process_logic_mapped</span>
+
+    <span class="c1"># Define class methods</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_processing_parameter_names</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">independent_var_key</span><span class="p">,</span> <span class="n">dependent_param_name</span><span class="p">,</span> <span class="s2">&quot;fitting_model&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">output_key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">context_keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">output_key</span><span class="p">]</span>
+
+    <span class="c1"># Create the specialized class</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;CONTEXT_OUTPUT_KEY&quot;</span><span class="p">:</span> <span class="n">output_key</span><span class="p">,</span>
+        <span class="s2">&quot;_process_logic&quot;</span><span class="p">:</span> <span class="n">create_process_logic</span><span class="p">(),</span>
+        <span class="s2">&quot;get_processing_parameter_names&quot;</span><span class="p">:</span> <span class="nb">classmethod</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">get_processing_parameter_names</span><span class="p">()</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;get_created_keys&quot;</span><span class="p">:</span> <span class="nb">classmethod</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">get_created_keys</span><span class="p">()),</span>
+        <span class="s2">&quot;context_keys&quot;</span><span class="p">:</span> <span class="nb">classmethod</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">context_keys</span><span class="p">()),</span>
+        <span class="s2">&quot;__doc__&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ModelFittingContextProcessor with custom parameter mapping:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  x_values from: </span><span class="si">{</span><span class="n">independent_var_key</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  y_values from: </span><span class="si">{</span><span class="n">dependent_var_key</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  output to: </span><span class="si">{</span><span class="n">output_key</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="p">(</span><span class="n">ModelFittingContextProcessor</span><span class="p">,),</span> <span class="n">attrs</span><span class="p">)</span></div>
 
 
 

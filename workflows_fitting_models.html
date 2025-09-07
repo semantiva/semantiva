@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Data IO (Sources &amp; Sinks)" href="data_io.html" /><link rel="prev" title="Execution" href="execution.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Workflows — Fitting Models via model: - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -227,6 +228,11 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -271,67 +277,233 @@
 <h1>Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code><a class="headerlink" href="#workflows-fitting-models-via-model" title="Link to this heading">¶</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>This workflow demonstrates fitting a simple polynomial model by configuring:</p>
+<p>This workflow demonstrates fitting mathematical models to data using both traditional
+and flexible parameter mapping approaches. The system provides:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#semantiva.workflows.fitting_model.FittingModel" title="semantiva.workflows.fitting_model.FittingModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.workflows.fitting_model.FittingModel</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.workflows.fitting_model.PolynomialFittingModel" title="semantiva.workflows.fitting_model.PolynomialFittingModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.workflows.fitting_model.PolynomialFittingModel</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor" title="semantiva.workflows.fitting_model.ModelFittingContextProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.workflows.fitting_model.ModelFittingContextProcessor</span></code></a></p></li>
+<li><p><a class="reference internal" href="#semantiva.workflows.fitting_model.FittingModel" title="semantiva.workflows.fitting_model.FittingModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.workflows.fitting_model.FittingModel</span></code></a> — Abstract base class for fitting models</p></li>
+<li><p><a class="reference internal" href="#semantiva.workflows.fitting_model.PolynomialFittingModel" title="semantiva.workflows.fitting_model.PolynomialFittingModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.workflows.fitting_model.PolynomialFittingModel</span></code></a> — Concrete polynomial fitting implementation</p></li>
+<li><p><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor" title="semantiva.workflows.fitting_model.ModelFittingContextProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.workflows.fitting_model.ModelFittingContextProcessor</span></code></a> — Context processor with flexible parameter mapping</p></li>
 </ul>
-<p>The processor consumes series data from the <strong>context channel</strong> (independent and
-dependent arrays) and writes the fitted coefficients back into the <strong>context</strong>.</p>
+<p>The processor consumes data from the <strong>context channel</strong> and writes fitted coefficients
+back into the <strong>context</strong>. It supports both traditional fixed parameter names
+(<code class="docutils literal notranslate"><span class="pre">x_values</span></code>, <code class="docutils literal notranslate"><span class="pre">y_values</span></code>) and flexible parameter mapping for complex data structures.</p>
 </section>
-<section id="how-it-works">
-<h2>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>
-<p>The example config uses the <code class="docutils literal notranslate"><span class="pre">model:</span></code> resolver to describe and instantiate a fitting
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>Traditional Interface (Backward Compatible)</strong></dt><dd><p>Uses standard <code class="docutils literal notranslate"><span class="pre">x_values</span></code> and <code class="docutils literal notranslate"><span class="pre">y_values</span></code> parameter names with configurable output keys.
+Maintains full compatibility with existing pipelines.</p>
+</dd>
+<dt><strong>Flexible Parameter Mapping</strong></dt><dd><p>Supports custom parameter names and nested path extraction using dot notation
+(e.g., <code class="docutils literal notranslate"><span class="pre">&quot;gaussian_fit_parameters.std_dev_x&quot;</span></code>). Automatically handles different
+data structure formats through dynamic processor creation.</p>
+</dd>
+<dt><strong>Data Structure Compatibility</strong></dt><dd><ul class="simple">
+<li><p><strong>Single dictionaries</strong>: <code class="docutils literal notranslate"><span class="pre">{&quot;key&quot;:</span> <span class="pre">[value1,</span> <span class="pre">value2,</span> <span class="pre">...]}</span></code></p></li>
+<li><p><strong>Lists of dictionaries</strong>: <code class="docutils literal notranslate"><span class="pre">[{&quot;key&quot;:</span> <span class="pre">value1},</span> <span class="pre">{&quot;key&quot;:</span> <span class="pre">value2},</span> <span class="pre">...]</span></code> (common from slicers)</p></li>
+<li><p><strong>Nested structures</strong>: Multi-level path extraction with dot notation</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="traditional-usage">
+<h2>Traditional Usage<a class="headerlink" href="#traditional-usage" title="Link to this heading">¶</a></h2>
+<p>The traditional approach uses the <code class="docutils literal notranslate"><span class="pre">model:</span></code> resolver to describe and instantiate a fitting
 model in a single, declarative string:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">fitting_model:</span> <span class="pre">&quot;model:PolynomialFittingModel:degree=2&quot;</span></code> → a 2nd-degree polynomial</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">independent_var_key:</span> <span class="pre">&quot;t_values&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">dependent_var_key:</span> <span class="pre">&quot;data_values&quot;</span></code> → names
-of context keys that must contain the x/y arrays</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">context_keyword:</span> <span class="pre">&quot;fit_coefficients&quot;</span></code> → where results are stored in the context</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context_keyword:</span> <span class="pre">&quot;fit_coefficients&quot;</span></code> → where results are stored in the context
+(the context must provide <code class="docutils literal notranslate"><span class="pre">x_values</span></code> and <code class="docutils literal notranslate"><span class="pre">y_values</span></code> arrays)</p></li>
 </ul>
 <p>At runtime, <a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor" title="semantiva.workflows.fitting_model.ModelFittingContextProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelFittingContextProcessor</span></code></a>
 reads the arrays from <code class="docutils literal notranslate"><span class="pre">payload.context</span></code>, fits the model, and stores the coefficients
 under <code class="docutils literal notranslate"><span class="pre">payload.context[&quot;fit_coefficients&quot;]</span></code>.</p>
 </section>
+<section id="flexible-parameter-mapping">
+<h2>Flexible Parameter Mapping<a class="headerlink" href="#flexible-parameter-mapping" title="Link to this heading">¶</a></h2>
+<p>When <code class="docutils literal notranslate"><span class="pre">independent_var_key</span></code> and/or <code class="docutils literal notranslate"><span class="pre">dependent_var_key</span></code> parameters are specified,
+the system automatically creates a specialized processor that can extract data using
+custom parameter names and nested paths.</p>
+<p><strong>Configuration Examples</strong></p>
+<p>Basic flexible parameter mapping:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;time_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;measurements&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;time_series_fit&quot;</span>
+</pre></div>
+</div>
+<p>Nested path extraction:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.std_dev_x&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;std_dev_coefficients&quot;</span>
+</pre></div>
+</div>
+<p>Slicer integration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;slice_indices&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aggregated_data.mean_values&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;trend_analysis&quot;</span>
+</pre></div>
+</div>
+<p>Multiple fitting operations:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Fit standard deviation trend</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.std_dev_x&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;std_dev_trend&quot;</span>
+
+<span class="w">    </span><span class="c1"># Fit orientation trend  </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.angle&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;orientation_trend&quot;</span>
+</pre></div>
+</div>
+<p><strong>Data Structure Examples</strong></p>
+<p>The flexible parameter mapping supports various data structure formats:</p>
+<p><em>Single Dictionary Format:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;t_values&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span>
+    <span class="s2">&quot;gaussian_fit_parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;std_dev_x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+        <span class="s2">&quot;std_dev_y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">],</span>
+        <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><em>List of Dictionaries Format (Slicer Output):</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;t_values&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span>
+    <span class="s2">&quot;gaussian_fit_parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;std_dev_x&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;std_dev_y&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;std_dev_x&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;std_dev_y&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;std_dev_x&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;std_dev_y&quot;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;std_dev_x&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span> <span class="s2">&quot;std_dev_y&quot;</span><span class="p">:</span> <span class="mf">0.45</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;std_dev_x&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;std_dev_y&quot;</span><span class="p">:</span> <span class="mf">0.55</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="integration-with-pipeline-components">
+<h2>Integration with Pipeline Components<a class="headerlink" href="#integration-with-pipeline-components" title="Link to this heading">¶</a></h2>
+<p><strong>Slicer Integration</strong></p>
+<p>The flexible parameter mapping is particularly useful when working with slicer outputs.
+The system automatically detects and handles data from slice aggregators:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SliceAggregatorContextProcessor</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># ... slicer configuration</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">    </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;slice_indices&quot;</span>
+<span class="w">    </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aggregated_data.mean_values&quot;</span>
+<span class="w">    </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;trend_analysis&quot;</span>
+</pre></div>
+</div>
+<p><strong>Multiple Fitting Operations</strong></p>
+<p>You can perform multiple fits on different aspects of the same data by configuring
+multiple processors with different dependent variable paths:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fit standard deviation trend</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">    </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">    </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.std_dev_x&quot;</span>
+<span class="w">    </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;std_dev_trend&quot;</span>
+
+<span class="c1"># Fit orientation trend</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">    </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">    </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.angle&quot;</span>
+<span class="w">    </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;orientation_trend&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="technical-implementation">
+<h2>Technical Implementation<a class="headerlink" href="#technical-implementation" title="Link to this heading">¶</a></h2>
+<p><strong>Automatic Factory Selection</strong></p>
+<p>When the pipeline node factory detects <code class="docutils literal notranslate"><span class="pre">independent_var_key</span></code> and/or <code class="docutils literal notranslate"><span class="pre">dependent_var_key</span></code>
+parameters in a ModelFittingContextProcessor configuration, it automatically:</p>
+<ol class="arabic simple">
+<li><p>Creates a specialized processor class using <a class="reference internal" href="#semantiva.workflows.fitting_model._model_fitting_processor_factory" title="semantiva.workflows.fitting_model._model_fitting_processor_factory"><code class="xref py py-func docutils literal notranslate"><span class="pre">_model_fitting_processor_factory()</span></code></a></p></li>
+<li><p>Configures the processor to expect the specified parameter names</p></li>
+<li><p>Sets up nested path extraction for the dependent variable</p></li>
+<li><p>Maintains all standard functionality (output keys, error handling, etc.)</p></li>
+</ol>
+<p><strong>Nested Path Resolution</strong></p>
+<p>The system uses dot notation to traverse nested structures:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;data.field&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">data[&quot;field&quot;]</span></code> or <code class="docutils literal notranslate"><span class="pre">data.field</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;measurements.values&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">measurements[&quot;values&quot;]</span></code> or <code class="docutils literal notranslate"><span class="pre">measurements.values</span></code></p></li>
+<li><p>Works with both dictionary access and attribute access</p></li>
+</ul>
+<p><strong>Error Handling</strong></p>
+<p>The system provides comprehensive error handling for:</p>
+<ul class="simple">
+<li><p>Missing parameters (clear error messages for required parameters)</p></li>
+<li><p>Invalid paths (detailed path resolution errors with context)</p></li>
+<li><p>Data type mismatches (validation of expected data structures)</p></li>
+<li><p>Empty data (handling of edge cases with empty or null data)</p></li>
+</ul>
+</section>
 <section id="run-it-inspect-then-execute">
 <h2>Run it (inspect, then execute)<a class="headerlink" href="#run-it-inspect-then-execute" title="Link to this heading">¶</a></h2>
 <p><strong>1) Inspect the pipeline (pre-flight checks)</strong></p>
+<p>Traditional usage:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>tests/pipeline_model_fitting.yaml<span class="w"> </span>--extended
+</pre></div>
+</div>
+<p>Flexible parameter mapping:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>tests/pipeline_model_fitting_flexible.yaml<span class="w"> </span>--extended
+semantiva<span class="w"> </span>inspect<span class="w"> </span>tests/pipeline_model_fitting_nested_path.yaml<span class="w"> </span>--extended
 </pre></div>
 </div>
 <p>You should see the canonical identities (<code class="docutils literal notranslate"><span class="pre">PipelineId</span></code>, per-node <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code>) and
 the configured parameters for the fitting step. See <a class="reference internal" href="introspection_validation.html"><span class="doc">Introspection &amp; Validation</span></a>.</p>
-<p><strong>2) Execute programmatically with initial context</strong></p>
-<p>This workflow expects two arrays in the context. Until CLI context injection is added,
-seed them programmatically:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_pipeline_from_yaml</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.payload</span><span class="w"> </span><span class="kn">import</span> <span class="n">Payload</span>
-
-<span class="c1"># Toy data: y = 1 + 2 t + 0.5 t^2 (noisy-free for demo)</span>
-<span class="n">t_values</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
-<span class="n">data_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">t_values</span><span class="p">]</span>
-
-<span class="n">nodes</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;tests/pipeline_model_fitting.yaml&quot;</span><span class="p">)</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
-
-<span class="n">initial</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">{</span>
-    <span class="s2">&quot;t_values&quot;</span><span class="p">:</span> <span class="n">t_values</span><span class="p">,</span>
-    <span class="s2">&quot;data_values&quot;</span><span class="p">:</span> <span class="n">data_values</span><span class="p">,</span>
-<span class="p">})</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>   <span class="c1"># -&gt; Payload(data=..., context=...)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fit_coefficients&quot;</span><span class="p">))</span>
+<p><strong>2) Execute from the CLI with initial context</strong></p>
+<p>Traditional usage (provide arrays via <code class="docutils literal notranslate"><span class="pre">--context</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>tests/pipeline_model_fitting.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--context<span class="w"> </span><span class="nv">x_values</span><span class="o">=[</span>-1.0,0.0,1.0,2.0<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--context<span class="w"> </span><span class="nv">y_values</span><span class="o">=</span><span class="s2">&quot;[1.0,1.0,2.5,5.0]&quot;</span>
 </pre></div>
 </div>
-<p>The coefficients are written under <code class="docutils literal notranslate"><span class="pre">fit_coefficients</span></code> in the <strong>context</strong>. The data
-channel for this step is pass-through.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>A CLI flag for context injection (<code class="docutils literal notranslate"><span class="pre">--context</span> <span class="pre">key=value</span></code>) is <strong>planned</strong>; until
-then, initialize context via pipeline steps or programmatically.</p>
+<p>Flexible parameter mapping:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>tests/pipeline_model_fitting_flexible.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--context<span class="w"> </span><span class="nv">time_values</span><span class="o">=[</span><span class="m">0</span>,1,2,3,4<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--context<span class="w"> </span><span class="nv">measurements</span><span class="o">=</span><span class="s2">&quot;[1.1,1.9,3.1,3.9,5.1]&quot;</span>
+</pre></div>
 </div>
+<p>Nested path example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>tests/pipeline_model_fitting_nested_path.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--context<span class="w"> </span><span class="nv">t_values</span><span class="o">=[</span><span class="m">1</span>,2,3,4,5<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--context<span class="w"> </span><span class="s1">&#39;gaussian_fit_parameters={&quot;std_dev_x&quot;:[0.1,0.2,0.3,0.4,0.5]}&#39;</span>
+</pre></div>
+</div>
+<p>The resulting coefficients are written to the specified context keyword.</p>
 <p><strong>3) Visualize the config</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva-studio-viewer<span class="w"> </span>serve-pipeline<span class="w"> </span>tests/pipeline_model_fitting.yaml<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
 <span class="c1"># open http://127.0.0.1:8000 and click the fitting node to see its parameters and node_uuid</span>
@@ -340,58 +512,146 @@ then, initialize context via pipeline steps or programmatically.</p>
 <p>Link-outs:
 - <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a> (Payload and dual channels)
 - <a class="reference internal" href="registry_and_extensions.html"><span class="doc">Registry &amp; Extensions</span></a> (<code class="docutils literal notranslate"><span class="pre">model:</span></code> resolver and extensions)
-- <a class="reference internal" href="studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a> (serve and export diagrams)</p>
+- <a class="reference internal" href="studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a> (serve and export diagrams)
+- <a class="reference internal" href="context_processors.html"><span class="doc">Context Processors</span></a> (Context processor fundamentals)
+- <a class="reference internal" href="data_processors.html"><span class="doc">Data Processors</span></a> (Data slicer integration)</p>
 </section>
-<section id="example-yaml">
-<h2>Example YAML<a class="headerlink" href="#example-yaml" title="Link to this heading">¶</a></h2>
+<section id="example-yaml-configurations">
+<h2>Example YAML Configurations<a class="headerlink" href="#example-yaml-configurations" title="Link to this heading">¶</a></h2>
+<p><strong>Traditional Usage</strong></p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
 <span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=2&quot;</span>
-<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
-<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data_values&quot;</span>
 <span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fit_coefficients&quot;</span>
 </pre></div>
 </div>
+<p><strong>Flexible Parameter Mapping</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;time_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;measurements&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;time_series_fit&quot;</span>
+</pre></div>
+</div>
+<p><strong>Nested Path Extraction</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.std_dev_x&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;std_dev_coefficients&quot;</span>
+</pre></div>
+</div>
+<p><strong>Slicer Integration</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;slice_indices&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aggregated_data.mean_values&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;trend_analysis&quot;</span>
+</pre></div>
+</div>
+<p><strong>Multiple Operations</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Fit standard deviation trend</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.std_dev_x&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;std_dev_trend&quot;</span>
+
+<span class="w">    </span><span class="c1"># Fit orientation trend  </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=1&quot;</span>
+<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
+<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gaussian_fit_parameters.angle&quot;</span>
+<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;orientation_trend&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="programmatic-usage">
+<h2>Programmatic Usage<a class="headerlink" href="#programmatic-usage" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_pipeline_from_yaml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Traditional usage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;tests/pipeline_model_fitting.yaml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Requires x_values/y_values in context</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Flexible parameter mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;tests/pipeline_model_fitting_flexible.yaml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Requires time_values/measurements in context</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Using the factory directly</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.workflows.fitting_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">_model_fitting_processor_factory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ProcessorClass</span> <span class="o">=</span> <span class="n">_model_fitting_processor_factory</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">independent_var_key</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dependent_var_key</span><span class="o">=</span><span class="s2">&quot;data.measurements&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">context_keyword</span><span class="o">=</span><span class="s2">&quot;analysis_results&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">processor</span> <span class="o">=</span> <span class="n">ProcessorClass</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="semantiva.workflows.fitting_model._model_fitting_processor_factory">
+<span class="sig-prename descclassname"><span class="pre">semantiva.workflows.fitting_model.</span></span><span class="sig-name descname"><span class="pre">_model_fitting_processor_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">independent_var_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent_var_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_keyword</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#_model_fitting_processor_factory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model._model_fitting_processor_factory" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-semantiva.workflows.fitting_model">
 <span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.workflows.fitting_model" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.workflows.fitting_model.FittingModel">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.workflows.fitting_model.</span></span><span class="sig-name descname"><span class="pre">FittingModel</span></span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#FittingModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.FittingModel" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.workflows.fitting_model.</span></span><span class="sig-name descname"><span class="pre">FittingModel</span></span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#FittingModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.FittingModel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code>]</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.workflows.fitting_model.FittingModel.fit">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#FittingModel.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.FittingModel.fit" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#FittingModel.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.FittingModel.fit" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.workflows.fitting_model.ModelFittingContextProcessor">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.workflows.fitting_model.</span></span><span class="sig-name descname"><span class="pre">ModelFittingContextProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitting_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">independent_var_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent_var_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_keyword</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#ModelFittingContextProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.workflows.fitting_model.</span></span><span class="sig-name descname"><span class="pre">ModelFittingContextProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#ModelFittingContextProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor" title="semantiva.context_processors.context_processors.ContextProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextProcessor</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_created_keys">
-<span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#ModelFittingContextProcessor.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_created_keys" title="Link to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.workflows.fitting_model.ModelFittingContextProcessor.CONTEXT_OUTPUT_KEY">
+<span class="sig-name descname"><span class="pre">CONTEXT_OUTPUT_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fit.parameters'</span></em><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.CONTEXT_OUTPUT_KEY" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_required_keys">
-<span class="sig-name descname"><span class="pre">get_required_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#ModelFittingContextProcessor.get_required_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_required_keys" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="semantiva.workflows.fitting_model.ModelFittingContextProcessor.context_keys">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#ModelFittingContextProcessor.context_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.context_keys" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_suppressed_keys">
-<span class="sig-name descname"><span class="pre">get_suppressed_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#ModelFittingContextProcessor.get_suppressed_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_suppressed_keys" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="semantiva.workflows.fitting_model.ModelFittingContextProcessor.with_context_keyword">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">with_context_keyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#ModelFittingContextProcessor.with_context_keyword"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.with_context_keyword" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.workflows.fitting_model.PolynomialFittingModel">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.workflows.fitting_model.</span></span><span class="sig-name descname"><span class="pre">PolynomialFittingModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#PolynomialFittingModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.PolynomialFittingModel" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.workflows.fitting_model.</span></span><span class="sig-name descname"><span class="pre">PolynomialFittingModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/workflows/fitting_model.html#PolynomialFittingModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.workflows.fitting_model.PolynomialFittingModel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#semantiva.workflows.fitting_model.FittingModel" title="semantiva.workflows.fitting_model.FittingModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FittingModel</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.workflows.fitting_model.PolynomialFittingModel.fit">
@@ -460,18 +720,27 @@ then, initialize context via pipeline steps or programmatically.</p>
             <ul>
 <li><a class="reference internal" href="#">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#how-it-works">How it works</a></li>
+<li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#traditional-usage">Traditional Usage</a></li>
+<li><a class="reference internal" href="#flexible-parameter-mapping">Flexible Parameter Mapping</a></li>
+<li><a class="reference internal" href="#integration-with-pipeline-components">Integration with Pipeline Components</a></li>
+<li><a class="reference internal" href="#technical-implementation">Technical Implementation</a></li>
 <li><a class="reference internal" href="#run-it-inspect-then-execute">Run it (inspect, then execute)</a></li>
-<li><a class="reference internal" href="#example-yaml">Example YAML</a></li>
+<li><a class="reference internal" href="#example-yaml-configurations">Example YAML Configurations</a></li>
+<li><a class="reference internal" href="#programmatic-usage">Programmatic Usage</a></li>
+<li><a class="reference internal" href="#api-reference">API Reference</a><ul>
+<li><a class="reference internal" href="#semantiva.workflows.fitting_model._model_fitting_processor_factory"><code class="docutils literal notranslate"><span class="pre">_model_fitting_processor_factory()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-semantiva.workflows.fitting_model">Autodoc</a><ul>
 <li><a class="reference internal" href="#semantiva.workflows.fitting_model.FittingModel"><code class="docutils literal notranslate"><span class="pre">FittingModel</span></code></a><ul>
 <li><a class="reference internal" href="#semantiva.workflows.fitting_model.FittingModel.fit"><code class="docutils literal notranslate"><span class="pre">FittingModel.fit()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_created_keys"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.get_created_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_required_keys"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.get_required_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.get_suppressed_keys"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.get_suppressed_keys()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.CONTEXT_OUTPUT_KEY"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.CONTEXT_OUTPUT_KEY</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.context_keys"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.context_keys()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.workflows.fitting_model.ModelFittingContextProcessor.with_context_keyword"><code class="docutils literal notranslate"><span class="pre">ModelFittingContextProcessor.with_context_keyword()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#semantiva.workflows.fitting_model.PolynomialFittingModel"><code class="docutils literal notranslate"><span class="pre">PolynomialFittingModel</span></code></a><ul>

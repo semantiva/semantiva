@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Concepts" href="concepts.html" /><link rel="prev" title="Semantiva CLI" href="cli.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Semantiva Studio Viewer - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -227,6 +228,11 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -368,6 +374,15 @@ Export it first:
 <code class="docutils literal notranslate"><span class="pre">semantiva-studio-viewer</span> <span class="pre">export-components</span> <span class="pre">--output</span> <span class="pre">semantiva_components.ttl</span></code>.
 See <a class="reference internal" href="registry_and_extensions.html"><span class="doc">Registry &amp; Extensions</span></a> for extension discovery/registration.</p>
 </section>
+<section id="inspection-schema-note-gui">
+<h2>Inspection schema note (GUI)<a class="headerlink" href="#inspection-schema-note-gui" title="Link to this heading">¶</a></h2>
+<p>Each node record now includes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">invalid_parameters</span></code> — list of <code class="docutils literal notranslate"><span class="pre">{name,</span> <span class="pre">reason}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_configuration_valid</span></code> — false if invalid parameters exist</p></li>
+</ul>
+<p>These allow the viewer to flag and annotate misconfigured nodes precisely.</p>
+</section>
 <section id="large-graphs">
 <h2>Large Graphs<a class="headerlink" href="#large-graphs" title="Link to this heading">¶</a></h2>
 <p>For very large pipelines:</p>
@@ -451,6 +466,7 @@ See <a class="reference internal" href="registry_and_extensions.html"><span clas
 <li><a class="reference internal" href="#positional-binding-node-uuid">Positional Binding (node_uuid)</a></li>
 <li><a class="reference internal" href="#limitations">Limitations</a></li>
 <li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#inspection-schema-note-gui">Inspection schema note (GUI)</a></li>
 <li><a class="reference internal" href="#large-graphs">Large Graphs</a></li>
 <li><a class="reference internal" href="#see-also">See also</a></li>
 </ul>

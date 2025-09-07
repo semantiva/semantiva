@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Canonical Graph Builder" href="graph.html" /><link rel="prev" title="Introspection &amp; Validation" href="introspection_validation.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Pipelines in Semantiva - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -227,6 +228,11 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -297,8 +303,63 @@ is defined under <code class="docutils literal notranslate"><span class="pre">no
 short name if registered). The <code class="docutils literal notranslate"><span class="pre">parameters</span></code> map configures that processor. Nodes
 may also define <code class="docutils literal notranslate"><span class="pre">ports</span></code> if they connect to non-default inputs/outputs.</p>
 </section>
+<section id="parameter-resolution-precedence">
+<span id="pipeline-yaml-parameters-precedence"></span><h2>Parameter resolution (precedence)<a class="headerlink" href="#parameter-resolution-precedence" title="Link to this heading">¶</a></h2>
+<p>At runtime, node parameters are resolved as:</p>
+<ol class="arabic simple">
+<li><p>Node <code class="docutils literal notranslate"><span class="pre">parameters:</span></code> in YAML</p></li>
+<li><p>Existing <code class="docutils literal notranslate"><span class="pre">payload.context</span></code> values</p></li>
+<li><p>Python defaults in the processor’s <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> signature</p></li>
+</ol>
+<p>Missing required parameters raise:</p>
+<p><code class="docutils literal notranslate"><span class="pre">KeyError:</span> <span class="pre">Unable</span> <span class="pre">to</span> <span class="pre">resolve</span> <span class="pre">parameter</span> <span class="pre">'name'</span> <span class="pre">from</span> <span class="pre">context,</span> <span class="pre">node</span> <span class="pre">configuration,</span> <span class="pre">or</span> <span class="pre">defaults.</span></code></p>
+<p>Unknown configuration parameters that are not accepted by the processor are
+reported during inspection and raise an error before execution.</p>
+</section>
+<section id="parameter-validation-in-yaml-configuration">
+<h2>Parameter Validation in YAML Configuration<a class="headerlink" href="#parameter-validation-in-yaml-configuration" title="Link to this heading">¶</a></h2>
+<section id="invalid-parameters-detected">
+<h3>Invalid Parameters Detected<a class="headerlink" href="#invalid-parameters-detected" title="Link to this heading">¶</a></h3>
+<p>Parameters in YAML configuration are validated against processor signatures:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ This will be detected as invalid</span>
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatMultiplyOperation</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span><span class="w">      </span><span class="c1"># ✅ Valid parameter</span>
+<span class="w">        </span><span class="nt">facotr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.0</span><span class="w">      </span><span class="c1"># ❌ Invalid (typo)</span>
+<span class="w">        </span><span class="nt">unknown</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test&quot;</span><span class="w">  </span><span class="c1"># ❌ Invalid (not accepted by processor)</span>
+</pre></div>
+</div>
+</section>
+<section id="cli-inspection-with-strict">
+<h3>CLI Inspection with –strict<a class="headerlink" href="#cli-inspection-with-strict" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Report invalid parameters and exit non-zero</span>
+semantiva<span class="w"> </span>inspect<span class="w"> </span>bad_pipeline.yaml<span class="w"> </span>--strict
+
+<span class="c1"># Output:</span>
+<span class="c1"># Invalid configuration parameters:</span>
+<span class="c1"># - node #0 (FloatMultiplyOperation): facotr</span>
+<span class="c1"># - node #0 (FloatMultiplyOperation): unknown</span>
+</pre></div>
+</div>
+</section>
+<section id="runtime-validation">
+<h3>Runtime Validation<a class="headerlink" href="#runtime-validation" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will raise InvalidNodeParameterError at pipeline construction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidNodeParameterError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">configs_with_invalid_params</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">InvalidNodeParameterError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid parameters: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">invalid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="canonical-spec-identity">
-<span id="canonical-spec-and-identity"></span><h2>Canonical spec &amp; identity<a class="headerlink" href="#canonical-spec-identity" title="Link to this heading">¶</a></h2>
+<h2>Canonical spec &amp; identity<a class="headerlink" href="#canonical-spec-identity" title="Link to this heading">¶</a></h2>
 <p>Pipelines are normalized into <a class="reference internal" href="glossary.html#term-GraphV1"><span class="xref std std-term">GraphV1</span></a>, producing deterministic identities:
 <a class="reference internal" href="glossary.html#term-PipelineId"><span class="xref std std-term">PipelineId</span></a> for the pipeline and <a class="reference internal" href="glossary.html#term-node_uuid"><span class="xref std std-term">node_uuid</span></a> per node. See <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>.</p>
 </section>
@@ -353,11 +414,9 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 <p>Example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">semantiva.workflows.fitting_model.FittingModel</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
 <span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=2&quot;</span>
-<span class="w">        </span><span class="nt">independent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t_values&quot;</span>
-<span class="w">        </span><span class="nt">dependent_var_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data_values&quot;</span>
 <span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fit_coefficients&quot;</span>
 </pre></div>
 </div>
@@ -367,7 +426,7 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 <span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.pipeline.pipeline" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.pipeline.pipeline.Pipeline">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.pipeline.pipeline.</span></span><span class="sig-name descname"><span class="pre">Pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_configuration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orchestrator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/pipeline/pipeline.html#Pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.pipeline.pipeline.Pipeline" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.pipeline.pipeline.</span></span><span class="sig-name descname"><span class="pre">Pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_configuration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orchestrator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/pipeline/pipeline.html#Pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.pipeline.pipeline.Pipeline" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_PayloadProcessor</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.pipeline.pipeline.Pipeline.get_probe_results">
@@ -393,7 +452,7 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 
 <dl class="py class" id="module-semantiva.pipeline.payload">
 <dt class="sig sig-object py" id="semantiva.pipeline.payload.Payload">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.pipeline.payload.</span></span><span class="sig-name descname"><span class="pre">Payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/pipeline/payload.html#Payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.pipeline.payload.Payload" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.pipeline.payload.</span></span><span class="sig-name descname"><span class="pre">Payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/pipeline/payload.html#Payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.pipeline.payload.Payload" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
@@ -458,6 +517,13 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 <li><a class="reference internal" href="#">Pipelines in Semantiva</a><ul>
 <li><a class="reference internal" href="#overview-mental-model">Overview &amp; Mental Model</a></li>
 <li><a class="reference internal" href="#defining-pipelines-in-yaml">Defining Pipelines in YAML</a></li>
+<li><a class="reference internal" href="#parameter-resolution-precedence">Parameter resolution (precedence)</a></li>
+<li><a class="reference internal" href="#parameter-validation-in-yaml-configuration">Parameter Validation in YAML Configuration</a><ul>
+<li><a class="reference internal" href="#invalid-parameters-detected">Invalid Parameters Detected</a></li>
+<li><a class="reference internal" href="#cli-inspection-with-strict">CLI Inspection with –strict</a></li>
+<li><a class="reference internal" href="#runtime-validation">Runtime Validation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#canonical-spec-identity">Canonical spec &amp; identity</a></li>
 <li><a class="reference internal" href="#running-a-pipeline-from-python">Running a Pipeline from Python</a></li>
 <li><a class="reference internal" href="#what-is-a-payload">What is a Payload?</a></li>

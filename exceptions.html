@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Glossary" href="glossary.html" /><link rel="prev" title="API Reference" href="api_reference.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Exceptions - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -227,6 +228,11 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -272,15 +278,21 @@
 <ul class="simple">
 <li><p><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError" title="semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError</span></code></a></p></li>
 <li><p><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError" title="semantiva.exceptions.pipeline_exceptions.PipelineTopologyError"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.exceptions.pipeline_exceptions.PipelineTopologyError</span></code></a></p></li>
+<li><p><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError" title="semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError</span></code></a></p></li>
 </ul>
 <dl class="py exception" id="module-semantiva.exceptions.pipeline_exceptions">
+<dt class="sig sig-object py" id="semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidNodeParameterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processor_fqcn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_uuid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invalid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#InvalidNodeParameterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError">
-<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">PipelineConfigurationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#PipelineConfigurationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">PipelineConfigurationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#PipelineConfigurationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="semantiva.exceptions.pipeline_exceptions.PipelineTopologyError">
-<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">PipelineTopologyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#PipelineTopologyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">PipelineTopologyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#PipelineTopologyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <section id="see-also">
@@ -348,6 +360,7 @@ defined in the <a class="reference internal" href="glossary.html"><span class="d
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Exceptions</a><ul>
+<li><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError"><code class="docutils literal notranslate"><span class="pre">InvalidNodeParameterError</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError"><code class="docutils literal notranslate"><span class="pre">PipelineConfigurationError</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError"><code class="docutils literal notranslate"><span class="pre">PipelineTopologyError</span></code></a></li>
 <li><a class="reference internal" href="#see-also">See also</a></li>

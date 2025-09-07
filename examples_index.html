@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API Reference" href="api_reference.html" /><link rel="prev" title="Logger" href="logger.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Examples Index - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -227,6 +228,11 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -283,8 +289,20 @@
 <tr class="row-odd"><td><p>Pipeline defaults</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">tests/test_pipeline_defaults.yaml</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Model fitting</p></td>
+<tr class="row-even"><td><p>Model fitting (traditional)</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">tests/pipeline_model_fitting.yaml</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Model fitting (flexible parameters)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/source/examples/pipeline_model_fitting_flexible.yaml</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Model fitting (nested paths)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/source/examples/pipeline_model_fitting_nested_path.yaml</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Model fitting (slicer integration)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/source/examples/pipeline_model_fitting_slicer_integration.yaml</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Model fitting (multiple operations)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/source/examples/pipeline_model_fitting_multiple_operations.yaml</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Parametric sweep</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">tests/parametric_sweep_demo.yaml</span></code></p></td>
@@ -301,6 +319,18 @@ Run: <code class="docutils literal notranslate"><span class="pre">semantiva</spa
 Inspect: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">tests/pipeline_model_fitting.yaml</span> <span class="pre">--extended</span></code>
 Execute: use the Python snippet on the tutorial page to seed context; CLI context
 injection is planned.</p>
+<p><strong>Model fitting (flexible parameters)</strong> — see <a class="reference internal" href="workflows_fitting_models.html"><span class="doc">Workflows — Fitting Models via model:</span></a>
+Advanced model fitting with custom parameter names and flexible data structures.
+Inspect: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">docs/source/examples/pipeline_model_fitting_flexible.yaml</span> <span class="pre">--extended</span></code></p>
+<p><strong>Model fitting (nested paths)</strong> — see <a class="reference internal" href="workflows_fitting_models.html"><span class="doc">Workflows — Fitting Models via model:</span></a>
+Demonstrates nested path extraction using dot notation for complex data structures.
+Inspect: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">docs/source/examples/pipeline_model_fitting_nested_path.yaml</span> <span class="pre">--extended</span></code></p>
+<p><strong>Model fitting (slicer integration)</strong> — see <a class="reference internal" href="workflows_fitting_models.html"><span class="doc">Workflows — Fitting Models via model:</span></a>
+Shows integration with slicer outputs and aggregated data processing.
+Inspect: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">docs/source/examples/pipeline_model_fitting_slicer_integration.yaml</span> <span class="pre">--extended</span></code></p>
+<p><strong>Model fitting (multiple operations)</strong> — see <a class="reference internal" href="workflows_fitting_models.html"><span class="doc">Workflows — Fitting Models via model:</span></a>
+Demonstrates multiple fitting operations on different aspects of the same data.
+Inspect: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">docs/source/examples/pipeline_model_fitting_multiple_operations.yaml</span> <span class="pre">--extended</span></code></p>
 <p><strong>Parametric sweep</strong> — see <a class="reference internal" href="data_processors.html"><span class="doc">Data Processors</span></a>
 Inspect: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">tests/parametric_sweep_demo.yaml</span> <span class="pre">--extended</span></code>
 Run: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">run</span> <span class="pre">tests/parametric_sweep_demo.yaml</span> <span class="pre">-v</span></code></p>

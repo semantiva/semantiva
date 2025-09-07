@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Trace ↔ Graph Alignment" href="trace_graph_alignment.html" /><link rel="prev" title="Exceptions" href="exceptions.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Glossary - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -227,6 +228,11 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -312,6 +318,16 @@ or realization. Examples include parameter slicing, renaming, and object modelin
 </dd>
 <dt id="term-node_uuid">node_uuid<a class="headerlink" href="#term-node_uuid" title="Link to this term">¶</a></dt><dd><p>Positional, stable identifier for a node within GraphV1. Used to align inspection,
 tracing, and Viewer node details. See <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>.</p>
+</dd>
+<dt id="term-Context-Observer">Context Observer<a class="headerlink" href="#term-Context-Observer" title="Link to this term">¶</a></dt><dd><p>Mediates context writes/deletes from processors to the active context.</p>
+</dd>
+<dt id="term-Validating-Observer">Validating Observer<a class="headerlink" href="#term-Validating-Observer" title="Link to this term">¶</a></dt><dd><p>Observer that enforces declared created/suppressed keys.</p>
+</dd>
+<dt id="term-Required-keys">Required keys<a class="headerlink" href="#term-Required-keys" title="Link to this term">¶</a></dt><dd><p>Keys that must exist before the processor runs.</p>
+</dd>
+<dt id="term-Created-keys">Created keys<a class="headerlink" href="#term-Created-keys" title="Link to this term">¶</a></dt><dd><p>Keys a processor may create/update.</p>
+</dd>
+<dt id="term-Suppressed-keys">Suppressed keys<a class="headerlink" href="#term-Suppressed-keys" title="Link to this term">¶</a></dt><dd><p>Keys a processor may delete.</p>
 </dd>
 <dt id="term-Studio-Viewer">Studio Viewer<a class="headerlink" href="#term-Studio-Viewer" title="Link to this term">¶</a></dt><dd><p>Read-only UI for YAML pipeline visualization.</p>
 </dd>

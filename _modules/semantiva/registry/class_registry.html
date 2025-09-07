@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>semantiva.registry.class_registry - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=25af2a20" />
@@ -214,6 +214,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -226,6 +227,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -382,6 +388,9 @@
 <span class="sd">    supporting both standard and custom resolution strategies.</span>
 
 <span class="sd">    It maintains lists of registered file paths, modules, and pluggable resolver</span>
+<span class="sd">    functions for extensible class name resolution. When components are resolved,</span>
+<span class="sd">    they are automatically imported which triggers registration in the global</span>
+<span class="sd">    component registry via the SemantivaComponent metaclass.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_registered_paths</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -393,10 +402,25 @@
 <a class="viewcode-back" href="../../../registry_and_extensions.html#semantiva.registry.class_registry.ClassRegistry.initialize_default_modules">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize_default_modules</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize default modules at the class level&quot;&quot;&quot;</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_registered_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;semantiva.context_processors.context_processors&quot;</span><span class="p">)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_registered_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;semantiva.examples.test_utils&quot;</span><span class="p">)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_registered_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;semantiva.workflows.fitting_model&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize core Semantiva components and resolvers.</span>
+
+<span class="sd">        This method registers default modules containing core processors and data types,</span>
+<span class="sd">        and sets up built-in class and parameter resolvers. It must be called before</span>
+<span class="sd">        using the registry for component resolution.</span>
+
+<span class="sd">        The CLI automatically calls this method at startup. For programmatic usage,</span>
+<span class="sd">        call this method explicitly before using Pipeline or registry functionality.</span>
+
+<span class="sd">        Safe to call multiple times - subsequent calls are idempotent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">default_modules</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;semantiva.context_processors.context_processors&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;semantiva.examples.test_utils&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;semantiva.workflows.fitting_model&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Register and import all default modules</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">register_modules</span><span class="p">(</span><span class="n">default_modules</span><span class="p">)</span>
 
         <span class="bp">cls</span><span class="o">.</span><span class="n">_custom_resolvers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_param_resolvers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -682,12 +706,24 @@
 <a class="viewcode-back" href="../../../registry_and_extensions.html#semantiva.registry.class_registry.ClassRegistry.register_modules">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">register_modules</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">modules</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a module or a list of modules&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a module or a list of modules.</span>
+
+<span class="sd">        This method not only adds modules to the registry but also imports them</span>
+<span class="sd">        to ensure that any SemantivaComponent subclasses in the modules are</span>
+<span class="sd">        registered via their metaclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">modules</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">modules</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_registered_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">module</span><span class="p">)</span></div>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_registered_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="c1"># Import the module to trigger component registration via metaclass</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully imported and registered module: </span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to import module &#39;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ClassRegistry.get_registered_paths">

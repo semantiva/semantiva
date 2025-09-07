@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Context Processors" href="context_processors.html" /><link rel="prev" title="Data Types" href="data_types.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Data Processors - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
@@ -227,6 +228,11 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
 </div>
@@ -277,6 +283,44 @@
 <li><p><a class="reference internal" href="#semantiva.data_processors.data_processors.OperationTopologyFactory" title="semantiva.data_processors.data_processors.OperationTopologyFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.data_processors.OperationTopologyFactory</span></code></a> and slicing utilities</p></li>
 <li><p><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory" title="semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory</span></code></a>: generate collections by sweeping parameters</p></li>
 </ul>
+<p><strong>Important</strong>: All processor parameters must be explicitly declared in the <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> signature.
+<cite>**kwargs</cite> is not allowed for reliable provenance tracking. Each parameter must be individually named
+to ensure proper parameter resolution and inspection.</p>
+</section>
+<section id="parameter-validation-examples">
+<h2>Parameter Validation Examples<a class="headerlink" href="#parameter-validation-examples" title="Link to this heading">¶</a></h2>
+<section id="valid-parameter-patterns">
+<h3>Valid Parameter Patterns<a class="headerlink" href="#valid-parameter-patterns" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataOperation</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ValidProcessor</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+        <span class="c1"># ✅ All parameters explicitly declared</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">apply_transformation</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="invalid-parameter-patterns-rejected">
+<h3>Invalid Parameter Patterns (Rejected)<a class="headerlink" href="#invalid-parameter-patterns-rejected" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ This will raise ValueError during introspection</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidProcessor</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># This pattern is rejected for provenance reliability</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="exception-parametric-sweep-processors">
+<h3>Exception: Parametric Sweep Processors<a class="headerlink" href="#exception-parametric-sweep-processors" title="Link to this heading">¶</a></h3>
+<p>Only certain factory-generated processors are allowed to use <cite>**kwargs</cite>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ✅ This is allowed - generated by ParametricSweepFactory</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParametricSweepSomeProcessor</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># This works because class name contains &quot;ParametricSweep&quot;</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
@@ -360,11 +404,11 @@ graph, and <a class="reference internal" href="tracing.html"><span class="doc">T
 <span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.data_processors.data_processors" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseDataProcessor</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.context_keys">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.context_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_keys" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.context_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_keys" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -374,51 +418,51 @@ graph, and <a class="reference internal" href="tracing.html"><span class="doc">T
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.get_created_keys">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.get_created_keys" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.get_created_keys" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.output_data_type">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.output_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.output_data_type" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.output_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.output_data_type" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.signature_string">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.signature_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.signature_string" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.signature_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.signature_string" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseDataProcessor</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe.get_created_keys">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.get_created_keys" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.get_created_keys" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe.signature_string">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe.signature_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.signature_string" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe.signature_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.signature_string" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.OperationTopologyFactory">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">OperationTopologyFactory</span></span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#OperationTopologyFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.OperationTopologyFactory" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">OperationTopologyFactory</span></span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#OperationTopologyFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.OperationTopologyFactory" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.OperationTopologyFactory.create_data_operation">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_data_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_process_logic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#OperationTopologyFactory.create_data_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.OperationTopologyFactory.create_data_operation" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_data_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_process_logic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#OperationTopologyFactory.create_data_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.OperationTopologyFactory.create_data_operation" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.ParameterInfo">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">ParameterInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default=&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation='Unknown'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#ParameterInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.ParameterInfo" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">ParameterInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default=&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation='Unknown'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#ParameterInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.ParameterInfo" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="semantiva.data_processors.data_processors.ParameterInfo.annotation">
@@ -439,10 +483,10 @@ graph, and <a class="reference internal" href="tracing.html"><span class="doc">T
 
 <dl class="py class" id="module-semantiva.data_processors.parametric_sweep_factory">
 <dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.parametric_sweep_factory.</span></span><span class="sig-name descname"><span class="pre">ParametricSweepFactory</span></span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#ParametricSweepFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.parametric_sweep_factory.</span></span><span class="sig-name descname"><span class="pre">ParametricSweepFactory</span></span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#ParametricSweepFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory.create">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">independent_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametric_expressions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#ParametricSweepFactory.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory.create" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">independent_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametric_expressions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#ParametricSweepFactory.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory.create" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -507,6 +551,12 @@ graph, and <a class="reference internal" href="tracing.html"><span class="doc">T
             <ul>
 <li><a class="reference internal" href="#">Data Processors</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#parameter-validation-examples">Parameter Validation Examples</a><ul>
+<li><a class="reference internal" href="#valid-parameter-patterns">Valid Parameter Patterns</a></li>
+<li><a class="reference internal" href="#invalid-parameter-patterns-rejected">Invalid Parameter Patterns (Rejected)</a></li>
+<li><a class="reference internal" href="#exception-parametric-sweep-processors">Exception: Parametric Sweep Processors</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
 <li><a class="reference internal" href="#annotated-walkthrough">Annotated walkthrough</a></li>
 <li><a class="reference internal" href="#run-it">Run it</a></li>

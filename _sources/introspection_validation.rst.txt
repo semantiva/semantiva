@@ -135,8 +135,25 @@ Example output (truncated):
      node_index: 2
      node_uuid: "eb3e87c0-97b7-5097-8214-b53b4ba0fd6e"
      processor: "TransformData"
-     reason: "Incompatible types: expected ImageType, received TextType from previous node"
-     hint: "Check the output of node 1 or insert a converter operation."
+    reason: "Incompatible types: expected ImageType, received TextType from previous node"
+    hint: "Check the output of node 1 or insert a converter operation."
+
+Unknown / Unused Parameters
+---------------------------
+
+Semantiva validates node configuration keys against the processor signature.
+Parameters present in YAML ``parameters`` that are not accepted by the processor
+are reported during inspection under ``invalid_parameters``:
+
+.. code-block:: text
+
+   invalid_parameters:
+     - name: facotr
+       reason: unknown_parameter
+
+The GUI and CLI can highlight these entries. When using ``inspect --strict``,
+the command exits non-zero if any node contains invalid parameters. During
+execution, invalid configuration causes a validation error before running.
 
 Tips
 ----
@@ -144,6 +161,22 @@ Tips
 * Use ``--extended`` to include identities and port/type summaries for faster debugging.
 * If resolving classes from your own packages, ensure they are importable (installed in the environment).
 * Increase verbosity with ``-v`` to see more details during inspection (see :doc:`logger`).
+
+Component Documentation in Introspection
+-----------------------------------------
+
+Semantiva components (subclasses of :class:`~semantiva.core.semantiva_component._SemantivaComponent`) 
+automatically include their class docstrings in introspection metadata. Docstrings are extracted using 
+``inspect.getdoc()`` and appear in:
+
+* **Component metadata** - accessible via ``get_metadata()["docstring"]``
+* **Semantic identity** - formatted in ``semantic_id()`` output for debugging and LLM queries  
+* **Pipeline inspection** - included in both summary and extended reports
+* **Tracing and orchestration** - used for channel identification in transport systems
+
+**Best Practice**: Keep component docstrings lean and concise (one-liner preferred) since they become 
+part of the semantic identity used throughout the pipeline introspection system. Detailed documentation 
+should be placed in dedicated RST files.
 
 .. _spec-phase-vs-runtime-vs-execution:
 
