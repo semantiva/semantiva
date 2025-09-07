@@ -129,7 +129,17 @@ class ClassRegistry:
 
     @classmethod
     def initialize_default_modules(cls) -> None:
-        """Initialize default modules at the class level"""
+        """Initialize core Semantiva components and resolvers.
+
+        This method registers default modules containing core processors and data types,
+        and sets up built-in class and parameter resolvers. It must be called before
+        using the registry for component resolution.
+
+        The CLI automatically calls this method at startup. For programmatic usage,
+        call this method explicitly before using Pipeline or registry functionality.
+
+        Safe to call multiple times - subsequent calls are idempotent.
+        """
         default_modules = [
             "semantiva.context_processors.context_processors",
             "semantiva.examples.test_utils",

@@ -556,6 +556,12 @@ def _lint(args: argparse.Namespace) -> int:
 
 
 def main(argv: List[str] | None = None) -> None:
+    # Initialize default modules at runtime to ensure core components are registered
+    # for all CLI commands, while avoiding import-time circular dependencies
+    from semantiva.registry.class_registry import ClassRegistry
+
+    ClassRegistry.initialize_default_modules()
+
     args = _parse_args(argv)
     if args.command == "run":
         code = _run(args)

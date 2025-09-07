@@ -4,6 +4,8 @@ Semantiva CLI
 =============
 
 The ``semantiva`` command lets you **inspect** and **run** pipelines from the terminal.
+All CLI commands automatically initialize core Semantiva components at startup,
+ensuring processors and data types are available for pipeline execution.
 
 Quick view
 ----------
@@ -120,6 +122,20 @@ Exit code is non-zero when any ``SVA`` error diagnostics are emitted.
 
 Common behaviors
 ----------------
+
+Component initialization
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All CLI commands (``run``, ``inspect``, ``dev lint``) automatically initialize
+core Semantiva components at startup via ``ClassRegistry.initialize_default_modules()``.
+This ensures processors and data types are registered and available for:
+
+- YAML pipeline parsing and validation
+- Class resolution and instantiation  
+- Contract validation and linting
+
+For programmatic usage outside the CLI, you must call this initialization explicitly.
+See :doc:`registry_and_extensions` for details.
 
 Exit codes
 ~~~~~~~~~~
