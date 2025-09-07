@@ -41,7 +41,6 @@ def test_stateless_contracts_detect_bad_classes() -> None:
         def output_data_type(cls):
             return NoDataType
 
-
     class BadDataSink:
         """Example of BAD implementation: not stateless (plain class)"""
 
@@ -59,7 +58,6 @@ def test_stateless_contracts_detect_bad_classes() -> None:
         @classmethod
         def input_data_type(cls):
             return NoDataType
-
 
     class BadPayloadSource:
         """Example of BAD implementation: not stateless (plain class)"""
@@ -83,7 +81,6 @@ def test_stateless_contracts_detect_bad_classes() -> None:
         def _injected_context_keys(cls):
             return []
 
-
     class BadPayloadSink:
         """Example of BAD implementation: not stateless (plain class)"""
 
@@ -95,15 +92,21 @@ def test_stateless_contracts_detect_bad_classes() -> None:
                 "component_type": "PayloadSink",
             }
 
-        def _send_payload(self, payload):  # Missing @classmethod - should trigger SVA011
+        def _send_payload(
+            self, payload
+        ):  # Missing @classmethod - should trigger SVA011
             pass
 
         @classmethod
         def input_data_type(cls):
             return NoDataType
 
-    diags = validate_components([BadDataSource, BadDataSink, BadPayloadSource, BadPayloadSink])
+    diags = validate_components(
+        [BadDataSource, BadDataSink, BadPayloadSource, BadPayloadSink]
+    )
     codes = {d.code for d in diags}
 
     # Expect the specific stateless-related errors
-    assert "SVA005" in codes or "SVA009" in codes or "SVA007" in codes or "SVA011" in codes
+    assert (
+        "SVA005" in codes or "SVA009" in codes or "SVA007" in codes or "SVA011" in codes
+    )
