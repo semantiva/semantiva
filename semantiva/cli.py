@@ -19,23 +19,12 @@ import argparse
 import sys
 import time
 from pathlib import Path
-from typing import Any, List, NoReturn
+from typing import Any, Dict, List, NoReturn
 import importlib
 
 import yaml
 
-from semantiva.context_processors import ContextType
-from semantiva.data_types import NoDataType
 from semantiva.logger import Logger
-from semantiva.registry import load_extensions
-from semantiva.inspection import (
-    build_pipeline_inspection,
-    extended_report,
-    summary_report,
-    validate_pipeline,
-)
-from semantiva.pipeline import Pipeline, Payload
-from semantiva.trace.drivers.jsonl import JSONLTrace
 
 # Exit code constants
 EXIT_SUCCESS = 0
@@ -203,14 +192,87 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
     )
     inspect_p.add_argument("--version", action="version", version=_get_version())
 
+    # Developer commands
+    dev_p = sub.add_parser(
+        "dev",
+        help="Developer tools",
+        description=(
+            "Developer-focused commands for Semantiva. Use 'semantiva dev lint' "
+            "to run static contract checks on components."
+        ),
+    )
+    dev_sub = dev_p.add_subparsers(dest="dev_command")
+
+    lint_p = dev_sub.add_parser(
+        "lint",
+        help="Lint Semantiva components against design contracts",
+        description="""
+Run static contract checks for Semantiva components.
+
+The lint command discovers components from modules, paths, extensions, or pipeline YAML
+files and validates them against Semantiva's contract rules. These ensure components
+follow proper design patterns, have correct method signatures and documentation, and
+maintain compatibility across the Semantiva ecosystem.
+
+Use --debug for detailed information about which rules are checked for each component.
+        """.strip(),
+    )
+    lint_p.add_argument(
+        "--modules",
+        nargs="*",
+        default=[],
+        help="Python modules to import and validate (e.g., 'my_extension')",
+    )
+    lint_p.add_argument(
+        "--paths",
+        nargs="*",
+        default=[],
+        help="File system paths to scan for Python components",
+    )
+    lint_p.add_argument(
+        "--extensions",
+        nargs="*",
+        default=[],
+        help="Semantiva extension names to load and validate",
+    )
+    lint_p.add_argument(
+        "--yaml",
+        nargs="*",
+        default=[],
+        help="Pipeline YAML files to load (discovers and validates their components)",
+    )
+    lint_p.add_argument(
+        "--export-contracts",
+        default=None,
+        help="Export validation rules documentation to specified Markdown file",
+    )
+    lint_p.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show detailed validation information: component types, applicable rules, and individual check results",
+    )
+    lint_p.add_argument("--version", action="version", version=_get_version())
+
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_usage(sys.stderr)
+        raise SystemExit(EXIT_CLI_ERROR)
+    if args.command == "dev" and getattr(args, "dev_command", None) is None:
+        dev_p.print_usage(sys.stderr)
         raise SystemExit(EXIT_CLI_ERROR)
     return args
 
 
 def _run(args: argparse.Namespace) -> int:
+    # Lazy imports to avoid heavy module initialization on `semantiva` import
+    # Import pipeline first to avoid circular-init issues in default module discovery
+    from semantiva.pipeline import Pipeline, Payload
+    from semantiva.context_processors import ContextType
+    from semantiva.data_types import NoDataType
+    from semantiva.inspection import build_pipeline_inspection, validate_pipeline
+    from semantiva.registry import load_extensions
+    from semantiva.trace.drivers.jsonl import JSONLTrace
+
     logger = _configure_logger(args.verbose, args.quiet)
 
     config = _load_yaml(Path(args.pipeline))
@@ -319,6 +381,17 @@ def _run(args: argparse.Namespace) -> int:
 
 
 def _inspect(args: argparse.Namespace) -> int:
+    # Lazy imports to avoid heavy module initialization on `semantiva` import
+    # Import pipeline first to avoid circular-init issues when builder pulls nodes
+    from semantiva.pipeline import Pipeline as _PipelineInit  # noqa: F401
+    from semantiva.registry import load_extensions
+    from semantiva.inspection import (
+        build_pipeline_inspection,
+        extended_report,
+        summary_report,
+        validate_pipeline,
+    )
+
     _configure_logger(args.verbose, args.quiet)
 
     config = _load_yaml(Path(args.pipeline))
@@ -390,12 +463,111 @@ def _inspect(args: argparse.Namespace) -> int:
     return 1 if strict_fail else EXIT_SUCCESS
 
 
+def _lint(args: argparse.Namespace) -> int:
+    # Import locally; this is a developer-only command
+    from semantiva.contracts.expectations import (
+        discover_from_extensions,
+        discover_from_modules,
+        discover_from_paths,
+        discover_from_pipeline_yaml,
+        discover_from_registry,
+        export_contract_catalog_markdown,
+        validate_components,
+    )
+
+    # Logger is already imported at module level
+    logger = Logger()
+
+    # Set debug level if requested
+    if args.debug:
+        logger.set_verbose_level("DEBUG")
+
+    classes: List[type] = []
+    if args.modules:
+        classes += discover_from_modules(args.modules)
+    if args.paths:
+        classes += discover_from_paths(args.paths)
+    if args.extensions:
+        classes += discover_from_extensions(args.extensions)
+    if args.yaml:
+        classes += discover_from_pipeline_yaml(args.yaml)
+    if not classes:
+        classes = discover_from_registry()
+
+    uniq = {f"{c.__module__}.{c.__qualname__}": c for c in classes}.values()
+
+    # Log the components being tested
+    component_names = [f"{c.__module__}.{c.__qualname__}" for c in uniq]
+    logger.info(f"Testing {len(component_names)} components")
+    for comp_name in sorted(component_names):
+        logger.info(f"  - {comp_name}")
+
+    # Check if debug mode is enabled
+    debug_mode = args.debug
+    diags = validate_components(uniq, debug_mode=debug_mode)
+
+    by_comp: Dict[str, List[Any]] = {}
+    for d in diags:
+        by_comp.setdefault(d.component, []).append(d)
+
+    # Log component test results
+    if not diags:
+        logger.info("All components passed validation ✓")
+    else:
+        # Log summary
+        error_count = sum(1 for d in diags if d.severity == "error")
+        warning_count = sum(1 for d in diags if d.severity == "warning")
+        passed_components = set(component_names) - set(by_comp.keys())
+
+        logger.info(
+            f"Validation complete: {len(passed_components)} passed, {len(by_comp)} with issues"
+        )
+        if error_count > 0:
+            logger.info(f"  - {error_count} errors found")
+        if warning_count > 0:
+            logger.info(f"  - {warning_count} warnings found")
+
+        # Log passed components
+        for comp in sorted(passed_components):
+            logger.info(f"  ✓ {comp}")
+
+        # Log failed components
+        for comp in sorted(by_comp.keys()):
+            error_diags = [d for d in by_comp[comp] if d.severity == "error"]
+            warning_diags = [d for d in by_comp[comp] if d.severity == "warning"]
+            if error_diags:
+                logger.info(f"  ✗ {comp} ({len(error_diags)} errors)")
+            elif warning_diags:
+                logger.info(f"  ⚠ {comp} ({len(warning_diags)} warnings)")
+
+    # Print detailed diagnostic information
+    for comp, ds in sorted(by_comp.items()):
+        print(f"\n{comp}")
+        for d in ds:
+            loc = f"{d.location[0]}:{d.location[1]}" if d.location else "<unknown>"
+            print(f"  {d.severity.upper()} {d.code} @ {loc}")
+            print(f"    {d.message}")
+
+    if args.export_contracts:
+        export_contract_catalog_markdown(args.export_contracts)
+        print(f"\nWrote contract catalog to: {args.export_contracts}")
+
+    return EXIT_SUCCESS if not any(d.severity == "error" for d in diags) else 1
+
+
 def main(argv: List[str] | None = None) -> None:
     args = _parse_args(argv)
     if args.command == "run":
         code = _run(args)
-    else:
+    elif args.command == "inspect":
         code = _inspect(args)
+    elif args.command == "dev":
+        if args.dev_command == "lint":
+            code = _lint(args)
+        else:
+            code = EXIT_CLI_ERROR
+    else:
+        code = EXIT_CLI_ERROR
     sys.exit(code)
 
 

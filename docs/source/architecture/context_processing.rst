@@ -14,6 +14,35 @@ Key Classes
 * ``semantiva.context_processors.context_observer._ValidatingContextObserver`` — enforces allowed created/suppressed keys.
 * Nodes wire observers in ``semantiva.pipeline.nodes.nodes``.
 
+Observer Pattern Details
+------------------------
+
+The context observer pattern ensures safe, validated context mutations:
+
+**Why Observer Pattern?**
+
+* **Validation**: All context updates are checked against declared keys
+* **Abstraction**: Processors don't need to know about context implementation details  
+* **Flexibility**: Same processor works with single contexts, collections, or ChainMaps
+* **Debugging**: All mutations are logged and traceable
+
+**Observer Types**
+
+* ``_ContextObserver`` — base implementation for context routing
+* ``_ValidatingContextObserver`` — adds key validation against processor declarations
+* Framework automatically chooses the appropriate observer based on processor metadata
+
+**Internal API Warning**
+
+``_ContextObserver`` classes are **framework internals**. Users should never:
+
+* Instantiate observers directly
+* Pass observers to processors manually  
+* Access observer internals in application code
+
+Observers are managed automatically by pipeline nodes. Direct usage should be
+limited to framework development and extension testing.
+
 Lifecycle
 ---------
 1. Node builds a :term:`GraphV1`, pulls :term:`node_uuid`.
@@ -23,6 +52,13 @@ Lifecycle
    * ``suppressed_keys`` ← ``processor.get_suppressed_keys()``
 4. Node calls ``processor.operate_context(context=context, context_observer=observer, **params)``.
 5. Processor calls ``_notify_context_update/delete``; observer validates and writes.
+6. Observer updates the **active context** (the original context passed to the node).
+
+.. note::
+   
+   **Testing Implication**: In tests using observers directly, check 
+   ``observer.observer_context.get_value(key)`` not ``original_context.get_value(key)``.
+   The observer maintains its own context copy for validation purposes.
 
 Parameter Resolution
 --------------------

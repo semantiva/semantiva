@@ -11,6 +11,37 @@ observer via ``_notify_context_update(key, value)`` and ``_notify_context_deleti
 **Important**: All parameters must be explicitly declared in the ``_process_logic`` signature.
 `**kwargs` is not allowed for reliable provenance tracking.
 
+Context Observer Pattern
+------------------------
+
+ContextProcessors use an **observer pattern** for context updates:
+
+* **Processors**: Call ``_notify_context_update()`` to request context changes
+* **Observers**: Handle the actual context mutations and validation
+* **Nodes**: Create and manage observers automatically
+
+**For Users**: You should never instantiate ``_ContextObserver`` directly. The framework
+handles this through pipeline nodes.
+
+.. code-block:: python
+
+   class MyContextProcessor(ContextProcessor):
+       def _process_logic(self, *, input_value: float) -> None:
+           # ✅ Correct: Use the notification method
+           self._notify_context_update("result", input_value * 2)
+           
+           # ❌ Wrong: Never access context directly
+           # context["result"] = input_value * 2
+
+Observer Lifecycle
+~~~~~~~~~~~~~~~~~~
+
+1. **Node Creation**: Pipeline nodes create ``_ValidatingContextObserver`` with declared keys
+2. **Validation Setup**: Observer configured with ``get_created_keys()`` and ``get_suppressed_keys()``
+3. **Processor Execution**: Processor calls ``_notify_context_update()``
+4. **Observer Validation**: Observer validates key is allowed and performs the update
+5. **Context Updated**: Changes are written to the active context
+
 Parameter Validation Examples
 -----------------------------
 
@@ -123,6 +154,75 @@ also participate in validation:
 
 * ``rename:a:b`` — requires ``a``, creates ``b``, suppresses ``a``.
 * ``delete:k`` — suppresses ``k``.
+
+Testing Context Processors
+---------------------------
+
+**Recommended Approach**: Use pipeline nodes for testing, not direct processor instantiation.
+
+.. code-block:: python
+
+   import pytest
+   from semantiva.pipeline.pipeline import Pipeline
+   from semantiva.pipeline.payload import Payload
+   from semantiva.context_processors.context_types import ContextType
+
+   def test_my_context_processor():
+       """Test using pipeline infrastructure (recommended)."""
+       config = {
+           "pipeline": {
+               "nodes": [
+                   {
+                       "processor": "MyContextProcessor",
+                       "parameters": {"input_value": 5.0}
+                   }
+               ]
+           }
+       }
+       
+       pipeline = Pipeline.from_dict(config)
+       initial_payload = Payload(data=None, context=ContextType())
+       result_payload = pipeline.process(initial_payload)
+       
+       # Check results in the final context
+       assert result_payload.context.get_value("result") == 10.0
+
+**Alternative for Unit Tests**: If you must test processors directly, use this pattern:
+
+.. code-block:: python
+
+   def test_context_processor_direct():
+       """Direct testing (use sparingly)."""
+       from semantiva.context_processors.context_observer import _ContextObserver
+       
+       processor = MyContextProcessor()
+       context = ContextType()
+       observer = _ContextObserver()
+       
+       # Execute processor
+       processor.operate_context(
+           context=context,
+           context_observer=observer,
+           input_value=5.0
+       )
+       
+       # ⚠️ Important: Check observer's context, not original context
+       result = observer.observer_context.get_value("result")
+       assert result == 10.0
+
+.. warning::
+   
+   **Do not instantiate** ``_ContextObserver`` in production code or regular tests.
+   Context observers are **framework internals** managed by pipeline nodes.
+   
+   Direct observer usage should be limited to:
+   
+   * Extension development and testing
+   * Framework debugging
+   * Advanced integration scenarios
+   
+   For most testing needs, use pipeline-based tests which provide better integration
+   coverage and follow the intended usage patterns.
 
 Autodoc
 -------

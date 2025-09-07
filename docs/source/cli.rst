@@ -13,6 +13,7 @@ Quick view
    semantiva --help
    semantiva run <pipeline.yaml> [--dry-run] [--validate] [--set key=value ...] [--context key=value ...] [--trace-*] [-v|--verbose] [-q|--quiet]
    semantiva inspect <pipeline.yaml> [--extended] [-v|--verbose] [-q|--quiet]
+   semantiva dev lint [--modules pkg ...] [--paths path ...] [--extensions ext ...] [--yaml file.yaml ...]
 
 Subcommands
 -----------
@@ -93,6 +94,29 @@ Inspection degrades gracefully for malformed configs and prints validation warni
 
 If any node contains configuration parameters that are not accepted by its processor,
 the command will exit non-zero and list the offending parameters.
+
+semantiva dev lint
+~~~~~~~~~~~~~~~~~~
+
+Run contract checks against discovered components. Use optional discovery
+flags to import modules, scan paths, or load pipeline YAML files.
+
+**Usage**
+
+.. code-block:: bash
+
+   semantiva dev lint [--modules pkg ...] [--paths path ...]
+                      [--extensions ext ...] [--yaml pipeline.yaml ...]
+
+**Options**
+
+- ``--modules``: import modules before scanning.
+- ``--paths``: scan Python files or packages for components.
+- ``--extensions``: load Semantiva extension entry points.
+- ``--yaml``: load pipeline YAMLs (ensures extensions are loaded).
+- ``--export-contracts``: write the rule catalog to a Markdown file.
+
+Exit code is non-zero when any ``SVA`` error diagnostics are emitted.
 
 Common behaviors
 ----------------
@@ -210,5 +234,4 @@ FAQ
 **Q:** My trace file is empty  
 **A:** Re-run with ``--trace-driver jsonl --trace-output <dir>`` and
 check :doc:`tracing` for detail flags and file naming.
-
 
