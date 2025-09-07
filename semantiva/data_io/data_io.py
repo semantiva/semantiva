@@ -59,7 +59,7 @@ class DataSource(_SemantivaComponent):
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
 
-        excluded_parameters = ["self", "data"]
+        excluded_parameters = ["cls", "data"]
 
         annotated_parameter_list = [
             f"{param_name}: {param_type}"
@@ -106,7 +106,7 @@ class PayloadSource(_SemantivaComponent):
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
 
-        excluded_parameters = ["self", "data"]
+        excluded_parameters = ["cls", "data"]
 
         annotated_parameter_list = [
             f"{param_name}: {param_type}"
@@ -132,8 +132,9 @@ class PayloadSource(_SemantivaComponent):
 
         return component_metadata
 
+    @classmethod
     @abstractmethod
-    def _get_payload(self, *args, **kwargs) -> Payload:
+    def _get_payload(cls, *args, **kwargs) -> Payload:
         """
         Abstract method to implement payload retrieval logic.
 
@@ -146,7 +147,8 @@ class PayloadSource(_SemantivaComponent):
         """
         ...
 
-    def get_payload(self, *args, **kwargs) -> Payload:
+    @classmethod
+    def get_payload(cls, *args, **kwargs) -> Payload:
         """
         Retrieve a payload by invoking the `_get_payload` method.
 
@@ -157,11 +159,11 @@ class PayloadSource(_SemantivaComponent):
         Returns:
             Payload: The retrieved payload containing data and context.
         """
-        return self._get_payload(*args, **kwargs)
+        return cls._get_payload(*args, **kwargs)
 
     @classmethod
     @abstractmethod
-    def _injected_context_keys(self) -> List[str]:
+    def _injected_context_keys(cls) -> List[str]:
         """
         Return the keys of the context that are injected by the source.
 
@@ -201,8 +203,9 @@ class DataSink(_SemantivaComponent, Generic[T]):
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__(logger=logger)
 
+    @classmethod
     @abstractmethod
-    def _send_data(self, data: T, *args, **kwargs) -> None:
+    def _send_data(cls, data: T, *args, **kwargs) -> None:
         """
         Abstract method to implement data transmission logic.
 
@@ -219,7 +222,7 @@ class DataSink(_SemantivaComponent, Generic[T]):
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
 
-        excluded_parameters = ["self", "data"]
+        excluded_parameters = ["cls", "data"]
 
         annotated_parameter_list = [
             f"{param_name}: {param_type}"
@@ -244,7 +247,8 @@ class DataSink(_SemantivaComponent, Generic[T]):
 
         return component_metadata
 
-    def send_data(self, data: T, *args, **kwargs) -> None:
+    @classmethod
+    def send_data(cls, data: T, *args, **kwargs) -> None:
         """
         Send data by invoking the `_send_data` method.
 
@@ -256,7 +260,7 @@ class DataSink(_SemantivaComponent, Generic[T]):
         Returns:
             None
         """
-        return self._send_data(data, *args, **kwargs)
+        return cls._send_data(data, *args, **kwargs)
 
     @classmethod
     @abstractmethod
@@ -279,8 +283,9 @@ class PayloadSink(_SemantivaComponent, Generic[T]):
     def __init__(self, logger: Optional[Logger] = None):
         super().__init__(logger=logger)
 
+    @classmethod
     @abstractmethod
-    def _send_payload(self, payload: Payload, *args, **kwargs):
+    def _send_payload(cls, payload: Payload, *args, **kwargs):
         """
         Abstract method to implement payload consumption logic.
 
@@ -294,7 +299,8 @@ class PayloadSink(_SemantivaComponent, Generic[T]):
         """
         pass
 
-    def send_payload(self, payload: Payload, *args, **kwargs) -> None:
+    @classmethod
+    def send_payload(cls, payload: Payload, *args, **kwargs) -> None:
         """
         Consume the provided payload by invoking the `_send_payload` method.
 
@@ -306,11 +312,11 @@ class PayloadSink(_SemantivaComponent, Generic[T]):
         Returns:
             None
         """
-        self._send_payload(payload, *args, **kwargs)
+        cls._send_payload(payload, *args, **kwargs)
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
-        excluded_parameters = ["self", "payload"]
+        excluded_parameters = ["cls", "payload"]
 
         annotated_parameter_list = [
             f"{param_name}: {param_type}"

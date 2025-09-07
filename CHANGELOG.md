@@ -41,15 +41,13 @@ Here is the updated changelog with the missing items included and the requested 
   - Added package `registry` to gather plugin and class/module registry.
   - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
   - Pluggable class name resolvers in `ClassRegistry` with built-in support for `slicer:` YAML prefixes.
-  - Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in
-      support for a ``model:`` prefix to instantiate fitting models from YAML
+  - Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in support for a ``model:`` prefix to instantiate fitting models from YAML
 - Comprehensive tracing documentation covering CLI options, record schema, detail levels, examples, and troubleshooting
 - Documented Studio Viewer quick start, modes, export, trace inspection anchors, limitations, and troubleshooting
   - Documentation: added model fitting tutorial, parametric sweep walkthrough, and example run instructions
-- ContextProcessor now supports observer-mediated, stateless processing with
-  runtime parameter introspection
-- `ModelFittingContextProcessor.with_context_keyword()` factory binds output
-  keys for stateless model fitting
+- ContextProcessor now supports observer-mediated, stateless processing with runtime parameter introspection
+- `ModelFittingContextProcessor.with_context_keyword()` factory binds output keys for stateless model fitting
+- Shared contract validator with `semantiva dev lint` CLI, Jupyter magic, and pytests for enforcing component and node metadata rules
 - **Flexible Parameter Mapping for ModelFittingContextProcessor**: Added `_model_fitting_processor_factory` to enable custom parameter names and nested path extraction
   - Supports both single dictionaries and lists of dictionaries (e.g., from slicer operations)
   - Enables dot notation for nested data access (e.g., `"gaussian_fit_parameters.std_dev_x"`)
