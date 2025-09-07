@@ -1,12 +1,85 @@
 Registry & Extensions
 =====================
 
-Semantiva discovers and resolves processors via a registry that supports
-**class resolvers** and **parameter resolvers**. This page shows how to extend
-Semantiva with custom types and operations and how the registry locates them.
+Semantiva's extensibility is built on a **component registry system** that discovers,
+validates, and resolves processors and data types at runtime. This architecture enables
+seamless integration of custom extensions while maintaining type safety and performance.
+
+**Why Component Registration Matters**
+
+The registry system solves fundamental challenges in extensible data processing frameworks:
+
+* **Dynamic Discovery**: Automatically locate and load processors from installed packages
+* **Type Safety**: Validate component contracts before pipeline execution  
+* **Lazy Loading**: Defer expensive imports until components are actually needed
+* **Dependency Resolution**: Handle complex circular dependencies between framework modules
+* **Extension Isolation**: Prevent conflicts between different extension packages
+
+**Benefits for Users**
+
+* **Zero Configuration**: CLI automatically registers core components—no setup required
+* **YAML Simplicity**: Reference processors by name without importing Python modules
+* **Modular Design**: Install only the extensions you need for your domain
+* **Development Agility**: Test custom processors alongside built-in components seamlessly
+
+**Benefits for Extension Developers**
+
+* **Standard Integration**: Follow established patterns for processor registration
+* **Conflict Avoidance**: Registry prevents naming collisions and import-time side effects
+* **Testing Support**: Clear initialization patterns for unit and integration tests
+* **Documentation**: Automatic discovery enables introspection and documentation generation
+
+Component Registration & Initialization
+----------------------------------------
+
+Semantiva provides multiple ways to register components:
+
+**1. Automatic CLI Initialization**
+
+When using the ``semantiva`` CLI, core components are automatically registered at startup:
+
+.. code-block:: bash
+
+   semantiva run pipeline.yaml  # Core components auto-registered
+   semantiva inspect pipeline.yaml  # Core components auto-registered
+
+This happens through ``ClassRegistry.initialize_default_modules()`` called in the CLI's main() function.
+
+**2. Programmatic Registration**
+
+For programmatic usage, you must explicitly initialize components:
+
+.. code-block:: python
+
+   from semantiva.registry.class_registry import ClassRegistry
+   
+   # Initialize core Semantiva components (required for programmatic usage)
+   ClassRegistry.initialize_default_modules()
+   
+   # Optional: load additional extensions
+   from semantiva.registry.plugin_registry import load_extensions
+   load_extensions()  # discover and register installed Semantiva extensions
+
+   # Optional: manual registration pattern (example)
+   # from mypkg.bio import DNASequence, GCContentOperation
+   # ClassRegistry.register_datatype(DNASequence)
+   # ClassRegistry.register_processor(GCContentOperation)
+
+**3. Import-time vs Runtime Initialization**
+
+.. important::
+
+   Component registration happens at **runtime**, not during package import.
+   This prevents circular import issues while ensuring components are available
+   when needed. Always call ``initialize_default_modules()`` before using
+   the registry in programmatic contexts.
 
 Extension Quickstart
 --------------------
+
+Semantiva discovers and resolves processors via a registry that supports
+**class resolvers** and **parameter resolvers**. This section demonstrates
+how to extend Semantiva with custom types and operations.
 
 This example adds a domain-specific ``DataType`` and a ``DataOperation`` that
 computes GC content for DNA sequences.
@@ -35,8 +108,12 @@ Programmatic usage (note the :term:`Payload` return):
 
 .. code-block:: python
 
+   from semantiva.registry.class_registry import ClassRegistry
    from semantiva.pipeline import Pipeline
    from mypkg.bio import DNASequence, GCContentOperation
+
+   # Initialize core components (required for programmatic usage)
+   ClassRegistry.initialize_default_modules()
 
    p = Pipeline([GCContentOperation()])
    result = p.process()  # -> :term:`Payload`
@@ -161,12 +238,16 @@ Pipeline-based testing:
 .. code-block:: python
 
    import pytest
+   from semantiva.registry.class_registry import ClassRegistry
    from semantiva.pipeline.pipeline import Pipeline
    from semantiva.pipeline.payload import Payload
    from semantiva.context_processors.context_types import ContextType
 
    def test_my_extension_processor():
        """Test ContextProcessor through pipeline (recommended)."""
+       # Initialize core components for testing
+       ClassRegistry.initialize_default_modules()
+       
        config = {
            "extensions": ["my_extension"],
            "pipeline": {
@@ -272,8 +353,16 @@ Examples
 
 .. code-block:: python
 
-   from semantiva.registry import ClassRegistry, load_extensions
-   load_extensions()  # load entry-point based extensions if any
+   from semantiva.registry.class_registry import ClassRegistry
+   from semantiva.registry.plugin_registry import load_extensions
+   
+   # Required: initialize core components
+   ClassRegistry.initialize_default_modules()
+   
+   # Optional: load entry-point based extensions
+   load_extensions()
+   
+   # Now you can resolve classes
    cls = ClassRegistry.get_class("slicer:YourOp:YourCollection")
 
 Autodoc
