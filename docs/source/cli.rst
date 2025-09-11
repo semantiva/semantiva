@@ -118,7 +118,8 @@ flags to import modules, scan paths, or load pipeline YAML files.
 - ``--yaml``: load pipeline YAMLs (ensures extensions are loaded).
 - ``--export-contracts``: write the rule catalog to a Markdown file.
 
-Exit code is non-zero when any ``SVA`` error diagnostics are emitted.
+Exit code: ``0`` when no error diagnostics are found; ``3`` (``EXIT_CONFIG_ERROR``)
+when any ``SVA`` error diagnostics are emitted. Warnings do not affect the exit code.
 
 Common behaviors
 ----------------
@@ -147,6 +148,9 @@ Exit codes
 - **4** — runtime execution error.
 - **5** — keyboard interrupt.
 - **non-zero** — a validation or runtime error occurred; see stderr for details.
+
+For ``dev lint``, configuration/validation errors map to exit code ``3`` to
+facilitate CI enforcement. Pipelines should treat warnings as non-fatal.
 
 Error surface
 ~~~~~~~~~~~~~
@@ -250,4 +254,3 @@ FAQ
 **Q:** My trace file is empty  
 **A:** Re-run with ``--trace-driver jsonl --trace-output <dir>`` and
 check :doc:`tracing` for detail flags and file naming.
-
