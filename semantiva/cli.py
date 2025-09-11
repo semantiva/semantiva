@@ -361,9 +361,28 @@ def _run(args: argparse.Namespace) -> int:
         initial_payload = (
             Payload(NoDataType(), ContextType(ctx_dict)) if ctx_dict else None
         )
-        pipeline.process(initial_payload)
+        result_payload = pipeline.process(initial_payload)
         duration = time.time() - start
-        print(f"✅ Completed in {duration:.2f}s")
+        logger.info(f"✅ Completed in {duration:.2f}s")
+        # Show final payload channels in verbose mode, each on its own line
+        try:
+            logger.info("Output data: %s", repr(result_payload.data))
+        except Exception:  # pragma: no cover - defensive
+            logger.info("Output data: <unrepresentable data>")
+        try:
+            ctx = result_payload.context.to_dict()
+            lines = ["Output context:"]
+            for k, v in ctx.items():
+                try:
+                    v_repr = repr(v)
+                except Exception:  # pragma: no cover - defensive
+                    v_repr = "<unrepresentable>"
+                # Ensure one line per key
+                v_repr = v_repr.replace("\n", " ")
+                lines.append(f"  {k}: {v_repr}")
+            logger.info("\n".join(lines))
+        except Exception:  # pragma: no cover - defensive
+            logger.info("Output context: <unrepresentable context>")
         return EXIT_SUCCESS
     except KeyboardInterrupt:
         print("Interrupted.", file=sys.stderr)
@@ -552,7 +571,12 @@ def _lint(args: argparse.Namespace) -> int:
         export_contract_catalog_markdown(args.export_contracts)
         print(f"\nWrote contract catalog to: {args.export_contracts}")
 
-    return EXIT_SUCCESS if not any(d.severity == "error" for d in diags) else 1
+    # CI integration: return configuration/validation error code on any error diagnostics
+    return (
+        EXIT_SUCCESS
+        if not any(d.severity == "error" for d in diags)
+        else EXIT_CONFIG_ERROR
+    )
 
 
 def main(argv: List[str] | None = None) -> None:
