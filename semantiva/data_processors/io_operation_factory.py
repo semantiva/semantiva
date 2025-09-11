@@ -73,6 +73,10 @@ class _IOOperationFactory:
                 source_params = [
                     p for name, p in source_sig.parameters.items() if name != "self"
                 ]
+                accepts_context = "context" in source_sig.parameters or any(
+                    p.kind is inspect.Parameter.VAR_KEYWORD
+                    for p in source_sig.parameters.values()
+                )
 
                 # Create parameter list for the new method
                 new_params = [
@@ -91,6 +95,10 @@ class _IOOperationFactory:
                 def _process_logic_method(
                     self, data: BaseDataType, **kwargs
                 ) -> BaseDataType:
+                    if accepts_context and self.context_observer is not None:
+                        kwargs.setdefault(
+                            "context", self.context_observer.observer_context
+                        )
                     data_io_instance = data_io_class()
                     loaded_data = data_io_instance.get_data(**kwargs)
                     return loaded_data
@@ -98,24 +106,25 @@ class _IOOperationFactory:
                 # Apply the exact signature
                 setattr(_process_logic_method, "__signature__", new_sig)
 
-                def get_processing_parameter_names(cls) -> List[str]:
-                    """
-                    Retrieve the names of parameters required by the `_get_data` method.
+                if hasattr(data_io_class, "get_processing_parameter_names"):
 
-                    Returns:
-                        List[str]: A list of parameter names (excluding `self` and `data`).
-                    """
-                    signature = inspect.signature(data_io_class._get_data)
-                    return [
-                        param.name
-                        for param in signature.parameters.values()
-                        if param.name not in {"self", "data"}
-                        and param.kind
-                        not in {
-                            inspect.Parameter.VAR_POSITIONAL,
-                            inspect.Parameter.VAR_KEYWORD,
-                        }
-                    ]
+                    def get_processing_parameter_names(cls) -> List[str]:
+                        return list(data_io_class.get_processing_parameter_names())
+
+                else:
+
+                    def get_processing_parameter_names(cls) -> List[str]:
+                        signature = inspect.signature(data_io_class._get_data)
+                        return [
+                            param.name
+                            for param in signature.parameters.values()
+                            if param.name not in {"self", "data"}
+                            and param.kind
+                            not in {
+                                inspect.Parameter.VAR_POSITIONAL,
+                                inspect.Parameter.VAR_KEYWORD,
+                            }
+                        ]
 
             elif issubclass(data_io_class, PayloadSource):
 

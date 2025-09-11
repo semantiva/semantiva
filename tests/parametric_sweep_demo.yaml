@@ -5,9 +5,8 @@ pipeline:
     # Parametric sweep with configuration
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 3
-        independent_vars:
-          t: [-1, 2]
+        vars:
+          t: {lo: -1, hi: 2, steps: 3}
         parametric_expressions:
           # Complex expressions using the independent variable 't'
           value: "2.0 * t"

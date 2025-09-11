@@ -20,6 +20,7 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    :caption: How-To & Workflows
 
    pipeline
+   sweeps
    graph
    registry_and_extensions
    data_types

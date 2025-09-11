@@ -12,262 +12,367 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Parametric sweep factory.
+
+This module provides a factory for creating "sweep" DataSource classes that
+produce a typed collection by iterating over one or more independent variables
+and invoking an underlying element DataSource for each combination (product)
+or element-wise (zip) combination.
+
+The factory implements:
+- numeric ranges (RangeSpec), explicit sequences (SequenceSpec), and
+    context-driven sequences (FromContext)
+- safe expression evaluation for parametric expressions via
+    :class:`semantiva.utils.safe_eval.ExpressionEvaluator` (tuples and simple
+    type conversion functions are supported)
+- automatic creation of context keys named ``{var}_values`` for downstream
+    processors
+
+This file is intentionally implementation-only: use the public
+`ParametricSweepFactory.create` call documented below to construct sweep
+sources.
+"""
+
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple, Type, Optional
+from dataclasses import dataclass
+import itertools
+import inspect
+from typing import Any, Dict, Sequence, Type, Union, Literal, cast
 
 import numpy as np
 
 from semantiva.data_io.data_io import DataSource
-from semantiva.data_processors.data_processors import DataOperation
-from semantiva.data_types import NoDataType, DataCollectionType
+from semantiva.data_types import DataCollectionType
+from semantiva.utils.safe_eval import ExpressionEvaluator, ExpressionError
+
+
+@dataclass
+class RangeSpec:
+    """Specification for a numeric range variable.
+
+    Args:
+        lo: Lower bound of the range.
+        hi: Upper bound of the range.
+        steps: Number of values to generate (must be positive).
+        scale: "linear" (default) or "log" for logarithmic spacing.
+        endpoint: Whether to include the upper bound in the generated values.
+    """
+
+    lo: float
+    hi: float
+    steps: int
+    scale: Literal["linear", "log"] = "linear"
+    endpoint: bool = True
+
+    def __post_init__(self) -> None:
+        if self.steps <= 0:
+            raise ValueError("steps must be positive")
+        if self.scale not in ("linear", "log"):
+            raise ValueError("scale must be 'linear' or 'log'")
+        if self.scale == "log" and (self.lo <= 0 or self.hi <= 0):
+            raise ValueError("log scale requires positive bounds")
+
+
+@dataclass
+class SequenceSpec:
+    """Specification for an explicit sequence variable.
+
+    Args:
+        values: Any non-empty, non-string sequence of values to be iterated.
+    """
+
+    values: Sequence[Any]
+
+    def __post_init__(self) -> None:
+        if not self.values:
+            raise ValueError("values must be non-empty")
+        if isinstance(self.values, (str, bytes)):
+            raise TypeError("values must be a non-string sequence")
+
+
+class FromContext:
+    """Sentinel specifying that a sequence should be read from the pipeline
+    context at runtime.
+
+    Use this when the sweep values are produced earlier in the pipeline and
+    stored in the context. The factory will expose the required context key
+    via processor inspection and will create a ``{var}_values`` context entry
+    containing the materialized sequence for downstream processors.
+
+    Args:
+        key: The context key name to read the sequence from.
+    """
+
+    def __init__(self, key: str) -> None:
+        self.key = key
+
+    def __repr__(self) -> str:  # pragma: no cover - trivial
+        return f"FromContext({self.key!r})"
+
+
+VarSpec = Union[RangeSpec, SequenceSpec, FromContext]
+
+__all__ = [
+    "ParametricSweepFactory",
+    "RangeSpec",
+    "SequenceSpec",
+    "FromContext",
+    "VarSpec",
+]
+
+
+def _materialize_sequences(
+    *,
+    vars: Dict[str, VarSpec],
+    params: Dict[str, Any],
+) -> tuple[Dict[str, Sequence[Any]], Dict[str, Sequence[Any]]]:
+    sequences: Dict[str, Sequence[Any]] = {}
+    created: Dict[str, Sequence[Any]] = {}
+    for var, spec in vars.items():
+        if isinstance(spec, RangeSpec):
+            if spec.scale == "linear":
+                values = np.linspace(
+                    spec.lo, spec.hi, spec.steps, endpoint=spec.endpoint
+                )
+            else:
+                if spec.endpoint:
+                    values = np.logspace(
+                        np.log10(spec.lo), np.log10(spec.hi), spec.steps
+                    )
+                else:
+                    log_range = np.log10(spec.hi) - np.log10(spec.lo)
+                    adjusted_hi = spec.lo * (
+                        10 ** (log_range * (spec.steps - 1) / spec.steps)
+                    )
+                    values = np.logspace(
+                        np.log10(spec.lo), np.log10(adjusted_hi), spec.steps
+                    )
+            seq_list = list(values)
+        elif isinstance(spec, SequenceSpec):
+            seq_list = list(spec.values)
+        elif isinstance(spec, FromContext):
+            if spec.key not in params:
+                raise ValueError(
+                    f"Context key '{spec.key}' missing for variable '{var}'"
+                )
+            value = params[spec.key]
+            if isinstance(value, (str, bytes)) or not isinstance(value, Sequence):
+                raise TypeError(
+                    f"Context key '{spec.key}' must be a non-string sequence"
+                )
+            seq_list = list(value)
+            if not seq_list:
+                raise ValueError(
+                    f"Context key '{spec.key}' must be a non-empty sequence"
+                )
+        else:  # pragma: no cover - defensive
+            raise TypeError(f"Invalid specification for variable '{var}'")
+        sequences[var] = seq_list
+        created[f"{var}_values"] = seq_list
+    return sequences, created
+
+
+def _iterate_sweep(
+    sequences: Dict[str, Sequence[Any]],
+    *,
+    mode: Literal["product", "zip"],
+    broadcast: bool,
+):
+    if not sequences:
+        return []
+    if mode == "zip":
+        seq_lengths = [len(seq) for seq in sequences.values()]
+        if broadcast:
+            max_len = max(seq_lengths)
+            expanded: Dict[str, Sequence[Any]] = {}
+            for var, seq in sequences.items():
+                if len(seq) == max_len:
+                    expanded[var] = seq
+                else:
+                    expanded[var] = [seq[i % len(seq)] for i in range(max_len)]
+            sequences = expanded
+            step_count = max_len
+        else:
+            if len(set(seq_lengths)) != 1:
+                raise ValueError(
+                    "All variable sequences must have identical lengths in zip mode"
+                )
+            step_count = seq_lengths[0]
+        for i in range(step_count):
+            yield {var: sequences[var][i] for var in sequences}
+    else:  # product
+        var_names = sorted(sequences.keys())
+        var_seqs = [sequences[v] for v in var_names]
+        for combo in itertools.product(*var_seqs):
+            yield dict(zip(var_names, combo))
 
 
 class ParametricSweepFactory:
-    """Factory for creating parametric sweep data operations.
-
-    This factory produces DataOperation classes that generate collections of data
-    by systematically varying independent parameters over specified ranges. The
-    generated operation takes a DataSource and produces a DataCollection of the
-    respective output data type.
-
-    Generated Operation Behavior:
-    ----------------------------
-    The created DataOperation class:
-    1. Takes NoDataType as input (requires no input data)
-    2. Produces a DataCollectionType containing multiple data elements
-    3. Each element is generated by calling the DataSource with different parameter values
-    4. Parameter values are computed by varying independent variables over linear ranges
-    5. Mathematical expressions can derive additional parameters from independent variables
-    6. Static parameters remain constant across all generated elements
-    7. Parameter sequences are stored in the pipeline context for downstream access
-
-    Use Cases:
-    ----------
-    - Parameter studies and sensitivity analysis
-    - Generating synthetic datasets with controlled variations
-    - Monte Carlo simulations with systematic parameter exploration
-    - Batch data generation for machine learning training sets
-
-    Context Integration:
-    -------------------
-    The generated operation automatically injects parameter sequences into the
-    pipeline context using keys formatted as "{variable_name}_values". These
-    sequences contain the actual parameter values used during generation and
-    can be accessed by subsequent pipeline operations.
-
-    Mathematical Expression Evaluation:
-    ----------------------------------
-    Parametric expressions are evaluated using Python's eval() function within
-    a controlled namespace. Expressions can reference independent variables by
-    name and use standard mathematical operations and functions.
-
-    Thread Safety:
-    --------------
-    Generated operations are thread-safe for read-only access. The factory
-    itself is stateless and thread-safe.
-
-    Example:
-    --------
-    ```python
-    # Create a sweep operation class
-    SweepOp = ParametricSweepFactory.create(
-        element_source=MyDataSource,
-        collection_output=MyDataCollection,
-        independent_vars={"t": (0.0, 1.0), "amplitude": (10, 100)},
-        parametric_expressions={"frequency": "2 * t + 1"},
-        num_steps=50,
-        static_params={"sampling_rate": 1000}
-    )
-
-    # Use in pipeline
-    operation = SweepOp()
-    result = operation.process(NoDataType())  # Returns MyDataCollection with 50 elements
-    ```
-    """
+    """Factory for creating parametric sweep data sources."""
 
     @staticmethod
     def create(
-        element_source: Type[DataSource],
+        *,
+        element: Type,
+        element_kind: Literal[
+            "DataSource", "DataOperation", "DataProbe"
+        ] = "DataSource",
         collection_output: Type[DataCollectionType],
-        independent_vars: Dict[str, Tuple[float, float]],
-        parametric_expressions: Dict[str, str],
-        num_steps: int,
-        static_params: Optional[Dict[str, Any]] = None,
-        name: Optional[str] = None,
-    ) -> Type[DataOperation]:
-        """Create a parametric sweep DataOperation class.
-
-        Produces a DataOperation subclass that generates a collection of data elements
-        by systematically varying parameters and calling the specified DataSource.
-        Each generated element represents one point in the parameter space.
-
-        Args:
-            element_source: DataSource subclass used to generate individual data elements.
-                           Called once per parameter combination with computed parameters.
-            collection_output: DataCollectionType subclass for storing generated elements.
-                              Must be compatible with element_source output type.
-            independent_vars: Dictionary mapping variable names to (min, max) ranges.
-                             Variables are varied linearly using np.linspace over num_steps.
-                             Example: {"time": (0.0, 10.0), "amplitude": (1, 100)}
-            parametric_expressions: Dictionary mapping parameter names to mathematical expressions.
-                                   Expressions are evaluated with independent variables in scope.
-                                   Example: {"frequency": "2 * time + 1", "phase": "amplitude / 10"}
-            num_steps: Number of parameter combinations to generate. Must be > 1.
-                      Determines resolution of parameter space exploration.
-            static_params: Fixed parameters passed to DataSource unchanged across all elements.
-                          Merged with computed dynamic parameters for each call.
-            name: Optional class name for generated operation. Defaults to
-                 "{element_source.__name__}ParametricSweep".
-
-        Returns:
-            DataOperation subclass configured for the specified parametric sweep.
-            The class takes NoDataType input and produces collection_output type.
-
-        Raises:
-            TypeError: If element_source is not a DataSource subclass or
-                      collection_output is not a DataCollectionType subclass.
-            ValueError: If independent_vars is empty or num_steps <= 1.
-
-        Generated Operation Characteristics:
-        -----------------------------------
-        - Input Type: NoDataType (no input data required)
-        - Output Type: Specified collection_output type
-        - Context Keys: "{variable}_values" for each independent variable
-        - Parameter Evaluation: Expressions evaluated using Python eval()
-        - Parameter Order: static_params overridden by dynamic parameters
-
-        Example Usage:
-        --------------
-        ```python
-        # Define sweep parameters
-        SweepClass = ParametricSweepFactory.create(
-            element_source=SignalDataSource,
-            collection_output=SignalCollection,
-            independent_vars={"t": (0, 1), "freq": (1, 10)},
-            parametric_expressions={"amplitude": "100 * t", "phase": "freq * 2"},
-            num_steps=20,
-            static_params={"sampling_rate": 1000}
-        )
-
-        # Use in pipeline
-        sweep_op = SweepClass()
-        signal_collection = sweep_op.process(NoDataType())
-        # Results in 20 signals with varying t, freq, amplitude, and phase
-        ```
-        """
-
+        vars: Dict[str, VarSpec],
+        parametric_expressions: Dict[str, str] | None = None,
+        static_params: Dict[str, Any] | None = None,
+        include_independent: bool = False,
+        mode: Literal["product", "zip"] = "product",
+        broadcast: bool = False,
+        name: str | None = None,
+        expression_evaluator: ExpressionEvaluator | None = None,
+    ) -> Type[DataSource]:
+        if element_kind != "DataSource":
+            raise NotImplementedError(
+                "Sweep factory currently supports element_kind='DataSource' only. "
+                "API is future-ready for DataOperation/DataProbe but not implemented in this epic."
+            )
+        element_source: Type[DataSource] = element  # type: ignore[assignment]
         if not issubclass(element_source, DataSource):
-            raise TypeError("element_source must be a DataSource subclass")
+            raise TypeError("element must be a DataSource subclass")
         if not issubclass(collection_output, DataCollectionType):
             raise TypeError("collection_output must be a DataCollectionType subclass")
-        if not independent_vars:
-            raise ValueError("independent_vars must be non-empty")
-        if num_steps <= 1:
-            raise ValueError("num_steps must be greater than 1")
+        if not vars:
+            raise ValueError("vars must be non-empty")
+        if mode not in {"product", "zip"}:
+            raise ValueError("mode must be 'product' or 'zip'")
 
-        class_name = name or f"{element_source.__name__}ParametricSweep"
+        evaluator = expression_evaluator or ExpressionEvaluator()
 
-        class ParametricSweep(DataOperation):
-            """Dynamically created parametric sweep operation.
+        compiled_exprs: Dict[str, Any] = {}
+        allowed_names = set(vars.keys())
+        for out_param, expr in (parametric_expressions or {}).items():
+            try:
+                compiled_exprs[out_param] = evaluator.compile(expr, allowed_names)
+            except ExpressionError as exc:
+                raise ValueError(
+                    f"Invalid parametric expression for '{out_param}': {exc}"
+                ) from exc
 
-            This operation generates a collection of data elements by systematically
-            varying independent parameters over specified ranges and calling the
-            configured DataSource for each parameter combination.
+        normalized_static: Dict[str, Any] = (
+            {} if static_params is None else cast(Dict[str, Any], static_params)
+        )
 
-            Operation Flow:
-            1. Generate linear sequences for each independent variable using np.linspace
-            2. Store parameter sequences in pipeline context as "{variable}_values"
-            3. For each step: evaluate expressions, merge with static params, call DataSource
-            4. Collect all generated elements into the specified collection type
+        # Parameter validation against element_source._get_data
+        source_sig = inspect.signature(element_source._get_data)
+        source_params = {n for n, p in source_sig.parameters.items() if n != "self"}
+        independent_names = set(vars.keys())
+        expr_out = set(compiled_exprs.keys())
+        static_names = set(normalized_static.keys())
+        forwarded = independent_names if include_independent else set()
+        planned = expr_out | static_names | forwarded
+        unknown = planned - source_params
+        if unknown:
+            raise TypeError(
+                f"Parametric sweep will pass parameters not accepted by the element source "
+                f"{element_source.__name__}: {sorted(unknown)}. "
+                f"Allowed params: {sorted(source_params)}"
+            )
+        missing_required = {
+            n
+            for n, p in source_sig.parameters.items()
+            if n != "self" and p.default is inspect._empty and n not in planned
+        }
+        if missing_required:
+            raise TypeError(
+                f"Element source {element_source.__name__} requires parameters not provided by sweep: {sorted(missing_required)}"
+            )
 
-            Context Updates:
-            - Injects "{variable}_values" arrays for each independent variable
-            - Arrays contain the actual parameter values used during generation
-            - Available for downstream operations and analysis
-            """
+        processed_vars = vars
 
+        class ParametricSweepSource(DataSource):
             _element_source = element_source
             _collection_output = collection_output
-            _independent_vars = independent_vars
-            _parametric_expressions = parametric_expressions
-            _num_steps = num_steps
-            _static_params = static_params or {}
+            _vars = processed_vars
+            _parametric_expressions = parametric_expressions or {}
+            _compiled_exprs = compiled_exprs
+            _static_params: Dict[str, Any] = normalized_static
+            _include_independent = include_independent
+            _mode = mode
+            _broadcast = broadcast
 
             @classmethod
-            def input_data_type(cls) -> Type[NoDataType]:
-                """Return the input data type for this operation."""
-                return NoDataType
-
-            @classmethod
-            def output_data_type(cls) -> Type[DataCollectionType]:
-                """Return the output data type for this operation."""
+            def output_data_type(cls) -> Type[DataCollectionType]:  # type: ignore[type-var]
                 return cls._collection_output
 
             @classmethod
-            def context_keys(cls):
-                """Return context keys that will be created during sweep execution.
+            def get_processing_parameter_names(cls) -> list[str]:
+                required = []
+                for spec in cls._vars.values():
+                    if isinstance(spec, FromContext):
+                        required.append(spec.key)
+                return required
 
-                Returns:
-                    List of context key names in format "{variable}_values" for
-                    each independent variable. These keys contain the parameter
-                    sequences used during data generation.
-                """
-                return [f"{var}_values" for var in cls._independent_vars]
+            @classmethod
+            def get_created_keys(cls) -> list[str]:
+                return [f"{var}_values" for var in cls._vars]
 
-            def _process_logic(
-                self, data: NoDataType, *args, **kwargs
-            ) -> DataCollectionType:
-                """Execute parametric sweep by generating parameter sequences and calling DataSource.
+            @classmethod
+            def _get_data(cls, **kwargs) -> DataCollectionType:  # type: ignore[type-var]
+                ctx = kwargs.pop("context", None)
+                sequences, created = _materialize_sequences(
+                    vars=cls._vars,
+                    params=kwargs,
+                )
+                if ctx is not None:
+                    if hasattr(ctx, "set_value"):
+                        for k, v in created.items():
+                            ctx.set_value(k, v)
+                    elif hasattr(ctx, "update"):
+                        ctx.update(created)
+                items = []
+                for sweep_args in _iterate_sweep(
+                    sequences, mode=cls._mode, broadcast=cls._broadcast
+                ):
+                    call_params = dict(cls._static_params)
+                    if cls._include_independent:
+                        call_params.update(sweep_args)
+                    for out_param, fn in cls._compiled_exprs.items():
+                        call_params[out_param] = fn(**sweep_args)
+                    elem = cls._element_source.get_data(**call_params)
+                    items.append(elem)
+                return cls._collection_output.from_list(items)
 
-                Algorithm:
-                1. Generate linear parameter sequences using np.linspace for each independent variable
-                2. Store sequences in pipeline context as "{variable}_values" arrays
-                3. Create lambda functions from parametric expressions for dynamic evaluation
-                4. For each step (0 to num_steps-1):
-                   a. Extract current parameter values from sequences
-                   b. Evaluate parametric expressions with current values
-                   c. Merge static parameters with dynamic parameters
-                   d. Call DataSource.get_data() with merged parameters
-                   e. Append generated element to collection
-                5. Return collection containing all generated elements
+        # Create proper signature for _get_data to expose FromContext parameters
+        def create_get_data_with_signature():
+            import inspect
 
-                Args:
-                    data: NoDataType input (ignored, sweep requires no input data)
+            # Collect FromContext parameter names
+            from_context_params = []
+            for spec in processed_vars.values():
+                if isinstance(spec, FromContext):
+                    from_context_params.append(spec.key)
 
-                Returns:
-                    DataCollectionType containing num_steps generated data elements
+            if from_context_params:
+                # Create signature with explicit FromContext parameters
+                params = [
+                    inspect.Parameter("cls", inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                ]
+                for param_name in from_context_params:
+                    params.append(
+                        inspect.Parameter(
+                            param_name, inspect.Parameter.POSITIONAL_OR_KEYWORD
+                        )
+                    )
+                params.append(
+                    inspect.Parameter("kwargs", inspect.Parameter.VAR_KEYWORD)
+                )
 
-                Context Side Effects:
-                    Injects "{variable}_values" arrays for each independent variable
-                    containing the actual parameter values used during generation.
-                """
-                sequences = {
-                    var: np.linspace(lo, hi, self._num_steps)
-                    for var, (lo, hi) in self._independent_vars.items()
-                }
-                for var, seq in sequences.items():
-                    self._notify_context_update(f"{var}_values", seq)
+                new_sig = inspect.Signature(params)
+                ParametricSweepSource._get_data.__func__.__signature__ = new_sig
 
-                # names of the sweep variables, e.g. "t, x, y"
-                arg_list = ", ".join(self._independent_vars.keys())
-                funcs = {
-                    name: eval(f"lambda {arg_list}: {expr}", {}, {})
-                    for name, expr in self._parametric_expressions.items()
-                }
+        # Create proper signature for _get_data to expose FromContext parameters
 
-                elements = []
-                for i in range(self._num_steps):
-                    current = {var: sequences[var][i] for var in sequences}
-                    dynamic = {name: func(**current) for name, func in funcs.items()}
-                    params = {**self._static_params, **dynamic}
-                    elements.append(self._element_source.get_data(**params))
-                return self._collection_output.from_list(elements)
+        create_get_data_with_signature()
 
-        ParametricSweep.__name__ = class_name
-        ParametricSweep.__doc__ = (
-            f"Parametric sweep data operation for {element_source.__name__} "
-            f"producing {collection_output.__name__}."
+        ParametricSweepSource.__name__ = (
+            name or f"{element_source.__name__}ParametricSweep"
         )
-
-        return ParametricSweep
+        ParametricSweepSource.__doc__ = f"Parametric sweep data source for {element_source.__name__} producing {collection_output.__name__}."
+        return ParametricSweepSource

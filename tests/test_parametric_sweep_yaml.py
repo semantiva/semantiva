@@ -22,12 +22,19 @@ from semantiva.pipeline import Pipeline, Payload
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import NoDataType
 from semantiva.examples.test_utils import FloatDataCollection
+from semantiva.registry import ClassRegistry
 
 
 @pytest.fixture
 def empty_context():
     """Pytest fixture for providing an empty context."""
     return ContextType()
+
+
+@pytest.fixture(autouse=True)
+def setup_test_utils():
+    """Register test utils module for all tests."""
+    ClassRegistry.register_modules(["semantiva.examples.test_utils"])
 
 
 def test_parametric_sweep_yaml(empty_context):
@@ -38,9 +45,8 @@ pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 5
-        independent_vars:
-          t: [0.0, 1.0]
+        vars:
+          t: {lo: 0.0, hi: 1.0, steps: 5}
         parametric_expressions:
           value: "t*2"
 """
@@ -73,10 +79,10 @@ pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 4
-        independent_vars:
-          x: [0.0, 1.0]
-          y: [2.0, 3.0]
+        vars:
+          x: {lo: 0.0, hi: 1.0, steps: 4}
+          y: {lo: 2.0, hi: 3.0, steps: 4}
+        mode: "zip"
         parametric_expressions:
           value: "x+y"
 """
@@ -110,9 +116,8 @@ pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 3
-        independent_vars:
-          t: [0.0, 2.0]
+        vars:
+          t: {lo: 0.0, hi: 2.0, steps: 3}
         parametric_expressions:
           value: "t + 10.0"
 """
@@ -139,9 +144,8 @@ pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 3
-        independent_vars:
-          t: [0.0, 1.0]
+        vars:
+          t: {lo: 0.0, hi: 1.0, steps: 3}
 """
 
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
@@ -156,24 +160,22 @@ pipeline:
     assert "t_values" in context.keys()
 
 
-def test_sweep_invalid_num_steps():
-    """Test that invalid num_steps raises appropriate error."""
+def test_sweep_invalid_vars_empty():
+    """Test that empty vars raises appropriate error."""
 
     yaml_config = """
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 1
-        independent_vars:
-          t: [0.0, 1.0]
+        vars: {}
 """
 
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
     # Should fail during pipeline creation
 
-    with pytest.raises(ValueError, match="num_steps must be an integer greater than 1"):
+    with pytest.raises(ValueError, match="vars must be a non-empty dictionary"):
         Pipeline(node_configs)
 
 
@@ -185,38 +187,37 @@ pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 3
-        independent_vars:
-          t: [0.0]  # Missing max value
+        vars:
+          t: "invalid_format"  # Not a list or dict
 """
 
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
     # Should fail during pipeline creation
 
-    with pytest.raises(ValueError, match="must have range format"):
+    with pytest.raises(ValueError, match="must be a list or dict specification"):
         Pipeline(node_configs)
 
 
 def test_sweep_missing_required_params():
-    """Test that missing required parameters falls back to standard resolution."""
+    """Test that missing required parameters raises appropriate error."""
 
     yaml_config = """
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        # Missing num_steps and independent_vars
+        # Missing vars parameter
         parametric_expressions:
           value: "42"
 """
 
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
-    # Should fail with standard class resolution error since structured processing fails
-
-    with pytest.raises(ValueError, match="not found"):
-        Pipeline(node_configs).process(Payload(NoDataType(), empty_context))
+    # Should fail when trying to resolve the sweep class without vars
+    with pytest.raises(ValueError, match="Class.*not found"):
+        pipeline = Pipeline(node_configs)
+        pipeline.process(Payload(NoDataType(), ContextType()))
 
 
 def test_complex_sweep_example(empty_context):
@@ -227,9 +228,8 @@ pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"
       parameters:
-        num_steps: 3
-        independent_vars:
-          t: [-1, 2]
+        vars:
+          t: {lo: -1, hi: 2, steps: 3}
         parametric_expressions:
           value: "50 + 5 * t + 5 * t ** 2"
 """
@@ -248,3 +248,34 @@ pipeline:
     assert "t_values" in context.keys()
     t_values = context.get_value("t_values")
     assert np.allclose(t_values, np.linspace(-1, 2, 3))  # [-1, 0.5, 2]
+
+
+def test_from_context_yaml_sequence(empty_context):
+    """Test that YAML shorthand `{ from_context: key }` is supported and works."""
+
+    # Populate context with discovered files
+    empty_context.set_value("discovered_files", ["a.txt", "b.txt"])
+
+    yaml_config = """
+pipeline:
+  nodes:
+    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+      parameters:
+        vars:
+          input_file: { from_context: discovered_files }
+        parametric_expressions:
+          value: "1.0"
+"""
+
+    node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
+
+    pipeline = Pipeline(node_configs)
+
+    payload = pipeline.process(Payload(NoDataType(), empty_context))
+    data, context = payload.data, payload.context
+
+    assert isinstance(data, FloatDataCollection)
+    # Two files -> two elements
+    assert len(data) == 2
+    # Sequence published to context
+    assert context.get_value("input_file_values") == ["a.txt", "b.txt"]
