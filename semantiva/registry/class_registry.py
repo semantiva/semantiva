@@ -92,12 +92,17 @@ from importlib import import_module
 from pathlib import Path
 import importlib.util
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, cast
+from typing import Any, Callable, Dict, List, Optional, Set, Type, Union, cast
 
 from semantiva.logger import Logger
-from semantiva.data_processors.data_processors import _BaseDataProcessor
+from semantiva.data_processors.data_processors import _BaseDataProcessor, DataOperation
 from semantiva.data_processors.data_slicer_factory import slicer
-from semantiva.data_processors.parametric_sweep_factory import ParametricSweepFactory
+from semantiva.data_processors.parametric_sweep_factory import (
+    ParametricSweepFactory,
+    RangeSpec,
+    SequenceSpec,
+    FromContext,
+)
 from semantiva.data_io.data_io import DataSource
 from semantiva.data_types.data_types import DataCollectionType
 from semantiva.context_processors.context_processors import (
@@ -284,12 +289,11 @@ class ClassRegistry:
         processor_spec = node_config.get("processor")
         parameters = node_config.get("parameters", {})
 
-        # Handle sweep: prefix with structured parameters
+        # Handle sweep: prefix with VarSpec parameters
         if (
             isinstance(processor_spec, str)
             and processor_spec.startswith("sweep:")
-            and "num_steps" in parameters
-            and "independent_vars" in parameters
+            and "vars" in parameters
         ):
 
             parts = processor_spec.split(":")
@@ -297,42 +301,73 @@ class ClassRegistry:
                 try:
                     _, source_name, collection_name = parts
 
-                    # Validate num_steps
-                    num_steps = parameters.get("num_steps")
-                    if not isinstance(num_steps, int) or num_steps <= 1:
-                        raise ValueError("num_steps must be an integer greater than 1")
+                    # VarSpec API
+                    vars_spec = parameters.get("vars", {})
+                    if not isinstance(vars_spec, dict) or not vars_spec:
+                        raise ValueError("vars must be a non-empty dictionary")
 
-                    # Validate and process independent_vars
-                    independent_vars = parameters.get("independent_vars", {})
-                    if not isinstance(independent_vars, dict) or not independent_vars:
-                        raise ValueError(
-                            "independent_vars must be a non-empty dictionary"
-                        )
-
-                    processed_vars = {}
-                    for var, range_spec in independent_vars.items():
-                        if isinstance(range_spec, list) and len(range_spec) == 2:
-                            processed_vars[var] = (
-                                float(range_spec[0]),
-                                float(range_spec[1]),
-                            )
+                    # Convert YAML vars to VarSpec objects
+                    processed_vars: Dict[
+                        str, Union[RangeSpec, SequenceSpec, FromContext]
+                    ] = {}
+                    for var, spec in vars_spec.items():
+                        if isinstance(spec, list):
+                            if len(spec) == 2 and all(
+                                isinstance(x, (int, float)) for x in spec
+                            ):
+                                # Range specification: [lo, hi] -> RangeSpec with default steps
+                                steps = parameters.get("num_steps", 10)
+                                processed_vars[var] = RangeSpec(
+                                    lo=float(spec[0]),
+                                    hi=float(spec[1]),
+                                    steps=steps,
+                                )
+                            else:
+                                # Explicit sequence -> SequenceSpec
+                                processed_vars[var] = SequenceSpec(spec)
+                        elif isinstance(spec, dict):
+                            # Support YAML shorthand for pulling a sequence from context:
+                            # vars:
+                            #   files: { from_context: discovered_files }
+                            if "from_context" in spec:
+                                key = spec["from_context"]
+                                if not isinstance(key, str):
+                                    raise ValueError(
+                                        f"from_context value for '{var}' must be a string key"
+                                    )
+                                processed_vars[var] = FromContext(key)
+                                continue
+                            # Full RangeSpec specification
+                            if "lo" in spec and "hi" in spec and "steps" in spec:
+                                processed_vars[var] = RangeSpec(
+                                    lo=float(spec["lo"]),
+                                    hi=float(spec["hi"]),
+                                    steps=int(spec["steps"]),
+                                    scale=spec.get("scale", "linear"),
+                                    endpoint=spec.get("endpoint", True),
+                                )
+                            elif "values" in spec:
+                                # SequenceSpec specification
+                                processed_vars[var] = SequenceSpec(spec["values"])
+                            else:
+                                raise ValueError(
+                                    f"Invalid var specification for '{var}': {spec}"
+                                )
                         else:
                             raise ValueError(
-                                f"Variable '{var}' must have range format [min, max]"
+                                f"Variable '{var}' must be a list or dict specification"
                             )
 
-                    # Validate optional parameters
+                    # Extract other parameters
                     parametric_expressions = parameters.get(
                         "parametric_expressions", {}
                     )
-                    if not isinstance(parametric_expressions, dict):
-                        raise ValueError("parametric_expressions must be a dictionary")
-
                     static_params = parameters.get("static_params", {})
-                    if not isinstance(static_params, dict):
-                        raise ValueError("static_params must be a dictionary")
+                    mode = parameters.get("mode", "product")
+                    broadcast = parameters.get("broadcast", False)
+                    include_independent = parameters.get("include_independent", False)
 
-                    # Resolve classes and create sweep processor
+                    # Resolve classes
                     source_cls = cls.get_class(source_name, use_resolvers=False)
                     collection_cls = cls.get_class(collection_name, use_resolvers=False)
 
@@ -343,13 +378,16 @@ class ClassRegistry:
                             f"{collection_name} is not a DataCollectionType subclass"
                         )
 
-                    sweep_class = ParametricSweepFactory.create(
+                    # Create sweep processor
+                    sweep_class: Type[DataOperation] = ParametricSweepFactory.create(
                         element_source=source_cls,
                         collection_output=collection_cls,
-                        independent_vars=processed_vars,
+                        vars=processed_vars,
                         parametric_expressions=parametric_expressions,
-                        num_steps=num_steps,
                         static_params=static_params if static_params else None,
+                        mode=mode,
+                        broadcast=broadcast,
+                        include_independent=include_independent,
                     )
 
                     return {**node_config, "processor": sweep_class, "parameters": {}}
