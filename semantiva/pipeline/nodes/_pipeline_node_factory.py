@@ -227,6 +227,9 @@ class _PipelineNodeFactory:
             name=f"{data_io_class.__name__}_DataSourceNode",
             base_cls=_DataSourceNode,
             processor=data_io_class,
+            get_created_keys=classmethod(
+                lambda cls: getattr(cls.processor, "get_created_keys", lambda: [])()
+            ),
         )
 
         return node_class(
@@ -438,7 +441,7 @@ def _pipeline_node_factory(
     #   processor: "sweep:FloatValueDataSource:FloatDataCollection"  # <- Resolver sees this
     #   parameters:                                                 # <- Resolver cannot see this
     #     num_steps: 5
-    #     independent_vars: { t: [0, 10] }
+    #     vars: { t: [0, 10] }
     #
     # PREPROCESSING SOLUTION:
     # - Operates at node configuration level (has access to full context)

@@ -4,8 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Here is the updated changelog with the missing items included and the requested rewording.
-
 ---
 
 ## [Unreleased] – TBD
@@ -28,7 +26,8 @@ Here is the updated changelog with the missing items included and the requested 
 - Enable use of data processor parameter defaults with full introspection support
 - Renamed `payload_operations` → `semantiva.pipeline` and `execution_tools` → `semantiva.execution`
 - Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`
-- **ParametricSweepFactory**: Factory for creating parametric sweep data operations with multi-dimensional parameter ranges
+- **ParametricSweepFactory**: Factory for creating parametric sweep data operations supporting multi-dimensional parameter ranges, explicit sequences and context-sourced independent variables with automatic step-count inference and optional inclusion of independent values in DataSource parameters
+  - Introduced a VarSpec-based API (RangeSpec / SequenceSpec / FromContext). Default combination mode is now "product" (Cartesian product); a "zip" mode (element-wise pairing) with optional broadcast was added.
 - New node types  
   - `_DataOperationContextInjectorProbeNode`: runs a `DataOperation`, stores its output in the pipeline context under a specified key, and forwards the original data  
   - `_ContextDataProcessorNode`: applies a `DataOperation` or `DataProbe` to a context value and writes the result back into context  
@@ -37,7 +36,7 @@ Here is the updated changelog with the missing items included and the requested 
 - Added `scripts/add_license.py` and `scripts/check_license_headers.py` for license header management
 - Expanded public API exports:
   - Major expansion of `semantiva.__init__.py` to export core classes and functions including `Pipeline`, `Payload`, `load_pipeline_from_yaml`, `PipelineInspector`, data types, processors, I/O components, and workflow utilities
-  - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
+- Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
   - Added package `registry` to gather plugin and class/module registry.
   - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
   - Pluggable class name resolvers in `ClassRegistry` with built-in support for `slicer:` YAML prefixes.
