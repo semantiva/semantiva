@@ -254,7 +254,7 @@ def test_from_context_yaml_sequence(empty_context):
     """Test that YAML shorthand `{ from_context: key }` is supported and works."""
 
     # Populate context with discovered files
-    empty_context.set_value("discovered_files", ["a.txt", "b.txt"]) 
+    empty_context.set_value("discovered_files", ["a.txt", "b.txt"])
 
     yaml_config = """
 pipeline:

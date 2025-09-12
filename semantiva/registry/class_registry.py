@@ -61,7 +61,7 @@ by varying independent parameters over specified ranges. Only the structured YAM
     processor: "sweep:DataSourceClass:CollectionClass"
     parameters:
       num_steps: <number>
-      independent_vars:
+      vars:
         var_name: [min, max]
       parametric_expressions:
         param_name: "expression"
@@ -72,7 +72,7 @@ Example:
     processor: "sweep:FloatValueDataSource:FloatDataCollection"
     parameters:
       num_steps: 5
-      independent_vars:
+      vars:
         t: [0, 10]
       parametric_expressions:
         x_0: "50 + 5 * t"
@@ -81,7 +81,7 @@ Example:
         image_size: [128, 128]
 
 The sweep processor:
-1. Creates sequences for each independent variable using np.linspace
+1. Creates sequences for each sweep variable using np.linspace
 2. Stores parameter sequences in context as `{var}_values`
 3. Evaluates expressions for each step using current parameter values
 4. Calls the data source with computed parameters to generate data elements
@@ -92,10 +92,10 @@ from importlib import import_module
 from pathlib import Path
 import importlib.util
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, Type, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Set, Union, cast
 
 from semantiva.logger import Logger
-from semantiva.data_processors.data_processors import _BaseDataProcessor, DataOperation
+from semantiva.data_processors.data_processors import _BaseDataProcessor
 from semantiva.data_processors.data_slicer_factory import slicer
 from semantiva.data_processors.parametric_sweep_factory import (
     ParametricSweepFactory,
@@ -230,7 +230,7 @@ class ClassRegistry:
         processor: "sweep:Source:Collection"     # <- Traditional resolver domain
         parameters:                              # <- Outside resolver scope
           num_steps: 5                          # <- Required for ParametricSweepFactory
-          independent_vars: { t: [0, 10] }      # <- Required for ParametricSweepFactory
+          vars: { t: [0, 10] }                  # <- Required for ParametricSweepFactory
 
         WHY NOT EXTEND RESOLVERS:
         1. Breaking Change: Would require modifying all existing resolver signatures
@@ -247,7 +247,7 @@ class ClassRegistry:
 
         PROCESSING FLOW:
         1. Check if processor matches structured sweep pattern
-        2. Validate presence of required parameters (num_steps, independent_vars)
+        2. Validate presence of required parameters (num_steps, vars)
         3. Transform parameters into ParametricSweepFactory.create() arguments
         4. Create sweep processor class using factory
         5. Return modified node config with resolved processor and empty parameters
@@ -379,11 +379,12 @@ class ClassRegistry:
                         )
 
                     # Create sweep processor
-                    sweep_class: Type[DataOperation] = ParametricSweepFactory.create(
-                        element_source=source_cls,
+                    sweep_class = ParametricSweepFactory.create(
+                        element=source_cls,
+                        element_kind="DataSource",
                         collection_output=collection_cls,
                         vars=processed_vars,
-                        parametric_expressions=parametric_expressions,
+                        parametric_expressions=parametric_expressions or None,
                         static_params=static_params if static_params else None,
                         mode=mode,
                         broadcast=broadcast,

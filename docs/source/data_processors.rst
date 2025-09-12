@@ -244,6 +244,14 @@ Traditional Parametric Sweep Example
 Annotated walkthrough
 ---------------------
 
+Slicers can wrap either a :py:class:`~semantiva.data_processors.data_processors.DataOperation`
+or a :py:class:`~semantiva.data_processors.data_processors.DataProbe`:
+
+- **Operator slicing** returns a new collection whose element type matches the
+  underlying operation.
+- **Probe slicing** leaves the collection untouched and collects probe outputs
+  into context via ``context_keyword``.
+
 This example demonstrates a parametric sweep using resolvers:
 
 1. ``sweep:FloatValueDataSource:FloatDataCollection``
