@@ -19,7 +19,7 @@ from semantiva.data_processors.parametric_sweep_factory import (
     FromContext,
 )
 from semantiva.examples.test_utils import FloatDataCollection, FloatValueDataSource
-from semantiva.pipeline.nodes._pipeline_node_factory import _PipelineNodeFactory
+from semantiva.inspection.builder import build_pipeline_inspection
 
 
 def test_required_and_created_keys() -> None:
@@ -29,6 +29,7 @@ def test_required_and_created_keys() -> None:
         vars={"v": FromContext("vals")},
         parametric_expressions={"value": "v"},
     )
-    node = _PipelineNodeFactory.create_io_node({"processor": Sweep})
-    assert node.processor.get_processing_parameter_names() == ["vals"]
-    assert node.__class__.get_created_keys() == ["v_values"]  # type: ignore[attr-defined]
+    inspection = build_pipeline_inspection([{"processor": Sweep}])
+    node_info = inspection.nodes[0]
+    assert "vals" in inspection.required_context_keys
+    assert "v_values" in node_info.created_keys
