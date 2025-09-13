@@ -274,10 +274,21 @@ def build_pipeline_inspection(
                 context_params[name] = origin_idx
                 required_params.add(name)
 
+        # Merge explicit context requirements exposed by processor
+        hook = getattr(processor.__class__, "get_context_requirements", None)
+        if callable(hook):
+            for key in hook():
+                if key not in context_params:
+                    context_params[key] = key_origin.get(key)
+                required_params.add(key)
+
         all_required_params.update(required_params)
 
         # Analyze context key creation
-        created_keys = set(node.processor.get_created_keys())
+        created_keys: set[str] = set()
+        get_ck = getattr(processor.__class__, "get_created_keys", None)
+        if callable(get_ck):
+            created_keys = set(get_ck())
 
         # Special handling for probe nodes that inject results into context
         if isinstance(node, _ProbeContextInjectorNode):

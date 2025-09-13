@@ -58,6 +58,7 @@ def test_factory_creates_processor(basic_sweep_config) -> None:
     sweep_cls = cast(Any, Sweep)
     assert sweep_cls._element_source is ParamSource
     assert sweep_cls._collection_output is FloatDataCollection
+    assert issubclass(Sweep, DataSource)
     assert sweep_cls._vars == {"t": RangeSpec(0.0, 1.0, steps=4)}
     assert sweep_cls.output_data_type() is FloatDataCollection
     assert sweep_cls.get_created_keys() == ["t_values"]
