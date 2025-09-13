@@ -208,6 +208,55 @@ def _iterate_sweep(
             yield dict(zip(var_names, combo))
 
 
+def _validate_element_source_signature(
+    *,
+    element_source: Type[DataSource],
+    vars: Dict[str, VarSpec],
+    parametric_expressions: Dict[str, str] | None,
+    static_params: Dict[str, Any] | None,
+    include_independent: bool,
+) -> None:
+    """Validate planned parameters against the element source signature."""
+    sig = inspect.signature(element_source._get_data)
+    source_params = {n for n, p in sig.parameters.items() if n != "self"}
+    independent_names = set(vars.keys())
+    expr_out = set((parametric_expressions or {}).keys())
+    static_names = set((static_params or {}).keys())
+    forwarded = independent_names if include_independent else set()
+    planned = expr_out | static_names | forwarded
+
+    unknown = planned - source_params
+    if unknown:
+        raise TypeError(
+            f"Parametric sweep will pass parameters not accepted by {element_source.__name__}: {sorted(unknown)}. "
+            f"Allowed parameters: {sorted(source_params)}"
+        )
+
+    missing_required = {
+        n
+        for n, p in sig.parameters.items()
+        if n != "self" and p.default is inspect._empty and n not in planned
+    }
+    if missing_required:
+        raise TypeError(
+            f"Element source {element_source.__name__} requires parameters not provided by sweep: {sorted(missing_required)}"
+        )
+
+
+def _compile_parametric_expressions(
+    exprs: Dict[str, str], allowed_names: set[str], evaluator: ExpressionEvaluator
+) -> Dict[str, Any]:
+    compiled: Dict[str, Any] = {}
+    for out_param, expr in exprs.items():
+        try:
+            compiled[out_param] = evaluator.compile(expr, allowed_names)
+        except ExpressionError as exc:  # pragma: no cover - error path
+            raise ValueError(
+                f"Invalid parametric expression for '{out_param}': {exc}"
+            ) from exc
+    return compiled
+
+
 class ParametricSweepFactory:
     """Factory for creating parametric sweep data sources."""
 
@@ -245,44 +294,21 @@ class ParametricSweepFactory:
 
         evaluator = expression_evaluator or ExpressionEvaluator()
 
-        compiled_exprs: Dict[str, Any] = {}
-        allowed_names = set(vars.keys())
-        for out_param, expr in (parametric_expressions or {}).items():
-            try:
-                compiled_exprs[out_param] = evaluator.compile(expr, allowed_names)
-            except ExpressionError as exc:
-                raise ValueError(
-                    f"Invalid parametric expression for '{out_param}': {exc}"
-                ) from exc
+        _validate_element_source_signature(
+            element_source=element_source,
+            vars=vars,
+            parametric_expressions=parametric_expressions,
+            static_params=static_params,
+            include_independent=include_independent,
+        )
+
+        compiled_exprs = _compile_parametric_expressions(
+            parametric_expressions or {}, set(vars.keys()), evaluator
+        )
 
         normalized_static: Dict[str, Any] = (
             {} if static_params is None else cast(Dict[str, Any], static_params)
         )
-
-        # Parameter validation against element_source._get_data
-        source_sig = inspect.signature(element_source._get_data)
-        source_params = {n for n, p in source_sig.parameters.items() if n != "self"}
-        independent_names = set(vars.keys())
-        expr_out = set(compiled_exprs.keys())
-        static_names = set(normalized_static.keys())
-        forwarded = independent_names if include_independent else set()
-        planned = expr_out | static_names | forwarded
-        unknown = planned - source_params
-        if unknown:
-            raise TypeError(
-                f"Parametric sweep will pass parameters not accepted by the element source "
-                f"{element_source.__name__}: {sorted(unknown)}. "
-                f"Allowed params: {sorted(source_params)}"
-            )
-        missing_required = {
-            n
-            for n, p in source_sig.parameters.items()
-            if n != "self" and p.default is inspect._empty and n not in planned
-        }
-        if missing_required:
-            raise TypeError(
-                f"Element source {element_source.__name__} requires parameters not provided by sweep: {sorted(missing_required)}"
-            )
 
         processed_vars = vars
 
@@ -302,12 +328,16 @@ class ParametricSweepFactory:
                 return cls._collection_output
 
             @classmethod
-            def get_processing_parameter_names(cls) -> list[str]:
+            def get_context_requirements(cls) -> list[str]:
                 required = []
                 for spec in cls._vars.values():
                     if isinstance(spec, FromContext):
                         required.append(spec.key)
                 return required
+
+            @classmethod
+            def get_processing_parameter_names(cls) -> list[str]:
+                return cls.get_context_requirements()
 
             @classmethod
             def get_created_keys(cls) -> list[str]:
