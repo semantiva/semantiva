@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `Payload(data: BaseDataType, context: ContextType)` in `semantiva.pipeline.payload`
 - **ParametricSweepFactory**: Factory for creating parametric sweep data operations supporting multi-dimensional parameter ranges, explicit sequences and context-sourced independent variables with automatic step-count inference and optional inclusion of independent values in DataSource parameters
   - Introduced a VarSpec-based API (RangeSpec / SequenceSpec / FromContext). Default combination mode is now "product" (Cartesian product); a "zip" mode (element-wise pairing) with optional broadcast was added.
+- Sweeps are now role-preserving `DataSource` classes with early element-source parameter validation and inspection hooks exposing required and created context keys.
 - New node types  
   - `_DataOperationContextInjectorProbeNode`: runs a `DataOperation`, stores its output in the pipeline context under a specified key, and forwards the original data  
   - `_ContextDataProcessorNode`: applies a `DataOperation` or `DataProbe` to a context value and writes the result back into context  

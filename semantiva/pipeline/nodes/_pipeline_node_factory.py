@@ -12,6 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Pipeline Node Factory (role-preserving with IO adapters)
+
+This module constructs pipeline nodes from registered Semantiva components while
+preserving each component's canonical role:
+
+  - DataSource/PayloadSource remain sources (no data input; they *produce* data)
+  - DataOperation remains an operation (transforms data)
+  - DataProbe remains a probe (no declared output type)
+  - DataSink/PayloadSink remain sinks (consume data; may pass through input)
+
+For orchestration uniformity, a node MAY wrap a source or sink behind a thin
+DataOperation adapter produced by `_IOOperationFactory`. This adapter pattern
+does NOT redefine the component's role: it simply gives the node a single
+execution surface (`_process_logic`) and centralizes parameter metadata and
+context notifications.
+
+Decision table (simplified):
+  * If the processor is a DataOperation or DataProbe -> use as-is
+  * If the processor is a DataSource/PayloadSource -> either:
+      - run as a source node, or
+      - wrap via `_IOOperationFactory` when a uniform operation interface
+        is required by the node/engine
+  * If the processor is a DataSink/PayloadSink -> wrap via `_IOOperationFactory`
+    so the node can call `_process_logic` and preserve pass-through semantics.
+
+Semantics preserved by adapters:
+  - Source adapters declare input type NoDataType and the underlying source's
+    output type; they forward context (if accepted) from the node's observer.
+  - Sink adapters declare input type equal to the sink's input type and return
+    the input (pass-through); payload sinks warn that context send is not
+    supported in pipelines.
+
+See: io_operation_factory._IOOperationFactory for adapter generation details.
+"""
+
 from types import new_class
 from typing import Any, Dict, Optional, Type, Union
 from semantiva.data_processors.io_operation_factory import _IOOperationFactory
@@ -51,6 +87,21 @@ def _resolve_class(class_name: Union[str, Type, None]) -> Optional[Type]:
 class _PipelineNodeFactory:
     """
     Factory class to create nodes based on the provided configuration.
+
+    This factory preserves component roles while optionally wrapping sources and
+    sinks with thin DataOperation adapters when needed for uniform execution.
+    The adapter pattern maintains semantic correctness: sources still produce data,
+    sinks still consume data, and operations still transform data. Adapters only
+    provide a consistent `_process_logic` interface for node orchestration.
+
+    Key wrapping decisions:
+    - DataSource/PayloadSource/DataSink/PayloadSink: wrap via _IOOperationFactory
+      to create uniform execution surface while preserving role semantics
+    - DataOperation/DataProbe: use directly (no adaptation needed)
+    - ContextProcessor: wrap in context-aware node types
+
+    The wrapper preserves all inspection metadata (parameter names, context
+    requirements, created keys) so `semantiva inspect` remains accurate.
     """
 
     @staticmethod
@@ -137,7 +188,10 @@ class _PipelineNodeFactory:
             _PayloadSourceNode: An instance of a dynamically created subclass of _PayloadSourceNode.
         """
 
-        # Wrap the data IO class in a DataOperation subclass
+        # Wrap the data IO class in a DataOperation subclass for uniform execution.
+        # This preserves the component's canonical role (source) while providing
+        # a consistent `_process_logic` interface that the node can call.
+        # The adapter mirrors signatures and forwards context as needed.
         processor = _IOOperationFactory.create_data_operation(data_io_class)
 
         node_class = _PipelineNodeFactory._create_class(
@@ -165,6 +219,10 @@ class _PipelineNodeFactory:
             _PayloadSinkNode: An instance of a dynamically created subclass of _PayloadSinkNode.
         """
 
+        # Wrap the data IO class in a DataOperation subclass for uniform execution.
+        # This preserves the component's canonical role (sink) while providing
+        # a consistent `_process_logic` interface. The adapter maintains pass-through
+        # semantics: data flows in, gets sent to the sink, and flows out unchanged.
         processor = _IOOperationFactory.create_data_operation(data_io_class)
 
         node_class = _PipelineNodeFactory._create_class(
@@ -192,6 +250,10 @@ class _PipelineNodeFactory:
             _DataSinkNode: An instance of a dynamically created subclass of _DataSinkNode.
         """
 
+        # Wrap the data IO class in a DataOperation subclass for uniform execution.
+        # This preserves the component's canonical role (sink) while providing
+        # a consistent `_process_logic` interface. The adapter maintains pass-through
+        # semantics: data flows in, gets sent to the sink, and flows out unchanged.
         processor = _IOOperationFactory.create_data_operation(data_io_class)
 
         node_class = _PipelineNodeFactory._create_class(
@@ -221,6 +283,10 @@ class _PipelineNodeFactory:
             _DataSinkNode: An instance of a dynamically created subclass of _DataSourceNode.
         """
 
+        # Wrap the data IO class in a DataOperation subclass for uniform execution.
+        # This preserves the component's canonical role (source) while providing
+        # a consistent `_process_logic` interface that the node can call.
+        # The adapter mirrors signatures and forwards context as needed.
         processor = _IOOperationFactory.create_data_operation(data_io_class)
 
         node_class = _PipelineNodeFactory._create_class(
@@ -440,8 +506,7 @@ def _pipeline_node_factory(
     # YAML Input:
     #   processor: "sweep:FloatValueDataSource:FloatDataCollection"  # <- Resolver sees this
     #   parameters:                                                 # <- Resolver cannot see this
-    #     num_steps: 5
-    #     vars: { t: [0, 10] }
+    #     vars: { t: { lo: 0, hi: 10, steps: 5 } }
     #
     # PREPROCESSING SOLUTION:
     # - Operates at node configuration level (has access to full context)

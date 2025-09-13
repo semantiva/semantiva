@@ -56,34 +56,32 @@ preprocessing validates sweep parameters and creates the appropriate processor c
 Parametric Sweep Resolver Usage
 ------------------------------
 The `sweep:` resolver creates parametric sweep processors that generate collections of data
-by varying independent parameters over specified ranges. Only the structured YAML format is supported:
+by varying variables declared under a ``vars`` mapping. Each variable can be a
+numeric range, an explicit sequence, or pulled from the pipeline context.
+
+Structured YAML format:
 
     processor: "sweep:DataSourceClass:CollectionClass"
     parameters:
-      num_steps: <number>
       vars:
-        var_name: [min, max]
+        t: { lo: 0.0, hi: 1.0, steps: 5 }
       parametric_expressions:
-        param_name: "expression"
-      static_params:
-        param_name: value
+        value: "t"
+      include_independent: true
 
 Example:
     processor: "sweep:FloatValueDataSource:FloatDataCollection"
     parameters:
-      num_steps: 5
       vars:
-        t: [0, 10]
+        t: { lo: 0.0, hi: 1.0, steps: 5 }
       parametric_expressions:
-        x_0: "50 + 5 * t"
-        amplitude: "100"
-      static_params:
-        image_size: [128, 128]
+        value: "t"
+      include_independent: true
 
 The sweep processor:
-1. Creates sequences for each sweep variable using np.linspace
-2. Stores parameter sequences in context as `{var}_values`
-3. Evaluates expressions for each step using current parameter values
+1. Creates sequences for each sweep variable
+2. Stores parameter sequences in context as ``{var}_values``
+3. Evaluates expressions for each step using current variable values
 4. Calls the data source with computed parameters to generate data elements
 5. Returns a collection containing all generated data elements
 """
@@ -229,8 +227,7 @@ class ClassRegistry:
 
         processor: "sweep:Source:Collection"     # <- Traditional resolver domain
         parameters:                              # <- Outside resolver scope
-          num_steps: 5                          # <- Required for ParametricSweepFactory
-          vars: { t: [0, 10] }                  # <- Required for ParametricSweepFactory
+          vars: { t: { lo: 0, hi: 10, steps: 5 } }  # <- Required for ParametricSweepFactory
 
         WHY NOT EXTEND RESOLVERS:
         1. Breaking Change: Would require modifying all existing resolver signatures
@@ -247,7 +244,7 @@ class ClassRegistry:
 
         PROCESSING FLOW:
         1. Check if processor matches structured sweep pattern
-        2. Validate presence of required parameters (num_steps, vars)
+        2. Validate presence of required parameters (vars)
         3. Transform parameters into ParametricSweepFactory.create() arguments
         4. Create sweep processor class using factory
         5. Return modified node config with resolved processor and empty parameters
@@ -316,11 +313,10 @@ class ClassRegistry:
                                 isinstance(x, (int, float)) for x in spec
                             ):
                                 # Range specification: [lo, hi] -> RangeSpec with default steps
-                                steps = parameters.get("num_steps", 10)
                                 processed_vars[var] = RangeSpec(
                                     lo=float(spec[0]),
                                     hi=float(spec[1]),
-                                    steps=steps,
+                                    steps=10,
                                 )
                             else:
                                 # Explicit sequence -> SequenceSpec
