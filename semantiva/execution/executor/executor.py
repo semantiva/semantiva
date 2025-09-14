@@ -28,33 +28,33 @@ track and compose asynchronous results uniformly.
 
 from abc import ABC, abstractmethod
 from concurrent.futures import Future
-from typing import Callable, Any
+from dataclasses import dataclass
+from typing import Callable, Any, Optional
 
 
 class SemantivaExecutor(ABC):
-    """
-    Abstract base for Semantiva task executors.
+    """Abstract base for Semantiva task executors."""
 
-    Executors decide how individual payload-processing steps are run.
-    They decouple 'what to run' (the callable + arguments) from 'how to run it'
-    (synchronously, in a thread, on a cluster, etc.).
-
-    Subclasses must implement:
-        submit(fn, *args, **kwargs) -> Future
-    """
+    @dataclass
+    class SERHooks:
+        upstream: list[str]
+        trigger: str
+        upstream_evidence: list[dict]
+        io_delta_provider: Callable[[], Any] | None
+        pre_checks: list[Any]
+        post_checks_provider: Callable[[], list[Any]] | None
+        env_pins_provider: Callable[[], dict] | None
+        redaction_policy_provider: Callable[[], dict] | None
 
     @abstractmethod
-    def submit(self, fn: Callable[..., Any], *args, **kwargs) -> Future:
-        """
-        Submit a callable for (possibly asynchronous) execution.
-
-        Args:
-            fn:   The function or callable to execute.
-            *args/**kwargs:  Arguments to pass to the function.
-
-        Returns:
-            A Future object whose .result() will yield the function's return value.
-        """
+    def submit(
+        self,
+        fn: Callable[..., Any],
+        *args,
+        ser_hooks: Optional["SemantivaExecutor.SERHooks"] = None,
+        **kwargs,
+    ) -> Future:
+        """Submit a callable for (possibly asynchronous) execution."""
         pass
 
 
@@ -84,7 +84,13 @@ class SequentialSemantivaExecutor(SemantivaExecutor):
             super().__init__()
             self.set_result(result)
 
-    def submit(self, fn: Callable[..., Any], *args, **kwargs) -> Future:
+    def submit(
+        self,
+        fn: Callable[..., Any],
+        *args,
+        ser_hooks: Optional[SemantivaExecutor.SERHooks] = None,
+        **kwargs,
+    ) -> Future:
         """
         Execute the function immediately and return a completed Future.
 

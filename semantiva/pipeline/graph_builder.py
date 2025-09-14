@@ -166,3 +166,14 @@ def compute_pipeline_id(canonical_spec: dict[str, Any]) -> str:
     """
     spec_json = json.dumps(canonical_spec, sort_keys=True, separators=(",", ":"))
     return "plid-" + hashlib.sha256(spec_json.encode("utf-8")).hexdigest()
+
+
+def compute_upstream_map(canonical_spec: dict[str, Any]) -> dict[str, list[str]]:
+    """Return mapping of node_uuid -> list of upstream node_uuids."""
+
+    mapping: dict[str, list[str]] = {
+        n["node_uuid"]: [] for n in canonical_spec.get("nodes", [])
+    }
+    for edge in canonical_spec.get("edges", []):
+        mapping.setdefault(edge["target"], []).append(edge["source"])
+    return mapping

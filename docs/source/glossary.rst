@@ -53,7 +53,7 @@ Glossary
 
    Trace Driver
      A pluggable sink that writes trace events. In 0.5.0, the built-in driver is
-     ``jsonl`` (pretty-printed JSON blocks). See :doc:`tracing`.
+     ``jsonl`` (one record per line). See :doc:`ser`.
 
    node_uuid
      Positional, stable identifier for a node within GraphV1. Used to align inspection,

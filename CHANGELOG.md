@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] – TBD
 
 ### Added
+- Replaced trace records with Step Evidence Records (SER v1) and updated JSONL driver
+- SER v1.1: CPU timing, status/error fields, rich summaries with detail flags,
+  JSON schema and legacy trace converter
 - Unknown/unused configuration parameter detection: inspection now reports
   `invalid_parameters` per node (with suggestions). Validation/execution fail
   fast with `InvalidNodeParameterError` when processors do not accept those keys.

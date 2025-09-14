@@ -12,93 +12,76 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Trace model (v1): stable event payloads and driver contract.
+"""Trace model for Step Evidence Record (SER v1.1).
 
-Includes:
-  - NodeAddress: triplet identifying a node within a specific run.
-  - NodeTraceEvent: "node" envelope payload (phase, timings, errors, optional summaries).
-  - TraceDriver: protocol for trace sinks; must implement start/node/end, flush, close.
-
-Notes for consumers:
-  - Switch on "type" and ignore unknown fields for forward compatibility.
-  - Reserved ODO fields: plan_id (None), plan_epoch (0).
-  - Orchestrator may pass ``pipeline_input`` to ``on_pipeline_start``; drivers may ignore.
+This module defines the dataclasses used by the tracing subsystem.  The legacy
+``NodeTraceEvent`` and ``NodeAddress`` envelopes have been replaced by the
+Step Evidence Record (SER), a single record emitted for each completed
+pipeline step.  Drivers switch on the ``type`` field and ignore unknown fields
+for forward compatibility.  Version ``1.1`` extends the original payload with
+CPU timing, explicit status/error fields, and optional human-friendly
+summaries for payloads and context.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, Protocol, Literal, Optional
+from typing import Any, Dict, List, Optional, Protocol, Literal
 
 from semantiva.pipeline.payload import Payload
 
 
-@dataclass(frozen=True)
-class NodeAddress:
-    """Stable address for a node event.
-
-    Attributes:
-      pipeline_run_id: Unique run identifier (e.g., "run-<uuidv7/hex>").
-      pipeline_id: Deterministic hash of canonical GraphV1 ("plid-<sha256>").
-      node_uuid: Deterministic UUIDv5 derived from the node's canonical definition.
-    """
-
-    pipeline_run_id: str
-    pipeline_id: str
-    node_uuid: str
+Result = Literal["PASS", "FAIL", "WARN"]
 
 
-@dataclass(frozen=True)
-class NodeTraceEvent:
-    """Node event payload (v1).
+@dataclass
+class Check:
+    """Result of a single check performed for a node."""
 
-    Fields mirror "node" record:
-      phase: "before" | "after" | "error".
-      address: NodeAddress triple.
-      params: Optional shallow mapping of node parameters (or None).
-      input_payload / output_payload: Optional payload snapshots (drivers may summarize).
-      error_type / error_msg: Populated on "error", else None.
-      event_time_utc: ISO8601 Zulu with millisecond precision.
-      t_wall / t_cpu: Wall/CPU seconds; None on "before".
-      plan_id / plan_epoch: Reserved for ODO; v1 sets None/0.
+    code: str
+    result: Result
+    details: Optional[Dict[str, Any]] = None
 
-    Optional output-only summaries (emitted on ``phase == 'after'``):
-      out_data_repr: Human-readable ``repr`` of output data when ``repr`` detail is enabled.
-      out_data_hash: Content fingerprint of output data when ``hash`` detail is enabled.
-      post_context_hash: Context fingerprint after node execution when ``hash`` detail is enabled.
-      post_context_repr: Human-readable key→value context string when ``repr`` and ``context`` details are both enabled.
 
-    Notes:
-      - Drivers may add summaries (hashes, reprs); consumers must ignore unknown fields.
-      - Orchestrator sets input/output payload to None for v1 minimal cost.
-    """
+@dataclass
+class UpstreamEvidence:
+    """Evidence of an upstream node's state when determining why a node ran."""
 
-    phase: Literal["before", "after", "error"]
-    address: NodeAddress
-    params: Mapping[str, Any] | None
-    input_payload: Payload | None
-    output_payload: Payload | None
-    error_type: str | None
-    error_msg: str | None
-    event_time_utc: str
-    t_wall: float | None
-    t_cpu: float | None
-    plan_id: str | None = None
-    plan_epoch: int = 0
-    # Optional output-only summaries (populated by driver, output phase only)
-    out_data_repr: str | None = None
-    out_data_hash: str | None = None
-    post_context_hash: str | None = None
-    post_context_repr: str | None = None
+    node_id: str
+    state: str
+    digest: Optional[str] = None
+
+
+@dataclass
+class IODelta:
+    """Input/output delta for a node execution."""
+
+    read: List[str]
+    created: List[str]
+    updated: List[str]
+    summaries: Dict[str, Dict[str, Any]]
+
+
+@dataclass
+class SERRecord:
+    """Step Evidence Record emitted for each executed pipeline node."""
+
+    type: Literal["ser"]
+    schema_version: int
+    ids: Dict[str, str]
+    topology: Dict[str, List[str]]
+    action: Dict[str, Any]
+    io_delta: IODelta
+    checks: Dict[str, Any]
+    timing: Dict[str, Any]
+    status: Literal["completed", "error"]
+    error: Optional[Dict[str, Any]] = None
+    labels: Optional[Dict[str, Any]] = None
+    summaries: Optional[Dict[str, Any]] = None
 
 
 class TraceDriver(Protocol):
-    """Driver API for Semantiva tracing (v1).
-
-    Implementations should be resilient to extra fields and ignore unknown kwargs.
-    Drivers must properly handle error events and ensure resource cleanup (flush/close)
-    is performed even when pipeline execution fails.
-    """
+    """Driver API for Semantiva tracing using SER records."""
 
     def on_pipeline_start(
         self,
@@ -108,27 +91,16 @@ class TraceDriver(Protocol):
         meta: dict,
         pipeline_input: Optional[Payload] = None,
     ) -> None:
-        """Emit a trace "pipeline_start" record.
+        """Emit a ``pipeline_start`` record."""
 
-        Args:
-          pipeline_id: "plid-<sha256>" for the canonical GraphV1.
-          run_id: Unique run identifier for this execution.
-          canonical_spec: Canonical GraphV1 ({"version": 1, "nodes": [...], "edges": [...]}).
-          meta: Minimal run metadata (e.g., {"num_nodes": int}).
-          pipeline_input: Optional payload snapshot (drivers MAY ignore).
+    def on_node_event(self, event: SERRecord) -> None:
+        """Emit a single SER record for a completed node."""
 
-        Notes:
-          - This optional parameter extends the Epic's minimal interface.
-            Orchestrator passes it when available; drivers without this parameter
-            remain runtime-compatible (the orchestrator catches TypeError).
-          - Consumers should NOT rely on snapshots; Trace v1 guarantees are in the envelopes.
-        """
-        ...
+    def on_pipeline_end(self, run_id: str, summary: dict) -> None:
+        """Emit a ``pipeline_end`` record summarising the run."""
 
-    def on_node_event(self, event: NodeTraceEvent) -> None: ...
+    def flush(self) -> None:
+        """Flush any internal buffers."""
 
-    def on_pipeline_end(self, run_id: str, summary: dict) -> None: ...
-
-    def flush(self) -> None: ...
-
-    def close(self) -> None: ...
+    def close(self) -> None:
+        """Release resources and close the driver."""

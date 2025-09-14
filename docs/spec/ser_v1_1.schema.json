@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantiva Step Evidence Record v1.1",
+  "type": "object",
+  "required": [
+    "type",
+    "schema_version",
+    "ids",
+    "topology",
+    "action",
+    "io_delta",
+    "checks",
+    "timing",
+    "status"
+  ],
+  "properties": {
+    "type": {"const": "ser"},
+    "schema_version": {"const": 2},
+    "ids": {
+      "type": "object",
+      "required": ["run_id", "pipeline_id", "node_id"],
+      "additionalProperties": true
+    },
+    "topology": {
+      "type": "object",
+      "properties": {
+        "upstream": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["upstream"],
+      "additionalProperties": true
+    },
+    "action": {"type": "object"},
+    "io_delta": {"type": "object"},
+    "checks": {"type": "object"},
+    "timing": {
+      "type": "object",
+      "required": ["start", "end", "duration_ms", "cpu_ms"],
+      "properties": {
+        "start": {"type": "string"},
+        "end": {"type": "string"},
+        "duration_ms": {"type": "integer"},
+        "cpu_ms": {"type": "integer"}
+      }
+    },
+    "status": {"enum": ["completed", "error"]},
+    "error": {"type": "object"},
+    "labels": {"type": "object"},
+    "summaries": {"type": "object"}
+  },
+  "additionalProperties": true
+}
