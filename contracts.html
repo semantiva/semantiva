@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Testing Strategies and Best Practices" href="development/testing_strategies.html" /><link rel="prev" title="Trace ↔ Graph Alignment" href="trace_graph_alignment.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Sweeps in YAML" href="sweeps.html" /><link rel="prev" title="Context Processors" href="context_processors.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Semantiva Contracts - Semantiva 0.5.0 documentation</title>
@@ -198,40 +198,35 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Start Here</span></p>
-<ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">How-To &amp; Workflows</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="registry_and_extensions.html">Registry &amp; Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -495,14 +490,20 @@ prints diagnostics with stable <code class="docutils literal notranslate"><span 
 <section id="fixing-common-sva-errors">
 <h2>Fixing common SVA errors<a class="headerlink" href="#fixing-common-sva-errors" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><strong>SVA001–SVA003</strong>: ensure all <code class="docutils literal notranslate"><span class="pre">*_data_type</span></code> methods are declared with
+<li><p><strong>SVA001-SVA003</strong>: ensure all <code class="docutils literal notranslate"><span class="pre">*_data_type</span></code> methods are declared with
 <code class="docutils literal notranslate"><span class="pre">&#64;classmethod</span></code> and use <code class="docutils literal notranslate"><span class="pre">cls</span></code> as the first argument.</p></li>
 <li><p><strong>SVA102</strong>: keep component docstrings concise (under the configured
 character limit).</p></li>
-<li><p><strong>SVA104–SVA106</strong>: <code class="docutils literal notranslate"><span class="pre">injected_context_keys</span></code> and
+<li><p><strong>SVA104-SVA106</strong>: <code class="docutils literal notranslate"><span class="pre">injected_context_keys</span></code> and
 <code class="docutils literal notranslate"><span class="pre">suppressed_context_keys</span></code> must be lists of unique strings without
 overlap.</p></li>
 </ul>
+</section>
+<section id="ci-integration">
+<h2>CI integration<a class="headerlink" href="#ci-integration" title="Link to this heading">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code> in CI pipelines to block merges when contracts are
+violated. The command exits with code <code class="docutils literal notranslate"><span class="pre">3</span></code> (<code class="docutils literal notranslate"><span class="pre">EXIT_CONFIG_ERROR</span></code>) when any
+<code class="docutils literal notranslate"><span class="pre">SVA</span></code> error diagnostics are present; warnings do not affect the exit code.</p>
 </section>
 </section>
 
@@ -511,23 +512,23 @@ overlap.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="development/testing_strategies.html">
+          <a class="next-page" href="sweeps.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Testing Strategies and Best Practices</div>
+                <div class="title">Sweeps in YAML</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="trace_graph_alignment.html">
+          <a class="prev-page" href="context_processors.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Trace ↔ Graph Alignment</div>
+                <div class="title">Context Processors</div>
                 
               </div>
             </a>
@@ -564,6 +565,7 @@ overlap.</p></li>
 <li><a class="reference internal" href="#">Semantiva Contracts</a><ul>
 <li><a class="reference internal" href="#rule-catalog">Rule catalog</a></li>
 <li><a class="reference internal" href="#fixing-common-sva-errors">Fixing common SVA errors</a></li>
+<li><a class="reference internal" href="#ci-integration">CI integration</a></li>
 </ul>
 </li>
 </ul>

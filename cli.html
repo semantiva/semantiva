@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Semantiva Studio Viewer" href="studio_viewer.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Extending Semantiva (Registries &amp; Extensions)" href="extensions.html" /><link rel="prev" title="Creating Components (Authoring Guide)" href="creating_components.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Semantiva CLI - Semantiva 0.5.0 documentation</title>
@@ -198,40 +198,35 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Start Here</span></p>
-<ul class="current">
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">How-To &amp; Workflows</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="registry_and_extensions.html">Registry &amp; Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -274,230 +269,114 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="semantiva-cli">
-<span id="cli"></span><h1>Semantiva CLI<a class="headerlink" href="#semantiva-cli" title="Link to this heading">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">semantiva</span></code> command lets you <strong>inspect</strong> and <strong>run</strong> pipelines from the terminal.
-All CLI commands automatically initialize core Semantiva components at startup,
-ensuring processors and data types are available for pipeline execution.</p>
-<section id="quick-view">
-<h2>Quick view<a class="headerlink" href="#quick-view" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>--help
-semantiva<span class="w"> </span>run<span class="w"> </span>&lt;pipeline.yaml&gt;<span class="w"> </span><span class="o">[</span>--dry-run<span class="o">]</span><span class="w"> </span><span class="o">[</span>--validate<span class="o">]</span><span class="w"> </span><span class="o">[</span>--set<span class="w"> </span><span class="nv">key</span><span class="o">=</span>value<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--context<span class="w"> </span><span class="nv">key</span><span class="o">=</span>value<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--trace-*<span class="o">]</span><span class="w"> </span><span class="o">[</span>-v<span class="p">|</span>--verbose<span class="o">]</span><span class="w"> </span><span class="o">[</span>-q<span class="p">|</span>--quiet<span class="o">]</span>
-semantiva<span class="w"> </span>inspect<span class="w"> </span>&lt;pipeline.yaml&gt;<span class="w"> </span><span class="o">[</span>--extended<span class="o">]</span><span class="w"> </span><span class="o">[</span>-v<span class="p">|</span>--verbose<span class="o">]</span><span class="w"> </span><span class="o">[</span>-q<span class="p">|</span>--quiet<span class="o">]</span>
-semantiva<span class="w"> </span>dev<span class="w"> </span>lint<span class="w"> </span><span class="o">[</span>--modules<span class="w"> </span>pkg<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--paths<span class="w"> </span>path<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--extensions<span class="w"> </span>ext<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yaml<span class="w"> </span>file.yaml<span class="w"> </span>...<span class="o">]</span>
-</pre></div>
-</div>
-</section>
-<section id="subcommands">
-<h2>Subcommands<a class="headerlink" href="#subcommands" title="Link to this heading">¶</a></h2>
-<section id="semantiva-run">
-<h3>semantiva run<a class="headerlink" href="#semantiva-run" title="Link to this heading">¶</a></h3>
-<p id="run-options">Execute a pipeline defined in YAML.</p>
-<p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>path/to/pipeline.yaml<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
-</div>
-<p><strong>Options</strong></p>
+<h1>Semantiva CLI<a class="headerlink" href="#semantiva-cli" title="Link to this heading">¶</a></h1>
+<p>(SSoT) This page mirrors <cite>semantiva/cli.py</cite>. Update this doc if CLI changes.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">-v</span></code> / <code class="docutils literal notranslate"><span class="pre">--verbose</span></code>: increase log verbosity (enables DEBUG-level logging).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-q</span></code> / <code class="docutils literal notranslate"><span class="pre">--quiet</span></code>: reduce log verbosity (sets ERROR-level logging — errors only).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>: build the pipeline graph without executing nodes.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--validate</span></code>: parse and validate configuration only.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--set</span></code>: override configuration values using dotted paths (e.g., <code class="docutils literal notranslate"><span class="pre">--set</span> <span class="pre">pipeline.param=value</span></code>). Can be used multiple times. Values are parsed using YAML semantics.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--context</span> <span class="pre">key=value</span></code>: inject initial payload context. Multiple <code class="docutils literal notranslate"><span class="pre">--context</span></code> flags are allowed; quote lists for shells. Values are parsed using YAML semantics (for example, <code class="docutils literal notranslate"><span class="pre">1.0</span></code> -&gt; float, <code class="docutils literal notranslate"><span class="pre">true</span></code> -&gt; bool).</p></li>
-<li><dl class="simple">
-<dt>Tracing options (see <a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a>):</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-driver</span></code>: e.g. <code class="docutils literal notranslate"><span class="pre">jsonl</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-output</span></code>: directory or file path</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-detail</span></code>: <code class="docutils literal notranslate"><span class="pre">hash</span></code>, <code class="docutils literal notranslate"><span class="pre">repr</span></code>, <code class="docutils literal notranslate"><span class="pre">context</span></code>, <code class="docutils literal notranslate"><span class="pre">all</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">run</span></code>  — Execute a pipeline from YAML.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span></code>  — Inspect a pipeline configuration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code> — Lint components against contracts.</p></li>
 </ul>
-</dd>
-</dl>
-</li>
-</ul>
-<p><strong>Examples</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run with verbose logging</span>
-semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>-v
-
-<span class="c1"># Run with tracing enabled (JSONL)</span>
-semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--trace-driver<span class="w"> </span>jsonl<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--trace-output<span class="w"> </span>traces/<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--trace-detail<span class="w"> </span><span class="nb">hash</span>
-</pre></div>
-</div>
-</section>
-<section id="semantiva-inspect">
-<h3>semantiva inspect<a class="headerlink" href="#semantiva-inspect" title="Link to this heading">¶</a></h3>
-<p>Parse YAML, build the canonical graph, and run pre-execution checks.</p>
-<p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>path/to/pipeline.yaml<span class="w"> </span><span class="o">[</span>--extended<span class="o">]</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
-</div>
-<p><strong>Options</strong></p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--extended</span></code>: include node identities (<code class="docutils literal notranslate"><span class="pre">node_uuid</span></code>), ports, parameters, inferred types (where available).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--strict</span></code>: exit non-zero if configuration contains invalid parameters.</p></li>
-<li><p>Verbosity: <code class="docutils literal notranslate"><span class="pre">-v</span></code> / <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> and <code class="docutils literal notranslate"><span class="pre">-q</span></code> analogous to <code class="docutils literal notranslate"><span class="pre">run</span></code>.</p></li>
-</ul>
-<p>Inspection degrades gracefully for malformed configs and prints validation warnings, continuing to emit a report (see “Error-Resilient Inspection” in the CLI source).</p>
-<p><strong>Examples</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic inspection</span>
-semantiva<span class="w"> </span>inspect<span class="w"> </span>hello_pipeline.yaml
-
-<span class="c1"># Extended inspection (identities &amp; details)</span>
-semantiva<span class="w"> </span>inspect<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>--extended
-</pre></div>
-</div>
-<p><strong>Strict validation</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>my_pipeline.yaml<span class="w"> </span>--strict
-</pre></div>
-</div>
-<p>If any node contains configuration parameters that are not accepted by its processor,
-the command will exit non-zero and list the offending parameters.</p>
-</section>
-<section id="semantiva-dev-lint">
-<h3>semantiva dev lint<a class="headerlink" href="#semantiva-dev-lint" title="Link to this heading">¶</a></h3>
-<p>Run contract checks against discovered components. Use optional discovery
-flags to import modules, scan paths, or load pipeline YAML files.</p>
-<p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>dev<span class="w"> </span>lint<span class="w"> </span><span class="o">[</span>--modules<span class="w"> </span>pkg<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--paths<span class="w"> </span>path<span class="w"> </span>...<span class="o">]</span>
-<span class="w">                   </span><span class="o">[</span>--extensions<span class="w"> </span>ext<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--yaml<span class="w"> </span>pipeline.yaml<span class="w"> </span>...<span class="o">]</span>
-</pre></div>
-</div>
-<p><strong>Options</strong></p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--modules</span></code>: import modules before scanning.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--paths</span></code>: scan Python files or packages for components.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--extensions</span></code>: load Semantiva extension entry points.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--yaml</span></code>: load pipeline YAMLs (ensures extensions are loaded).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--export-contracts</span></code>: write the rule catalog to a Markdown file.</p></li>
-</ul>
-<p>Exit code is non-zero when any <code class="docutils literal notranslate"><span class="pre">SVA</span></code> error diagnostics are emitted.</p>
-</section>
-</section>
-<section id="common-behaviors">
-<h2>Common behaviors<a class="headerlink" href="#common-behaviors" title="Link to this heading">¶</a></h2>
-<section id="component-initialization">
-<h3>Component initialization<a class="headerlink" href="#component-initialization" title="Link to this heading">¶</a></h3>
-<p>All CLI commands (<code class="docutils literal notranslate"><span class="pre">run</span></code>, <code class="docutils literal notranslate"><span class="pre">inspect</span></code>, <code class="docutils literal notranslate"><span class="pre">dev</span> <span class="pre">lint</span></code>) automatically initialize
-core Semantiva components at startup via <code class="docutils literal notranslate"><span class="pre">ClassRegistry.initialize_default_modules()</span></code>.
-This ensures processors and data types are registered and available for:</p>
-<ul class="simple">
-<li><p>YAML pipeline parsing and validation</p></li>
-<li><p>Class resolution and instantiation</p></li>
-<li><p>Contract validation and linting</p></li>
-</ul>
-<p>For programmatic usage outside the CLI, you must call this initialization explicitly.
-See <a class="reference internal" href="registry_and_extensions.html"><span class="doc">Registry &amp; Extensions</span></a> for details.</p>
 </section>
 <section id="exit-codes">
-<h3>Exit codes<a class="headerlink" href="#exit-codes" title="Link to this heading">¶</a></h3>
-<ul class="simple">
-<li><p><strong>0</strong> — success.</p></li>
-<li><p><strong>1</strong> — CLI argument error.</p></li>
-<li><p><strong>2</strong> — file not found.</p></li>
-<li><p><strong>3</strong> — configuration or validation error.</p></li>
-<li><p><strong>4</strong> — runtime execution error.</p></li>
-<li><p><strong>5</strong> — keyboard interrupt.</p></li>
-<li><p><strong>non-zero</strong> — a validation or runtime error occurred; see stderr for details.</p></li>
+<h2>Exit Codes<a class="headerlink" href="#exit-codes" title="Link to this heading">¶</a></h2>
+<p>0: success, 1: CLI error, 2: file error, 3: config error, 4: runtime error, 5: interrupt.</p>
+</section>
+<section id="run">
+<h2>Run<a class="headerlink" href="#run" title="Link to this heading">¶</a></h2>
+<p>Execute a pipeline.</p>
+<p><strong>Syntax</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>semantiva run PIPELINE.yaml
+                  [--dry-run]
+                  [--validate]
+                  [--set key=value]...
+                  [--context key=value]...
+                  [-v | --verbose]
+                  [-q | --quiet]
+                  [--trace-driver {none,jsonl,pythonpath}]
+                  [--trace-output PATH-or-DriverSpec]
+                  [--trace-detail FLAGS]
+                  [--version]
+</pre></div>
+</div>
+<p><strong>Arguments</strong>
+- <code class="docutils literal notranslate"><span class="pre">PIPELINE.yaml</span></code>            Path to the pipeline YAML file.
+- <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>                Build graph without executing nodes.
+- <code class="docutils literal notranslate"><span class="pre">--validate</span></code>               Validate configuration only.
+- <code class="docutils literal notranslate"><span class="pre">--set</span> <span class="pre">key=value</span></code>          Override by dotted path (lists use numeric indices).</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Value parsing: YAML first; falls back to string on parse error.</p></li>
 </ul>
-</section>
-<section id="error-surface">
-<h3>Error surface<a class="headerlink" href="#error-surface" title="Link to this heading">¶</a></h3>
+</div></blockquote>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">inspect</span></code>: reports spec-phase issues (unknown processor, bad ports, missing params).
-Non-zero exit code; details printed to stderr.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run</span></code>: may fail during initialization (imports/params) or at execution time
-(type contracts). Non-zero exit code; failing node identity appears in the message
-when available (<code class="docutils literal notranslate"><span class="pre">node_uuid</span></code>). See <a class="reference internal" href="introspection_validation.html"><span class="doc">Introspection &amp; Validation</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--context</span> <span class="pre">key=value</span></code>      Inject initial context key/values.</p>
+<ul>
+<li><p>Value parsing: YAML first; falls back to string on parse error.</p></li>
 </ul>
-</section>
-<section id="logs-verbosity">
-<h3>Logs &amp; verbosity<a class="headerlink" href="#logs-verbosity" title="Link to this heading">¶</a></h3>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">-q</span></code> sets ERROR-level logging (errors only).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-v</span></code> enables DEBUG-level logging.</p></li>
-<li><p>By default the CLI runs at INFO level.</p></li>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">/</span> <span class="pre">--verbose</span></code>           Increase log verbosity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">/</span> <span class="pre">--quiet</span></code>             Only show errors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace-driver</span></code>           <code class="docutils literal notranslate"><span class="pre">none</span></code> (default), <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, or <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace-output</span></code>           For <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, a file path; for <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>, a driver spec
+(<code class="docutils literal notranslate"><span class="pre">package.module:ClassName</span></code>) instantiated with no args.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace-detail</span></code>           Comma-separated flags: <code class="docutils literal notranslate"><span class="pre">timings,</span> <span class="pre">hash,</span> <span class="pre">repr,</span> <span class="pre">context,</span> <span class="pre">all</span></code>
+(default: <code class="docutils literal notranslate"><span class="pre">timings</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--version</span></code>                Show CLI version.</p></li>
 </ul>
-<p>By default, logs are written to stderr; configure handlers in your <code class="docutils literal notranslate"><span class="pre">logging</span></code> policy.
-See <a class="reference internal" href="logger.html"><span class="doc">Logger</span></a> for examples.</p>
-</section>
-<section id="tracing-shortcuts">
-<h3>Tracing shortcuts<a class="headerlink" href="#tracing-shortcuts" title="Link to this heading">¶</a></h3>
-<p>All tracing flags are shared between <code class="docutils literal notranslate"><span class="pre">run</span></code> and the underlying execution.
-See <a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a> for the driver matrix, detail flags, and output format.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p>Tracing options: see <a class="reference internal" href="tracing.html#trace-detail-and-format"><span class="std std-ref">Options &amp; Drivers</span></a> and <a class="reference internal" href="tracing.html#pretty-vs-compact-json"><span class="std std-ref">Output Format &amp; Naming</span></a>
-for driver selection, detail flags, and output naming.</p>
-</div>
-</section>
-</section>
-<section id="ecosystem">
-<h2>Ecosystem<a class="headerlink" href="#ecosystem" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Visualize a pipeline diagram with <strong>Semantiva Studio Viewer</strong>:
-see <a class="reference internal" href="studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a> (<code class="docutils literal notranslate"><span class="pre">semantiva-studio-viewer</span> <span class="pre">serve-pipeline</span> <span class="pre">...</span></code>).</p></li>
-<li><p>If you use domain extensions (e.g., <strong>Semantiva Imaging</strong>), their processors
-are referenced the same way in YAML (by class name or registry name).</p></li>
-</ul>
-</section>
-<section id="recipes">
-<h2>Recipes<a class="headerlink" href="#recipes" title="Link to this heading">¶</a></h2>
-<section id="run-with-verbose-logs">
-<h3>Run with verbose logs<a class="headerlink" href="#run-with-verbose-logs" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>-v
-
-<span class="c1"># Alternative: direct Python execution</span>
-python<span class="w"> </span>-m<span class="w"> </span>semantiva.semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>-v
+<p><strong>YAML Extension Loading</strong>
+If your YAML contains:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;my_package.ext&quot;</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
-</section>
-<section id="inspect-with-identities-pre-flight">
-<h3>Inspect with identities (pre-flight)<a class="headerlink" href="#inspect-with-identities-pre-flight" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>--extended
+<p>or:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;my_package.ext&quot;</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
+<p>those extensions are loaded before validation/execution (entry point or module import).</p>
 </section>
-<section id="run-with-jsonl-tracing-hash-summaries">
-<h3>Run with JSONL tracing (hash summaries)<a class="headerlink" href="#run-with-jsonl-tracing-hash-summaries" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--trace-driver<span class="w"> </span>jsonl<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--trace-output<span class="w"> </span>traces/<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--trace-detail<span class="w"> </span><span class="nb">hash</span>
+<section id="inspect">
+<h2>Inspect<a class="headerlink" href="#inspect" title="Link to this heading">¶</a></h2>
+<p><strong>Syntax</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>semantiva inspect PIPELINE.yaml
+                    [--extended]
+                    [-v | --verbose]
+                    [-q | --quiet]
+                    [--strict]
+                    [--version]
 </pre></div>
 </div>
+<p><strong>Arguments</strong>
+- <code class="docutils literal notranslate"><span class="pre">PIPELINE.yaml</span></code>  Path to the pipeline YAML file.
+- <code class="docutils literal notranslate"><span class="pre">--extended</span></code>     Show extended inspection details.
+- <code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">/</span> <span class="pre">--verbose</span></code> Increase log verbosity.
+- <code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">/</span> <span class="pre">--quiet</span></code>   Only show errors.
+- <code class="docutils literal notranslate"><span class="pre">--strict</span></code>       Exit non-zero if configuration is invalid.
+- <code class="docutils literal notranslate"><span class="pre">--version</span></code>      Show CLI version.</p>
 </section>
-<section id="override-configuration-values">
-<h3>Override configuration values<a class="headerlink" href="#override-configuration-values" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Override pipeline parameters</span>
-semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>--set<span class="w"> </span>pipeline.nodes.0.parameters.value<span class="o">=</span><span class="m">5</span>.0
-
-<span class="c1"># Multiple overrides</span>
-semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--set<span class="w"> </span>pipeline.nodes.0.parameters.value<span class="o">=</span><span class="m">5</span>.0<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--set<span class="w"> </span>pipeline.nodes.1.parameters.factor<span class="o">=</span><span class="m">3</span>.0
+<section id="dev-lint">
+<h2>Dev / Lint<a class="headerlink" href="#dev-lint" title="Link to this heading">¶</a></h2>
+<p><strong>Syntax</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>semantiva dev lint
+  [--modules MOD ...]
+  [--paths PATH ...]
+  [--extensions NAME ...]
+  [--yaml FILE ...]
+  [--export-contracts PATH]
+  [--debug]
+  [--version]
 </pre></div>
 </div>
-</section>
-<section id="minimal-failure-demonstration">
-<h3>Minimal failure demonstration<a class="headerlink" href="#minimal-failure-demonstration" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Intentionally mis-configure to see validation errors</span>
-semantiva<span class="w"> </span>inspect<span class="w"> </span>examples/broken_pipeline.yaml<span class="w"> </span>--extended<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;non-zero exit as expected&quot;</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="faq">
-<h2>FAQ<a class="headerlink" href="#faq" title="Link to this heading">¶</a></h2>
-<p><strong>Q:</strong> <code class="docutils literal notranslate"><span class="pre">semantiva:</span> <span class="pre">command</span> <span class="pre">not</span> <span class="pre">found</span></code>
-<strong>A:</strong> Ensure your Python environment is active and Semantiva is installed:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">semantiva</span></code>. If using a venv, activate it before running.</p>
-<p><strong>Q:</strong> ImportError for my custom processor
-<strong>A:</strong> Install your package into the same environment so it’s importable.</p>
-<p><strong>Q:</strong> My trace file is empty
-<strong>A:</strong> Re-run with <code class="docutils literal notranslate"><span class="pre">--trace-driver</span> <span class="pre">jsonl</span> <span class="pre">--trace-output</span> <span class="pre">&lt;dir&gt;</span></code> and
-check <a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a> for detail flags and file naming.</p>
+<p><strong>Arguments</strong>
+- <code class="docutils literal notranslate"><span class="pre">--modules</span></code>          Python modules to import and validate
+- <code class="docutils literal notranslate"><span class="pre">--paths</span></code>            Paths to scan for Python components
+- <code class="docutils literal notranslate"><span class="pre">--extensions</span></code>       Extension names (entry points or module names) to load and validate
+- <code class="docutils literal notranslate"><span class="pre">--yaml</span></code>             Pipeline YAML files (discovers referenced components)
+- <code class="docutils literal notranslate"><span class="pre">--export-contracts</span></code> Write rule catalog to PATH (Markdown)
+- <code class="docutils literal notranslate"><span class="pre">--debug</span></code>            Detailed rule-by-rule diagnostics
+- <code class="docutils literal notranslate"><span class="pre">--version</span></code>          Show CLI version</p>
 </section>
 </section>
 
@@ -506,23 +385,23 @@ check <a class="reference internal" href="tracing.html"><span class="doc">Tracin
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="studio_viewer.html">
+          <a class="next-page" href="extensions.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Semantiva Studio Viewer</div>
+                <div class="title">Extending Semantiva (Registries &amp; Extensions)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="getting_started.html">
+          <a class="prev-page" href="creating_components.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Getting Started</div>
+                <div class="title">Creating Components (Authoring Guide)</div>
                 
               </div>
             </a>
@@ -557,31 +436,11 @@ check <a class="reference internal" href="tracing.html"><span class="doc">Tracin
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Semantiva CLI</a><ul>
-<li><a class="reference internal" href="#quick-view">Quick view</a></li>
-<li><a class="reference internal" href="#subcommands">Subcommands</a><ul>
-<li><a class="reference internal" href="#semantiva-run">semantiva run</a></li>
-<li><a class="reference internal" href="#semantiva-inspect">semantiva inspect</a></li>
-<li><a class="reference internal" href="#semantiva-dev-lint">semantiva dev lint</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#common-behaviors">Common behaviors</a><ul>
-<li><a class="reference internal" href="#component-initialization">Component initialization</a></li>
-<li><a class="reference internal" href="#exit-codes">Exit codes</a></li>
-<li><a class="reference internal" href="#error-surface">Error surface</a></li>
-<li><a class="reference internal" href="#logs-verbosity">Logs &amp; verbosity</a></li>
-<li><a class="reference internal" href="#tracing-shortcuts">Tracing shortcuts</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ecosystem">Ecosystem</a></li>
-<li><a class="reference internal" href="#recipes">Recipes</a><ul>
-<li><a class="reference internal" href="#run-with-verbose-logs">Run with verbose logs</a></li>
-<li><a class="reference internal" href="#inspect-with-identities-pre-flight">Inspect with identities (pre-flight)</a></li>
-<li><a class="reference internal" href="#run-with-jsonl-tracing-hash-summaries">Run with JSONL tracing (hash summaries)</a></li>
-<li><a class="reference internal" href="#override-configuration-values">Override configuration values</a></li>
-<li><a class="reference internal" href="#minimal-failure-demonstration">Minimal failure demonstration</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#faq">FAQ</a></li>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#exit-codes">Exit Codes</a></li>
+<li><a class="reference internal" href="#run">Run</a></li>
+<li><a class="reference internal" href="#inspect">Inspect</a></li>
+<li><a class="reference internal" href="#dev-lint">Dev / Lint</a></li>
 </ul>
 </li>
 </ul>

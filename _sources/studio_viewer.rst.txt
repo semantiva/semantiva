@@ -33,7 +33,7 @@ Quick Start
 See also:
 * :doc:`pipeline` — how pipelines are defined and executed
 * :doc:`tracing` — how to enable and read execution traces
-* :doc:`registry_and_extensions` — extending Semantiva and generating component sets
+* :doc:`extensions` — extending Semantiva and generating component sets
 
 Modes & Controls
 ----------------
@@ -118,7 +118,7 @@ Fix reported errors, then re-open in the Viewer.
 **Component browser: where does the TTL come from?**  
 Export it first:
 ``semantiva-studio-viewer export-components --output semantiva_components.ttl``.
-See :doc:`registry_and_extensions` for extension discovery/registration.
+See :doc:`extensions` for extension discovery/registration.
 
 Inspection schema note (GUI)
 ----------------------------
@@ -145,4 +145,4 @@ See also
 * :doc:`pipeline` — from YAML to execution (and Payloads)
 * :doc:`tracing` — record schema, detail flags, JSONL usage
 * :doc:`graph` — GraphV1, node_uuid, PipelineId identities
-* :doc:`registry_and_extensions` — generating component sets
+* :doc:`extensions` — generating component sets

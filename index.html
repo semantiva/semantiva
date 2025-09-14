@@ -198,40 +198,35 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Start Here</span></p>
-<ul>
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">How-To &amp; Workflows</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="registry_and_extensions.html">Registry &amp; Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -277,7 +272,6 @@
 <h1>Semantiva Documentation<a class="headerlink" href="#semantiva-documentation" title="Link to this heading">¶</a></h1>
 <p>Semantiva is a semantic execution framework focused on <strong>typed, transparent, inspectable</strong> pipelines.</p>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Start Here</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#install-run-your-first-pipeline">Install &amp; run your first pipeline</a></li>
@@ -288,26 +282,29 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#see-also">See also</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#quick-view">Quick view</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#subcommands">Subcommands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#common-behaviors">Common behaviors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#ecosystem">Ecosystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#recipes">Recipes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#faq">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="creating_components.html#audience">Audience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="creating_components.html#do-this-not-that">Do This / Not That</a></li>
+<li class="toctree-l2"><a class="reference internal" href="creating_components.html#contract-highlights">Contract Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="creating_components.html#minimal-templates-pass-lint">Minimal Templates (pass lint)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="creating_components.html#context-processors-domain-context-logic">Context Processors (domain context logic)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="creating_components.html#linting-your-components">Linting Your Components</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#quick-start">Quick Start</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#modes-controls">Modes &amp; Controls</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#export-share">Export &amp; Share</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#trace-inspection">Trace Inspection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#positional-binding-node-uuid">Positional Binding (node_uuid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#limitations">Limitations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#troubleshooting">Troubleshooting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#inspection-schema-note-gui">Inspection schema note (GUI)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#large-graphs">Large Graphs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#see-also">See also</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exit-codes">Exit Codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#run">Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#inspect">Inspect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#dev-lint">Dev / Lint</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#implement-an-extension">Implement an Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#package-as-an-entry-point">Package as an Entry Point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#loading-extensions">Loading Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#authoring-reminders">Authoring Reminders</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a><ul>
@@ -319,6 +316,95 @@
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#resolvers-parameters">Resolvers &amp; Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#dual-channel-pipeline">Dual-Channel Pipeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#minimal-epistemic-unit-meu">Minimal Epistemic Unit (MEU)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#overview-mental-model">Overview &amp; Mental Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#defining-pipelines-in-yaml">Defining Pipelines in YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-resolution-precedence">Parameter resolution (precedence)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-validation-in-yaml-configuration">Parameter Validation in YAML Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#canonical-spec-identity">Canonical spec &amp; identity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#running-a-pipeline-from-python">Running a Pipeline from Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#what-is-a-payload">What is a Payload?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#public-api-surface">Public API Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#extension-points">Extension Points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#objects-in-pipeline-configurations">Objects in Pipeline Configurations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#module-semantiva.pipeline.pipeline">Autodoc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_types.html#public-api-surface">Public API Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_types.html#module-semantiva.data_types.data_types">Autodoc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_processors.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processors.html#parameter-validation-examples">Parameter Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processors.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processors.html#annotated-walkthrough">Annotated walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processors.html#run-it">Run it</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_processors.html#module-semantiva.data_processors.data_processors">Autodoc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html#public-api-surface">Public API Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html#module-semantiva.data_io.data_io">Autodoc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#context-observer-pattern">Context Observer Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#parameter-validation-examples">Parameter Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#where-do-required-keys-come-from">Where do required keys come from?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#validation-safe-mutation">Validation &amp; Safe Mutation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#factories-rename-delete">Factories: rename/delete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#testing-context-processors">Testing Context Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#module-semantiva.context_processors.context_processors">Autodoc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#rule-catalog">Rule catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#fixing-common-sva-errors">Fixing common SVA errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#ci-integration">CI integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#objective">Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#key-concepts-and-parameters">Key concepts and parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#variable-specification-types">Variable specification types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#modes">Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#basic-example">Basic example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#explanation">Explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#from-context-zip-mode">From context &amp; zip mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#id1">Explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#inspection">Inspection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#api-reference-short">API reference (short)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#notes-on-expressions">Notes on expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#good-practices">Good practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#id2">Explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#id3">Explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#expressions">Expressions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#modes-controls">Modes &amp; Controls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#export-share">Export &amp; Share</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#trace-inspection">Trace Inspection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#positional-binding-node-uuid">Positional Binding (node_uuid)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#inspection-schema-note-gui">Inspection schema note (GUI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#large-graphs">Large Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#see-also">See also</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a><ul>
@@ -350,72 +436,9 @@
 <li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#module-semantiva.inspection.builder">Autodoc</a></li>
 </ul>
 </li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">How-To &amp; Workflows</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#overview-mental-model">Overview &amp; Mental Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#defining-pipelines-in-yaml">Defining Pipelines in YAML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-resolution-precedence">Parameter resolution (precedence)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-validation-in-yaml-configuration">Parameter Validation in YAML Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#canonical-spec-identity">Canonical spec &amp; identity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#running-a-pipeline-from-python">Running a Pipeline from Python</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#what-is-a-payload">What is a Payload?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#public-api-surface">Public API Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#extension-points">Extension Points</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#objects-in-pipeline-configurations">Objects in Pipeline Configurations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipeline.html#module-semantiva.pipeline.pipeline">Autodoc</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graph.html#graph-and-identity">Graph and Identity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="graph.html#see-also">See also</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="registry_and_extensions.html">Registry &amp; Extensions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#component-registration-initialization">Component Registration &amp; Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#extension-quickstart">Extension Quickstart</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#discovery-registration">Discovery &amp; Registration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#referencing-custom-processors-in-yaml">Referencing Custom Processors in YAML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#resolvers-class-parameter">Resolvers (class &amp; parameter)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#modeldescriptor">ModelDescriptor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#plan-then-realize-optional">Plan then realize (optional)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#best-practices">Best Practices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#testing-extensions">Testing Extensions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#packaging-distribution">Packaging &amp; Distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#security-resources">Security &amp; Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#see-also">See also</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#public-api-surface">Public API Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#descriptors">Descriptors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="registry_and_extensions.html#module-semantiva.registry.class_registry">Autodoc</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_types.html#public-api-surface">Public API Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_types.html#module-semantiva.data_types.data_types">Autodoc</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#parameter-validation-examples">Parameter Validation Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#annotated-walkthrough">Annotated walkthrough</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#run-it">Run it</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#module-semantiva.data_processors.data_processors">Autodoc</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#context-observer-pattern">Context Observer Pattern</a></li>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#parameter-validation-examples">Parameter Validation Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#where-do-required-keys-come-from">Where do required keys come from?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#validation-safe-mutation">Validation &amp; Safe Mutation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#factories-rename-delete">Factories: rename/delete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#testing-context-processors">Testing Context Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="context_processors.html#module-semantiva.context_processors.context_processors">Autodoc</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a><ul>
@@ -447,12 +470,6 @@
 <li class="toctree-l2"><a class="reference internal" href="workflows_fitting_models.html#module-semantiva.workflows.fitting_model">Autodoc</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_io.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_io.html#public-api-surface">Public API Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_io.html#module-semantiva.data_io.data_io">Autodoc</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="logger.html#semantiva.logger.logger.Logger"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="logger.html#from-the-cli">From the CLI</a></li>
@@ -462,11 +479,6 @@
 <li class="toctree-l2"><a class="reference internal" href="examples_index.html#how-to-run-these-examples">How to run these examples</a></li>
 </ul>
 </li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="exceptions.html#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError"><code class="docutils literal notranslate"><span class="pre">InvalidNodeParameterError</span></code></a></li>
@@ -489,16 +501,6 @@
 <li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#consumer-guidance">Consumer Guidance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#why-uuids-not-indices">Why UUIDs, not indices?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#see-also">See also</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contracts.html#rule-catalog">Rule catalog</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contracts.html#fixing-common-sva-errors">Fixing common SVA errors</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a><ul>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Concepts" href="concepts.html" /><link rel="prev" title="Semantiva CLI" href="cli.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Tracing" href="tracing.html" /><link rel="prev" title="Sweeps in YAML" href="sweeps.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Semantiva Studio Viewer - Semantiva 0.5.0 documentation</title>
@@ -198,40 +198,35 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Start Here</span></p>
-<ul class="current">
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">How-To &amp; Workflows</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="registry_and_extensions.html">Registry &amp; Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -299,7 +294,7 @@ semantiva-studio-viewer<span class="w"> </span>serve-components<span class="w"> 
 <p>See also:
 * <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a> — how pipelines are defined and executed
 * <a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a> — how to enable and read execution traces
-* <a class="reference internal" href="registry_and_extensions.html"><span class="doc">Registry &amp; Extensions</span></a> — extending Semantiva and generating component sets</p>
+* <a class="reference internal" href="extensions.html"><span class="doc">Extending Semantiva (Registries &amp; Extensions)</span></a> — extending Semantiva and generating component sets</p>
 </section>
 <section id="modes-controls">
 <h2>Modes &amp; Controls<a class="headerlink" href="#modes-controls" title="Link to this heading">¶</a></h2>
@@ -372,7 +367,7 @@ Fix reported errors, then re-open in the Viewer.</p>
 <p><strong>Component browser: where does the TTL come from?</strong>
 Export it first:
 <code class="docutils literal notranslate"><span class="pre">semantiva-studio-viewer</span> <span class="pre">export-components</span> <span class="pre">--output</span> <span class="pre">semantiva_components.ttl</span></code>.
-See <a class="reference internal" href="registry_and_extensions.html"><span class="doc">Registry &amp; Extensions</span></a> for extension discovery/registration.</p>
+See <a class="reference internal" href="extensions.html"><span class="doc">Extending Semantiva (Registries &amp; Extensions)</span></a> for extension discovery/registration.</p>
 </section>
 <section id="inspection-schema-note-gui">
 <h2>Inspection schema note (GUI)<a class="headerlink" href="#inspection-schema-note-gui" title="Link to this heading">¶</a></h2>
@@ -398,7 +393,7 @@ See <a class="reference internal" href="registry_and_extensions.html"><span clas
 <li><p><a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a> — from YAML to execution (and Payloads)</p></li>
 <li><p><a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a> — record schema, detail flags, JSONL usage</p></li>
 <li><p><a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a> — GraphV1, node_uuid, PipelineId identities</p></li>
-<li><p><a class="reference internal" href="registry_and_extensions.html"><span class="doc">Registry &amp; Extensions</span></a> — generating component sets</p></li>
+<li><p><a class="reference internal" href="extensions.html"><span class="doc">Extending Semantiva (Registries &amp; Extensions)</span></a> — generating component sets</p></li>
 </ul>
 </section>
 </section>
@@ -408,23 +403,23 @@ See <a class="reference internal" href="registry_and_extensions.html"><span clas
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="concepts.html">
+          <a class="next-page" href="tracing.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Concepts</div>
+                <div class="title">Tracing</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="cli.html">
+          <a class="prev-page" href="sweeps.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Semantiva CLI</div>
+                <div class="title">Sweeps in YAML</div>
                 
               </div>
             </a>

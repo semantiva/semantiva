@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Creating Components (Authoring Guide)" href="creating_components.html" /><link rel="prev" title="Semantiva Documentation" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Semantiva CLI" href="cli.html" /><link rel="prev" title="Getting Started" href="getting_started.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
-        <title>Getting Started - Semantiva 0.5.0 documentation</title>
+        <title>Creating Components (Authoring Guide) - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -199,8 +199,8 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Creating Components (Authoring Guide)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
@@ -248,7 +248,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/getting_started.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/creating_components.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -268,74 +268,141 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="getting-started">
-<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
-<section id="install-run-your-first-pipeline">
-<span id="id1"></span><h2>Install &amp; run your first pipeline<a class="headerlink" href="#install-run-your-first-pipeline" title="Link to this heading">¶</a></h2>
-<p>(See the steps below to install Semantiva and execute a sample pipeline.)</p>
+          <section id="creating-components-authoring-guide">
+<h1>Creating Components (Authoring Guide)<a class="headerlink" href="#creating-components-authoring-guide" title="Link to this heading">¶</a></h1>
+<section id="audience">
+<h2>Audience<a class="headerlink" href="#audience" title="Link to this heading">¶</a></h2>
+<p>Developers adding domain behavior via <strong>operations</strong>, <strong>probes</strong>, <strong>sources/sinks</strong>, or <strong>context processors</strong>.</p>
 </section>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>To install Semantiva, use pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>semantiva
-</pre></div>
-</div>
-<p>This installs the core Semantiva framework and its dependencies.</p>
-</section>
-<section id="quickstart-hello-pipeline">
-<h2>Quickstart - Hello Pipeline<a class="headerlink" href="#quickstart-hello-pipeline" title="Link to this heading">¶</a></h2>
-<p>Save the following minimal pipeline definition to a file (e.g. <code class="docutils literal notranslate"><span class="pre">hello_pipeline.yaml</span></code>):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatMultiplyOperation</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatTxtFileSaver</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output_float.txt&quot;</span>
-</pre></div>
-</div>
-<p>Run it with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml
-</pre></div>
-</div>
-<p>This command executes the pipeline and prints out pipeline execution logs.</p>
-<p>You can also run the pipeline with tracing enabled.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>--trace-driver<span class="w"> </span>jsonl<span class="w"> </span>--trace-detail<span class="w"> </span>all<span class="w"> </span>--trace-output<span class="w"> </span>traces/
-</pre></div>
-</div>
-<p>This command will produce detailed execution traces.</p>
-</section>
-<section id="running-a-pipeline-from-python">
-<h2>Running a Pipeline from Python<a class="headerlink" href="#running-a-pipeline-from-python" title="Link to this heading">¶</a></h2>
-<p>You can load a pipeline from YAML and execute it programmatically.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">load_pipeline_from_yaml</span>
-
-<span class="n">nodes</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;hello_pipeline.yaml&quot;</span><span class="p">)</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>  <span class="c1"># -&gt; :term:`Payload`</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>     <span class="c1"># e.g., FloatDataType(2.0)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>  <span class="c1"># dict-like context object</span>
-</pre></div>
-</div>
-<p>Note that <code class="docutils literal notranslate"><span class="pre">Pipeline.process</span></code> always returns a <a class="reference internal" href="glossary.html#term-Payload"><span class="xref std std-term">Payload</span></a>.</p>
-</section>
-<section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<section id="do-this-not-that">
+<h2>Do This / Not That<a class="headerlink" href="#do-this-not-that" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="concepts.html"><span class="doc">Concepts</span></a></p></li>
-<li><p><a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a></p></li>
-<li><p><a class="reference internal" href="studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a></p></li>
-<li><p><a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a></p></li>
+<li><p>✅ Use <strong>DataOperation</strong> for transformations (may update context).</p></li>
+<li><p>✅ Use <strong>DataProbe</strong> for read-only analysis:
+- Declare <strong>only</strong> <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code>.
+- <strong>Do not</strong> declare <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code>.
+- <strong>Do not</strong> declare or mutate context keys (probes are read-only).</p></li>
+<li><p>✅ Use <strong>DataSource</strong> / <strong>DataSink</strong> for I/O; <strong>ContextProcessor</strong> for domain context logic.</p></li>
+<li><p>❌ Do <em>not</em> subclass internal/private processor bases.</p></li>
+<li><p>✅ Keep constructors minimal (base classes already wire logging/observer).</p></li>
 </ul>
 </section>
-<section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
-<p>For terminal usage, see <a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a> for the full CLI reference.</p>
+<section id="contract-highlights">
+<h2>Contract Highlights<a class="headerlink" href="#contract-highlights" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">input_data_type</span></code> / <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code> are <strong>&#64;classmethod</strong> and return <strong>types</strong> (not instances) where applicable.</p>
+<ul class="simple">
+<li><p><strong>DataProbe</strong>:
+- must declare <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code>,
+- <strong>must not</strong> declare <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code>,
+- <strong>must not</strong> create/update context.</p></li>
+<li><p><strong>DataSink</strong> must <strong>not</strong> declare an output type.</p></li>
+</ul>
+</section>
+<section id="minimal-templates-pass-lint">
+<h2>Minimal Templates (pass lint)<a class="headerlink" href="#minimal-templates-pass-lint" title="Link to this heading">¶</a></h2>
+<section id="dataoperation-transforms-may-update-context">
+<h3>DataOperation (transforms; may update context)<a class="headerlink" href="#dataoperation-transforms-may-update-context" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataOperation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DemoNormalize</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize floats; writes mean/std to context.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataType</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">):</span>
+        <span class="c1"># Example context write via observer hook</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;norm.mean&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;norm.std&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</section>
+<section id="dataprobe-read-only-no-context-creation">
+<h3>DataProbe (read-only; no context creation)<a class="headerlink" href="#dataprobe-read-only-no-context-creation" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataProbe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DemoProbeReadOnly</span><span class="p">(</span><span class="n">DataProbe</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probe floats (read-only); does not mutate context.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataType</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">):</span>
+        <span class="c1"># Analysis only; DO NOT update context</span>
+        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</section>
+<section id="datasource-produces-data-declares-only-output-type">
+<h3>DataSource (produces data; declares only output type)<a class="headerlink" href="#datasource-produces-data-declares-only-output-type" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DemoSource</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Emit floats from a backing store.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">][:</span><span class="n">count</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="datasink-consumes-data-declares-only-input-type">
+<h3>DataSink (consumes data; declares only input type)<a class="headerlink" href="#datasink-consumes-data-declares-only-input-type" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataSink</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DemoSink</span><span class="p">(</span><span class="n">DataSink</span><span class="p">[</span><span class="n">FloatDataType</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Persist floats to a sink.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_send_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataType</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;out.txt&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="context-processors-domain-context-logic">
+<h2>Context Processors (domain context logic)<a class="headerlink" href="#context-processors-domain-context-logic" title="Link to this heading">¶</a></h2>
+<p>Use a context processor for creating/merging domain context. Keep them focused on
+context state, not data transformations. Run the linter to verify contracts.</p>
+</section>
+<section id="linting-your-components">
+<h2>Linting Your Components<a class="headerlink" href="#linting-your-components" title="Link to this heading">¶</a></h2>
+<p>Run contract checks with the CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Validate modules</span>
+semantiva<span class="w"> </span>dev<span class="w"> </span>lint<span class="w"> </span>--modules<span class="w"> </span>my_package.ext
+
+<span class="c1"># Scan source paths</span>
+semantiva<span class="w"> </span>dev<span class="w"> </span>lint<span class="w"> </span>--paths<span class="w"> </span>./src<span class="w"> </span>./plugins
+
+<span class="c1"># Validate components referenced by YAML</span>
+semantiva<span class="w"> </span>dev<span class="w"> </span>lint<span class="w"> </span>--yaml<span class="w"> </span>pipeline.yaml
+
+<span class="c1"># Export the rule catalog</span>
+semantiva<span class="w"> </span>dev<span class="w"> </span>lint<span class="w"> </span>--export-contracts<span class="w"> </span>CONTRACTS.md
+
+<span class="c1"># Detailed diagnostics</span>
+semantiva<span class="w"> </span>dev<span class="w"> </span>lint<span class="w"> </span>--modules<span class="w"> </span>my_package.ext<span class="w"> </span>--debug
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -344,23 +411,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="creating_components.html">
+          <a class="next-page" href="cli.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Creating Components (Authoring Guide)</div>
+                <div class="title">Semantiva CLI</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="index.html">
+          <a class="prev-page" href="getting_started.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">Getting Started</div>
                 
               </div>
             </a>
@@ -394,13 +461,19 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Getting Started</a><ul>
-<li><a class="reference internal" href="#install-run-your-first-pipeline">Install &amp; run your first pipeline</a></li>
-<li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#quickstart-hello-pipeline">Quickstart - Hello Pipeline</a></li>
-<li><a class="reference internal" href="#running-a-pipeline-from-python">Running a Pipeline from Python</a></li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
-<li><a class="reference internal" href="#see-also">See also</a></li>
+<li><a class="reference internal" href="#">Creating Components (Authoring Guide)</a><ul>
+<li><a class="reference internal" href="#audience">Audience</a></li>
+<li><a class="reference internal" href="#do-this-not-that">Do This / Not That</a></li>
+<li><a class="reference internal" href="#contract-highlights">Contract Highlights</a></li>
+<li><a class="reference internal" href="#minimal-templates-pass-lint">Minimal Templates (pass lint)</a><ul>
+<li><a class="reference internal" href="#dataoperation-transforms-may-update-context">DataOperation (transforms; may update context)</a></li>
+<li><a class="reference internal" href="#dataprobe-read-only-no-context-creation">DataProbe (read-only; no context creation)</a></li>
+<li><a class="reference internal" href="#datasource-produces-data-declares-only-output-type">DataSource (produces data; declares only output type)</a></li>
+<li><a class="reference internal" href="#datasink-consumes-data-declares-only-input-type">DataSink (consumes data; declares only input type)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#context-processors-domain-context-logic">Context Processors (domain context logic)</a></li>
+<li><a class="reference internal" href="#linting-your-components">Linting Your Components</a></li>
 </ul>
 </li>
 </ul>

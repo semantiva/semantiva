@@ -2,10 +2,12 @@
 <html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Concepts" href="concepts.html" /><link rel="prev" title="Semantiva CLI" href="cli.html" />
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 --><title>Python Module Index - Semantiva 0.5.0 documentation</title>
-<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+        <title>Extending Semantiva (Registries &amp; Extensions) - Semantiva 0.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=7205999f" />
@@ -177,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -196,11 +198,11 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
@@ -245,7 +247,13 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/extensions.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
@@ -254,178 +262,101 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          
-<section class="domainindex-section">
-  <h1>Python Module Index</h1>
-  <div class="domainindex-jumpbox"><a href="#cap-s"><strong>s</strong></a></div>
+          <section id="extending-semantiva-registries-extensions">
+<h1>Extending Semantiva (Registries &amp; Extensions)<a class="headerlink" href="#extending-semantiva-registries-extensions" title="Link to this heading">¶</a></h1>
+<p>(SSoT) This page mirrors <cite>semantiva/registry/*</cite>. Update this doc if registry changes.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>Register domain components (operations, probes, sources/sinks, context processors)
+and custom resolvers using the plugin registry.</p>
 </section>
-<table class="domainindex-table">
-  <tr class="pcap">
-    <td></td><td>&#160;</td><td></td>
-  </tr>
-  <tr class="cap" id="cap-s">
-    <td></td><td><strong>s</strong></td><td></td>
-  </tr>
-  <tr>
-    <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-    <td>
-        <code class="xref">semantiva</code></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="context_processors.html#module-semantiva.context_processors.context_processors"><code class="xref">semantiva.context_processors.context_processors</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="context_processors.html#module-semantiva.context_processors.context_types"><code class="xref">semantiva.context_processors.context_types</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="context_processors.html#module-semantiva.context_processors.factory"><code class="xref">semantiva.context_processors.factory</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="data_io.html#module-semantiva.data_io.data_io"><code class="xref">semantiva.data_io.data_io</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="data_processors.html#module-semantiva.data_processors.data_processors"><code class="xref">semantiva.data_processors.data_processors</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="data_processors.html#module-semantiva.data_processors.data_slicer_factory"><code class="xref">semantiva.data_processors.data_slicer_factory</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="data_processors.html#module-semantiva.data_processors.parametric_sweep_factory"><code class="xref">semantiva.data_processors.parametric_sweep_factory</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="data_types.html#module-semantiva.data_types.data_types"><code class="xref">semantiva.data_types.data_types</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="exceptions.html#module-semantiva.exceptions.pipeline_exceptions"><code class="xref">semantiva.exceptions.pipeline_exceptions</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="execution.html#module-semantiva.execution.executor.executor"><code class="xref">semantiva.execution.executor.executor</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="execution.html#module-semantiva.execution.job_queue.queue_orchestrator"><code class="xref">semantiva.execution.job_queue.queue_orchestrator</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="execution.html#module-semantiva.execution.orchestrator.orchestrator"><code class="xref">semantiva.execution.orchestrator.orchestrator</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="execution.html#module-semantiva.execution.transport.base"><code class="xref">semantiva.execution.transport.base</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="execution.html#module-semantiva.execution.transport.in_memory"><code class="xref">semantiva.execution.transport.in_memory</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="introspection_validation.html#module-semantiva.inspection.builder"><code class="xref">semantiva.inspection.builder</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="introspection_validation.html#module-semantiva.inspection.reporter"><code class="xref">semantiva.inspection.reporter</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="introspection_validation.html#module-semantiva.inspection.validator"><code class="xref">semantiva.inspection.validator</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="logger.html#module-semantiva.logger.logger"><code class="xref">semantiva.logger.logger</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="pipeline.html#module-semantiva.pipeline.payload"><code class="xref">semantiva.pipeline.payload</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="pipeline.html#module-semantiva.pipeline.pipeline"><code class="xref">semantiva.pipeline.pipeline</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="tracing.html#module-semantiva.trace.drivers.jsonl"><code class="xref">semantiva.trace.drivers.jsonl</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="tracing.html#module-semantiva.trace.model"><code class="xref">semantiva.trace.model</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="workflows_fitting_models.html#module-semantiva.workflows.fitting_model"><code class="xref">semantiva.workflows.fitting_model</code></a></td><td>
-    <em></em></td>
-  </tr>
-</table>
+<section id="implement-an-extension">
+<h2>Implement an Extension<a class="headerlink" href="#implement-an-extension" title="Link to this heading">¶</a></h2>
+<p>Subclass <code class="docutils literal notranslate"><span class="pre">SemantivaExtension</span></code> and implement <code class="docutils literal notranslate"><span class="pre">register()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">SemantivaExtension</span><span class="p">,</span> <span class="n">ClassRegistry</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyDomainExtension</span><span class="p">(</span><span class="n">SemantivaExtension</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ClassRegistry</span><span class="o">.</span><span class="n">register_modules</span><span class="p">([</span>
+            <span class="s2">&quot;my_pkg.ops&quot;</span><span class="p">,</span>      <span class="c1"># DataOperation/DataProbe subclasses</span>
+            <span class="s2">&quot;my_pkg.io&quot;</span><span class="p">,</span>       <span class="c1"># DataSource/DataSink</span>
+            <span class="s2">&quot;my_pkg.context&quot;</span><span class="p">,</span>  <span class="c1"># ContextProcessor</span>
+        <span class="p">])</span>
+        <span class="c1"># Optional: custom class-name resolvers (e.g., &quot;rename:Old:New&quot;)</span>
+        <span class="c1"># ClassRegistry.register_resolver(my_resolver)</span>
+        <span class="c1"># Optional: parameter resolvers (transform config values)</span>
+        <span class="c1"># ClassRegistry.register_param_resolver(my_param_resolver)</span>
+</pre></div>
+</div>
+</section>
+<section id="package-as-an-entry-point">
+<h2>Package as an Entry Point<a class="headerlink" href="#package-as-an-entry-point" title="Link to this heading">¶</a></h2>
+<p><strong>pyproject.toml</strong></p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[project.entry-points.</span><span class="s2">&quot;semantiva.extensions&quot;</span><span class="k">]</span>
+<span class="n">my-domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;my_pkg.ext:MyDomainExtension&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-extensions">
+<h2>Loading Extensions<a class="headerlink" href="#loading-extensions" title="Link to this heading">¶</a></h2>
+<p>From YAML:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;my-domain&quot;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;my-domain&quot;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>From Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_extensions</span>
+
+<span class="n">load_extensions</span><span class="p">([</span><span class="s2">&quot;my-domain&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="authoring-reminders">
+<h2>Authoring Reminders<a class="headerlink" href="#authoring-reminders" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Use <strong>DataOperation</strong>/<strong>DataProbe</strong> for processing.</p></li>
+<li><p><strong>Probes</strong> are read-only: declare <strong>only</strong> <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code>; do not mutate context.</p></li>
+<li><p>Use <strong>DataSource</strong>/<strong>DataSink</strong> for I/O; <strong>ContextProcessor</strong> for domain context.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code> to verify contract compliance.</p></li>
+</ul>
+</section>
+</section>
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="concepts.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Concepts</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="cli.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Semantiva CLI</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -444,8 +375,31 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Extending Semantiva (Registries &amp; Extensions)</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#implement-an-extension">Implement an Extension</a></li>
+<li><a class="reference internal" href="#package-as-an-entry-point">Package as an Entry Point</a></li>
+<li><a class="reference internal" href="#loading-extensions">Loading Extensions</a></li>
+<li><a class="reference internal" href="#authoring-reminders">Authoring Reminders</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

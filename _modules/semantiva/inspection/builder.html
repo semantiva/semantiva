@@ -197,40 +197,35 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Start Here</span></p>
-<ul>
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../creating_components.html">Creating Components (Authoring Guide)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../concepts.html">Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tracing.html">Tracing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">How-To &amp; Workflows</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../pipeline.html">Pipelines in Semantiva</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../registry_and_extensions.html">Registry &amp; Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sweeps.html">Sweeps in YAML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples_index.html">Examples Index</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -551,10 +546,21 @@
                 <span class="n">context_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin_idx</span>
                 <span class="n">required_params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
+        <span class="c1"># Merge explicit context requirements exposed by processor</span>
+        <span class="n">hook</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;get_context_requirements&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">hook</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">hook</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_params</span><span class="p">:</span>
+                    <span class="n">context_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_origin</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">required_params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
         <span class="n">all_required_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">required_params</span><span class="p">)</span>
 
         <span class="c1"># Analyze context key creation</span>
-        <span class="n">created_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">get_created_keys</span><span class="p">())</span>
+        <span class="n">created_keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">get_ck</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;get_created_keys&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">get_ck</span><span class="p">):</span>
+            <span class="n">created_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">get_ck</span><span class="p">())</span>
 
         <span class="c1"># Special handling for probe nodes that inject results into context</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">_ProbeContextInjectorNode</span><span class="p">):</span>
