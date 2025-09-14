@@ -8,6 +8,13 @@ By enforcing **type-safe** relationships between data and algorithms, Semantiva 
 
 Additionally, Semantiva is designed to be **AI-compatible**, allowing for collaboration with intelligent systems that can reason about, optimize, and even co-develop complex workflows using its well-defined semantic structures.
 
+## Why Semantiva?
+
+Semantiva is more than a pipeline runner—it is a **semantic framework for reproducible, contract-validated data workflows**.
+Pipelines compile into **deterministic graphs with stable IDs**, components are checked against a **contract catalog**, and payloads always flow with **typed data and structured context**.
+With first-class **parametric sweeps** and pluggable **execution backends**, Semantiva combines **clarity, provenance, and flexibility** in one framework.
+
+
 ## Key Principles
 
 1. **Domain-Driven Design (DDD)**
@@ -20,24 +27,31 @@ Additionally, Semantiva is designed to be **AI-compatible**, allowing for collab
 
 3. **Semantic Transparency & AI-Readiness**
    - Retains full traceability of how data is transformed and why particular operations are invoked.
-   - Facilitates clear, explainable workflows, valuable for AI-driven assistance, QA, audits, or scientific reproducibility.
-   - Enables AI assistants to understand, suggest, and even co-design workflows based on structured metadata and domain logic.
 
-4. **Modular & Extensible Architecture**
-   - Supports adding new data types, operation types, and domain ontologies without disrupting existing components.
-   - Adapts naturally to diverse applications—ranging from basic string manipulations to advanced imaging pipelines or HPC-scale workloads.
-   - Allows intelligent agents to interact with and modify workflows dynamically, making it a natural fit for AI-assisted design and automation.
+## Features
 
-## Why Semantiva?
+- **Semantic Components**: Processors, data types, and contexts are `_SemantivaComponent`s with machine-readable metadata mapped to RDF predicates—ready for knowledge-graph integration.
+- **Deterministic Graph Identity**: Pipelines compile into canonical graphs with stable node/pipeline IDs (UUIDv5 + SHA256). Cosmetic YAML changes won’t alter provenance.
+- **Contract-Validated Processors**: A table-driven ruleset validates every component (input/output types, metadata, context usage). Results are diagnostics, not crashes.
+- **Typed Payloads and Rich Context**: Workflows operate on `Payload(data, context)`, where data is a `BaseDataType` and context is a structured `ContextType`—ensuring safe parameter resolution and traceability.
+- **Parametric Sweeps**: Define systematic parameter grids in YAML (ranges, sequences, context-driven variables). Sweeps generate typed collections for experimentation without boilerplate.
+- **Flexible Execution**: Clean separation of concerns: Executor (how tasks run), Orchestrator (how the graph is traversed), Transport (how messages/events are passed). Ships with in-memory defaults, ready to scale out.
+- **Tracing and Observability**: Optional tracing emits before/after/error events with deterministic IDs. Zero overhead when disabled.
+- **Modular & Extensible Architecture**
+  - Supports adding new data types, processor types, and domain ontologies without disrupting existing components.
+  - Adapts naturally to diverse applications—ranging from basic string manipulations to advanced imaging pipelines or HPC-scale workloads.
+  - Allows intelligent agents to interact with and modify workflows dynamically, making it a natural fit for AI-assisted design and automation.
+
+## Benefits
 
 - **Clarity & Consistency**: Well-defined semantics for data and operations ensure that both humans and AI systems understand precisely how information flows and transforms.
 - **Adaptive Workflows**: Easily extend pipelines with new steps or data types, minimizing rework when domain requirements evolve.
-- **Scalability & HPC Integration**: Abstract base classes and a pipeline-oriented design let users scale operations seamlessly, whether on local machines or high-performance clusters.
-- **AI-Driven Collaboration**: Semantiva’s structured approach enables AI systems to assist with workflow optimizations, debugging, and dynamic pipeline generation.
-- **Interdisciplinary Collaboration**: A shared language of data and operation types fosters better communication across physics, mathematics, engineering, and software teams.
-- **Dual-Channel Pipelines**: Semantiva doesn’t just process data; it manages **metadata context** in parallel. This powerful design lets you inject dynamic parameters into each operation, influence routing or thresholds at runtime, and evolve configurations mid-pipeline—**ideal for software architects** who need flexible system designs and for **researchers** exploring iterative experiments.  
-- **Dynamic Parameter Injection**: By pulling parameters directly from the metadata context stream (instead of hardcoding them), each operation becomes more composable and reusable. **Systems engineers** can update or override settings without redeploying the entire pipeline, and **developers** can write once and adapt many times.  
-- **Advanced Reusability**: Operations remain generic because specific behaviors (thresholds, routing decisions, or domain-specific parameters) live in the metadata context flow. This reduces code duplication and fosters a library of well-tested transformations that can be combined for new use cases.
+- **Scalability & HPC Integration**: A pipeline-oriented design lets users scale operations seamlessly, whether on local machines or high-performance clusters.
+- **AI-Driven Collaboration**: Structured metadata enables AI systems to assist with workflow optimizations, debugging, and dynamic pipeline generation.
+- **Interdisciplinary Collaboration**: A shared language of data and processor types fosters better communication across physics, mathematics, engineering, and software teams.
+- **Dual-Channel Pipelines**: Semantiva processes **data** and **metadata context** in parallel, enabling dynamic parameter injection and runtime adaptation without code rewrites.
+- **Dynamic Parameter Injection**: Parameters come from the context stream (not hardcoded), improving composability and reuse; change behavior without redeploys.
+- **Advanced Reusability**: Keep operations generic; put thresholds/routing/domain parameters in context to reduce duplication and enable mix-and-match pipelines.
 
 ## AI-Enhanced Development Potential
 
@@ -55,18 +69,18 @@ This makes Semantiva uniquely suited to the evolving landscape of **human-AI col
 1. **Data Operations**
    - Abstract classes that enforce type-safe transformations, ensuring data flows remain coherent and domain-accurate.
 
-2. **Context Operations**
-   - Manages contextual or environmental information affecting data processing, enhancing adaptability and domain awareness.
+2. **Context Processors**
+   - Manage contextual or environmental information affecting data processing, enhancing adaptability and domain awareness.
 
-3. **Payload Operations (Pipelines)**
-   - Orchestrates the execution of multiple operations, combining data transformations and context adaptations into a coherent workflow.
+3. **Pipelines**
+   - Orchestrate the execution of multiple operations, combining data transformations and context adaptations into a coherent workflow.
    - Semantiva pipelines propagate both **data** and **metadata context** in parallel, empowering operations to dynamically fetch parameters. This supports fluid, on-the-fly changes to how data is processed.
 
-4. **Data Types & Operation Types**
-   - Defines the structure and constraints of domain-specific data, alongside compatible operations (e.g., `Image` ↔ `ImageOperation`), guaranteeing semantic integrity.
+4. **Data Types & Processor Types**
+   - Define the structure and constraints of domain-specific data, alongside compatible operations (e.g., `Image` ↔ `ImageOperation`), guaranteeing semantic integrity.
 
 5. **Execution Tools**
-     - Utilities for executing, monitoring, and debugging pipelines, supporting straightforward deployment and scaling.
+   - Utilities for executing, monitoring, and debugging pipelines, supporting straightforward deployment and scaling.
 
 ## Pipeline Configuration & Node Factories
 
@@ -90,11 +104,8 @@ To quickly dive into Semantiva, explore the following resources:
 - **Advanced Workflow Demo:**  
    Check out the [Semantiva Imaging](https://github.com/semantiva/semantiva-imaging) repository for a detailed demo on designing advanced imaging pipelines.
 
-- **Interactive Hands-On Notebooks:**  
-   Practice with real-world examples available in the [semantiva-hands-on-intro](https://github.com/semantiva/semantiva-hands-on-intro) repository, which provides step-by-step guides and notebooks.
-
 - **Extended Documentation:**  
-   Visit [docs.semantiva.org](https://docs.semantiva.org/) for comprehensive reference material on Semantiva's architecture, principles, and usage.
+   Visit [api.semantiva.org](https://api.semantiva.org/) for comprehensive reference material on Semantiva's architecture, principles, and usage.
 
 These resources offer a practical roadmap to mastering the framework and leveraging its full potential in your projects.
  

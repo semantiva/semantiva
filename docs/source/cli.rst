@@ -1,256 +1,117 @@
-.. _cli:
-
 Semantiva CLI
 =============
+(SSoT) This page mirrors `semantiva/cli.py`. Update this doc if CLI changes.
 
-The ``semantiva`` command lets you **inspect** and **run** pipelines from the terminal.
-All CLI commands automatically initialize core Semantiva components at startup,
-ensuring processors and data types are available for pipeline execution.
+Overview
+--------
+- ``semantiva run``  — Execute a pipeline from YAML.
+- ``semantiva inspect``  — Inspect a pipeline configuration.
+- ``semantiva dev lint`` — Lint components against contracts.
 
-Quick view
+Exit Codes
 ----------
+0: success, 1: CLI error, 2: file error, 3: config error, 4: runtime error, 5: interrupt.
 
-.. code-block:: bash
+Run
+---
+Execute a pipeline.
 
-   semantiva --help
-   semantiva run <pipeline.yaml> [--dry-run] [--validate] [--set key=value ...] [--context key=value ...] [--trace-*] [-v|--verbose] [-q|--quiet]
-   semantiva inspect <pipeline.yaml> [--extended] [-v|--verbose] [-q|--quiet]
-   semantiva dev lint [--modules pkg ...] [--paths path ...] [--extensions ext ...] [--yaml file.yaml ...]
+**Syntax**
 
-Subcommands
------------
+.. code-block:: text
 
-semantiva run
-~~~~~~~~~~~~~
+    semantiva run PIPELINE.yaml
+                      [--dry-run]
+                      [--validate]
+                      [--set key=value]...
+                      [--context key=value]...
+                      [-v | --verbose]
+                      [-q | --quiet]
+                      [--trace-driver {none,jsonl,pythonpath}]
+                      [--trace-output PATH-or-DriverSpec]
+                      [--trace-detail FLAGS]
+                      [--version]
 
-.. _run-options:
+**Arguments**
+- ``PIPELINE.yaml``            Path to the pipeline YAML file.
+- ``--dry-run``                Build graph without executing nodes.
+- ``--validate``               Validate configuration only.
+- ``--set key=value``          Override by dotted path (lists use numeric indices).
 
-Execute a pipeline defined in YAML.
+  - Value parsing: YAML first; falls back to string on parse error.
 
-**Usage**
+- ``--context key=value``      Inject initial context key/values.
 
-.. code-block:: bash
+  - Value parsing: YAML first; falls back to string on parse error.
 
-   semantiva run path/to/pipeline.yaml [OPTIONS]
+- ``-v / --verbose``           Increase log verbosity.
+- ``-q / --quiet``             Only show errors.
+- ``--trace-driver``           ``none`` (default), ``jsonl``, or ``pythonpath``.
+- ``--trace-output``           For ``jsonl``, a file path; for ``pythonpath``, a driver spec
+  (``package.module:ClassName``) instantiated with no args.
+- ``--trace-detail``           Comma-separated flags: ``timings, hash, repr, context, all``
+  (default: ``timings``).
+- ``--version``                Show CLI version.
 
-**Options**
+**YAML Extension Loading**
+If your YAML contains:
 
-- ``-v`` / ``--verbose``: increase log verbosity (enables DEBUG-level logging).
-- ``-q`` / ``--quiet``: reduce log verbosity (sets ERROR-level logging — errors only).
-- ``--dry-run``: build the pipeline graph without executing nodes.
-- ``--validate``: parse and validate configuration only.
-- ``--set``: override configuration values using dotted paths (e.g., ``--set pipeline.param=value``). Can be used multiple times. Values are parsed using YAML semantics.
-- ``--context key=value``: inject initial payload context. Multiple ``--context`` flags are allowed; quote lists for shells. Values are parsed using YAML semantics (for example, ``1.0`` -> float, ``true`` -> bool).
-- Tracing options (see :doc:`tracing`):
-   - ``--trace-driver``: e.g. ``jsonl``
-   - ``--trace-output``: directory or file path
-   - ``--trace-detail``: ``hash``, ``repr``, ``context``, ``all``
+.. code-block:: yaml
 
-**Examples**
+    extensions: ["my_package.ext"]
 
-.. code-block:: bash
+or:
 
-   # Run with verbose logging
-   semantiva run hello_pipeline.yaml -v
+.. code-block:: yaml
 
-   # Run with tracing enabled (JSONL)
-   semantiva run hello_pipeline.yaml \
-     --trace-driver jsonl \
-     --trace-output traces/ \
-     --trace-detail hash
+    pipeline:
+      extensions: ["my_package.ext"]
 
-semantiva inspect
-~~~~~~~~~~~~~~~~~
+those extensions are loaded before validation/execution (entry point or module import).
 
-Parse YAML, build the canonical graph, and run pre-execution checks.
-
-**Usage**
-
-.. code-block:: bash
-
-   semantiva inspect path/to/pipeline.yaml [--extended] [OPTIONS]
-
-**Options**
-
-- ``--extended``: include node identities (``node_uuid``), ports, parameters, inferred types (where available).
-- ``--strict``: exit non-zero if configuration contains invalid parameters.
-- Verbosity: ``-v`` / ``--verbose`` and ``-q`` analogous to ``run``.
-
-Inspection degrades gracefully for malformed configs and prints validation warnings, continuing to emit a report (see "Error-Resilient Inspection" in the CLI source).
-
-**Examples**
-
-.. code-block:: bash
-
-   # Basic inspection
-   semantiva inspect hello_pipeline.yaml
-
-   # Extended inspection (identities & details)
-   semantiva inspect hello_pipeline.yaml --extended
-
-**Strict validation**
-
-.. code-block:: bash
-
-   semantiva inspect my_pipeline.yaml --strict
-
-If any node contains configuration parameters that are not accepted by its processor,
-the command will exit non-zero and list the offending parameters.
-
-semantiva dev lint
-~~~~~~~~~~~~~~~~~~
-
-Run contract checks against discovered components. Use optional discovery
-flags to import modules, scan paths, or load pipeline YAML files.
-
-**Usage**
-
-.. code-block:: bash
-
-   semantiva dev lint [--modules pkg ...] [--paths path ...]
-                      [--extensions ext ...] [--yaml pipeline.yaml ...]
-
-**Options**
-
-- ``--modules``: import modules before scanning.
-- ``--paths``: scan Python files or packages for components.
-- ``--extensions``: load Semantiva extension entry points.
-- ``--yaml``: load pipeline YAMLs (ensures extensions are loaded).
-- ``--export-contracts``: write the rule catalog to a Markdown file.
-
-Exit code: ``0`` when no error diagnostics are found; ``3`` (``EXIT_CONFIG_ERROR``)
-when any ``SVA`` error diagnostics are emitted. Warnings do not affect the exit code.
-
-Common behaviors
-----------------
-
-Component initialization
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-All CLI commands (``run``, ``inspect``, ``dev lint``) automatically initialize
-core Semantiva components at startup via ``ClassRegistry.initialize_default_modules()``.
-This ensures processors and data types are registered and available for:
-
-- YAML pipeline parsing and validation
-- Class resolution and instantiation  
-- Contract validation and linting
-
-For programmatic usage outside the CLI, you must call this initialization explicitly.
-See :doc:`registry_and_extensions` for details.
-
-Exit codes
-~~~~~~~~~~
-
-- **0** — success.
-- **1** — CLI argument error.
-- **2** — file not found.
-- **3** — configuration or validation error.
-- **4** — runtime execution error.
-- **5** — keyboard interrupt.
-- **non-zero** — a validation or runtime error occurred; see stderr for details.
-
-For ``dev lint``, configuration/validation errors map to exit code ``3`` to
-facilitate CI enforcement. Pipelines should treat warnings as non-fatal.
-
-Error surface
-~~~~~~~~~~~~~
-
-- ``inspect``: reports spec-phase issues (unknown processor, bad ports, missing params).
-  Non-zero exit code; details printed to stderr.
-- ``run``: may fail during initialization (imports/params) or at execution time
-  (type contracts). Non-zero exit code; failing node identity appears in the message
-  when available (``node_uuid``). See :doc:`introspection_validation`.
-
-Logs & verbosity
-~~~~~~~~~~~~~~~~
-
-- ``-q`` sets ERROR-level logging (errors only).
-- ``-v`` enables DEBUG-level logging.
-- By default the CLI runs at INFO level.
-
-By default, logs are written to stderr; configure handlers in your ``logging`` policy.
-See :doc:`logger` for examples.
-
-Tracing shortcuts
-~~~~~~~~~~~~~~~~~
-
-All tracing flags are shared between ``run`` and the underlying execution.
-See :doc:`tracing` for the driver matrix, detail flags, and output format.
-
-.. seealso::
-
-   Tracing options: see :ref:`trace-detail-and-format` and :ref:`pretty-vs-compact-json`
-   for driver selection, detail flags, and output naming.
-
-Ecosystem
----------
-
-- Visualize a pipeline diagram with **Semantiva Studio Viewer**:
-  see :doc:`studio_viewer` (``semantiva-studio-viewer serve-pipeline ...``).
-- If you use domain extensions (e.g., **Semantiva Imaging**), their processors
-  are referenced the same way in YAML (by class name or registry name).
-
-Recipes
+Inspect
 -------
 
-Run with verbose logs
-~~~~~~~~~~~~~~~~~~~~~
+**Syntax**
 
-.. code-block:: bash
+.. code-block:: text
 
-   semantiva run hello_pipeline.yaml -v
-   
-   # Alternative: direct Python execution
-   python -m semantiva.semantiva run hello_pipeline.yaml -v
+    semantiva inspect PIPELINE.yaml
+                        [--extended]
+                        [-v | --verbose]
+                        [-q | --quiet]
+                        [--strict]
+                        [--version]
 
-Inspect with identities (pre-flight)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Arguments**
+- ``PIPELINE.yaml``  Path to the pipeline YAML file.
+- ``--extended``     Show extended inspection details.
+- ``-v / --verbose`` Increase log verbosity.
+- ``-q / --quiet``   Only show errors.
+- ``--strict``       Exit non-zero if configuration is invalid.
+- ``--version``      Show CLI version.
 
-.. code-block:: bash
+Dev / Lint
+----------
 
-   semantiva inspect hello_pipeline.yaml --extended
+**Syntax**
 
-Run with JSONL tracing (hash summaries)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: text
 
-.. code-block:: bash
+    semantiva dev lint
+      [--modules MOD ...]
+      [--paths PATH ...]
+      [--extensions NAME ...]
+      [--yaml FILE ...]
+      [--export-contracts PATH]
+      [--debug]
+      [--version]
 
-   semantiva run hello_pipeline.yaml \
-     --trace-driver jsonl \
-     --trace-output traces/ \
-     --trace-detail hash
-
-Override configuration values
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: bash
-
-   # Override pipeline parameters
-   semantiva run hello_pipeline.yaml --set pipeline.nodes.0.parameters.value=5.0
-   
-   # Multiple overrides
-   semantiva run hello_pipeline.yaml \
-     --set pipeline.nodes.0.parameters.value=5.0 \
-     --set pipeline.nodes.1.parameters.factor=3.0
-
-Minimal failure demonstration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: bash
-
-   # Intentionally mis-configure to see validation errors
-   semantiva inspect examples/broken_pipeline.yaml --extended || echo "non-zero exit as expected"
-
-FAQ
----
-
-**Q:** ``semantiva: command not found``  
-**A:** Ensure your Python environment is active and Semantiva is installed:
-``pip install semantiva``. If using a venv, activate it before running.
-
-**Q:** ImportError for my custom processor  
-**A:** Install your package into the same environment so it’s importable.
-
-**Q:** My trace file is empty  
-**A:** Re-run with ``--trace-driver jsonl --trace-output <dir>`` and
-check :doc:`tracing` for detail flags and file naming.
+**Arguments**
+- ``--modules``          Python modules to import and validate
+- ``--paths``            Paths to scan for Python components
+- ``--extensions``       Extension names (entry points or module names) to load and validate
+- ``--yaml``             Pipeline YAML files (discovers referenced components)
+- ``--export-contracts`` Write rule catalog to PATH (Markdown)
+- ``--debug``            Detailed rule-by-rule diagnostics
+- ``--version``          Show CLI version

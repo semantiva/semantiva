@@ -142,7 +142,7 @@ Public API Surface
 
 Extension Points
 ----------------
-- Provide processors (see :doc:`data_processors`) and register via :doc:`registry_and_extensions`.
+- Provide processors (see :doc:`data_processors`) and register via :doc:`extensions`.
 
 .. _objects-in-pipeline-configurations:
 
@@ -165,7 +165,7 @@ Example:
            fitting_model: "model:PolynomialFittingModel:degree=2"
            context_keyword: "fit_coefficients"
 
-See :doc:`registry_and_extensions` for resolver overview and best practices.
+See :doc:`extensions` for resolver overview and best practices.
 
 Autodoc
 -------

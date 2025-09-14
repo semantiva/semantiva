@@ -166,13 +166,13 @@ Notes on expressions
 --------------------
 
 - Expressions are parsed using a safe AST-based evaluator. This means:
-  - No arbitrary ``eval`` or execution of imports.
-  - Only simple function calls are allowed (``abs``, ``min``, ``max``,
-    ``round``, and the type conversions ``float/int/str/bool``).
-  - Tuples are supported which makes multi-valued parameters possible,
-    e.g. ``"(50 + 20 * t, 20)"`` returns a 2-tuple for a multi-valued
-    parameter.
-  - Unknown variables or disallowed syntax raise clear errors at compile time.
+    - No arbitrary ``eval`` or execution of imports.
+    - Only simple function calls are allowed (``abs``, ``min``, ``max``, ``round``, and
+      the type conversions ``float/int/str/bool``).
+    - Tuples are supported which makes multi-valued parameters possible,
+      e.g. ``"(50 + 20 * t, 20)"`` returns a 2-tuple for a multi-valued
+      parameter.
+    - Unknown variables or disallowed syntax raise clear errors at compile time.
 
 Good practices
 --------------

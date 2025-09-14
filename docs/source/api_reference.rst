@@ -4,7 +4,7 @@ API Reference
 See the following sections for detailed APIs:
 
 - :doc:`pipeline`
-- :doc:`registry_and_extensions`
+- :doc:`extensions`
 - :doc:`data_types`
 - :doc:`data_processors`
 - :doc:`context_processors`

@@ -239,7 +239,7 @@ The resulting coefficients are written to the specified context keyword.
 
 Link-outs:
 - :doc:`pipeline` (Payload and dual channels)
-- :doc:`registry_and_extensions` (``model:`` resolver and extensions)
+- :doc:`extensions` (``model:`` resolver and extensions)
 - :doc:`studio_viewer` (serve and export diagrams)
 - :doc:`context_processors` (Context processor fundamentals)
 - :doc:`data_processors` (Data slicer integration)
