@@ -92,5 +92,5 @@ See also
 --------
 
 For examples of resolver usage, see :ref:`objects-in-pipeline-configurations`
-and the *Resolvers Overview* in :doc:`registry_and_extensions`.
+and the *Resolvers Overview* in :doc:`extensions`.
 
