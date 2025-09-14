@@ -35,6 +35,7 @@ from semantiva.trace._utils import (
     canonical_json_bytes,
     context_to_kv_repr,
 )
+from semantiva.trace.delta_collector import DeltaCollector
 from semantiva.pipeline.graph_builder import (
     build_canonical_spec,
     compute_pipeline_id,
@@ -185,6 +186,19 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                 trace.on_pipeline_start(pipeline_id, run_id, canonical, meta)
             trace_opts = getattr(trace, "get_options", lambda: {"hash": True})()
 
+        # Helper to introspect processor-declared required context keys.
+        def _required_keys_for(node) -> list[str]:
+            get_req = getattr(node.processor, "get_required_keys", None)
+            if callable(get_req):
+                try:
+                    r = get_req()
+                    if isinstance(r, (list, tuple, set)):
+                        return list(r)
+                except Exception:
+                    pass
+            # Some processors declare on observer/metadata; ignore for now
+            return []
+
         nodes: List[_PipelineNode] = []
         for node_def in pipeline_spec:
             params = instantiate_from_descriptor(node_def.get("parameters", {}))
@@ -229,6 +243,40 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                         if pre_ctx_summary:
                             summaries["pre_context"] = pre_ctx_summary
 
+                pre_ctx_view = (
+                    context.to_dict()
+                    if hasattr(context, "to_dict")
+                    else dict(context)  # type: ignore[arg-type,call-overload]
+                )
+                required_keys = _required_keys_for(node)
+                collector = DeltaCollector(
+                    enable_hash=bool(trace_opts.get("hash")),
+                    enable_repr=bool(trace_opts.get("repr")),
+                )
+
+                node_id = node_uuids[index - 1] if index - 1 < len(node_uuids) else ""
+                hooks = SemantivaExecutor.SERHooks(
+                    upstream=upstream_map.get(node_id, []),
+                    trigger="dependency",
+                    upstream_evidence=[
+                        {"node_id": u, "state": "completed"}
+                        for u in upstream_map.get(node_id, [])
+                    ],
+                    io_delta_provider=lambda: collector.compute(
+                        pre_ctx=pre_ctx_view,
+                        post_ctx=(
+                            payload.context.to_dict()
+                            if hasattr(payload.context, "to_dict")
+                            else dict(payload.context)  # type: ignore[arg-type,call-overload]
+                        ),
+                        required_keys=required_keys,
+                    ),
+                    pre_checks=[],
+                    post_checks_provider=lambda: [],
+                    env_pins_provider=lambda: {},
+                    redaction_policy_provider=lambda: {},
+                )
+
                 try:
                     payload = node.process(Payload(data, context))
                     data, context = payload.data, payload.context
@@ -259,10 +307,42 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                                 post_ctx_summary["sha256"] = sha256_bytes(
                                     canonical_json_bytes(post_ctx)
                                 )
-                            if trace_opts.get("repr") and trace_opts.get("context"):
-                                post_ctx_summary["repr"] = context_to_kv_repr(post_ctx)
-                            if post_ctx_summary:
-                                summaries["post_context"] = post_ctx_summary
+                        if trace_opts.get("repr") and trace_opts.get("context"):
+                            post_ctx_summary["repr"] = context_to_kv_repr(post_ctx)
+                        if post_ctx_summary:
+                            summaries["post_context"] = post_ctx_summary
+
+                        io_delta = (
+                            hooks.io_delta_provider()
+                            if hooks and hooks.io_delta_provider
+                            else IODelta([], [], [], {})
+                        )
+                        why_run = {
+                            "trigger": hooks.trigger if hooks else "dependency",
+                            "upstream_evidence": (
+                                hooks.upstream_evidence if hooks else []
+                            ),
+                            "pre": hooks.pre_checks if hooks else [],
+                            "policy": [],
+                        }
+                        why_ok = {
+                            "post": (
+                                hooks.post_checks_provider()
+                                if hooks and hooks.post_checks_provider
+                                else []
+                            ),
+                            "invariants": [],
+                            "env": (
+                                hooks.env_pins_provider()
+                                if hooks and hooks.env_pins_provider
+                                else {}
+                            ),
+                            "redaction": (
+                                hooks.redaction_policy_provider()
+                                if hooks and hooks.redaction_policy_provider
+                                else {}
+                            ),
+                        }
 
                         ser = SERRecord(
                             type="ser",
@@ -280,23 +360,17 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                                 "params": {},
                                 "param_source": {},
                             },
-                            io_delta=IODelta(
-                                [], [], [], {}
-                            ),  # TODO: populate read/write sets
-                            checks={
-                                "why_run": {
-                                    "trigger": "dependency",
-                                    "upstream_evidence": [],
-                                    "pre": [],
-                                    "policy": [],
-                                },
-                                "why_ok": {
-                                    "post": [],
-                                    "invariants": [],
-                                    "env": {},
-                                    "redaction": {},
-                                },
-                            },
+                            io_delta=(
+                                io_delta
+                                if isinstance(io_delta, IODelta)
+                                else IODelta(
+                                    read=io_delta.get("read", []),
+                                    created=io_delta.get("created", []),
+                                    updated=io_delta.get("updated", []),
+                                    summaries=io_delta.get("summaries", {}),
+                                )
+                            ),
+                            checks={"why_run": why_run, "why_ok": why_ok},
                             timing={
                                 "start": start_iso,
                                 "end": end_iso,
@@ -316,6 +390,39 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                             datetime.now().isoformat(timespec="milliseconds") + "Z"
                         )
                         err_summary = summaries or {}
+                        io_delta = (
+                            hooks.io_delta_provider()
+                            if hooks and hooks.io_delta_provider
+                            else IODelta([], [], [], {})
+                        )
+                        why_run = {
+                            "trigger": hooks.trigger if hooks else "dependency",
+                            "upstream_evidence": (
+                                hooks.upstream_evidence if hooks else []
+                            ),
+                            "pre": hooks.pre_checks if hooks else [],
+                            "policy": [],
+                        }
+                        why_ok = {
+                            "post": [
+                                {
+                                    "code": type(exc).__name__,
+                                    "result": "FAIL",
+                                    "details": {"error": str(exc)},
+                                }
+                            ],
+                            "invariants": [],
+                            "env": (
+                                hooks.env_pins_provider()
+                                if hooks and hooks.env_pins_provider
+                                else {}
+                            ),
+                            "redaction": (
+                                hooks.redaction_policy_provider()
+                                if hooks and hooks.redaction_policy_provider
+                                else {}
+                            ),
+                        }
                         ser = SERRecord(
                             type="ser",
                             schema_version=2,
@@ -332,29 +439,17 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                                 "params": {},
                                 "param_source": {},
                             },
-                            io_delta=IODelta(
-                                [], [], [], {}
-                            ),  # TODO: populate read/write sets
-                            checks={
-                                "why_run": {
-                                    "trigger": "dependency",
-                                    "upstream_evidence": [],
-                                    "pre": [],
-                                    "policy": [],
-                                },
-                                "why_ok": {
-                                    "post": [
-                                        {
-                                            "code": type(exc).__name__,
-                                            "result": "FAIL",
-                                            "details": {"error": str(exc)},
-                                        }
-                                    ],
-                                    "invariants": [],
-                                    "env": {},
-                                    "redaction": {},
-                                },
-                            },
+                            io_delta=(
+                                io_delta
+                                if isinstance(io_delta, IODelta)
+                                else IODelta(
+                                    read=io_delta.get("read", []),
+                                    created=io_delta.get("created", []),
+                                    updated=io_delta.get("updated", []),
+                                    summaries=io_delta.get("summaries", {}),
+                                )
+                            ),
+                            checks={"why_run": why_run, "why_ok": why_ok},
                             timing={
                                 "start": start_iso,
                                 "end": end_iso,
