@@ -77,7 +77,7 @@ Next Steps
 - :doc:`concepts`
 - :doc:`pipeline`
 - :doc:`studio_viewer`
-- :doc:`tracing`
+- :doc:`ser`
 
 See also
 --------

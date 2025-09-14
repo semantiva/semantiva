@@ -27,8 +27,19 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Any
 
 from semantiva.pipeline.payload import Payload
-from semantiva.trace.model import NodeAddress, NodeTraceEvent, TraceDriver
-from semantiva.pipeline.graph_builder import build_canonical_spec, compute_pipeline_id
+from semantiva.trace.model import IODelta, SERRecord, TraceDriver
+from semantiva.trace._utils import (
+    serialize,
+    sha256_bytes,
+    safe_repr,
+    canonical_json_bytes,
+    context_to_kv_repr,
+)
+from semantiva.pipeline.graph_builder import (
+    build_canonical_spec,
+    compute_pipeline_id,
+    compute_upstream_map,
+)
 import time
 from datetime import datetime
 import uuid
@@ -158,9 +169,12 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
         run_id = None
         pipeline_id = None
         node_uuids: List[str] = []
+        upstream_map: dict[str, list[str]] = {}
+        trace_opts = {"hash": False, "repr": False, "context": False}
         if trace is not None:
             pipeline_id = compute_pipeline_id(canonical)
             node_uuids = [n["node_uuid"] for n in canonical["nodes"]]
+            upstream_map = compute_upstream_map(canonical)
             run_id = f"run-{uuid.uuid4().hex}"
             meta = {"num_nodes": len(node_uuids)}
             try:
@@ -169,6 +183,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                 )
             except TypeError:
                 trace.on_pipeline_start(pipeline_id, run_id, canonical, meta)
+            trace_opts = getattr(trace, "get_options", lambda: {"hash": True})()
 
         nodes: List[_PipelineNode] = []
         for node_def in pipeline_spec:
@@ -186,66 +201,172 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                     f"Running node {index}: {node.processor.__class__.__name__}"
                 )
                 if trace is not None and run_id and pipeline_id:
-                    addr = NodeAddress(run_id, pipeline_id, node_uuids[index - 1])
-                    before = NodeTraceEvent(
-                        phase="before",
-                        address=addr,
-                        params=None,
-                        input_payload=None,
-                        output_payload=None,
-                        error_type=None,
-                        error_msg=None,
-                        event_time_utc=datetime.now().isoformat(timespec="milliseconds")
-                        + "Z",
-                        t_wall=None,
-                        t_cpu=None,
-                    )
-                    trace.on_node_event(before)
                     start_wall = time.time()
                     start_cpu = time.process_time()
+                    start_iso = datetime.now().isoformat(timespec="milliseconds") + "Z"
+                    summaries: dict[str, dict[str, object]] = {}
+                    if trace_opts.get("hash") or trace_opts.get("repr"):
+                        inp: dict[str, object] = {"dtype": type(data).__name__}
+                        try:
+                            inp["rows"] = len(data)  # type: ignore[arg-type]
+                        except Exception:
+                            pass
+                        if trace_opts.get("hash"):
+                            inp["sha256"] = sha256_bytes(serialize(data))
+                        if trace_opts.get("repr"):
+                            inp["repr"] = safe_repr(data)
+                        summaries["input_data"] = inp
+                        pre_ctx = (
+                            context.to_dict() if hasattr(context, "to_dict") else {}
+                        )
+                        pre_ctx_summary: dict[str, object] = {}
+                        if trace_opts.get("hash"):
+                            pre_ctx_summary["sha256"] = sha256_bytes(
+                                canonical_json_bytes(pre_ctx)
+                            )
+                        if trace_opts.get("repr") and trace_opts.get("context"):
+                            pre_ctx_summary["repr"] = context_to_kv_repr(pre_ctx)
+                        if pre_ctx_summary:
+                            summaries["pre_context"] = pre_ctx_summary
 
                 try:
                     payload = node.process(Payload(data, context))
                     data, context = payload.data, payload.context
                     if trace is not None and run_id and pipeline_id:
                         t_wall = time.time() - start_wall
-                        t_cpu = time.process_time() - start_cpu
-                        after = NodeTraceEvent(
-                            phase="after",
-                            address=addr,
-                            params=None,
-                            input_payload=None,
-                            output_payload=Payload(data, context),
-                            error_type=None,
-                            error_msg=None,
-                            event_time_utc=datetime.now().isoformat(
-                                timespec="milliseconds"
-                            )
-                            + "Z",
-                            t_wall=t_wall,
-                            t_cpu=t_cpu,
+                        cpu_ms = int((time.process_time() - start_cpu) * 1000)
+                        end_iso = (
+                            datetime.now().isoformat(timespec="milliseconds") + "Z"
                         )
-                        trace.on_node_event(after)
+                        if trace_opts.get("hash") or trace_opts.get("repr"):
+                            out: dict[str, object] = {"dtype": type(data).__name__}
+                            try:
+                                out["rows"] = len(data)  # type: ignore[arg-type]
+                            except Exception:
+                                pass
+                            if trace_opts.get("hash"):
+                                out["sha256"] = sha256_bytes(serialize(data))
+                            if trace_opts.get("repr"):
+                                out["repr"] = safe_repr(data)
+                            summaries["output_data"] = out
+                            post_ctx = (
+                                payload.context.to_dict()
+                                if hasattr(payload.context, "to_dict")
+                                else {}
+                            )
+                            post_ctx_summary: dict[str, object] = {}
+                            if trace_opts.get("hash"):
+                                post_ctx_summary["sha256"] = sha256_bytes(
+                                    canonical_json_bytes(post_ctx)
+                                )
+                            if trace_opts.get("repr") and trace_opts.get("context"):
+                                post_ctx_summary["repr"] = context_to_kv_repr(post_ctx)
+                            if post_ctx_summary:
+                                summaries["post_context"] = post_ctx_summary
+
+                        ser = SERRecord(
+                            type="ser",
+                            schema_version=2,
+                            ids={
+                                "run_id": run_id,
+                                "pipeline_id": pipeline_id,
+                                "node_id": node_uuids[index - 1],
+                            },
+                            topology={
+                                "upstream": upstream_map.get(node_uuids[index - 1], [])
+                            },
+                            action={
+                                "op_ref": node.processor.__class__.__name__,
+                                "params": {},
+                                "param_source": {},
+                            },
+                            io_delta=IODelta(
+                                [], [], [], {}
+                            ),  # TODO: populate read/write sets
+                            checks={
+                                "why_run": {
+                                    "trigger": "dependency",
+                                    "upstream_evidence": [],
+                                    "pre": [],
+                                    "policy": [],
+                                },
+                                "why_ok": {
+                                    "post": [],
+                                    "invariants": [],
+                                    "env": {},
+                                    "redaction": {},
+                                },
+                            },
+                            timing={
+                                "start": start_iso,
+                                "end": end_iso,
+                                "duration_ms": int(t_wall * 1000),
+                                "cpu_ms": cpu_ms,
+                            },
+                            status="completed",
+                            labels={"node_fqn": node.processor.__class__.__name__},
+                            summaries=summaries or None,
+                        )
+                        trace.on_node_event(ser)
                 except Exception as exc:
                     if trace is not None and run_id and pipeline_id:
                         t_wall = time.time() - start_wall
-                        t_cpu = time.process_time() - start_cpu
-                        err = NodeTraceEvent(
-                            phase="error",
-                            address=addr,
-                            params=None,
-                            input_payload=None,
-                            output_payload=None,
-                            error_type=type(exc).__name__,
-                            error_msg=str(exc),
-                            event_time_utc=datetime.now().isoformat(
-                                timespec="milliseconds"
-                            )
-                            + "Z",
-                            t_wall=t_wall,
-                            t_cpu=t_cpu,
+                        cpu_ms = int((time.process_time() - start_cpu) * 1000)
+                        end_iso = (
+                            datetime.now().isoformat(timespec="milliseconds") + "Z"
                         )
-                        trace.on_node_event(err)
+                        err_summary = summaries or {}
+                        ser = SERRecord(
+                            type="ser",
+                            schema_version=2,
+                            ids={
+                                "run_id": run_id,
+                                "pipeline_id": pipeline_id,
+                                "node_id": node_uuids[index - 1],
+                            },
+                            topology={
+                                "upstream": upstream_map.get(node_uuids[index - 1], [])
+                            },
+                            action={
+                                "op_ref": node.processor.__class__.__name__,
+                                "params": {},
+                                "param_source": {},
+                            },
+                            io_delta=IODelta(
+                                [], [], [], {}
+                            ),  # TODO: populate read/write sets
+                            checks={
+                                "why_run": {
+                                    "trigger": "dependency",
+                                    "upstream_evidence": [],
+                                    "pre": [],
+                                    "policy": [],
+                                },
+                                "why_ok": {
+                                    "post": [
+                                        {
+                                            "code": type(exc).__name__,
+                                            "result": "FAIL",
+                                            "details": {"error": str(exc)},
+                                        }
+                                    ],
+                                    "invariants": [],
+                                    "env": {},
+                                    "redaction": {},
+                                },
+                            },
+                            timing={
+                                "start": start_iso,
+                                "end": end_iso,
+                                "duration_ms": int(t_wall * 1000),
+                                "cpu_ms": cpu_ms,
+                            },
+                            status="error",
+                            error={"type": type(exc).__name__, "message": str(exc)},
+                            labels={"node_fqn": node.processor.__class__.__name__},
+                            summaries=err_summary or None,
+                        )
+                        trace.on_node_event(ser)
                     raise
 
                 transport.publish(

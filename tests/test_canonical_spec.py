@@ -85,13 +85,13 @@ def test_trace_driver_defensive_guard(tmp_path, caplog):
     from semantiva.trace.drivers.jsonl import JSONLTrace
 
     caplog.set_level("WARNING")
-    driver = JSONLTrace(output_path=tmp_path, detail="all")
+    driver = JSONLTrace(output_path=tmp_path)
     driver.on_pipeline_start("pid", "rid", {"oops": object()}, {})
     driver.flush()
     driver.close()
-    files = list(tmp_path.glob("*.jsonl"))
+    files = list(tmp_path.glob("*.ser.jsonl"))
     assert files
-    content = files[0].read_text().split("\n\n")
-    record = json.loads([c for c in content if c.strip()][0])
+    content = [c for c in files[0].read_text().splitlines() if c.strip()]
+    record = json.loads(content[0])
     assert "canonical_spec" not in record
     assert any("canonical_spec" in r.message for r in caplog.records)

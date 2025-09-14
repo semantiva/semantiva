@@ -12,17 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Semantiva tracing (v1).
+"""Semantiva tracing (SER v1.1).
 
-This package provides the core tracing infrastructure for Semantiva pipelines.
-It implements a contract-based system for capturing execution events with
-configurable detail levels and pluggable storage backends.
-
-The tracing system captures complete execution records including error events
-with timing data, exception details, and proper resource cleanup for failed pipelines.
-
-Core Components:
-- NodeTraceEvent: Standard envelope for all node execution events (before/after/error)
-- TraceDriver: Protocol for implementing custom storage backends
-- JSONLTrace: Default append-only JSONL driver with background buffering and error handling
+This package provides the core tracing infrastructure for Semantiva pipelines
+based on the Step Evidence Record (SER).  Each completed node emits a single
+``SERRecord`` capturing the action, topology, input/output deltas, checks,
+timing (wall and CPU) information and optional payload/context summaries.
+Drivers implement the :class:`~semantiva.trace.model.TraceDriver` protocol to
+persist these records.
 """

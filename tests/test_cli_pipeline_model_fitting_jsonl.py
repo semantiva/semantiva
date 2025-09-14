@@ -43,9 +43,9 @@ def test_cli_pipeline_model_fitting_jsonl(tmp_path: Path):
         ]
     )
     assert res.returncode == 0
-    files = list(output_dir.glob("*.jsonl"))
+    files = list(output_dir.glob("*.ser.jsonl"))
     assert files, "trace file not created"
-    content = [c for c in files[0].read_text().split("\n\n") if c.strip()]
+    content = [c for c in files[0].read_text().splitlines() if c.strip()]
     records = [json.loads(chunk) for chunk in content]
     start = next(r for r in records if r["type"] == "pipeline_start")
     json.dumps(start["canonical_spec"])
@@ -78,9 +78,9 @@ pipeline:
         ]
     )
     assert res.returncode == 0
-    files = list(output_dir.glob("*.jsonl"))
+    files = list(output_dir.glob("*.ser.jsonl"))
     assert files
-    content = [c for c in files[0].read_text().split("\n\n") if c.strip()]
+    content = [c for c in files[0].read_text().splitlines() if c.strip()]
     records = [json.loads(chunk) for chunk in content]
     start = next(r for r in records if r["type"] == "pipeline_start")
     node_uuids = [n["node_uuid"] for n in start["canonical_spec"]["nodes"]]

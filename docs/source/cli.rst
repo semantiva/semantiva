@@ -29,7 +29,7 @@ Execute a pipeline.
                       [-q | --quiet]
                       [--trace-driver {none,jsonl,pythonpath}]
                       [--trace-output PATH-or-DriverSpec]
-                      [--trace-detail FLAGS]
+                     [--trace-detail FLAGS]
                       [--version]
 
 **Arguments**
@@ -49,8 +49,8 @@ Execute a pipeline.
 - ``--trace-driver``           ``none`` (default), ``jsonl``, or ``pythonpath``.
 - ``--trace-output``           For ``jsonl``, a file path; for ``pythonpath``, a driver spec
   (``package.module:ClassName``) instantiated with no args.
-- ``--trace-detail``           Comma-separated flags: ``timings, hash, repr, context, all``
-  (default: ``timings``).
+- ``--trace-detail``           Comma-separated flags: ``hash, repr, context, all``
+  (default: ``hash``).
 - ``--version``                Show CLI version.
 
 **YAML Extension Loading**

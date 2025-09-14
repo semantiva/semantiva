@@ -50,6 +50,7 @@ nodes = load_pipeline_from_yaml("pipeline.yaml")
 import yaml
 from typing import List, Dict, Any
 from semantiva.registry import load_extensions
+from semantiva.registry.class_registry import ClassRegistry
 
 
 def load_pipeline_from_yaml(yaml_file: str) -> List[Dict[str, Any]]:
@@ -98,6 +99,11 @@ def load_pipeline_from_yaml(yaml_file: str) -> List[Dict[str, Any]]:
         specified processors are available. Use with `Pipeline(nodes)` to
         create an executable pipeline.
     """
+    # Ensure core components and example utilities are registered so that
+    # processor class names referenced in YAML (e.g. FloatValueDataSource)
+    # can be resolved by the ClassRegistry during pipeline loading.
+    ClassRegistry.initialize_default_modules()
+
     with open(yaml_file, "r", encoding="utf-8") as file:
         pipeline_config = yaml.safe_load(file)
 

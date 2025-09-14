@@ -32,7 +32,7 @@ Quick Start
 
 See also:
 * :doc:`pipeline` — how pipelines are defined and executed
-* :doc:`tracing` — how to enable and read execution traces
+* :doc:`ser` — how to enable and read execution traces
 * :doc:`extensions` — extending Semantiva and generating component sets
 
 Modes & Controls
@@ -79,7 +79,7 @@ the diagram:
 3. In your trace file (JSONL), filter node events by that ``node_uuid`` to review
    timings, summaries, or errors for the selected node.
 
-See :doc:`tracing` for the record schema and :doc:`trace_graph_alignment` for identity guarantees.
+See :doc:`ser` for the record schema and :doc:`trace_graph_alignment` for identity guarantees.
 
 .. _positional-binding-node_uuid:
 
@@ -143,6 +143,6 @@ See also
 --------
 
 * :doc:`pipeline` — from YAML to execution (and Payloads)
-* :doc:`tracing` — record schema, detail flags, JSONL usage
+* :doc:`ser` — record schema, detail flags, JSONL usage
 * :doc:`graph` — GraphV1, node_uuid, PipelineId identities
 * :doc:`extensions` — generating component sets

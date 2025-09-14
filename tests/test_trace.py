@@ -16,12 +16,11 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from collections import defaultdict
 
 from semantiva import Payload
 from semantiva.configurations import load_pipeline_from_yaml
 from semantiva.pipeline import Pipeline, build_graph, compute_pipeline_id
-from semantiva.trace.model import TraceDriver, NodeTraceEvent
+from semantiva.trace.model import TraceDriver, SERRecord
 from semantiva.trace.drivers.jsonl import JSONLTrace
 from semantiva.trace._utils import context_to_kv_repr
 
@@ -30,7 +29,7 @@ class _CaptureTrace(TraceDriver):
     def __init__(self) -> None:
         self.start: tuple[str, str, dict, dict] | None = None
         self.end: tuple[str, dict] | None = None
-        self.events: list[NodeTraceEvent] = []
+        self.events: list[SERRecord] = []
 
     def on_pipeline_start(
         self,
@@ -40,20 +39,17 @@ class _CaptureTrace(TraceDriver):
         meta: dict,
         pipeline_input: Payload | None = None,
     ) -> None:
-        # Accept optional pipeline_input parameter (backward/forward compatible)
         self.start = (pipeline_id, run_id, canonical_spec, meta)
 
-    def on_node_event(self, event: NodeTraceEvent) -> None:
+    def on_node_event(self, event: SERRecord) -> None:
         self.events.append(event)
 
     def on_pipeline_end(self, run_id: str, summary: dict) -> None:
         self.end = (run_id, summary)
 
-    def flush(self) -> None:
-        pass
+    def flush(self) -> None: ...
 
-    def close(self) -> None:
-        pass
+    def close(self) -> None: ...
 
 
 def test_graph_canonicalization_parity(tmp_path: Path) -> None:
@@ -69,17 +65,18 @@ def test_graph_canonicalization_parity(tmp_path: Path) -> None:
     assert pid1 == pid2 == pid3
 
 
-def test_trace_events_two_per_node(tmp_path: Path) -> None:
+def test_trace_records_one_per_node(tmp_path: Path) -> None:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     tracer = _CaptureTrace()
     pipeline = Pipeline(nodes, trace=tracer)
     pipeline.process()
     assert tracer.start is not None and tracer.end is not None
-    phases = defaultdict(list)
-    for ev in tracer.events:
-        phases[ev.address.node_uuid].append(ev.phase)
-    for p in phases.values():
-        assert p == ["before", "after"]
+    assert len(tracer.events) == len(tracer.start[2]["nodes"])
+    # Ensure each record has required fields
+    for rec in tracer.events:
+        assert rec.type == "ser"
+        assert rec.ids["run_id"] == tracer.start[1]
+        assert "node_id" in rec.ids
 
 
 def test_jsonl_driver_creates_files(tmp_path: Path) -> None:
@@ -92,14 +89,10 @@ def test_jsonl_driver_creates_files(tmp_path: Path) -> None:
     pipeline2 = Pipeline(nodes, trace=tracer2)
     pipeline2.process()
     tracer2.close()
-    files = list(tmp_path.glob("*.jsonl"))
+    files = list(tmp_path.glob("*.ser.jsonl"))
     assert len(files) == 2
-    content = [
-        json.loads(chunk)
-        for chunk in files[0].read_text().split("\n\n")
-        if chunk.strip()
-    ]
-    assert all("type" in rec and rec["schema_version"] == 1 for rec in content)
+    content = [json.loads(line) for line in files[0].read_text().splitlines() if line]
+    assert any(rec.get("type") == "ser" for rec in content)
 
 
 def test_context_to_kv_repr() -> None:
@@ -110,44 +103,63 @@ def test_context_to_kv_repr() -> None:
     assert s.count("=") == 3
 
 
-def _run_and_load(detail: str, tmp_path: Path) -> list[dict]:
+def _run_and_load(tmp_path: Path) -> list[dict]:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
-    trace_path = tmp_path / "trace.jsonl"
-    tracer = JSONLTrace(str(trace_path), detail=detail)
+    trace_path = tmp_path / "trace.ser.jsonl"
+    tracer = JSONLTrace(str(trace_path))
     pipeline = Pipeline(nodes, trace=tracer)
     pipeline.process()
     tracer.close()
-    text = trace_path.read_text()
-    return [json.loads(ch) for ch in text.split("\n\n") if ch.strip()]
+    text = trace_path.read_text().splitlines()
+    return [json.loads(ch) for ch in text if ch.strip()]
 
 
-def test_detail_matrix(tmp_path: Path) -> None:
-    details = {
-        "timings": {"hash": False, "repr": False, "context": False},
-        "hash": {"hash": True, "repr": False, "context": False},
-        "repr": {"hash": False, "repr": True, "context": False},
-        "repr,context": {"hash": False, "repr": True, "context": True},
-        "all": {"hash": True, "repr": True, "context": True},
-    }
-    for detail, expect in details.items():
-        records = _run_and_load(detail, tmp_path / detail.replace(",", "_"))
-        after = [
-            r for r in records if r.get("type") == "node" and r.get("phase") == "after"
-        ]
-        assert after
-        has_hash = any("out_data_hash" in r and "post_context_hash" in r for r in after)
-        has_repr = any("out_data_repr" in r for r in after)
-        has_ctx_repr = any("post_context_repr" in r for r in after)
-        assert has_hash == expect["hash"]
-        assert has_repr == expect["repr"]
-        assert has_ctx_repr == expect["context"]
+def test_output_format(tmp_path: Path) -> None:
+    records = _run_and_load(tmp_path)
+    assert records[0]["type"] == "pipeline_start"
+    assert records[0]["schema_version"] == 2
+    ser = next(r for r in records if r["type"] == "ser")
+    assert ser["status"] == "completed"
+    assert "cpu_ms" in ser["timing"] and ser["timing"]["cpu_ms"] >= 0
+    assert "input_data" in ser.get("summaries", {})
 
 
-def test_pretty_output(tmp_path: Path) -> None:
-    _ = _run_and_load("timings", tmp_path)
-    trace_file = tmp_path / "trace.jsonl"
-    text = trace_file.read_text()
-    assert text.startswith("{\n")
-    assert "\n\n{" in text
-    first = json.loads(text.split("\n\n")[0])
-    assert list(first.keys()) == sorted(first.keys())
+def test_detail_flags(tmp_path: Path) -> None:
+    nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
+    trace_path = tmp_path / "trace.ser.jsonl"
+    tracer = JSONLTrace(str(trace_path), detail="hash")
+    Pipeline(nodes, trace=tracer).process()
+    tracer.close()
+    ser = next(
+        json.loads(line)
+        for line in trace_path.read_text().splitlines()
+        if line and json.loads(line)["type"] == "ser"
+    )
+    assert "sha256" in ser["summaries"]["input_data"]
+    assert "repr" not in ser["summaries"]["input_data"]
+
+    trace_path2 = tmp_path / "trace2.ser.jsonl"
+    tracer2 = JSONLTrace(str(trace_path2), detail="repr")
+    Pipeline(nodes, trace=tracer2).process()
+    tracer2.close()
+    ser2 = next(
+        json.loads(line)
+        for line in trace_path2.read_text().splitlines()
+        if line and json.loads(line)["type"] == "ser"
+    )
+    assert "repr" in ser2["summaries"]["input_data"]
+    assert "pre_context" not in ser2["summaries"] or "repr" not in ser2[
+        "summaries"
+    ].get("pre_context", {})
+
+    trace_path3 = tmp_path / "trace3.ser.jsonl"
+    tracer3 = JSONLTrace(str(trace_path3), detail="repr,context")
+    Pipeline(nodes, trace=tracer3).process()
+    tracer3.close()
+    ser3 = next(
+        json.loads(line)
+        for line in trace_path3.read_text().splitlines()
+        if line and json.loads(line)["type"] == "ser"
+    )
+    assert "repr" in ser3["summaries"]["input_data"]
+    assert "repr" in ser3["summaries"]["pre_context"]
