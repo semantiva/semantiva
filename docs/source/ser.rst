@@ -50,3 +50,22 @@ driver:
 Legacy trace files can be converted to SER using the ``semantiva trace convert``
 command.
 
+IO Delta
+--------
+Each SER now includes an ``io_delta`` describing how the node interacted with context:
+
+- ``read``: declared required keys (if provided by the processor)
+- ``created``: new keys written by the node
+- ``updated``: existing keys whose values changed
+- ``summaries`` (changed keys only): ``dtype``, ``len``, ``rows``, and optional
+  ``sha256`` (``hash`` flag) and ``repr`` (``repr`` flag)
+
+Checks via SERHooks
+-------------------
+Orchestrator constructs basic hooks that fill:
+
+- ``checks.why_run``: trigger and upstream evidence
+- ``checks.why_ok``: post-check results, invariants (reserved), env pins, and redaction (reserved)
+
+These are extension points for richer policy modules.
+

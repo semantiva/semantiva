@@ -9,9 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] – TBD
 
 ### Added
-- Replaced trace records with Step Evidence Records (SER v1) and updated JSONL driver
-- SER v1.1: CPU timing, status/error fields, rich summaries with detail flags,
-  JSON schema and legacy trace converter
+- **Trace API** with JSONL driver and CLI wiring
+- **Tracing (SER v1)**: Canonical GraphV1, deterministic IDs, JSONL driver, CLI wiring, and human-friendly output
+  - Canonical graph builder (`build_graph`) produces a GraphV1 canonical spec used as the single source of truth.
+  - Zero-cost when disabled: tracing is opt-in;
+  - Trace record v1 envelopes are minimal and stable: `pipeline_start`, `node` (phase=`before|after|error`) and `pipeline_end`. 
+  - `JSONLTrace` driver: append-only, asynchronous background writer.
+  - CLI wiring added: `--trace-driver`, `--trace-output`, and `--trace-detail` control trace backend, output location, and which semantic summaries are emitted.
 - Unknown/unused configuration parameter detection: inspection now reports
   `invalid_parameters` per node (with suggestions). Validation/execution fail
   fast with `InvalidNodeParameterError` when processors do not accept those keys.
@@ -66,13 +70,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Rewrote the ``Concepts`` documentation into a narrative overview highlighting type safety, dual-channel execution, and semantic transparency
 - Introduced metadata and node interface contract tests to enforce component expectations
 - **Documentation**: Added a docstring audit to the documentation build to track coverage
-- **Trace API** with JSONL driver and CLI wiring
-- **Tracing (v1)**: Canonical GraphV1, deterministic IDs, JSONL driver, CLI wiring, and human-friendly output
-  - Canonical graph builder (`build_graph`) produces a GraphV1 canonical spec used as the single source of truth.
-  - Zero-cost when disabled: tracing is opt-in;
-  - Trace record v1 envelopes are minimal and stable: `pipeline_start`, `node` (phase=`before|after|error`) and `pipeline_end`. 
-  - `JSONLTrace` driver: append-only, asynchronous background writer.
-  - CLI wiring added: `--trace-driver`, `--trace-output`, and `--trace-detail` control trace backend, output location, and which semantic summaries are emitted.
 
 ### Changed
 - **Refactored Pipeline Introspection System**: Replaced `PipelineInspector` with modular inspection architecture

@@ -101,6 +101,7 @@ class SequentialSemantivaExecutor(SemantivaExecutor):
         Returns:
             A completed Future whose result() returns fn(*args, **kwargs).
         """
+        # ser_hooks is accepted for API parity with async executors.
         # Directly call the function in the current thread
         result = fn(*args, **kwargs)
         # Wrap the result in an ImmediateFuture so callers can uniformly
