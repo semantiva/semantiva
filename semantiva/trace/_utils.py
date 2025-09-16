@@ -44,6 +44,16 @@ def safe_repr(obj: Any, maxlen: int = 200) -> str:
     return s[:head] + "…"
 
 
+def serialize_json_safe(obj: Any) -> Any:
+    """Return ``obj`` if JSON serializable, else ``safe_repr`` string."""
+
+    try:
+        json.dumps(obj, ensure_ascii=False)
+        return obj
+    except Exception:
+        return safe_repr(obj)
+
+
 def _bytes_from_known_interfaces(obj: Any) -> bytes | None:
     """Try to obtain bytes from known object interfaces.
 

@@ -253,33 +253,12 @@ Use --debug for detailed information about which rules are checked for each comp
     )
     lint_p.add_argument("--version", action="version", version=_get_version())
 
-    trace_p = sub.add_parser("trace", help="Trace utilities")
-    trace_sub = trace_p.add_subparsers(dest="trace_command")
-    convert_p = trace_sub.add_parser(
-        "convert", help="Convert trace files between formats"
-    )
-    convert_p.add_argument("input", help="Path to legacy trace JSONL file")
-    convert_p.add_argument(
-        "--from",
-        dest="from_format",
-        required=True,
-        choices=["trace-v1"],
-    )
-    convert_p.add_argument(
-        "--to",
-        dest="to_format",
-        required=True,
-        choices=["ser-v1.1"],
-    )
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_usage(sys.stderr)
         raise SystemExit(EXIT_CLI_ERROR)
     if args.command == "dev" and getattr(args, "dev_command", None) is None:
         dev_p.print_usage(sys.stderr)
-        raise SystemExit(EXIT_CLI_ERROR)
-    if args.command == "trace" and getattr(args, "trace_command", None) is None:
-        trace_p.print_usage(sys.stderr)
         raise SystemExit(EXIT_CLI_ERROR)
     return args
 
@@ -615,13 +594,6 @@ def main(argv: List[str] | None = None) -> None:
     elif args.command == "dev":
         if args.dev_command == "lint":
             code = _lint(args)
-        else:
-            code = EXIT_CLI_ERROR
-    elif args.command == "trace":
-        if args.trace_command == "convert":
-            from semantiva.cli.trace_convert import convert
-
-            code = convert(args)
         else:
             code = EXIT_CLI_ERROR
     else:

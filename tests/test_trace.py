@@ -117,11 +117,15 @@ def _run_and_load(tmp_path: Path) -> list[dict]:
 def test_output_format(tmp_path: Path) -> None:
     records = _run_and_load(tmp_path)
     assert records[0]["type"] == "pipeline_start"
-    assert records[0]["schema_version"] == 2
-    ser = next(r for r in records if r["type"] == "ser")
+    assert records[0]["schema_version"] == 0
+    ser = next(
+        r for r in records if r["type"] == "ser" and "factor" in r["action"]["params"]
+    )
     assert ser["status"] == "completed"
     assert "cpu_ms" in ser["timing"] and ser["timing"]["cpu_ms"] >= 0
     assert "input_data" in ser.get("summaries", {})
+    assert ser["action"]["params"]["factor"] == 2.0
+    assert ser["action"]["param_source"]["factor"] == "node"
 
 
 def test_detail_flags(tmp_path: Path) -> None:

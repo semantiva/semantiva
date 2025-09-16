@@ -83,6 +83,8 @@ def test_error_tracing_writes_failure(tmp_path: Path) -> None:
     assert ser["status"] == "error"
     assert ser["error"]["type"] == "ValueError"
     assert ser["checks"]["why_ok"]["post"][0]["result"] == "FAIL"
+    assert ser["action"]["params"]["msg"] == "fail"
+    assert ser["action"]["param_source"]["msg"] == "node"
     pipeline_end = records[-1]
     assert pipeline_end["type"] == "pipeline_end"
     assert pipeline_end["summary"]["status"] == "error"

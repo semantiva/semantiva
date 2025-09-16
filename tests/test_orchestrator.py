@@ -35,6 +35,7 @@ from semantiva.execution.transport import InMemorySemantivaTransport
 from semantiva.context_processors.context_types import ContextType
 from semantiva.examples.test_utils import FloatDataType, FloatMultiplyOperation
 from semantiva.logger import Logger
+from semantiva.execution.executor import SequentialSemantivaExecutor
 
 
 @pytest.fixture
@@ -97,3 +98,26 @@ def test_orchestrator_applies_each_node_and_publishes(fake_pipeline):
     assert isinstance(data_output, FloatDataType)
     # Context is passed through unchanged
     assert context_output == ctx
+
+
+def test_orchestrator_uses_executor(monkeypatch, fake_pipeline):
+    calls: list = []
+    original = SequentialSemantivaExecutor.submit
+
+    def capture(self, fn, *args, **kwargs):
+        calls.append(kwargs.get("ser_hooks"))
+        return original(self, fn, *args, **kwargs)
+
+    monkeypatch.setattr(SequentialSemantivaExecutor, "submit", capture)
+    orch = LocalSemantivaOrchestrator()
+    initial = FloatDataType(1.0)
+    ctx = ContextType({})
+    orch.execute(
+        fake_pipeline.resolved_spec,
+        Payload(initial, ctx),
+        InMemorySemantivaTransport(),
+        Logger(),
+        canonical_spec=fake_pipeline.canonical_spec,
+    )
+    assert len(calls) == len(fake_pipeline.resolved_spec)
+    assert all(h is not None for h in calls)
