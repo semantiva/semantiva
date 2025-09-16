@@ -76,8 +76,9 @@ the diagram:
 
 1. Open your pipeline YAML in the Viewer.
 2. Click a node to see its details (including :term:`node_uuid`).
-3. In your trace file (JSONL), filter node events by that ``node_uuid`` to review
-   timings, summaries, or errors for the selected node.
+3. Open the corresponding ``*.ser.jsonl`` trace file and filter SER records by
+   ``ids.node_id`` matching that ``node_uuid`` to review timings, parameters, or
+   errors for the selected node. Studio overlays are built directly from SER.
 
 See :doc:`ser` for the record schema and :doc:`trace_graph_alignment` for identity guarantees.
 

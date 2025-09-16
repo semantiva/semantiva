@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Semantiva Step Evidence Record v1.1",
+  "$id": "https://semantiva.ai/schemas/ser/0/ser_v0.schema.json",
+  "title": "Semantiva Step Evidence Record v0 (draft)",
   "type": "object",
   "required": [
     "type",
@@ -15,7 +16,7 @@
   ],
   "properties": {
     "type": {"const": "ser"},
-    "schema_version": {"const": 2},
+    "schema_version": {"const": 0},
     "ids": {
       "type": "object",
       "required": ["run_id", "pipeline_id", "node_id"],
@@ -29,7 +30,16 @@
       "required": ["upstream"],
       "additionalProperties": true
     },
-    "action": {"type": "object"},
+    "action": {
+      "type": "object",
+      "required": ["op_ref", "params", "param_source"],
+      "properties": {
+        "op_ref": {"type": "string"},
+        "params": {"type": "object"},
+        "param_source": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
     "io_delta": {"type": "object"},
     "checks": {"type": "object"},
     "timing": {

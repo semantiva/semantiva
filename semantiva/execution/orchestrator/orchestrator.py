@@ -34,6 +34,7 @@ from semantiva.trace._utils import (
     safe_repr,
     canonical_json_bytes,
     context_to_kv_repr,
+    serialize_json_safe,
 )
 from semantiva.trace.delta_collector import DeltaCollector
 from semantiva.pipeline.graph_builder import (
@@ -86,7 +87,7 @@ class SemantivaOrchestrator(ABC):
         """
         Walk the pipeline DAG, process each node, and publish intermediate results.
 
-        Emits before, after, and error events when tracing is enabled.
+        Emits a single SER node record for each executed step when tracing is enabled.
         Zero overhead when trace is None (no run_id, no canonicalization, no timings).
 
         Args:
@@ -139,13 +140,13 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
         """
         Execute each node in the provided pipeline in order.
 
-        Emits before, after, and error events when tracing is enabled.
+        Emits SER node records when tracing is enabled.
         Zero overhead when trace is None (no run_id, no canonicalization, no timings).
 
         When ``trace`` is provided, the orchestrator emits ``pipeline_start`` and
-        ``pipeline_end`` records along with per-node ``before``/``after``/``error`` events.
-        Error events capture timing data and exception details for failed nodes.
-        Trace resources (flush/close) are properly managed even when execution fails.
+        ``pipeline_end`` records along with one ``ser`` record per node. Error
+        records capture timing data and exception details for failed nodes. Trace
+        resources (flush/close) are properly managed even when execution fails.
         No tracing overhead is incurred when ``trace`` is ``None``.
 
         Args:
@@ -199,13 +200,36 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
             # Some processors declare on observer/metadata; ignore for now
             return []
 
+        def _resolve_params_with_sources(node, node_def, ctx) -> tuple[dict, dict]:
+            params_out: dict[str, Any] = {}
+            source_out: dict[str, str] = {}
+            declared = (node_def or {}).get("parameters", {}) or {}
+            defaults = getattr(node.processor, "get_default_params", lambda: {})() or {}
+            for k, v in declared.items():
+                params_out[k] = serialize_json_safe(v)
+                source_out[k] = "node"
+            required_from_ctx: list[str] = getattr(
+                node.processor, "get_required_keys", lambda: []
+            )()
+            for k in required_from_ctx:
+                if k not in params_out and k in ctx:
+                    params_out[k] = serialize_json_safe(ctx[k])
+                    source_out[k] = "context"
+            for k, v in defaults.items():
+                if k not in params_out:
+                    params_out[k] = serialize_json_safe(v)
+                    source_out[k] = "default"
+            return params_out, source_out
+
         nodes: List[_PipelineNode] = []
+        node_defs: List[dict[str, Any]] = []
         for node_def in pipeline_spec:
             params = instantiate_from_descriptor(node_def.get("parameters", {}))
             nd = dict(node_def)
             nd["parameters"] = params
             node = _pipeline_node_factory(nd, logger)
             nodes.append(node)
+            node_defs.append(nd)
 
         self._last_nodes = nodes
 
@@ -265,9 +289,9 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                     io_delta_provider=lambda: collector.compute(
                         pre_ctx=pre_ctx_view,
                         post_ctx=(
-                            payload.context.to_dict()
-                            if hasattr(payload.context, "to_dict")
-                            else dict(payload.context)  # type: ignore[arg-type,call-overload]
+                            context.to_dict()
+                            if hasattr(context, "to_dict")
+                            else dict(context)  # type: ignore[arg-type,call-overload]
                         ),
                         required_keys=required_keys,
                     ),
@@ -277,8 +301,16 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                     redaction_policy_provider=lambda: {},
                 )
 
+                params, param_sources = _resolve_params_with_sources(
+                    node, node_defs[index - 1], pre_ctx_view
+                )
+
                 try:
-                    payload = node.process(Payload(data, context))
+                    future = self.executor.submit(
+                        lambda: node.process(Payload(data, context)),
+                        ser_hooks=hooks,
+                    )
+                    payload = future.result()
                     data, context = payload.data, payload.context
                     if trace is not None and run_id and pipeline_id:
                         t_wall = time.time() - start_wall
@@ -346,7 +378,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
 
                         ser = SERRecord(
                             type="ser",
-                            schema_version=2,
+                            schema_version=0,
                             ids={
                                 "run_id": run_id,
                                 "pipeline_id": pipeline_id,
@@ -357,8 +389,8 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                             },
                             action={
                                 "op_ref": node.processor.__class__.__name__,
-                                "params": {},
-                                "param_source": {},
+                                "params": params,
+                                "param_source": param_sources,
                             },
                             io_delta=(
                                 io_delta
@@ -425,7 +457,7 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                         }
                         ser = SERRecord(
                             type="ser",
-                            schema_version=2,
+                            schema_version=0,
                             ids={
                                 "run_id": run_id,
                                 "pipeline_id": pipeline_id,
@@ -436,8 +468,8 @@ class LocalSemantivaOrchestrator(SemantivaOrchestrator):
                             },
                             action={
                                 "op_ref": node.processor.__class__.__name__,
-                                "params": {},
-                                "param_source": {},
+                                "params": params,
+                                "param_source": param_sources,
                             },
                             io_delta=(
                                 io_delta

@@ -11,13 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Semantiva tracing (SER v0).
-
-This package provides the core tracing infrastructure for Semantiva pipelines
-based on the Step Evidence Record (SER). Each completed node emits a single
-``SERRecord`` capturing the action, topology, input/output deltas, checks,
-timing (wall and CPU) information and optional payload/context summaries.
-Drivers implement the :class:`~semantiva.trace.model.TraceDriver` protocol to
-persist these records.
-"""

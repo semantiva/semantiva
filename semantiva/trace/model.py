@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Trace model for Step Evidence Record (SER v1.1).
+"""Trace model for Step Evidence Record (SER v0 - draft).
 
-This module defines the dataclasses used by the tracing subsystem.  The legacy
-``NodeTraceEvent`` and ``NodeAddress`` envelopes have been replaced by the
-Step Evidence Record (SER), a single record emitted for each completed
-pipeline step.  Drivers switch on the ``type`` field and ignore unknown fields
-for forward compatibility.  Version ``1.1`` extends the original payload with
-CPU timing, explicit status/error fields, and optional human-friendly
-summaries for payloads and context.
+This module defines the dataclasses used by the tracing subsystem. The Step
+Evidence Record (SER) is a single record emitted for each completed pipeline
+step. Drivers switch on the ``type`` field and ignore unknown fields for
+forward compatibility. Version ``0`` is the draft schema used during
+pre-release development.
 """
 
 from __future__ import annotations

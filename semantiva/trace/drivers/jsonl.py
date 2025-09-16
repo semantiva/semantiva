@@ -72,7 +72,7 @@ class JSONLTrace(TraceDriver):
         assert self._file is not None
         record = {
             "type": "pipeline_start",
-            "schema_version": 2,
+            "schema_version": 0,
             "pipeline_id": pipeline_id,
             "run_id": run_id,
             "canonical_spec": canonical_spec,
@@ -110,7 +110,7 @@ class JSONLTrace(TraceDriver):
             return
         record = {
             "type": "pipeline_end",
-            "schema_version": 2,
+            "schema_version": 0,
             "run_id": run_id,
             "summary": summary,
         }
