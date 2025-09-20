@@ -135,6 +135,16 @@ class SemantivaOrchestrator(ABC):
         run_token = cast(str, run_id) if trace_active else ""
         pipeline_token = cast(str, pipeline_id) if trace_active else ""
         env_pins_static = self._collect_env_pins() if trace_driver is not None else {}
+        if trace_driver is not None:
+            try:
+                from semantiva.registry.bootstrap import current_profile
+
+                env_pins_static = dict(env_pins_static)
+                env_pins_static["registry.fingerprint"] = (
+                    current_profile().fingerprint()
+                )
+            except Exception:
+                pass
 
         try:
             for index, node in enumerate(nodes):

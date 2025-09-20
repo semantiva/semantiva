@@ -29,6 +29,7 @@ from semantiva import Pipeline, Payload
 from semantiva.logger.logger import Logger
 from .logging_setup import _setup_log
 from semantiva.configurations.load_pipeline_from_yaml import load_pipeline_from_yaml
+from semantiva.registry.bootstrap import RegistryProfile, apply_profile
 
 
 def worker_loop(
@@ -92,6 +93,17 @@ def worker_loop(
                 worker_logger.debug(f"Worker {job_id} received message: {msg}")
 
                 try:
+                    registry_profile_spec = msg.metadata.get("registry_profile")
+                    if registry_profile_spec:
+                        try:
+                            apply_profile(RegistryProfile(**registry_profile_spec))
+                        except Exception as exc:
+                            worker_logger.warning(
+                                "Failed to apply registry profile for job %s: %s",
+                                job_id,
+                                exc,
+                            )
+
                     # 1) Unpack the payload dictionary
                     pcfg = msg.metadata.get("pipeline")
                     # If pipeline metadata is a path to a YAML file, load it
