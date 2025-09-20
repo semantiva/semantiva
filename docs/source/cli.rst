@@ -30,9 +30,18 @@ Execute a pipeline.
                       [--context key=value]...
                       [-v | --verbose]
                       [-q | --quiet]
-                      [--trace-driver {none,jsonl,pythonpath}]
-                      [--trace-output PATH-or-DriverSpec]
-                     [--trace-detail FLAGS]
+                      [--execution.orchestrator CLASS]
+                      [--execution.executor CLASS]
+                      [--execution.transport CLASS]
+                      [--execution.option key=value]...
+                      [--trace.driver NAME]
+                      [--trace.output PATH-or-DriverSpec]
+                      [--trace.option key=value]...
+                      [--fanout.param NAME]
+                      [--fanout.values SEQ]
+                      [--fanout.values-file PATH]
+                      [--fanout.multi NAME=SEQ]...
+                      [--fanout.multi-file PATH]
                       [--version]
 
 **Arguments**
@@ -49,19 +58,26 @@ Execute a pipeline.
 
 - ``-v / --verbose``           Increase log verbosity.
 - ``-q / --quiet``             Only show errors.
-- ``--trace-driver``           ``none`` (default), ``jsonl``, or ``pythonpath``.
-- ``--trace-output``           For ``jsonl``, a file path; for ``pythonpath``, a driver spec
-  (``package.module:ClassName``) instantiated with no args.
-- ``--trace-detail``           Comma-separated flags: ``hash, repr, context, all``
-  (default: ``hash``).
+- ``--execution.orchestrator`` Resolve orchestrator by class name via the registry.
+- ``--execution.executor``     Resolve executor by class name via the registry.
+- ``--execution.transport``    Resolve transport by class name via the registry.
+- ``--execution.option``       Key/value pairs forwarded to the orchestrator ``options``.
+- ``--trace.driver``           Trace driver name (``none``, ``jsonl``, ``pythonpath``, or registry class).
+- ``--trace.output``           Trace output path or ``module:Class`` when ``driver=pythonpath``.
+- ``--trace.option``           Additional driver keyword arguments (repeatable).
+- ``--fanout.param``           Single-parameter fan-out target name.
+- ``--fanout.values``          Values for single-parameter fan-out (JSON list or comma-separated).
+- ``--fanout.values-file``     External JSON/YAML file supplying fan-out values.
+- ``--fanout.multi``           Multi-parameter ZIP values (repeatable ``name=[...]`` arguments).
+- ``--fanout.multi-file``      External JSON/YAML mapping supplying multi fan-out values.
 - ``--version``                Show CLI version.
 
-Environment pins and pre/post check results are always included in every
-SER regardless of the ``--trace-detail`` flags; the flags only control the
-additional summary hashes and representations. This behaviour is implemented
-once in :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`,
-so every orchestrator used by the CLI (local now, remote later) produces the
-same evidence layout.
+CLI flags mirror the YAML schema. Any value provided on the command line
+overrides the matching YAML block before validation and execution. Trace detail
+flags are supplied via ``--trace.option detail=...`` (``hash`` is implied when no
+options are provided). Environment pins and why-ok invariants are always
+captured by :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`,
+ensuring consistent SER output across orchestrator implementations.
 
 **YAML Extension Loading**
 If your YAML contains:

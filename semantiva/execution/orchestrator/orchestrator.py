@@ -75,10 +75,17 @@ class SemantivaOrchestrator(ABC):
 
     def __init__(self) -> None:
         self._last_nodes: list[_PipelineNode] = []
+        self._next_run_metadata: dict[str, Any] | None = None
+        self._current_run_metadata: dict[str, Any] | None = None
 
     @property
     def last_nodes(self) -> List[_PipelineNode]:
         return self._last_nodes
+
+    def configure_run_metadata(self, metadata: dict[str, Any] | None) -> None:
+        """Stage metadata to be used for the next :meth:`execute` call."""
+
+        self._next_run_metadata = dict(metadata or {})
 
     # ------------------------------------------------------------------
     # Public lifecycle
@@ -91,6 +98,7 @@ class SemantivaOrchestrator(ABC):
         logger: Logger,
         trace: TraceDriver | None = None,
         canonical_spec: dict[str, Any] | None = None,
+        run_metadata: dict[str, Any] | None = None,
     ) -> Payload:
         """Run the pipeline and emit SER records via the template method.
 
@@ -100,6 +108,12 @@ class SemantivaOrchestrator(ABC):
 
         data = payload.data
         context = payload.context
+
+        pending_meta = run_metadata
+        if pending_meta is None and self._next_run_metadata is not None:
+            pending_meta = self._next_run_metadata
+        self._next_run_metadata = None
+        self._current_run_metadata = dict(pending_meta or {})
 
         canonical = canonical_spec
         resolved_spec: Sequence[dict[str, Any]] = pipeline_spec
@@ -308,6 +322,7 @@ class SemantivaOrchestrator(ABC):
                 )
             raise
         finally:
+            self._current_run_metadata = None
             if trace_driver is not None:
                 trace_driver.flush()
                 trace_driver.close()
@@ -706,11 +721,15 @@ class SemantivaOrchestrator(ABC):
             "pre": pre_checks,
             "policy": [],
         }
+        args_payload: dict[str, Any] = {}
+        if self._current_run_metadata:
+            args_payload.update(self._current_run_metadata.get("args", {}))
         why_ok = {
             "post": post_checks,
             "invariants": [],
             "env": env_pins,
             "redaction": {},
+            "args": args_payload,
         }
         return SERRecord(
             type="ser",

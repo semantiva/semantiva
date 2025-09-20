@@ -1,0 +1,18 @@
+extensions: []
+
+pipeline:
+  nodes:
+    - processor: FloatValueDataSource
+    - processor: FloatMultiplyOperation
+    - processor: FloatMockDataSink
+      parameters:
+        path: ./fanout-output.txt
+
+trace:
+  driver: jsonl
+  output_path: ./ser/fanout-run-local.ser.jsonl
+
+fanout:
+  multi:
+    value: [3.0, 5.0, 9.5]
+    factor: [2.0, 3.0, 5.0]

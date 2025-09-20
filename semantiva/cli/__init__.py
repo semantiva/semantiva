@@ -16,17 +16,24 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib
+import json
+import re
 import sys
 import time
 from pathlib import Path
 from typing import Any, Dict, List, NoReturn
-import importlib
-import re
 from importlib.metadata import PackageNotFoundError, version as pkg_version
 
 import yaml
 
+from semantiva.configurations import parse_pipeline_config
+from semantiva.configurations.schema import ExecutionConfig, TraceConfig
+from semantiva.execution.fanout import expand_fanout
+from semantiva.execution.orchestrator.factory import build_orchestrator
 from semantiva.logger import Logger
+from semantiva.registry.class_registry import ClassRegistry
 
 # Exit code constants
 EXIT_SUCCESS = 0
@@ -130,6 +137,119 @@ def _configure_logger(verbose: bool, quiet: bool) -> Logger:
     return Logger(level=level)
 
 
+def _parse_yaml_value(value_str: str) -> Any:
+    try:
+        return yaml.safe_load(value_str)
+    except yaml.YAMLError:
+        return value_str
+
+
+def _parse_key_value(item: str) -> tuple[str, Any]:
+    if "=" not in item:
+        raise ValueError(f"Expected key=value format, got: {item}")
+    key, value_str = item.split("=", 1)
+    return key, _parse_yaml_value(value_str)
+
+
+def _parse_options_list(items: List[str]) -> Dict[str, Any]:
+    options: Dict[str, Any] = {}
+    for item in items:
+        key, value = _parse_key_value(item)
+        options[key] = value
+    return options
+
+
+def _parse_fanout_values_arg(value: str) -> List[Any]:
+    parsed = _parse_yaml_value(value)
+    if isinstance(parsed, list):
+        return parsed
+    if isinstance(parsed, str) and "," in parsed:
+        return [_parse_yaml_value(part.strip()) for part in value.split(",")]
+    return [parsed]
+
+
+def _parse_fanout_multi_args(items: List[str]) -> Dict[str, List[Any]]:
+    multi: Dict[str, List[Any]] = {}
+    for item in items:
+        key, value = _parse_key_value(item)
+        if isinstance(value, list):
+            multi[key] = value
+        else:
+            multi[key] = _parse_fanout_values_arg(str(value))
+    return multi
+
+
+def _build_fanout_args(
+    index: int, values: Dict[str, Any], meta: Dict[str, Any]
+) -> Dict[str, Any]:
+    args_map: Dict[str, Any] = {
+        "fanout.index": index,
+        "fanout.mode": meta.get("mode", "none"),
+        "fanout.values": values,
+    }
+    if "source_file" in meta:
+        args_map["fanout.source_file"] = meta["source_file"]
+    if "source_sha256" in meta:
+        args_map["fanout.source_sha256"] = meta["source_sha256"]
+    try:
+        encoded = json.dumps(
+            values, sort_keys=True, default=lambda obj: repr(obj)
+        ).encode("utf-8")
+    except TypeError:
+        encoded = repr(values).encode("utf-8")
+    if len(encoded) > 1024:
+        args_map["fanout.values_sha256"] = hashlib.sha256(encoded).hexdigest()
+    return args_map
+
+
+def _build_trace_driver(trace_cfg: TraceConfig):
+    if not trace_cfg.driver or trace_cfg.driver == "none":
+        return None
+    driver_name = trace_cfg.driver
+    if driver_name == "jsonl":
+        from semantiva.trace.drivers.jsonl import JSONLTrace
+
+        detail = (
+            trace_cfg.options.get("detail")
+            if isinstance(trace_cfg.options, dict)
+            else None
+        )
+        return JSONLTrace(trace_cfg.output_path, detail=detail)
+    if driver_name == "pythonpath":
+        if not trace_cfg.output_path:
+            raise ValueError(
+                "trace.output must specify module:Class when driver=pythonpath"
+            )
+        module_path, _, cls_name = trace_cfg.output_path.partition(":")
+        if not module_path or not cls_name:
+            raise ValueError(
+                "trace.output must be in module:Class format for pythonpath driver"
+            )
+        mod = importlib.import_module(module_path)
+        trace_cls = getattr(mod, cls_name)
+        return trace_cls(**dict(trace_cfg.options))
+    trace_cls = ClassRegistry.get_class(driver_name)
+    kwargs = dict(trace_cfg.options)
+    if trace_cfg.output_path and "output_path" not in kwargs:
+        kwargs["output_path"] = trace_cfg.output_path
+    return trace_cls(**kwargs)
+
+
+def _build_execution_components(exec_cfg: ExecutionConfig):
+    transport_obj = None
+    if exec_cfg.transport:
+        transport_cls = ClassRegistry.get_class(exec_cfg.transport)
+        transport_obj = transport_cls()
+    executor_obj = None
+    if exec_cfg.executor:
+        executor_cls = ClassRegistry.get_class(exec_cfg.executor)
+        executor_obj = executor_cls()
+    orchestrator = build_orchestrator(
+        exec_cfg, transport=transport_obj, executor=executor_obj
+    )
+    return orchestrator, transport_obj
+
+
 def _load_yaml(path: Path) -> Any:
     try:
         with path.open("r", encoding="utf-8") as f:
@@ -190,20 +310,73 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
     )
     run_p.add_argument("-q", "--quiet", action="store_true", help="Only show errors")
     run_p.add_argument(
-        "--trace-driver",
-        choices=["none", "jsonl", "pythonpath"],
-        default="none",
-        help="Tracing driver to use",
+        "--execution.orchestrator",
+        dest="exec_orchestrator",
+        help="Orchestrator class name to resolve via the registry",
     )
     run_p.add_argument(
-        "--trace-output",
-        default=None,
+        "--execution.executor",
+        dest="exec_executor",
+        help="Executor class name to resolve via the registry",
+    )
+    run_p.add_argument(
+        "--execution.transport",
+        dest="exec_transport",
+        help="Transport class name to resolve via the registry",
+    )
+    run_p.add_argument(
+        "--execution.option",
+        dest="exec_options",
+        action="append",
+        default=[],
+        metavar="key=value",
+        help="Additional execution option (repeatable)",
+    )
+    run_p.add_argument(
+        "--trace.driver",
+        dest="trace_driver",
+        help="Trace driver name ('jsonl', 'none', 'pythonpath', or registry class)",
+    )
+    run_p.add_argument(
+        "--trace.output",
+        dest="trace_output",
         help="Trace output path or driver spec",
     )
     run_p.add_argument(
-        "--trace-detail",
-        default="hash",
-        help=("Comma-separated trace detail flags: hash, repr, context, all"),
+        "--trace.option",
+        dest="trace_options",
+        action="append",
+        default=[],
+        metavar="key=value",
+        help="Trace driver option (repeatable)",
+    )
+    run_p.add_argument(
+        "--fanout.param",
+        dest="fanout_param",
+        help="Single-parameter fan-out target name",
+    )
+    run_p.add_argument(
+        "--fanout.values",
+        dest="fanout_values",
+        help="Fan-out values (JSON list or comma-separated)",
+    )
+    run_p.add_argument(
+        "--fanout.values-file",
+        dest="fanout_values_file",
+        help="Path to JSON/YAML file with fan-out values",
+    )
+    run_p.add_argument(
+        "--fanout.multi",
+        dest="fanout_multi",
+        action="append",
+        default=[],
+        metavar="param=[...]",
+        help="Multi-parameter fan-out ZIP values (repeatable)",
+    )
+    run_p.add_argument(
+        "--fanout.multi-file",
+        dest="fanout_multi_file",
+        help="Path to JSON/YAML file containing mapping of multi fan-out values",
     )
     run_p.add_argument("--version", action="version", version=_get_version())
 
@@ -299,38 +472,28 @@ Use --debug for detailed information about which rules are checked for each comp
 
 
 def _run(args: argparse.Namespace) -> int:
-    # Lazy imports to avoid heavy module initialization on `semantiva` import
-    # Import pipeline first to avoid circular-init issues in default module discovery
     from semantiva.pipeline import Pipeline, Payload
     from semantiva.context_processors import ContextType
     from semantiva.data_types import NoDataType
     from semantiva.inspection import build_pipeline_inspection, validate_pipeline
-    from semantiva.registry import load_extensions
-    from semantiva.trace.drivers.jsonl import JSONLTrace
 
     logger = _configure_logger(args.verbose, args.quiet)
 
-    config = _load_yaml(Path(args.pipeline))
+    raw_config = _load_yaml(Path(args.pipeline))
+    if raw_config is None:
+        config: Dict[str, Any] = {}
+    elif isinstance(raw_config, dict):
+        config = dict(raw_config)
+    else:
+        print("Invalid config: top-level YAML must be a mapping", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
 
-    # Load extensions if specified
-    if isinstance(config, dict):
-        specs = config.get("extensions")
-        if not specs and isinstance(config.get("pipeline"), dict):
-            specs = config["pipeline"].get("extensions")
-        if specs:
-            load_extensions(specs)
-
-    # Apply overrides
     for item in args.overrides:
-        if "=" not in item:
-            print(f"Invalid override format: {item}", file=sys.stderr)
-            return EXIT_CONFIG_ERROR
-        key, value_str = item.split("=", 1)
         try:
-            print("trying yaml.safe_load")
-            value = yaml.safe_load(value_str)
-        except yaml.YAMLError:
-            value = value_str
+            key, value = _parse_key_value(item)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return EXIT_CONFIG_ERROR
         try:
             _apply_override(config, key, value)
         except Exception:
@@ -339,26 +502,119 @@ def _run(args: argparse.Namespace) -> int:
     if args.verbose and args.overrides:
         logger.debug("Overrides: %s", args.overrides)
 
+    # Merge CLI execution/trace/fanout sections
+    if any(
+        [
+            args.exec_orchestrator,
+            args.exec_executor,
+            args.exec_transport,
+            args.exec_options,
+        ]
+    ):
+        exec_section = config.setdefault("execution", {})
+        if not isinstance(exec_section, dict):
+            print("Invalid config: execution block must be a mapping", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+        if args.exec_orchestrator:
+            exec_section["orchestrator"] = args.exec_orchestrator
+        if args.exec_executor:
+            exec_section["executor"] = args.exec_executor
+        if args.exec_transport:
+            exec_section["transport"] = args.exec_transport
+        if args.exec_options:
+            opts = exec_section.setdefault("options", {})
+            if not isinstance(opts, dict):
+                print(
+                    "Invalid config: execution.options must be a mapping",
+                    file=sys.stderr,
+                )
+                return EXIT_CONFIG_ERROR
+            try:
+                opts.update(_parse_options_list(args.exec_options))
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return EXIT_CONFIG_ERROR
+
+    if any([args.trace_driver, args.trace_output is not None, args.trace_options]):
+        trace_section = config.setdefault("trace", {})
+        if not isinstance(trace_section, dict):
+            print("Invalid config: trace block must be a mapping", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+        if args.trace_driver:
+            trace_section["driver"] = args.trace_driver
+        if args.trace_output is not None:
+            trace_section["output_path"] = args.trace_output
+        if args.trace_options:
+            opts = trace_section.setdefault("options", {})
+            if not isinstance(opts, dict):
+                print(
+                    "Invalid config: trace.options must be a mapping", file=sys.stderr
+                )
+                return EXIT_CONFIG_ERROR
+            try:
+                opts.update(_parse_options_list(args.trace_options))
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return EXIT_CONFIG_ERROR
+
+    if any(
+        [
+            args.fanout_param,
+            args.fanout_values,
+            args.fanout_values_file,
+            args.fanout_multi,
+            args.fanout_multi_file,
+        ]
+    ):
+        fanout_section = config.setdefault("fanout", {})
+        if not isinstance(fanout_section, dict):
+            print("Invalid config: fanout block must be a mapping", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+        if args.fanout_param:
+            fanout_section["param"] = args.fanout_param
+        if args.fanout_values:
+            fanout_section["values"] = _parse_fanout_values_arg(args.fanout_values)
+        if args.fanout_values_file:
+            fanout_section["values_file"] = args.fanout_values_file
+        if args.fanout_multi:
+            multi = fanout_section.setdefault("multi", {})
+            if not isinstance(multi, dict):
+                print("Invalid config: fanout.multi must be a mapping", file=sys.stderr)
+                return EXIT_CONFIG_ERROR
+            try:
+                multi.update(_parse_fanout_multi_args(args.fanout_multi))
+            except ValueError as exc:
+                print(str(exc), file=sys.stderr)
+                return EXIT_CONFIG_ERROR
+        if args.fanout_multi_file:
+            fanout_section["values_file"] = args.fanout_multi_file
+
+    pipeline_path = Path(args.pipeline).expanduser().resolve()
+
     try:
-        nodes = _validate_structure(config)
-        inspection = build_pipeline_inspection(nodes)
+        pipeline_cfg = parse_pipeline_config(
+            config,
+            source_path=str(pipeline_path),
+            base_dir=pipeline_path.parent,
+        )
+    except Exception as exc:
+        print(f"Invalid config: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+
+    try:
+        inspection = build_pipeline_inspection(pipeline_cfg.nodes)
         validate_pipeline(inspection)
     except Exception as exc:
         print(f"Invalid config: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
 
-    ctx_dict: dict[str, Any] = {}
+    ctx_dict: Dict[str, Any] = {}
     for item in args.contexts:
-        if "=" not in item:
-            print(f"Invalid context format: {item}", file=sys.stderr)
-            return EXIT_CONFIG_ERROR
-        key, value_str = item.split("=", 1)
         try:
-            # Parse value using YAML to handle type conversion (1.0 -> float, true -> bool, etc.)
-            value = yaml.safe_load(value_str)
-        except yaml.YAMLError:
-            # Fall back to string if YAML parsing fails
-            value = value_str
+            key, value = _parse_key_value(item)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return EXIT_CONFIG_ERROR
         ctx_dict[key] = value
     if args.verbose and ctx_dict:
         logger.debug("Injected context: %s", ctx_dict)
@@ -370,54 +626,75 @@ def _run(args: argparse.Namespace) -> int:
         return EXIT_SUCCESS
 
     try:
-        trace_driver = None
-        if args.trace_driver != "none":
-            if args.trace_driver == "jsonl":
-                trace_driver = JSONLTrace(args.trace_output, detail=args.trace_detail)
-            else:
-                if not args.trace_output:
-                    print(
-                        "--trace-output must specify driver class for pythonpath",
-                        file=sys.stderr,
-                    )
-                    return EXIT_CONFIG_ERROR
-                module_path, _, cls_name = args.trace_output.partition(":")
-                mod = importlib.import_module(module_path)
-                trace_cls = getattr(mod, cls_name)
-                trace_driver = trace_cls()
-        pipeline = Pipeline(nodes, logger=logger, trace=trace_driver)
-        if args.dry_run:
-            if ctx_dict and args.verbose:
-                logger.debug("Ignoring --context for dry run")
-            print(f"Graph: {len(pipeline.nodes)} nodes.")
-            print("Dry run OK (no execution performed).")
-            return EXIT_SUCCESS
-        start = time.time()
-        initial_payload = (
-            Payload(NoDataType(), ContextType(ctx_dict)) if ctx_dict else None
+        trace_driver = _build_trace_driver(pipeline_cfg.trace)
+    except Exception as exc:
+        print(f"Failed to build trace driver: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+
+    try:
+        orchestrator, transport_obj = _build_execution_components(
+            pipeline_cfg.execution
         )
-        result_payload = pipeline.process(initial_payload)
-        duration = time.time() - start
-        logger.info(f"✅ Completed in {duration:.2f}s")
-        # Show final payload channels in verbose mode, each on its own line
-        try:
-            logger.info("Output data: %s", repr(result_payload.data))
-        except Exception:  # pragma: no cover - defensive
-            logger.info("Output data: <unrepresentable data>")
-        try:
-            ctx = result_payload.context.to_dict()
-            lines = ["Output context:"]
-            for k, v in ctx.items():
-                try:
-                    v_repr = repr(v)
-                except Exception:  # pragma: no cover - defensive
-                    v_repr = "<unrepresentable>"
-                # Ensure one line per key
-                v_repr = v_repr.replace("\n", " ")
-                lines.append(f"  {k}: {v_repr}")
-            logger.info("\n".join(lines))
-        except Exception:  # pragma: no cover - defensive
-            logger.info("Output context: <unrepresentable context>")
+    except Exception as exc:
+        print(f"Failed to build execution components: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+
+    pipeline = Pipeline(
+        pipeline_cfg.nodes,
+        logger=logger,
+        transport=transport_obj,
+        orchestrator=orchestrator,
+        trace=trace_driver,
+    )
+
+    runs, fanout_meta = expand_fanout(
+        pipeline_cfg.fanout,
+        cwd=pipeline_cfg.base_dir or pipeline_path.parent,
+    )
+    if not runs:
+        fanout_meta.setdefault("mode", "none")
+        runs = [{}]
+    run_count = len(runs)
+
+    if args.dry_run:
+        if ctx_dict and args.verbose:
+            logger.debug("Ignoring --context for dry run")
+        print(f"Graph: {len(pipeline.resolved_spec)} nodes.")
+        print(f"Fan-out runs: {run_count}")
+        print("Dry run OK (no execution performed).")
+        return EXIT_SUCCESS
+
+    try:
+        for idx, run_values in enumerate(runs):
+            run_context = dict(ctx_dict)
+            run_context.update(run_values)
+            fanout_args = _build_fanout_args(idx, dict(run_values), fanout_meta)
+            pipeline.set_run_metadata({"args": fanout_args})
+            initial_payload = (
+                Payload(NoDataType(), ContextType(run_context)) if run_context else None
+            )
+            logger.info("▶️  Run %d/%d starting", idx + 1, run_count)
+            start = time.time()
+            result_payload = pipeline.process(initial_payload)
+            duration = time.time() - start
+            logger.info("✅ Run %d/%d completed in %.2fs", idx + 1, run_count, duration)
+            try:
+                logger.info("Output data: %s", repr(result_payload.data))
+            except Exception:  # pragma: no cover - defensive
+                logger.info("Output data: <unrepresentable data>")
+            try:
+                ctx = result_payload.context.to_dict()
+                lines = ["Output context:"]
+                for k, v in ctx.items():
+                    try:
+                        v_repr = repr(v)
+                    except Exception:  # pragma: no cover - defensive
+                        v_repr = "<unrepresentable>"
+                    v_repr_repl = v_repr.replace("\n", " ")
+                    lines.append(f"  {k}: {v_repr_repl}")
+                logger.info("\n".join(lines))
+            except Exception:  # pragma: no cover - defensive
+                logger.info("Output context: <unrepresentable context>")
         return EXIT_SUCCESS
     except KeyboardInterrupt:
         print("Interrupted.", file=sys.stderr)

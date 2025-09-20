@@ -48,7 +48,7 @@ def test_cli_run_success(tmp_path: Path):
     res = run_cli(["run", str(yaml_path)])
     assert res.returncode == 0
     assert output_file.read_text().strip() == "84.0"
-    assert "Completed" in res.stdout
+    assert "Run 1/1 completed" in res.stdout
 
 
 def test_cli_file_not_found():
@@ -67,6 +67,8 @@ def test_cli_validate(tmp_path: Path):
               parameters:
                 factor: 2.0
             - processor: FloatMockDataSink
+              parameters:
+                path: "/tmp/out.txt"
         """,
     )
     invalid = make_pipeline(tmp_path, "pipeline:\n  bad: true\n", name="invalid.yaml")
