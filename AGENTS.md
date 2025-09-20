@@ -14,7 +14,9 @@ This repository houses the Semantiva framework, a dual-channel pipeline system t
   * **data_types/** - Minimal data containers used throughout the framework.
   * **examples/** - Example processors and test utilities.
   * **exceptions/** - Custom exception classes.
-  * **execution/** - Pipeline execution engine and job orchestration.
+  * **execution/** - Pipeline execution engine and job orchestration:
+    * **component_registry.py** - Registry for orchestrators, executors, and transports to avoid circular imports.
+    * **orchestrator/** - Orchestrator implementations and factory for building from configuration.
   * **logger/** - Configurable logging helpers.
   * **pipeline/** - Pipeline orchestration, node definitions, and `NodeFactory` for dynamic node creation.
   * **tools/** - Command-line utilities (e.g., ontology export, pipeline inspector).

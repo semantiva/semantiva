@@ -5,6 +5,25 @@ The execution module provides the orchestration infrastructure for running Seman
 It includes comprehensive error handling and integration with the tracing system to capture
 complete execution records, including error events with timing data and exception details.
 
+Component Registry System
+--------------------------
+
+Semantiva uses a dual-registry architecture to manage execution components while avoiding
+circular import dependencies:
+
+:py:class:`~semantiva.execution.component_registry.ExecutionComponentRegistry`
+    Specialized registry for orchestrators, executors, and transports. This registry
+    is designed to break circular import dependencies with the main ClassRegistry
+    and graph builder modules.
+
+:py:func:`~semantiva.execution.orchestrator.factory.build_orchestrator`
+    Factory function that uses ExecutionComponentRegistry to construct orchestrators
+    from configuration, supporting dependency injection of executors and transports.
+
+The component registry follows the dependency inversion principle, acting as a dependency
+sink rather than creating webs of interdependence. See :doc:`architecture/registry`
+for detailed architectural information.
+
 Template-method orchestrator
 ----------------------------
 
@@ -27,6 +46,8 @@ executor/transport while benefiting from the shared SER logic.
 Public API Surface
 ------------------
 
+- Component Registry: :py:mod:`semantiva.execution.component_registry`
+- Orchestrator Factory: :py:mod:`semantiva.execution.orchestrator.factory`
 - Executors: :py:mod:`semantiva.execution.executor.executor`
 - Orchestrators: :py:mod:`semantiva.execution.orchestrator.orchestrator`
 - Transports: :py:mod:`semantiva.execution.transport.in_memory`
@@ -34,6 +55,14 @@ Public API Surface
 
 Autodoc
 -------
+
+.. automodule:: semantiva.execution.component_registry
+   :members:
+   :undoc-members:
+
+.. automodule:: semantiva.execution.orchestrator.factory
+   :members:
+   :undoc-members:
 
 .. automodule:: semantiva.execution.executor.executor
    :members:
