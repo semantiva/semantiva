@@ -75,9 +75,14 @@ Execute a pipeline.
 CLI flags mirror the YAML schema. Any value provided on the command line
 overrides the matching YAML block before validation and execution. Trace detail
 flags are supplied via ``--trace.option detail=...`` (``hash`` is implied when no
-options are provided). Environment pins and why-ok invariants are always
+detail is provided). Environment pins and why-ok invariants are always
 captured by :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`,
 ensuring consistent SER output across orchestrator implementations.
+
+.. note::
+  In YAML, use the plural key ``options`` under ``trace`` and ``execution``. The
+  CLI uses repeatable singular flags ``--trace.option`` and ``--execution.option``
+  to populate those mappings.
 
 **YAML Extension Loading**
 If your YAML contains:

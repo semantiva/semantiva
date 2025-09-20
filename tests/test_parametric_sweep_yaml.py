@@ -43,7 +43,7 @@ def test_parametric_sweep_yaml(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           t: {lo: 0.0, hi: 1.0, steps: 5}
@@ -77,7 +77,7 @@ def test_multi_variable_sweep(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           x: {lo: 0.0, hi: 1.0, steps: 4}
@@ -114,7 +114,7 @@ def test_sweep_with_static_params(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           t: {lo: 0.0, hi: 2.0, steps: 3}
@@ -142,7 +142,7 @@ def test_sweep_no_expressions(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           t: {lo: 0.0, hi: 1.0, steps: 3}
@@ -166,7 +166,7 @@ def test_sweep_invalid_vars_empty():
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars: {}
 """
@@ -185,7 +185,7 @@ def test_sweep_invalid_vars_format():
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           t: "invalid_format"  # Not a list or dict
@@ -205,7 +205,7 @@ def test_sweep_missing_required_params():
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         # Missing vars parameter
         parametric_expressions:
@@ -226,7 +226,7 @@ def test_complex_sweep_example(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           t: {lo: -1, hi: 2, steps: 3}
@@ -259,7 +259,7 @@ def test_from_context_yaml_sequence(empty_context):
     yaml_config = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           input_file: { from_context: discovered_files }

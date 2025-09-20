@@ -55,7 +55,7 @@ def test_cli_pipeline_with_duplicate_nodes(tmp_path: Path):
     yaml_content = """
 pipeline:
   nodes:
-    - processor: FloatValueDataSource
+    - processor: FloatValueDataSourceWithDefault
     - processor: FloatMultiplyOperation
       parameters:
         factor: 2.0

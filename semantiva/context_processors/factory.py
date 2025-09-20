@@ -15,6 +15,7 @@
 """Dynamic context processors for common transformations."""
 
 import re
+from string import Formatter
 from typing import List
 
 
@@ -24,6 +25,7 @@ from semantiva.context_processors.context_processors import (
 
 
 _SAFE_KEY_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]*$")
+_PLACEHOLDER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 
 def _ensure_valid_key(key: str) -> None:
@@ -39,6 +41,41 @@ def _sanitize_identifier(key: str) -> str:
     if not identifier or not identifier[0].isalpha() and identifier[0] != "_":
         raise ValueError(f"Unable to derive a safe identifier from context key {key!r}")
     return identifier
+
+
+def _extract_strict_placeholders(template: str) -> List[str]:
+    """Return placeholder names from a template enforcing strict identifier rules."""
+
+    formatter = Formatter()
+    required: List[str] = []
+    seen: set[str] = set()
+    for literal, field_name, format_spec, conversion in formatter.parse(template):
+        if field_name is None:
+            continue
+        if field_name == "":
+            raise ValueError("Positional placeholders '{}' are not supported")
+        if conversion is not None:
+            raise ValueError(
+                "Format conversions (e.g., '!r') are not supported in stringbuild templates"
+            )
+        if format_spec:
+            raise ValueError(
+                "Format specifications (e.g., ':03d') are not supported in stringbuild templates"
+            )
+        if not _PLACEHOLDER_PATTERN.fullmatch(field_name):
+            raise ValueError(
+                "Placeholder names must match [A-Za-z_][A-Za-z0-9_]*; "
+                f"received {field_name!r}"
+            )
+        if field_name not in seen:
+            seen.add(field_name)
+            required.append(field_name)
+
+    if not required:
+        raise ValueError(
+            "Stringbuild templates must include at least one placeholder like '{key}'"
+        )
+    return required
 
 
 def _context_renamer_factory(
@@ -149,3 +186,65 @@ def create_rename_operation(
 def create_delete_operation(key: str) -> type[ContextProcessor]:
     """Public factory for deleting a context key."""
     return _context_deleter_factory(key)
+
+
+def _context_stringbuild_factory(
+    template: str, output_key: str
+) -> type[ContextProcessor]:
+    """Create a ContextProcessor subclass that builds strings from context keys."""
+
+    _ensure_valid_key(output_key)
+    required_keys = _extract_strict_placeholders(template)
+    class_suffix_out = _sanitize_identifier(output_key)
+
+    def _process_logic(self, **kwargs):
+        missing = [key for key in required_keys if key not in kwargs]
+        if missing:
+            raise KeyError(
+                "Context stringbuild missing required keys: "
+                + ", ".join(sorted(missing))
+            )
+
+        values = {name: str(kwargs[name]) for name in required_keys}
+        rendered = template.format(**values)
+        self._notify_context_update(output_key, rendered)
+        self.logger.debug(
+            "Stringbuild wrote %s=%r using keys %s",
+            output_key,
+            rendered,
+            required_keys,
+        )
+
+    def get_created_keys(cls) -> List[str]:
+        return [output_key]
+
+    def get_suppressed_keys(cls) -> List[str]:
+        return []
+
+    def context_keys(cls) -> List[str]:
+        return [output_key]
+
+    def get_processing_parameter_names(cls) -> List[str]:
+        return list(required_keys)
+
+    dynamic_class_name = f"StringBuild_{class_suffix_out}"
+    class_attrs = {
+        "_process_logic": _process_logic,
+        "get_created_keys": classmethod(get_created_keys),
+        "get_suppressed_keys": classmethod(get_suppressed_keys),
+        "context_keys": classmethod(context_keys),
+        "get_processing_parameter_names": classmethod(get_processing_parameter_names),
+        "__doc__": (
+            f"Builds a string from template {template!r} and writes it to "
+            f"context key '{output_key}'."
+        ),
+    }
+    return type(dynamic_class_name, (ContextProcessor,), class_attrs)
+
+
+def create_stringbuild_operation(
+    template: str, output_key: str
+) -> type[ContextProcessor]:
+    """Public factory for string-building context processors."""
+
+    return _context_stringbuild_factory(template, output_key)

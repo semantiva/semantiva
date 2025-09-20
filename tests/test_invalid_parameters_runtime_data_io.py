@@ -20,7 +20,7 @@ import pytest
 from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
 from semantiva.exceptions import InvalidNodeParameterError
 from semantiva.examples.test_utils import (
-    FloatValueDataSource,
+    FloatValueDataSourceWithDefault,
     FloatTxtFileSaver,
     FloatMultiplyOperation,
 )
@@ -29,7 +29,7 @@ from semantiva.examples.test_utils import (
 def test_runtime_raises_on_invalid_data_source_param():
     """Runtime should raise InvalidNodeParameterError for DataSource with invalid params."""
     config = {
-        "processor": FloatValueDataSource,
+        "processor": FloatValueDataSourceWithDefault,
         "parameters": {
             "value": 42.0,  # Valid
             "invalid_param": "not_allowed",  # Invalid
@@ -77,7 +77,7 @@ def test_runtime_raises_on_invalid_operation_param():
 def test_runtime_accepts_valid_params():
     """Runtime should accept valid parameters for all operation types."""
     configs = [
-        {"processor": FloatValueDataSource, "parameters": {"value": 25.5}},
+        {"processor": FloatValueDataSourceWithDefault, "parameters": {"value": 25.5}},
         {"processor": FloatTxtFileSaver, "parameters": {"path": "output.txt"}},
         {"processor": FloatMultiplyOperation, "parameters": {"factor": 3.0}},
     ]
@@ -94,7 +94,7 @@ def test_inspection_detects_data_io_invalid_params():
 
     configs = [
         {
-            "processor": FloatValueDataSource,
+            "processor": FloatValueDataSourceWithDefault,
             "parameters": {
                 "value": 42.0,  # Valid
                 "invalid_param1": True,  # Invalid
