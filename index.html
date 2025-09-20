@@ -215,9 +215,10 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry Bootstrap Profiles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
@@ -407,19 +408,14 @@
 <li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#see-also">See also</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#graphv1-pipeline-identity">GraphV1 &amp; Pipeline Identity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#cli-usage">CLI Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#hello-trace">Hello, Trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#record-schema-trace-v1">Record Schema (Trace v1)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#detail-levels-summary-fields">Detail Levels (Summary Fields)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#output-format-naming">Output Format &amp; Naming</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#consuming-traces-programmatically">Consuming Traces Programmatically</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#troubleshooting">Troubleshooting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#performance-cost-tuning">Performance &amp; Cost Tuning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#privacy-redaction">Privacy &amp; Redaction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#public-api-surface">Public API Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracing.html#module-semantiva.trace.model">Autodoc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#example-ser">Example SER</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#versioning-policy">Versioning Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#schema">Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#io-delta">IO Delta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#checks-via-serhooks">Checks via SERHooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#built-in-checks">Built-in checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#environment-pins">Environment pins</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a><ul>
@@ -441,6 +437,13 @@
 <li class="toctree-l2"><a class="reference internal" href="graph.html#see-also">See also</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry Bootstrap Profiles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#key-concepts">Key Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#distributed-execution">Distributed Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#programmatic-usage">Programmatic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#idempotent-defaults">Idempotent Defaults</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="architecture/context_processing.html#rationale">Rationale</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture/context_processing.html#key-classes">Key Classes</a></li>
@@ -452,6 +455,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="execution.html#template-method-orchestrator">Template-method orchestrator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="execution.html#public-api-surface">Public API Surface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="execution.html#module-semantiva.execution.executor.executor">Autodoc</a></li>
 </ul>
@@ -494,13 +498,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#node-identity">Node Identity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#trace-v1-output-summaries">Trace v1 Output Summaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#ser-output">SER Output</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#pipeline-run-identity">Pipeline &amp; Run Identity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#trace-graph-usage">Trace → Graph Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#forward-compatibility">Forward Compatibility</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#consumer-guidance">Consumer Guidance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#why-uuids-not-indices">Why UUIDs, not indices?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace_graph_alignment.html#see-also">See also</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a><ul>

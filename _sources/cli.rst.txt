@@ -1,6 +1,9 @@
 Semantiva CLI
 =============
-(SSoT) This page mirrors `semantiva/cli.py`. Update this doc if CLI changes.
+
+.. note::
+   **Single Source of Truth (SSoT)** — This page mirrors the CLI implementation at
+   ``semantiva/cli/__init__.py``. Update code and docs together to avoid drift.
 
 Overview
 --------
@@ -29,7 +32,7 @@ Execute a pipeline.
                       [-q | --quiet]
                       [--trace-driver {none,jsonl,pythonpath}]
                       [--trace-output PATH-or-DriverSpec]
-                      [--trace-detail FLAGS]
+                     [--trace-detail FLAGS]
                       [--version]
 
 **Arguments**
@@ -49,9 +52,16 @@ Execute a pipeline.
 - ``--trace-driver``           ``none`` (default), ``jsonl``, or ``pythonpath``.
 - ``--trace-output``           For ``jsonl``, a file path; for ``pythonpath``, a driver spec
   (``package.module:ClassName``) instantiated with no args.
-- ``--trace-detail``           Comma-separated flags: ``timings, hash, repr, context, all``
-  (default: ``timings``).
+- ``--trace-detail``           Comma-separated flags: ``hash, repr, context, all``
+  (default: ``hash``).
 - ``--version``                Show CLI version.
+
+Environment pins and pre/post check results are always included in every
+SER regardless of the ``--trace-detail`` flags; the flags only control the
+additional summary hashes and representations. This behaviour is implemented
+once in :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`,
+so every orchestrator used by the CLI (local now, remote later) produces the
+same evidence layout.
 
 **YAML Extension Loading**
 If your YAML contains:
