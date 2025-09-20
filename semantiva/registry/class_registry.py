@@ -24,6 +24,11 @@ prefix-based resolution. This is essential for pipeline definitions that use
 text-based configuration (e.g., YAML) to specify processor types, including
 special cases like renaming, deletion, slicing, or parametric sweep operations.
 
+Note: This registry handles data processors, context processors, and workflow
+components. Execution layer components (orchestrators, executors, transports)
+are managed by :py:class:`~semantiva.execution.component_registry.ExecutionComponentRegistry`
+to avoid circular import dependencies.
+
 Custom Resolver System
 ---------------------
 The registry supports pluggable resolvers via the `register_resolver` API. A
@@ -170,6 +175,18 @@ class ClassRegistry:
                 if resolver not in cls._custom_resolvers:
                     cls._custom_resolvers.append(resolver)
             cls._builtin_resolver_names.add(name)
+
+        # Initialize execution components after core modules are loaded
+        # This avoids circular import issues
+        try:
+            from semantiva.execution.component_registry import (
+                ExecutionComponentRegistry,
+            )
+
+            ExecutionComponentRegistry.initialize_defaults()
+        except ImportError:
+            # ExecutionComponentRegistry might not be available in all contexts
+            pass
 
         cls._initialized_defaults = True
 
