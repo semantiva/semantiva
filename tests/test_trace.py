@@ -17,8 +17,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from semantiva import Payload
 from semantiva.configurations import load_pipeline_from_yaml
+from semantiva.context_processors.context_types import ContextType
+from semantiva.data_types import NoDataType
 from semantiva.pipeline import Pipeline, build_graph, compute_pipeline_id
 from semantiva.trace.model import TraceDriver, SERRecord
 from semantiva.trace.drivers.jsonl import JSONLTrace
@@ -167,3 +171,92 @@ def test_detail_flags(tmp_path: Path) -> None:
     )
     assert "repr" in ser3["summaries"]["input_data"]
     assert "repr" in ser3["summaries"]["pre_context"]
+
+
+def test_ser_env_and_builtin_checks(tmp_path: Path) -> None:
+    records = _run_and_load(tmp_path)
+    ser_records = [
+        r for r in records if r.get("type") == "ser" and r.get("status") == "completed"
+    ]
+    assert ser_records
+    for rec in ser_records:
+        env = rec["checks"]["why_ok"]["env"]
+        assert {"python", "platform", "semantiva"}.issubset(env.keys())
+        assert all(isinstance(value, (str, type(None))) for value in env.values())
+        pre_checks = {entry["code"]: entry for entry in rec["checks"]["why_run"]["pre"]}
+        assert "required_keys_present" in pre_checks
+        assert "input_type_ok" in pre_checks
+        assert isinstance(
+            pre_checks["required_keys_present"]["details"].get("expected"), list
+        )
+    probe_record = next(
+        r for r in ser_records if r["action"]["op_ref"] == "FloatBasicProbe"
+    )
+    post_checks = {
+        entry["code"]: entry for entry in probe_record["checks"]["why_ok"]["post"]
+    }
+    assert "output_type_ok" in post_checks
+    writes = post_checks["context_writes_realized"]["details"]
+    assert "probed_data" in writes["created"]
+    assert writes["missing"] == []
+
+
+def test_pre_checks_detect_missing_context(tmp_path: Path) -> None:
+    cfg = tmp_path / "missing_addend.yaml"
+    cfg.write_text(
+        """
+pipeline:
+  nodes:
+    - processor: "FloatValueDataSource"
+    - processor: "FloatAddOperation"
+"""
+    )
+    nodes = load_pipeline_from_yaml(str(cfg))
+    trace_path = tmp_path / "trace.ser.jsonl"
+    tracer = JSONLTrace(str(trace_path))
+    pipeline = Pipeline(nodes, trace=tracer)
+    with pytest.raises(KeyError):
+        pipeline.process()
+    tracer.close()
+    records = [json.loads(line) for line in trace_path.read_text().splitlines() if line]
+    error_ser = next(
+        r for r in records if r.get("type") == "ser" and r.get("status") == "error"
+    )
+    pre_checks = {
+        entry["code"]: entry for entry in error_ser["checks"]["why_run"]["pre"]
+    }
+    assert pre_checks["required_keys_present"]["result"] == "FAIL"
+    assert "addend" in pre_checks["required_keys_present"]["details"]["missing"]
+    assert error_ser["checks"]["why_ok"]["post"][0]["code"] == "KeyError"
+
+
+def test_required_keys_satisfied_by_context(tmp_path: Path) -> None:
+    cfg = tmp_path / "context_addend.yaml"
+    cfg.write_text(
+        """
+pipeline:
+  nodes:
+    - processor: "FloatValueDataSource"
+    - processor: "FloatAddOperation"
+"""
+    )
+    nodes = load_pipeline_from_yaml(str(cfg))
+    trace_path = tmp_path / "trace.ser.jsonl"
+    tracer = JSONLTrace(str(trace_path))
+    pipeline = Pipeline(nodes, trace=tracer)
+    payload = Payload(NoDataType(), ContextType({"addend": 3.0}))
+    pipeline.process(payload)
+    tracer.close()
+    records = [json.loads(line) for line in trace_path.read_text().splitlines() if line]
+    add_ser = next(
+        r
+        for r in records
+        if r.get("type") == "ser"
+        and r.get("status") == "completed"
+        and r["action"]["op_ref"] == "FloatAddOperation"
+    )
+    pre_checks = {entry["code"]: entry for entry in add_ser["checks"]["why_run"]["pre"]}
+    required = pre_checks["required_keys_present"]["details"]
+    assert "addend" in required["expected"]
+    assert required["missing"] == []
+    assert add_ser["action"]["param_source"].get("addend") == "context"

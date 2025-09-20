@@ -23,6 +23,10 @@ from __future__ import annotations
 
 import json
 import hashlib
+import os
+import platform
+from importlib import import_module, metadata as importlib_metadata
+from pathlib import Path
 from typing import Any, Mapping
 
 
@@ -193,3 +197,75 @@ def json_dumps_human(obj: object) -> str:
     """Dump ``obj`` to pretty JSON with indentation and sorted keys."""
 
     return json.dumps(obj, ensure_ascii=False, indent=2, sort_keys=True)
+
+
+def safe_env_map(
+    env: Mapping[str, object], *, maxlen: int = 200
+) -> dict[str, str | None]:
+    """Return a sanitized mapping suitable for inclusion in SER env pins."""
+
+    safe: dict[str, str | None] = {}
+    for key, value in env.items():
+        if value is None:
+            safe[key] = None
+            continue
+        if isinstance(value, str):
+            if len(value) <= maxlen:
+                safe[key] = value
+            else:
+                safe[key] = value[: maxlen - 1] + "…"
+            continue
+        safe[key] = safe_repr(value, maxlen=maxlen)
+    return safe
+
+
+def _try_version(pkg: str) -> str | None:
+    """Return ``pkg.__version__`` when available without raising."""
+
+    try:
+        module = import_module(pkg)
+    except Exception:
+        return None
+    version = getattr(module, "__version__", None)
+    if version is None:
+        return None
+    return str(version)
+
+
+def _semantiva_version() -> str:
+    """Return the installed Semantiva version or ``"unknown"``."""
+
+    try:
+        return str(importlib_metadata.version("semantiva"))
+    except importlib_metadata.PackageNotFoundError:
+        pass
+    except Exception:
+        pass
+
+    version_file = Path(__file__).resolve().parents[2] / "version.txt"
+    try:
+        namespace: dict[str, str] = {}
+        exec(version_file.read_text(encoding="utf-8"), namespace)
+        value = namespace.get("__version__")
+        if value:
+            return str(value)
+    except Exception:
+        pass
+    return "unknown"
+
+
+def collect_env_pins() -> dict[str, str | None]:
+    """Collect minimal, non-sensitive environment pins for SER records."""
+
+    pins = {
+        "python": platform.python_version(),
+        "implementation": platform.python_implementation().lower(),
+        "platform": platform.platform(),
+        "semantiva": _semantiva_version(),
+        "numpy": _try_version("numpy"),
+        "pandas": _try_version("pandas"),
+    }
+    git_rev = os.getenv("SEMANTIVA_GIT_REV")
+    if git_rev:
+        pins["git_rev"] = git_rev
+    return safe_env_map(pins)

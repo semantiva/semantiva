@@ -16,31 +16,86 @@ single SER is emitted for every node that runs and contains:
 SERs are written to ``*.ser.jsonl`` files where each line is a JSON object.  Tools
 and the Studio viewer consume these records directly.
 
-Example::
+Example SER
+-----------
+
+.. code-block:: json
 
    {
-       "type": "ser",
-       "schema_version": 2,
-       "ids": {"run_id": "run-…", "pipeline_id": "plid-…", "node_id": "n-1"},
-       "topology": {"upstream": []},
-       "action": {
-           "op_ref": "FloatMultiplyOperation",
-           "params": {"factor": 2.0},
-           "param_source": {"factor": "node"}
-       },
-       "io_delta": {"read": [], "created": [], "updated": [], "summaries": {}},
-       "checks": {"why_run": {"trigger": "dependency", "upstream_evidence": [],
-                   "pre": [], "policy": []},
-                   "why_ok": {"post": [], "invariants": [],
-                   "env": {}, "redaction": {}}},
-       "timing": {"start": "…", "end": "…", "duration_ms": 12, "cpu_ms": 8},
-       "status": "completed",
-       "labels": {"node_fqn": "FloatMultiplyOperation"},
+     "type": "ser",
+     "schema_version": 0,
+     "ids": {"run_id": "run-…", "pipeline_id": "plid-…", "node_id": "n-3"},
+     "topology": {"upstream": ["n-2"]},
+     "action": {
+       "op_ref": "FloatBasicProbe",
+       "params": {"context_keyword": "probed_data"},
+       "param_source": {"context_keyword": "node"}
+     },
+     "io_delta": {
+       "read": ["probed_data"],
+       "created": ["probed_data"],
+       "updated": [],
        "summaries": {
-           "input_data": {"dtype": "FloatDataType", "sha256": "…"},
-           "output_data": {"dtype": "FloatDataType", "sha256": "…"}
+         "probed_data": {"dtype": "FloatDataType", "len": 1}
        }
+     },
+     "checks": {
+       "why_run": {
+         "trigger": "dependency",
+         "upstream_evidence": [{"node_id": "n-2", "state": "completed"}],
+         "pre": [
+           {
+             "code": "required_keys_present",
+             "result": "PASS",
+             "details": {"expected": ["probed_data"], "missing": []}
+           },
+           {
+             "code": "input_type_ok",
+             "result": "PASS",
+             "details": {"expected": "FloatDataType", "actual": "FloatDataType"}
+           }
+         ],
+         "policy": []
+       },
+       "why_ok": {
+         "post": [
+           {
+             "code": "output_type_ok",
+             "result": "PASS",
+             "details": {"expected": "FloatDataType", "actual": "FloatDataType"}
+           },
+           {
+             "code": "context_writes_realized",
+             "result": "PASS",
+             "details": {"created": ["probed_data"], "updated": [], "missing": []}
+           }
+         ],
+         "invariants": [],
+         "env": {
+           "python": "3.11.2",
+           "implementation": "cpython",
+           "platform": "Linux-…",
+           "semantiva": "0.1.0.dev0+dummy",
+           "numpy": null,
+           "pandas": null
+         },
+         "redaction": {}
+       }
+     },
+     "timing": {"start": "…", "end": "…", "duration_ms": 5, "cpu_ms": 4},
+     "status": "completed",
+     "labels": {"node_fqn": "FloatBasicProbe"},
+     "summaries": {
+       "input_data": {"dtype": "FloatDataType", "sha256": "…"},
+       "output_data": {"dtype": "FloatDataType", "sha256": "…"}
+     }
    }
+
+The ``checks`` block now always contains:
+
+* ``why_run.pre`` – built-in validation executed before the node runs.
+* ``why_ok.post`` – output validations that ran after the node returned.
+* ``why_ok.env`` – minimal, non-sensitive environment pins for reproducibility.
 
 Detail flags control which summary fields are emitted when using the JSONL
 driver:
@@ -83,10 +138,60 @@ Each SER now includes an ``io_delta`` describing how the node interacted with co
 
 Checks via SERHooks
 -------------------
-Orchestrator constructs basic hooks that fill:
+The template-method orchestrator collects SER evidence centrally. The base
+:py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`
+builds the pre/post check lists, captures ``io_delta`` snapshots, and pins the
+runtime environment exactly once per node. Downstream policy engines can extend
+these hooks (for example via ``_extra_pre_checks``) but every SER produced
+by the runtime includes the following checks out of the box—even on error.
+When a node fails, the exception entry is followed by the standard
+``output_type_ok`` and ``context_writes_realized`` checks so failure records
+retain the same structure as successful ones.
 
-- ``checks.why_run``: trigger and upstream evidence
-- ``checks.why_ok``: post-check results, invariants (reserved), env pins, and redaction (reserved)
+Built-in checks
+---------------
 
-These are extension points for richer policy modules.
+The runtime emits the following check entries for every node:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Code
+     - Channel
+     - Purpose
+     - PASS
+     - WARN / FAIL
+   * - ``required_keys_present``
+     - ``why_run.pre``
+     - Declared context keys are available before execution.
+     - All required keys present.
+     - Missing keys listed in ``details.missing``.
+   * - ``input_type_ok``
+     - ``why_run.pre``
+     - Input payload matches the processor's ``input_data_type``.
+     - ``details.actual`` matches ``details.expected``.
+     - Type mismatch triggers ``FAIL``.
+   * - ``config_valid``
+     - ``why_run.pre``
+     - Node configuration contains no unrecognised parameters.
+     - ``WARN`` lists ``details.invalid``; omitted when the node cannot report invalid parameters.
+     - ``WARN`` when inspection detected invalid parameters.
+   * - ``output_type_ok``
+     - ``why_ok.post``
+     - Output payload matches the processor's ``output_data_type``.
+     - ``details.actual`` matches ``details.expected``.
+     - Type mismatch triggers ``FAIL``.
+   * - ``context_writes_realized``
+     - ``why_ok.post``
+     - Context keys declared in ``io_delta.created``/``updated`` exist after execution.
+     - All declared keys materialised, ``details.missing`` empty.
+     - ``FAIL`` when writes were declared but no value was persisted.
+
+Environment pins
+----------------
+
+``checks.why_ok.env`` captures a reproducibility snapshot: Python runtime,
+implementation, platform string, Semantiva version, and optional third-party
+versions (``numpy``/``pandas`` when installed). Values are simple strings or
+``null`` and contain no host-specific secrets.
 

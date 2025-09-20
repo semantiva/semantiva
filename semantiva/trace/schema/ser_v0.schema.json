@@ -41,7 +41,47 @@
       "additionalProperties": true
     },
     "io_delta": {"type": "object"},
-    "checks": {"type": "object"},
+    "checks": {
+      "type": "object",
+      "required": ["why_run", "why_ok"],
+      "properties": {
+        "why_run": {
+          "type": "object",
+          "required": ["trigger", "upstream_evidence", "pre", "policy"],
+          "properties": {
+            "trigger": {"type": "string"},
+            "upstream_evidence": {"type": "array", "items": {"type": "object"}},
+            "pre": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/check"},
+              "minItems": 1
+            },
+            "policy": {"type": "array"}
+          },
+          "additionalProperties": true
+        },
+        "why_ok": {
+          "type": "object",
+          "required": ["post", "invariants", "env", "redaction"],
+          "properties": {
+            "post": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/check"},
+              "minItems": 1
+            },
+            "invariants": {"type": "array"},
+            "env": {
+              "type": "object",
+              "required": ["python", "platform", "semantiva"],
+              "additionalProperties": {"type": ["string", "null"]}
+            },
+            "redaction": {"type": "object"}
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
     "timing": {
       "type": "object",
       "required": ["start", "end", "duration_ms", "cpu_ms"],
@@ -57,5 +97,17 @@
     "labels": {"type": "object"},
     "summaries": {"type": "object"}
   },
-  "additionalProperties": true
+  "additionalProperties": true,
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": ["code", "result"],
+      "properties": {
+        "code": {"type": "string"},
+        "result": {"enum": ["PASS", "FAIL", "WARN"]},
+        "details": {"type": ["object", "null"]}
+      },
+      "additionalProperties": true
+    }
+  }
 }

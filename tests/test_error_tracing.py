@@ -82,7 +82,13 @@ def test_error_tracing_writes_failure(tmp_path: Path) -> None:
     ser = next(r for r in records if r["type"] == "ser")
     assert ser["status"] == "error"
     assert ser["error"]["type"] == "ValueError"
-    assert ser["checks"]["why_ok"]["post"][0]["result"] == "FAIL"
+    post_checks = ser["checks"]["why_ok"]["post"]
+    assert post_checks[0]["code"] == "ValueError"
+    assert post_checks[0]["result"] == "FAIL"
+    codes = {entry["code"] for entry in post_checks}
+    assert {"output_type_ok", "context_writes_realized"}.issubset(codes)
+    env = ser["checks"]["why_ok"]["env"]
+    assert {"python", "platform", "semantiva"}.issubset(env)
     assert ser["action"]["params"]["msg"] == "fail"
     assert ser["action"]["param_source"]["msg"] == "node"
     pipeline_end = records[-1]
