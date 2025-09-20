@@ -129,6 +129,8 @@ class ClassRegistry:
     _registered_modules: Set[str] = set()
     _custom_resolvers: List[Callable[[str], Optional[type]]] = []
     _param_resolvers: List[Callable[[Any], Optional[Any]]] = []
+    _builtin_resolver_names: Set[str] = set()
+    _initialized_defaults: bool = False
 
     @classmethod
     def initialize_default_modules(cls) -> None:
@@ -152,12 +154,24 @@ class ClassRegistry:
         # Register and import all default modules
         cls.register_modules(default_modules)
 
-        cls._custom_resolvers = []
-        cls._param_resolvers = []
-        cls.register_resolver(_rename_resolver)
-        cls.register_resolver(_delete_resolver)
-        cls.register_resolver(_slicer_resolver)
-        cls.register_param_resolver(_model_param_resolver)
+        builtin_resolvers: List[tuple[Callable[..., Any], bool]] = [
+            (_rename_resolver, False),
+            (_delete_resolver, False),
+            (_slicer_resolver, False),
+            (_model_param_resolver, True),
+        ]
+
+        for resolver, is_param in builtin_resolvers:
+            name = getattr(resolver, "__name__", str(resolver))
+            if is_param:
+                if resolver not in cls._param_resolvers:
+                    cls._param_resolvers.append(resolver)
+            else:
+                if resolver not in cls._custom_resolvers:
+                    cls._custom_resolvers.append(resolver)
+            cls._builtin_resolver_names.add(name)
+
+        cls._initialized_defaults = True
 
     @classmethod
     def register_resolver(cls, resolver_fn: Callable[[str], Optional[type]]) -> None:

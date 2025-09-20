@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] – TBD
 
 ### Added
+- Registry bootstrap profiles (``RegistryProfile``, ``apply_profile``,
+  ``current_profile``) with SER ``registry.fingerprint`` pinning and
+  documentation/examples for distributed bootstrap.
 - CLI is installable via the ``semantiva`` console entry point and ships the
   ``py.typed`` marker for downstream type checkers.
 - CI now produces CycloneDX SBOM and license reports on every push/PR.
@@ -69,6 +72,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
 
 ### Changed
+- ``ClassRegistry.initialize_default_modules()`` keeps user resolvers intact and
+  installs built-ins only once; distributed orchestrators propagate registry
+  profiles to workers before pipeline construction.
 - CLI ``--version`` uses ``importlib.metadata`` with a sanitized source fallback
   instead of executing ``version.txt``.
 - Context processor factories validate context keys before generating dynamic
