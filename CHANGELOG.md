@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] – TBD
 
 ### Added
+- ClassRegistry resolver for the ``stringbuild:`` prefix and corresponding unit tests and examples (docs/tutorials updated).
+  - Context string-builder factory (YAML resolver ``stringbuild:"<template>":<out_key>``): dynamic ContextProcessor factory that builds deterministic strings from strict ``{placeholder}`` identifiers and writes them to context. Templates reject format specs/conversions and require all placeholders to exist at runtime.
+  - Documentation: added `Factories: stringbuild` docs, fan-out quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
 - Unified pipeline schema blocks (``execution``, ``trace``, ``fanout``) with
   orchestration factory, fan-out expansion helper, CLI parity, documentation,
   and tests covering SER fan-out pinning and local end-to-end runs.

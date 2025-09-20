@@ -18,7 +18,7 @@ from semantiva.data_types import NoDataType
 from semantiva.examples.test_utils import (
     FloatMockDataSink,
     FloatMultiplyOperation,
-    FloatValueDataSource,
+    FloatValueDataSourceWithDefault,
 )
 from semantiva.trace.model import SERRecord, TraceDriver
 
@@ -49,7 +49,7 @@ def test_ser_records_include_fanout_arguments(tmp_path):
     trace = _CaptureTrace()
     pipeline = Pipeline(
         [
-            {"processor": FloatValueDataSource},
+            {"processor": FloatValueDataSourceWithDefault},
             {"processor": FloatMultiplyOperation},
             {
                 "processor": FloatMockDataSink,

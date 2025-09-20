@@ -36,7 +36,7 @@ def test_cli_run_success(tmp_path: Path):
         f"""
         pipeline:
           nodes:
-            - processor: FloatValueDataSource
+            - processor: FloatValueDataSourceWithDefault
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0
@@ -62,7 +62,7 @@ def test_cli_validate(tmp_path: Path):
         """
         pipeline:
           nodes:
-            - processor: FloatValueDataSource
+            - processor: FloatValueDataSourceWithDefault
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0
@@ -87,7 +87,7 @@ def test_cli_dry_run(tmp_path: Path):
         f"""
         pipeline:
           nodes:
-            - processor: FloatValueDataSource
+            - processor: FloatValueDataSourceWithDefault
             - processor: FloatTxtFileSaver
               parameters:
                 path: "{output_file}"
@@ -104,7 +104,7 @@ def test_cli_runtime_fail(tmp_path: Path):
         """
         pipeline:
           nodes:
-            - processor: FloatValueDataSource
+            - processor: FloatValueDataSourceWithDefault
             - processor: FloatDivideOperation
               parameters:
                 divisor: 0
@@ -121,7 +121,7 @@ def test_cli_overrides(tmp_path: Path):
         f"""
         pipeline:
           nodes:
-            - processor: FloatValueDataSource
+            - processor: FloatValueDataSourceWithDefault
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0
