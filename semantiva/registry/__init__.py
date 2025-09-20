@@ -14,10 +14,14 @@
 
 from .class_registry import ClassRegistry
 from .plugin_registry import SemantivaExtension, load_extensions
+from .bootstrap import RegistryProfile, apply_profile, current_profile
 
 
 __all__ = [
     "ClassRegistry",
     "SemantivaExtension",
     "load_extensions",
+    "RegistryProfile",
+    "apply_profile",
+    "current_profile",
 ]

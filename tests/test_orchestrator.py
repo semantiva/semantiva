@@ -102,7 +102,7 @@ def test_orchestrator_applies_each_node_and_publishes(fake_pipeline):
     assert context_output == ctx
 
 
-def test_orchestrator_uses_executor(monkeypatch, fake_pipeline):
+def test_orchestrator_uses_executor(monkeypatch, fake_pipeline) -> None:
     calls: list = []
     original = SequentialSemantivaExecutor.submit
 

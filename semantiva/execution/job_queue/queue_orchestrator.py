@@ -38,6 +38,7 @@ from semantiva.pipeline import Pipeline
 from semantiva.data_types import BaseDataType
 from semantiva.context_processors import ContextType
 from semantiva.logger.logger import Logger
+from semantiva.registry.bootstrap import RegistryProfile, current_profile
 from .logging_setup import _setup_log
 
 
@@ -91,6 +92,7 @@ class QueueSemantivaOrchestrator:
         data: Optional[BaseDataType] = None,
         context: Optional[ContextType] = None,
         return_future: bool = False,
+        registry_profile: Optional[RegistryProfile] = None,
     ) -> Optional[Future]:
         """
         Enqueue a new pipeline job for asynchronous execution.
@@ -102,6 +104,9 @@ class QueueSemantivaOrchestrator:
             context:        Optional initial context.
             return_future:  If True, returns a Future whose result() yields
                 ``(data, context)``.
+            registry_profile: Optional :class:`~semantiva.registry.bootstrap.RegistryProfile`
+                describing the registry state workers must apply before running
+                the pipeline. Defaults to ``current_profile()``.
 
         Returns:
             Future if return_future=True; otherwise None.
@@ -114,10 +119,20 @@ class QueueSemantivaOrchestrator:
         if fut:
             self.pending_futures[job_id] = fut
 
-        # 3) Place the job on the internal FIFO queue
+        # 3) Determine the registry profile to propagate
+        profile = registry_profile
+        if profile is None:
+            try:
+                profile = current_profile()
+            except Exception:
+                profile = None
+
+        profile_dict = profile.as_dict() if profile is not None else None
+
+        # 4) Place the job on the internal FIFO queue
         self.job_queue.put(
-            (job_id, pipeline_cfg, data, context or ContextType())
-        )  # Enqueue a tuple with (job_id, pipeline_cfg, data, context)
+            (job_id, pipeline_cfg, data, context or ContextType(), profile_dict)
+        )  # Enqueue a tuple with (job_id, pipeline_cfg, data, context, registry_profile)
         self.logger.info(f"Enqueued job {job_id}")
 
         return fut
@@ -137,7 +152,9 @@ class QueueSemantivaOrchestrator:
         while self.running:
             # -- Publish phase --
             try:
-                job_id, pipeline_cfg, data, context = self.job_queue.get(timeout=0.2)
+                job_id, pipeline_cfg, data, context, profile_dict = self.job_queue.get(
+                    timeout=0.2
+                )
             except queue.Empty:
                 job_id = None
 
@@ -147,7 +164,11 @@ class QueueSemantivaOrchestrator:
                     f"jobs.{job_id}.cfg",
                     data=data,
                     context=context,
-                    metadata={"job_id": job_id, "pipeline": pipeline_cfg},
+                    metadata={
+                        "job_id": job_id,
+                        "pipeline": pipeline_cfg,
+                        "registry_profile": profile_dict,
+                    },
                     require_ack=False,
                 )
 
