@@ -54,7 +54,8 @@ def _allowed_param_names(processor_cls) -> Set[str]:
         class_name = processor_cls.__name__
         allowed_kwargs_patterns = [
             "ParametricSweep",  # Parametric sweep factory
-            # Add other dynamic processor patterns as needed
+            "Rename_",  # ContextProcessor rename factory
+            "Delete_",  # ContextProcessor delete factory
         ]
 
         is_allowed_dynamic = any(
@@ -109,7 +110,8 @@ def classify_unknown_config_params(
             class_name = processor_cls.__name__
             allowed_kwargs_patterns = [
                 "ParametricSweep",  # Parametric sweep factory
-                # Add other dynamic processor patterns as needed
+                "Rename_",  # ContextProcessor rename factory
+                "Delete_",  # ContextProcessor delete factory
             ]
 
             is_allowed_dynamic = any(

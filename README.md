@@ -8,6 +8,23 @@ By enforcing **type-safe** relationships between data and algorithms, Semantiva 
 
 Additionally, Semantiva is designed to be **AI-compatible**, allowing for collaboration with intelligent systems that can reason about, optimize, and even co-develop complex workflows using its well-defined semantic structures.
 
+## Quickstart (60 seconds)
+
+```bash
+# Install Semantiva in an isolated environment
+pipx install semantiva
+
+# Run the in-repo example pipeline and emit SER traces locally
+semantiva run semantiva/examples/simple_pipeline.yaml \
+  --trace-driver=jsonl --trace-output ./trace
+
+# Inspect the installed version
+semantiva --version
+```
+
+The command above creates JSONL trace artifacts in ``./trace`` that comply with
+``semantiva/trace/schema/ser_v0.schema.json``.
+
 ## Why Semantiva?
 
 Semantiva is more than a pipeline runner—it is a **semantic framework for reproducible, contract-validated data workflows**.

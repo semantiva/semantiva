@@ -16,6 +16,12 @@ distribution = true
 [project.scripts]
 semantiva = "semantiva.cli:main"
 
+[tool.pdm.build]
+includes = [
+    "semantiva/py.typed",
+    "semantiva/trace/schema/*.json",
+]
+
 [tool.black]
 # Configuration for the black code formatter
 

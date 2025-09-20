@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] – TBD
 
 ### Added
+- CLI is installable via the ``semantiva`` console entry point and ships the
+  ``py.typed`` marker for downstream type checkers.
+- CI now produces CycloneDX SBOM and license reports on every push/PR.
 - **Trace API** with JSONL driver and CLI wiring
 - **Tracing (SER v0)**: Canonical GraphV1, deterministic IDs, JSONL driver, CLI wiring, and human-friendly output
   - Canonical graph builder (`build_graph`) produces a GraphV1 canonical spec used as the single source of truth.
@@ -66,6 +69,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
 
 ### Changed
+- CLI ``--version`` uses ``importlib.metadata`` with a sanitized source fallback
+  instead of executing ``version.txt``.
+- Context processor factories validate context keys before generating dynamic
+  code, rejecting unsafe identifiers.
 - Centralized the pipeline lifecycle in :py:class:`SemantivaOrchestrator`, making
   concrete orchestrators responsible only for ``_submit_and_wait`` and
   ``_publish``. Error SERs now include the standard post checks alongside the

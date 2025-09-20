@@ -21,6 +21,8 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, NoReturn
 import importlib
+import re
+from importlib.metadata import PackageNotFoundError, version as pkg_version
 
 import yaml
 
@@ -44,16 +46,47 @@ class _ArgumentParser(argparse.ArgumentParser):
         raise SystemExit(EXIT_CLI_ERROR)
 
 
-def _get_version() -> str:
-    """Return the package version from version.txt."""
+_VERSION_ASSIGNMENT_RE = re.compile(
+    r"(?m)^\s*__version__\s*=\s*['\"]([^'\"]+)['\"]\s*$"
+)
+_VERSION_RAW_RE = re.compile(r"(?m)^\s*([0-9A-Za-z_.+-]+)\s*$")
 
-    version_file = Path(__file__).resolve().parents[1] / "version.txt"
+
+def _parse_version_text(text: str) -> str | None:
+    """Extract a version string from file contents."""
+
+    assignment = _VERSION_ASSIGNMENT_RE.search(text)
+    if assignment:
+        return assignment.group(1)
+
+    raw = _VERSION_RAW_RE.search(text)
+    if raw:
+        return raw.group(1)
+    return None
+
+
+def _get_version() -> str:
+    """Return the Semantiva version using installed metadata or source fallback."""
+
     try:
-        namespace: dict[str, str] = {}
-        exec(version_file.read_text(), namespace)  # pylint: disable=exec-used
-        return namespace.get("__version__", "unknown")
-    except Exception:  # pragma: no cover - fallback path
-        return "unknown"
+        return pkg_version("semantiva")
+    except PackageNotFoundError:  # Running from a source tree
+        pass
+
+    module_path = Path(__file__).resolve()
+    for parent in module_path.parents:
+        candidate = parent / "version.txt"
+        if not candidate.exists():
+            continue
+        try:
+            parsed = _parse_version_text(
+                candidate.read_text(encoding="utf-8", errors="ignore")
+            )
+        except OSError:  # pragma: no cover - unexpected IO failure
+            continue
+        if parsed:
+            return parsed
+    return "unknown"
 
 
 def _apply_override(config: Any, key: str, value: Any) -> None:
@@ -124,6 +157,8 @@ def _validate_structure(config: Any) -> List[dict[str, Any]]:
 
 def _parse_args(argv: List[str] | None) -> argparse.Namespace:
     parser = _ArgumentParser(prog="semantiva")
+    # Top-level version flag so `semantiva --version` works as documented.
+    parser.add_argument("--version", action="version", version=_get_version())
     sub = parser.add_subparsers(dest="command")
 
     run_p = sub.add_parser("run", help="Execute a pipeline from a YAML file")
