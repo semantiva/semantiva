@@ -114,6 +114,7 @@ from semantiva.context_processors.context_processors import (
 from semantiva.context_processors.factory import (
     _context_deleter_factory,
     _context_renamer_factory,
+    _context_stringbuild_factory,
 )
 from semantiva.workflows.fitting_model import FittingModel
 from .descriptors import ModelDescriptor
@@ -162,6 +163,7 @@ class ClassRegistry:
         builtin_resolvers: List[tuple[Callable[..., Any], bool]] = [
             (_rename_resolver, False),
             (_delete_resolver, False),
+            (_stringbuild_resolver, False),
             (_slicer_resolver, False),
             (_model_param_resolver, True),
         ]
@@ -619,6 +621,21 @@ def _delete_resolver(name: str) -> Optional[type]:
         if match:
             key = match.group(1)
             return _context_deleter_factory(key)
+    return None
+
+
+def _stringbuild_resolver(name: str) -> Optional[type]:
+    """Resolver for the ``stringbuild:`` prefix."""
+
+    if name.startswith("stringbuild:"):
+        match = re.match(
+            r"stringbuild:(?P<quote>\"|')(?P<template>.*?)(?P=quote):(?P<out>[A-Za-z_][A-Za-z0-9_.]*)$",
+            name,
+        )
+        if match:
+            template = match.group("template")
+            output_key = match.group("out")
+            return _context_stringbuild_factory(template, output_key)
     return None
 
 

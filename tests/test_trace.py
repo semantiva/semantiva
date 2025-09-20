@@ -207,7 +207,7 @@ def test_pre_checks_detect_missing_context(tmp_path: Path) -> None:
         """
 pipeline:
   nodes:
-    - processor: "FloatValueDataSource"
+    - processor: "FloatValueDataSourceWithDefault"
     - processor: "FloatAddOperation"
 """
     )
@@ -236,7 +236,7 @@ def test_required_keys_satisfied_by_context(tmp_path: Path) -> None:
         """
 pipeline:
   nodes:
-    - processor: "FloatValueDataSource"
+    - processor: "FloatValueDataSourceWithDefault"
     - processor: "FloatAddOperation"
 """
     )

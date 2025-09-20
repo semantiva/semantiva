@@ -155,6 +155,25 @@ also participate in validation:
 * ``rename:a:b`` — requires ``a``, creates ``b``, suppresses ``a``.
 * ``delete:k`` — suppresses ``k``.
 
+Factories: stringbuild
+----------------------
+
+Compose deterministic strings from existing context values without writing a
+custom processor:
+
+.. code-block:: yaml
+
+   pipeline:
+     nodes:
+       - processor: 'stringbuild:"exp_{subject}_{run}.png":filename'
+
+Rules:
+
+* Placeholders must be simple identifiers like ``{subject}`` or ``{run}``.
+* Every placeholder is required at runtime; missing keys raise ``KeyError``.
+* Format conversions or specs (e.g., ``{value!r}``, ``{value:.3f}``) are not supported.
+* The destination key may already exist and will be overwritten, mirroring rename/delete behavior.
+
 Testing Context Processors
 ---------------------------
 

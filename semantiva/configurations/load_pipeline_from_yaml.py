@@ -37,6 +37,9 @@ def _ensure_mapping(name: str, value: Any) -> Mapping[str, Any]:
 
 def _parse_execution_block(block: Any) -> ExecutionConfig:
     data = _ensure_mapping("execution", block)
+    # Enforce strict key naming: only 'options' is supported (not 'option')
+    if "option" in data and "options" not in data:
+        raise ValueError("execution block must use 'options' (mapping), not 'option'")
     options = data.get("options") or {}
     if options is None:
         options = {}
@@ -52,9 +55,10 @@ def _parse_execution_block(block: Any) -> ExecutionConfig:
 
 def _parse_trace_block(block: Any) -> TraceConfig:
     data = _ensure_mapping("trace", block)
+    # Enforce strict key naming: only 'options' is supported (not 'option')
+    if "option" in data and "options" not in data:
+        raise ValueError("trace block must use 'options' (mapping), not 'option'")
     options = data.get("options") or {}
-    if options is None:
-        options = {}
     if not isinstance(options, Mapping):
         raise ValueError("trace.options must be a mapping")
     return TraceConfig(
