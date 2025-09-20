@@ -194,6 +194,20 @@ class FloatCollectValueProbe(FloatProbe):
 
 
 class FloatValueDataSource(DataSource):
+    """Outputs a FloatDataType value."""
+
+    @classmethod
+    def _get_data(cls, value: float) -> FloatDataType:
+        assert isinstance(value, float), "Value must be a float"
+        return FloatDataType(value)
+
+    @classmethod
+    def output_data_type(cls):
+        """Return the data type produced by this source."""
+        return FloatDataType
+
+
+class FloatValueDataSourceWithDefault(DataSource):
     """Outputs a FloatDataType value. Defaults to 42.0."""
 
     @classmethod

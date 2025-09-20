@@ -21,7 +21,7 @@ import inspect
 from semantiva.data_processors.io_operation_factory import _IOOperationFactory
 from semantiva.pipeline._param_resolution import classify_unknown_config_params
 from semantiva.examples.test_utils import (
-    FloatValueDataSource,
+    FloatValueDataSourceWithDefault,
     FloatTxtFileSaver,
 )
 
@@ -31,7 +31,9 @@ class TestInvalidParameterDetectionDataIO:
 
     def test_data_source_signature_exact_match(self):
         """DataSource should have exact signature matching _get_data."""
-        data_op = _IOOperationFactory.create_data_operation(FloatValueDataSource)
+        data_op = _IOOperationFactory.create_data_operation(
+            FloatValueDataSourceWithDefault
+        )
         sig = inspect.signature(data_op._process_logic)
 
         # Should have self, data, value parameters
@@ -61,7 +63,9 @@ class TestInvalidParameterDetectionDataIO:
 
     def test_data_source_invalid_param_detection(self):
         """DataSource should detect invalid parameters."""
-        data_op = _IOOperationFactory.create_data_operation(FloatValueDataSource)
+        data_op = _IOOperationFactory.create_data_operation(
+            FloatValueDataSourceWithDefault
+        )
 
         # Test with invalid parameters
         config = {
@@ -99,7 +103,7 @@ class TestInvalidParameterDetectionDataIO:
     def test_all_valid_params_accepted(self):
         """All data IO types should accept valid parameters without issues."""
         test_cases = [
-            (FloatValueDataSource, {"value": 25.0}),
+            (FloatValueDataSourceWithDefault, {"value": 25.0}),
             (FloatTxtFileSaver, {"path": "output.txt"}),
         ]
 

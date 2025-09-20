@@ -1,6 +1,6 @@
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
       parameters:
         vars:
           input_value: { from_context: discovered_values }

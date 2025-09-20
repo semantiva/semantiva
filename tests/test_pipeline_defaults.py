@@ -17,7 +17,7 @@ from semantiva.examples.test_utils import FloatDataType
 
 # Pipeline configuration matching test_pipeline_defaults.yaml
 pipeline_config = [
-    {"processor": "FloatValueDataSource"},
+    {"processor": "FloatValueDataSourceWithDefault"},
     {"processor": "FloatMultiplyOperationWithDefault", "parameters": {"factor": 2.5}},
     {"processor": "FloatMultiplyOperationWithDefault"},
     {"processor": "FloatCollectValueProbe", "context_keyword": "factor"},
@@ -29,7 +29,7 @@ pipeline_config = [
 
 def test_pipeline_defaults_execution():
     pipeline = Pipeline(pipeline_config)
-    # Initial data is produced by FloatValueDataSource: 42.0
+    # Initial data is produced by FloatValueDataSourceWithDefault: 42.0
     # Node 2: 42.0 * 2.5 = 105.0
     # Node 3: 105.0 * 2.0 (default) = 210.0
     # Node 4: factor = 210.0 injected into context

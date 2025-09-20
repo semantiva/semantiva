@@ -27,7 +27,7 @@ def test_cli_run_with_context(tmp_path: Path):
     yaml = """
 pipeline:
   nodes:
-    - processor: FloatValueDataSource
+    - processor: FloatValueDataSourceWithDefault
     - processor: ModelFittingContextProcessor
       parameters:
         fitting_model: "model:PolynomialFittingModel:degree=1"
