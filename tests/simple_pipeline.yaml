@@ -1,6 +1,6 @@
 pipeline:
   nodes:
-    - processor: "FloatValueDataSource"
+    - processor: "FloatValueDataSourceWithDefault"
       # parameters:
       #  value: 1.0
 

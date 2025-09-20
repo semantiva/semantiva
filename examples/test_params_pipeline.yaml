@@ -1,0 +1,15 @@
+pipeline:
+  nodes:
+    - processor: FloatValueDataSourceWithDefault
+      parameters:
+        value: 10.0
+
+    - processor: FloatMultiplyOperation
+      parameters:
+        factor: 2.5
+
+    - processor: FloatAddOperation
+      parameters:
+        addend: 5.0
+
+    - processor: FloatBasicProbe

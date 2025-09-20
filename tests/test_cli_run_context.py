@@ -24,7 +24,7 @@ def test_cli_run_context(tmp_path: Path):
         """
         pipeline:
           nodes:
-            - processor: FloatValueDataSource
+            - processor: FloatValueDataSourceWithDefault
             - processor: FloatMultiplyOperation
               parameters:
                 factor: 2.0

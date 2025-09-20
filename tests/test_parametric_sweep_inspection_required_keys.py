@@ -18,13 +18,16 @@ from semantiva.data_processors.parametric_sweep_factory import (
     ParametricSweepFactory,
     FromContext,
 )
-from semantiva.examples.test_utils import FloatDataCollection, FloatValueDataSource
+from semantiva.examples.test_utils import (
+    FloatDataCollection,
+    FloatValueDataSourceWithDefault,
+)
 from semantiva.inspection.builder import build_pipeline_inspection
 
 
 def test_required_and_created_keys() -> None:
     Sweep = ParametricSweepFactory.create(
-        element=FloatValueDataSource,
+        element=FloatValueDataSourceWithDefault,
         collection_output=FloatDataCollection,
         vars={"v": FromContext("vals")},
         parametric_expressions={"value": "v"},

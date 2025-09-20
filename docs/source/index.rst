@@ -32,6 +32,7 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    architecture/pipeline_schema
    execution
    workflows_fitting_models
+   tutorials/fanout_quickstart
    logger
    examples_index
    api_reference
