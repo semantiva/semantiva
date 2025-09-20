@@ -12,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Simple JSONL trace driver writing Step Evidence Records (SER)."""
+"""Simple JSONL trace driver writing Step Evidence Records (SER).
+
+Detailed SER fields, versioning, and trace detail flags are described in
+docs/source/ser.rst.
+"""
 
 from __future__ import annotations
 

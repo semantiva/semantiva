@@ -16,7 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Trace record v1 envelopes are minimal and stable: `pipeline_start`, `node` (phase=`before|after|error`) and `pipeline_end`. 
   - `JSONLTrace` driver: append-only, asynchronous background writer.
   - CLI wiring added: `--trace-driver`, `--trace-output`, and `--trace-detail` control trace backend, output location, and which semantic summaries are emitted.
-  - Orchestrator uses the executor for all node runs, SER records now include ``action.params`` and ``action.param_source``; JSON schema is packaged.
+  - Orchestrator uses the executor for all node runs, SER records include ``action.params`` and ``action.param_source``; JSON schema is packaged.
+  - SER runtime safeguards: built-in pre/post checks (`required_keys_present`, `input_type_ok`, `config_valid`, `output_type_ok`, `context_writes_realized`) populate ``checks.why_run.pre``/``checks.why_ok.post`` for every node. ``checks.why_ok.env`` carries reproducibility pins (Python, platform, Semantiva version, optional NumPy/Pandas).
 - Unknown/unused configuration parameter detection: inspection now reports
   `invalid_parameters` per node (with suggestions). Validation/execution fail
   fast with `InvalidNodeParameterError` when processors do not accept those keys.
@@ -65,6 +66,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
 
 ### Changed
+- Centralized the pipeline lifecycle in :py:class:`SemantivaOrchestrator`, making
+  concrete orchestrators responsible only for ``_submit_and_wait`` and
+  ``_publish``. Error SERs now include the standard post checks alongside the
+  exception entry, environment pins reuse a single metadata snapshot, and
+  schema-validation tests cover both success and failure paths.
 - ContextProcessor design aligned with DataProcessor mechanics:
   stateless `_process_logic`, observer-mediated updates, and a single
   parameter-resolution policy (config > context > defaults). No user migration required.

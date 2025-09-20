@@ -36,14 +36,21 @@ from semantiva.trace.drivers.jsonl import JSONLTrace
 
 def _extract_example(path: Path) -> dict:
     text = path.read_text().splitlines()
-    idx = text.index("Example::")
+    start_idx = None
+    for idx, line in enumerate(text):
+        if line.strip().startswith(".. code-block:: json"):
+            start_idx = idx
+            break
+    if start_idx is None:
+        raise ValueError("Example code block not found")
     block: list[str] = []
-    for line in text[idx + 2 :]:
+    for line in text[start_idx + 1 :]:
+        if line.strip() == "" and not block:
+            continue
         if line.startswith("   "):
             block.append(line[3:])
-        elif line.strip() == "" and block:
-            break
-        elif block:
+            continue
+        if block:
             break
     return json.loads("\n".join(block))
 

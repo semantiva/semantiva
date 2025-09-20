@@ -29,6 +29,7 @@ import pytest
 
 from semantiva.execution.orchestrator.orchestrator import (
     LocalSemantivaOrchestrator,
+    SemantivaOrchestrator,
 )
 from semantiva import Pipeline, Payload
 from semantiva.execution.transport import InMemorySemantivaTransport
@@ -36,6 +37,7 @@ from semantiva.context_processors.context_types import ContextType
 from semantiva.examples.test_utils import FloatDataType, FloatMultiplyOperation
 from semantiva.logger import Logger
 from semantiva.execution.executor import SequentialSemantivaExecutor
+from semantiva.trace.model import TraceDriver, SERRecord
 
 
 @pytest.fixture
@@ -121,3 +123,87 @@ def test_orchestrator_uses_executor(monkeypatch, fake_pipeline):
     )
     assert len(calls) == len(fake_pipeline.resolved_spec)
     assert all(h is not None for h in calls)
+
+
+class _CaptureTraceDriver(TraceDriver):
+    def __init__(self) -> None:
+        self.start: tuple[str, str] | None = None
+        self.end: tuple[str, dict] | None = None
+        self.events: list[SERRecord] = []
+
+    def on_pipeline_start(
+        self,
+        pipeline_id: str,
+        run_id: str,
+        canonical_spec: dict,
+        meta: dict,
+        pipeline_input=None,
+    ) -> None:
+        self.start = (pipeline_id, run_id)
+
+    def on_node_event(self, event: SERRecord) -> None:
+        self.events.append(event)
+
+    def on_pipeline_end(self, run_id: str, summary: dict) -> None:
+        self.end = (run_id, summary)
+
+    def flush(self) -> None: ...
+
+    def close(self) -> None: ...
+
+
+class RemoteStubOrchestrator(SemantivaOrchestrator):
+    def __init__(self) -> None:
+        super().__init__()
+        self.published: list[tuple[str, object]] = []
+
+    def _submit_and_wait(
+        self,
+        node_callable,
+        *,
+        ser_hooks,
+    ) -> Payload:
+        return node_callable()
+
+    def _publish(self, node, data, context, transport) -> None:
+        self.published.append((node.processor.semantic_id(), data))
+
+
+def test_remote_stub_inherits_template(fake_pipeline):
+    tracer_remote = _CaptureTraceDriver()
+    tracer_local = _CaptureTraceDriver()
+    transport = InMemorySemantivaTransport()
+    stub = RemoteStubOrchestrator()
+    local = LocalSemantivaOrchestrator()
+
+    payload_remote = Payload(FloatDataType(3.0), ContextType({}))
+    payload_local = Payload(FloatDataType(3.0), ContextType({}))
+
+    result_remote = stub.execute(
+        fake_pipeline.resolved_spec,
+        payload_remote,
+        transport,
+        Logger(),
+        trace=tracer_remote,
+        canonical_spec=fake_pipeline.canonical_spec,
+    )
+
+    result_local = local.execute(
+        fake_pipeline.resolved_spec,
+        payload_local,
+        InMemorySemantivaTransport(),
+        Logger(),
+        trace=tracer_local,
+        canonical_spec=fake_pipeline.canonical_spec,
+    )
+
+    assert isinstance(result_remote.data, FloatDataType)
+    assert result_remote.data.data == result_local.data.data
+    assert tracer_remote.events and tracer_local.events
+    assert len(tracer_remote.events) == len(tracer_local.events)
+    remote_ser = tracer_remote.events[0]
+    local_ser = tracer_local.events[0]
+    assert remote_ser.checks == local_ser.checks
+    assert remote_ser.io_delta == local_ser.io_delta
+    assert remote_ser.action == local_ser.action
+    assert len(stub.published) == len(fake_pipeline.resolved_spec)

@@ -19,6 +19,9 @@ Evidence Record (SER) is a single record emitted for each completed pipeline
 step. Drivers switch on the ``type`` field and ignore unknown fields for
 forward compatibility. Version ``0`` is the draft schema used during
 pre-release development.
+
+The exhaustive description of SER fields and semantics lives in
+docs/source/ser.rst.
 """
 
 from __future__ import annotations

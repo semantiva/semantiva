@@ -53,6 +53,13 @@ Execute a pipeline.
   (default: ``hash``).
 - ``--version``                Show CLI version.
 
+Environment pins and pre/post check results are always included in every
+SER regardless of the ``--trace-detail`` flags; the flags only control the
+additional summary hashes and representations. This behaviour is implemented
+once in :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`,
+so every orchestrator used by the CLI (local now, remote later) produces the
+same evidence layout.
+
 **YAML Extension Loading**
 If your YAML contains:
 
