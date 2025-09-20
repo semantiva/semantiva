@@ -12,30 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Dynamic context processors for common transformations.
+"""Dynamic context processors for common transformations."""
 
-This module provides factory functions that generate ContextProcessor subclasses
-at runtime for simple context manipulations such as renaming and deletion.
-
-Factories:
-
-- create_rename_operation(original_key, destination_key)
-- create_delete_operation(key)
-
-Each factory returns a class with:
-
-- a properly introspectable `_process_logic(...)` signature (no `exec`)
-- `get_created_keys()` / `get_suppressed_keys()` consistent with behavior
-- a descriptive `__doc__` for generated classes
-
-These classes participate fully in parameter resolution and validation.
-"""
-
+import re
 from typing import List
+
+
 from semantiva.context_processors.context_processors import (
     ContextProcessor,
 )
+
+
+_SAFE_KEY_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]*$")
+
+
+def _ensure_valid_key(key: str) -> None:
+    if not _SAFE_KEY_PATTERN.fullmatch(key):
+        message = (
+            "Context keys must match ^[A-Za-z_][A-Za-z0-9_.]*$; " f"received {key!r}"
+        )
+        raise ValueError(message)
+
+
+def _sanitize_identifier(key: str) -> str:
+    identifier = key.replace(".", "_")
+    if not identifier or not identifier[0].isalpha() and identifier[0] != "_":
+        raise ValueError(f"Unable to derive a safe identifier from context key {key!r}")
+    return identifier
 
 
 def _context_renamer_factory(
@@ -43,36 +46,26 @@ def _context_renamer_factory(
 ) -> type[ContextProcessor]:
     """Create a ContextProcessor subclass that renames a context key."""
 
-    param_name = original_key.replace(".", "_")
+    _ensure_valid_key(original_key)
+    _ensure_valid_key(destination_key)
 
-    def create_process_logic_with_signature():
+    # We'll keep the runtime function simple and map kwargs -> arg in operate_context
+    class_suffix_src = _sanitize_identifier(original_key)
+    class_suffix_dst = _sanitize_identifier(destination_key)
 
-        # Create a function with dynamic parameter name for provenance tracking
-        func_code = f"""
-def _process_logic_with_signature(self, {param_name}):
-    \"\"\"Rename the resolved '{original_key}' value to '{destination_key}'.\"\"\"
-    value = {param_name}
-    if value is not None:
-        self._notify_context_update(destination_key, value)
-        self._notify_context_deletion(original_key)
-        self.logger.debug(
-            f"Renamed context key '{original_key}' -> '{destination_key}'"
-        )
-    else:
-        self.logger.warning(
-            f"Key '{original_key}' not found in resolved parameters."
-        )
-"""
-
-        # Create the function with proper local context
-        local_context = {
-            "destination_key": destination_key,
-            "original_key": original_key,
-        }
-        exec(func_code, local_context)
-        return local_context["_process_logic_with_signature"]
-
-    _process_logic = create_process_logic_with_signature()
+    def _process_logic(self, **kwargs):
+        """Rename the resolved 'original_key' value to 'destination_key'."""
+        value = kwargs.get(original_key)
+        if value is not None:
+            self._notify_context_update(destination_key, value)
+            self._notify_context_deletion(original_key)
+            self.logger.debug(
+                f"Renamed context key '{original_key}' -> '{destination_key}'"
+            )
+        else:
+            self.logger.warning(
+                f"Key '{original_key}' not found in resolved parameters."
+            )
 
     def get_created_keys(cls) -> List[str]:
         return [destination_key]
@@ -86,7 +79,7 @@ def _process_logic_with_signature(self, {param_name}):
     def get_processing_parameter_names(cls) -> List[str]:
         return [original_key]
 
-    dynamic_class_name = f"Rename_{original_key}_to_{destination_key}"
+    dynamic_class_name = f"Rename_{class_suffix_src}_to_{class_suffix_dst}"
     class_attrs = {
         "_process_logic": _process_logic,
         "get_created_keys": classmethod(get_created_keys),
@@ -105,28 +98,19 @@ def _process_logic_with_signature(self, {param_name}):
 def _context_deleter_factory(key: str) -> type[ContextProcessor]:
     """Create a ContextProcessor subclass that deletes a context key."""
 
-    param_name = key.replace(".", "_")
+    _ensure_valid_key(key)
 
-    def create_process_logic_with_signature():
+    param_name = _sanitize_identifier(key)
 
-        # Create a function with dynamic parameter name for provenance tracking
-        func_code = f"""
-def _process_logic_with_signature(self, {param_name}):
-    \"\"\"Delete key '{key}' from context via the observer.\"\"\"
-    # The key should be available in resolved parameters if it exists
-    if {param_name} is not None:
-        self._notify_context_deletion(key)
-        self.logger.debug(f"Deleted context key '{key}'")
-    else:
-        self.logger.debug(f"Key '{key}' not found, nothing to delete")
-"""
-
-        # Create the function with proper local context
-        local_context = {"key": key}
-        exec(func_code, local_context)
-        return local_context["_process_logic_with_signature"]
-
-    _process_logic = create_process_logic_with_signature()
+    def _process_logic(self, **kwargs):
+        """Delete key 'key' from context via the observer."""
+        # The key should be available in resolved parameters if it exists
+        value = kwargs.get(key)
+        if value is not None:
+            self._notify_context_deletion(key)
+            self.logger.debug(f"Deleted context key '{key}'")
+        else:
+            self.logger.warning(f"Key '{key}' not found, nothing to delete")
 
     def get_created_keys(cls) -> List[str]:
         return []
@@ -147,7 +131,7 @@ def _process_logic_with_signature(self, {param_name}):
         "context_keys": classmethod(context_keys),
         "get_processing_parameter_names": classmethod(get_processing_parameter_names),
     }
-    dynamic_class_name = f"Delete_{key}"
+    dynamic_class_name = f"Delete_{param_name}"
     class_attrs["__doc__"] = (
         f"Deletes context key '{key}'. If the key is present after parameter "
         "resolution, it is removed via the observer."

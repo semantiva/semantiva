@@ -1,6 +1,9 @@
 Semantiva CLI
 =============
-(SSoT) This page mirrors `semantiva/cli.py`. Update this doc if CLI changes.
+
+.. note::
+   **Single Source of Truth (SSoT)** — This page mirrors the CLI implementation at
+   ``semantiva/cli/__init__.py``. Update code and docs together to avoid drift.
 
 Overview
 --------

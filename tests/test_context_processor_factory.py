@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Factory-generated context processor tests.
+"""Factory-generated context processor tests."""
 
-Tests dynamically created rename and delete processors via factory functions,
-verifying signature introspection, actual runtime behavior, and inspection compliance.
-"""
+import pytest
 
+from semantiva.context_processors import factory as factory_module
 from semantiva.registry import ClassRegistry
+
+ClassRegistry.initialize_default_modules()
 
 
 def test_rename_factory_signature_exposes_original_key():
@@ -84,3 +84,18 @@ def test_delete_factory_inspection_reports_required_key():
     # The delete operation should require 'mykey' from context
     assert "mykey" in insp.required_context_keys
     assert "mykey" in res[0]["parameter_resolution"]["from_context"]
+
+
+@pytest.mark.parametrize(
+    "original, destination",
+    [("foo-bar", "dest"), ("1start", "ok"), ("alpha", "bad key")],
+)
+def test_rename_factory_rejects_invalid_keys(original: str, destination: str) -> None:
+    with pytest.raises(ValueError):
+        factory_module._context_renamer_factory(original, destination)
+
+
+@pytest.mark.parametrize("key", ["with space", "!invalid", "2fast"])
+def test_delete_factory_rejects_invalid_keys(key: str) -> None:
+    with pytest.raises(ValueError):
+        factory_module._context_deleter_factory(key)

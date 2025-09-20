@@ -1,1 +1,2 @@
+include semantiva/py.typed
 recursive-include semantiva/trace/schema *.json

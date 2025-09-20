@@ -245,10 +245,20 @@ def build_pipeline_inspection(
 
         # Analyze parameter resolution with defaults
         param_details: Dict[str, ParameterInfo] = {}
+        # Prefer signature-based details when available (explicit params)
         if hasattr(processor.__class__, "_retrieve_parameter_details"):
             param_details = processor.__class__._retrieve_parameter_details(
                 processor.__class__._process_logic, ["self", "data"]
             )
+        # If signature has only **kwargs (dynamic factories), fall back to get_processing_parameter_names
+        if not param_details:
+            gppn = getattr(processor.__class__, "get_processing_parameter_names", None)
+            if callable(gppn):
+                # Build a minimal param_details mapping names -> unknown/default
+                param_details = {
+                    name: ParameterInfo(default=None, annotation="Unknown")
+                    for name in gppn()
+                }
 
         config_params: Dict[str, Any] = dict(node.processor_config)
         default_params: Dict[str, Any] = {}
