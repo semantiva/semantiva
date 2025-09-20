@@ -49,7 +49,7 @@ You can also run the pipeline with tracing enabled.
 
 .. code-block:: bash
 
-   semantiva run hello_pipeline.yaml --trace-driver jsonl --trace-detail all --trace-output traces/
+   semantiva run hello_pipeline.yaml --trace.driver jsonl --trace.option detail=all --trace.output traces/
 
 This command will produce detailed execution traces.
 

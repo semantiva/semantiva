@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] – TBD
 
 ### Added
+- Unified pipeline schema blocks (``execution``, ``trace``, ``fanout``) with
+  orchestration factory, fan-out expansion helper, CLI parity, documentation,
+  and tests covering SER fan-out pinning and local end-to-end runs.
+- **ExecutionComponentRegistry** for orchestrators/executors/transports with
+  lazy default registration to avoid circular imports; factory integration
+  for orchestrator construction.
 - Registry bootstrap profiles (``RegistryProfile``, ``apply_profile``,
   ``current_profile``) with SER ``registry.fingerprint`` pinning and
   documentation/examples for distributed bootstrap.
@@ -72,6 +78,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
 
 ### Changed
+- CLI trace configuration replaced legacy flags with structured
+  ``--execution.*``, ``--trace.*``, and ``--fanout.*`` options aligned with the
+  YAML schema.
+- Consolidated registry documentation: merged the component registry architecture
+  into a unified ``Registry System`` page and updated cross-references.
 - ``ClassRegistry.initialize_default_modules()`` keeps user resolvers intact and
   installs built-ins only once; distributed orchestrators propagate registry
   profiles to workers before pipeline construction.

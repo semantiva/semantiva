@@ -69,6 +69,7 @@ class Pipeline(_PayloadProcessor):
         self.transport = transport or InMemorySemantivaTransport()
         self.orchestrator = orchestrator or LocalSemantivaOrchestrator()
         self.trace = trace
+        self._run_metadata: dict[str, Any] | None = None
 
         # Precompute canonical spec and resolved descriptors for validation
         canonical, resolved = build_canonical_spec(pipeline_configuration)
@@ -96,6 +97,7 @@ class Pipeline(_PayloadProcessor):
         self.logger.info("Starting pipeline with %s nodes", len(self.nodes))
         self.stop_watch.start()  # existing pipeline timer start
 
+        run_meta = self._run_metadata
         result_payload = self.orchestrator.execute(
             pipeline_spec=self.resolved_spec,
             payload=payload,
@@ -103,9 +105,11 @@ class Pipeline(_PayloadProcessor):
             logger=self.logger,
             trace=self.trace,
             canonical_spec=self.canonical_spec,
+            run_metadata=run_meta,
         )
 
         self.nodes = self.orchestrator.last_nodes
+        self._run_metadata = None
 
         self.stop_watch.stop()  # existing pipeline timer stop
         self.logger.info("Pipeline execution complete.")
@@ -115,6 +119,11 @@ class Pipeline(_PayloadProcessor):
             self.get_timers(),
         )
         return result_payload
+
+    def set_run_metadata(self, metadata: Optional[Dict[str, Any]]) -> None:
+        """Set metadata that should be attached to the next run for tracing."""
+
+        self._run_metadata = dict(metadata or {})
 
     def get_timers(self) -> str:
         """

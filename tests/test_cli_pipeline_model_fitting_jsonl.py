@@ -30,11 +30,11 @@ def test_cli_pipeline_model_fitting_jsonl(tmp_path: Path):
         [
             "run",
             "tests/pipeline_model_fitting.yaml",
-            "--trace-driver",
+            "--trace.driver",
             "jsonl",
-            "--trace-detail",
-            "all",
-            "--trace-output",
+            "--trace.option",
+            "detail=all",
+            "--trace.output",
             str(output_dir),
             "--context",
             "x_values=[0,1,2]",
@@ -71,9 +71,9 @@ pipeline:
         [
             "run",
             str(yaml_path),
-            "--trace-driver",
+            "--trace.driver",
             "jsonl",
-            "--trace-output",
+            "--trace.output",
             str(output_dir),
         ]
     )

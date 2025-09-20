@@ -16,7 +16,7 @@ pipx install semantiva
 
 # Run the in-repo example pipeline and emit SER traces locally
 semantiva run semantiva/examples/simple_pipeline.yaml \
-  --trace-driver=jsonl --trace-output ./trace
+  --trace.driver=jsonl --trace.output ./trace
 
 # Inspect the installed version
 semantiva --version
