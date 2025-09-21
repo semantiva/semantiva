@@ -18,8 +18,17 @@ semantiva = "semantiva.cli:main"
 
 [tool.pdm.build]
 includes = [
+    "semantiva",
     "semantiva/py.typed",
     "semantiva/trace/schema/*.json",
+]
+
+# Exclude noisy or dev-only files from the wheel so the distribution stays small
+excludes = [
+    "semantiva/tests/**",
+    "semantiva/__pycache__/**",
+    "docs/**",
+    "logs/**",
 ]
 
 [tool.black]
