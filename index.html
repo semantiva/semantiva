@@ -218,10 +218,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry Bootstrap Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -360,6 +362,7 @@
 <li class="toctree-l2"><a class="reference internal" href="context_processors.html#where-do-required-keys-come-from">Where do required keys come from?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="context_processors.html#validation-safe-mutation">Validation &amp; Safe Mutation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="context_processors.html#factories-rename-delete">Factories: rename/delete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context_processors.html#factories-stringbuild">Factories: stringbuild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="context_processors.html#testing-context-processors">Testing Context Processors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="context_processors.html#module-semantiva.context_processors.context_processors">Autodoc</a></li>
 </ul>
@@ -437,11 +440,14 @@
 <li class="toctree-l2"><a class="reference internal" href="graph.html#see-also">See also</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry Bootstrap Profiles</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#key-concepts">Key Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#architecture-overview">Architecture Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#bootstrap-profiles">Bootstrap Profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#distributed-execution">Distributed Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#programmatic-usage">Programmatic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#best-practices">Best Practices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#idempotent-defaults">Idempotent Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture/registry.html#migration-notes">Migration Notes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a><ul>
@@ -454,10 +460,15 @@
 <li class="toctree-l2"><a class="reference internal" href="architecture/context_processing.html#performance">Performance</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture/pipeline_schema.html#validation">Validation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="execution.html#component-registry-system">Component Registry System</a></li>
 <li class="toctree-l2"><a class="reference internal" href="execution.html#template-method-orchestrator">Template-method orchestrator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="execution.html#public-api-surface">Public API Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="execution.html#module-semantiva.execution.executor.executor">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="execution.html#module-semantiva.execution.component_registry">Autodoc</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a><ul>
@@ -472,6 +483,13 @@
 <li class="toctree-l2"><a class="reference internal" href="workflows_fitting_models.html#programmatic-usage">Programmatic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows_fitting_models.html#api-reference">API Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows_fitting_models.html#module-semantiva.workflows.fitting_model">Autodoc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fanout_quickstart.html#what-you-ll-run">What you’ll run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fanout_quickstart.html#yaml">YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fanout_quickstart.html#key-ideas">Key ideas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fanout_quickstart.html#next-steps">Next steps</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a><ul>

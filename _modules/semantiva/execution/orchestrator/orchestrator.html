@@ -217,10 +217,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../architecture/registry.html">Registry Bootstrap Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference.html">API Reference</a></li>
@@ -342,10 +344,20 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_PipelineNode</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_run_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">last_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">_PipelineNode</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_nodes</span>
+
+<div class="viewcode-block" id="SemantivaOrchestrator.configure_run_metadata">
+<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.configure_run_metadata">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_run_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stage metadata to be used for the next :meth:`execute` call.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_run_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span></div>
+
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Public lifecycle</span>
@@ -360,6 +372,7 @@
         <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
         <span class="n">trace</span><span class="p">:</span> <span class="n">TraceDriver</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">canonical_spec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">run_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Payload</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the pipeline and emit SER records via the template method.</span>
 
@@ -369,6 +382,12 @@
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">data</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">context</span>
+
+        <span class="n">pending_meta</span> <span class="o">=</span> <span class="n">run_metadata</span>
+        <span class="k">if</span> <span class="n">pending_meta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_run_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pending_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_run_metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_run_metadata</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pending_meta</span> <span class="ow">or</span> <span class="p">{})</span>
 
         <span class="n">canonical</span> <span class="o">=</span> <span class="n">canonical_spec</span>
         <span class="n">resolved_spec</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">pipeline_spec</span>
@@ -577,6 +596,7 @@
                 <span class="p">)</span>
             <span class="k">raise</span>
         <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">trace_driver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">trace_driver</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
                 <span class="n">trace_driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -976,11 +996,15 @@
             <span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="n">pre_checks</span><span class="p">,</span>
             <span class="s2">&quot;policy&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
+        <span class="n">args_payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">:</span>
+            <span class="n">args_payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="n">why_ok</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">post_checks</span><span class="p">,</span>
             <span class="s2">&quot;invariants&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="n">env_pins</span><span class="p">,</span>
             <span class="s2">&quot;redaction&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">args_payload</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">SERRecord</span><span class="p">(</span>
             <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;ser&quot;</span><span class="p">,</span>

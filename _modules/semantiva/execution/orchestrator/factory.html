@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
-        <title>semantiva.execution.executor.executor - Semantiva 0.5.0 documentation</title>
+        <title>semantiva.execution.orchestrator.factory - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -264,7 +264,7 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for semantiva.execution.executor.executor</h1><div class="highlight"><pre>
+          <h1>Source code for semantiva.execution.orchestrator.factory</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2025 Semantiva authors</span>
 <span class="c1">#</span>
 <span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
@@ -278,117 +278,119 @@
 <span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
+<span class="sd">&quot;&quot;&quot;Factory utilities for constructing orchestrators from configuration.&quot;&quot;&quot;</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Defines the SemantivaExecutor abstraction and a default synchronous implementation.</span>
-<span class="sd">Executors encapsulate how individual pipeline tasks (node processing) are run,</span>
-<span class="sd">decoupling the orchestration logic from the actual execution strategy.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="sd">This abstraction allows Semantiva to support multiple execution models:</span>
-<span class="sd">  - Synchronous (SequentialSemantivaExecutor)</span>
-<span class="sd">  - Thread- or process-based pools</span>
-<span class="sd">  - Distributed task frameworks (Ray, Dask, Celery, etc.)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
-<span class="sd">An executor&#39;s submit() returns a Future, enabling orchestrators to</span>
-<span class="sd">track and compose asynchronous results uniformly.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Future</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..component_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionComponentRegistry</span>
 
 
-<div class="viewcode-block" id="SemantivaExecutor">
-<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SemantivaExecutor">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SemantivaExecutor</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base for Semantiva task executors.&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_instantiate_if_present</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">component_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="SemantivaExecutor.SERHooks">
-<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks">[docs]</a>
-    <span class="nd">@dataclass</span>
-    <span class="k">class</span><span class="w"> </span><span class="nc">SERHooks</span><span class="p">:</span>
-        <span class="n">upstream</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-        <span class="n">trigger</span><span class="p">:</span> <span class="nb">str</span>
-        <span class="n">upstream_evidence</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>
-        <span class="n">io_delta_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-        <span class="n">pre_checks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
-        <span class="n">post_checks_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span>
-        <span class="n">env_pins_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-        <span class="n">redaction_policy_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span></div>
+    <span class="k">if</span> <span class="n">component_type</span> <span class="o">==</span> <span class="s2">&quot;orchestrator&quot;</span><span class="p">:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">ExecutionComponentRegistry</span><span class="o">.</span><span class="n">get_orchestrator</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">component_type</span> <span class="o">==</span> <span class="s2">&quot;executor&quot;</span><span class="p">:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">ExecutionComponentRegistry</span><span class="o">.</span><span class="n">get_executor</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">component_type</span> <span class="o">==</span> <span class="s2">&quot;transport&quot;</span><span class="p">:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">ExecutionComponentRegistry</span><span class="o">.</span><span class="n">get_transport</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown component type: </span><span class="si">{</span><span class="n">component_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown </span><span class="si">{</span><span class="n">component_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SemantivaExecutor.submit">
-<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SemantivaExecutor.submit">[docs]</a>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-        <span class="n">ser_hooks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SemantivaExecutor.SERHooks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Future</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Submit a callable for (possibly asynchronous) execution.&quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
-</div>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_attempt_construct</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">attempt_order</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">),</span>
+        <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;options&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="s2">&quot;transport&quot;</span><span class="p">}},</span>
+        <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="s2">&quot;transport&quot;</span><span class="p">,</span> <span class="s2">&quot;executor&quot;</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{},</span>
+    <span class="p">]</span>
+    <span class="n">last_error</span><span class="p">:</span> <span class="ne">Exception</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">attempt_order</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">candidate</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">last_error</span> <span class="o">=</span> <span class="n">exc</span>
+            <span class="k">continue</span>
+    <span class="k">if</span> <span class="n">last_error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">last_error</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SequentialSemantivaExecutor">
-<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SequentialSemantivaExecutor">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SequentialSemantivaExecutor</span><span class="p">(</span><span class="n">SemantivaExecutor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Default, local executor that runs each task synchronously in the calling thread.</span>
 
-<span class="sd">    This implementation is useful for simple use cases, debugging, or</span>
-<span class="sd">    environments without a distributed runtime. It fulfills the</span>
-<span class="sd">    SemantivaExecutor contract by immediately executing the callable</span>
-<span class="sd">    and returning an already-completed Future.</span>
+<div class="viewcode-block" id="build_orchestrator">
+<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.orchestrator.factory.build_orchestrator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_orchestrator</span><span class="p">(</span>
+    <span class="n">exec_cfg</span><span class="p">:</span> <span class="n">ExecutionConfig</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">executor</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct an orchestrator respecting explicit transport and executor.</span>
+
+<span class="sd">    This factory function uses the ExecutionComponentRegistry to resolve orchestrator,</span>
+<span class="sd">    executor, and transport classes by name, then constructs them with dependency</span>
+<span class="sd">    injection. It provides graceful fallbacks for constructor argument compatibility.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        exec_cfg: Execution configuration containing component names and options</span>
+<span class="sd">        transport: Optional transport instance to inject (overrides config)</span>
+<span class="sd">        executor: Optional executor instance to inject (overrides config)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Configured orchestrator instance with injected dependencies</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If specified component names are not found in registry</span>
+<span class="sd">        TypeError: If component construction fails with all argument combinations</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from semantiva.configurations.schema import ExecutionConfig</span>
+<span class="sd">        &gt;&gt;&gt; config = ExecutionConfig(orchestrator=&quot;LocalSemantivaOrchestrator&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; orchestrator = build_orchestrator(config)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">class</span><span class="w"> </span><span class="nc">_ImmediateFuture</span><span class="p">(</span><span class="n">Future</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A Future subclass that is already completed with a given result.</span>
-<span class="sd">        Used internally to wrap synchronous call results.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">transport_obj</span> <span class="o">=</span> <span class="n">transport</span> <span class="ow">or</span> <span class="n">_instantiate_if_present</span><span class="p">(</span>
+        <span class="n">exec_cfg</span><span class="o">.</span><span class="n">transport</span><span class="p">,</span> <span class="s2">&quot;transport&quot;</span>
+    <span class="p">)</span>
+    <span class="n">executor_obj</span> <span class="o">=</span> <span class="n">executor</span> <span class="ow">or</span> <span class="n">_instantiate_if_present</span><span class="p">(</span><span class="n">exec_cfg</span><span class="o">.</span><span class="n">executor</span><span class="p">,</span> <span class="s2">&quot;executor&quot;</span><span class="p">)</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Initialize and immediately set the Future&#39;s result.</span>
+    <span class="k">if</span> <span class="n">exec_cfg</span><span class="o">.</span><span class="n">orchestrator</span><span class="p">:</span>
+        <span class="n">orch_cls</span> <span class="o">=</span> <span class="n">ExecutionComponentRegistry</span><span class="o">.</span><span class="n">get_orchestrator</span><span class="p">(</span><span class="n">exec_cfg</span><span class="o">.</span><span class="n">orchestrator</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">orch_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown orchestrator: </span><span class="si">{</span><span class="n">exec_cfg</span><span class="o">.</span><span class="n">orchestrator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.orchestrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalSemantivaOrchestrator</span>
 
-<span class="sd">            Args:</span>
-<span class="sd">                result: The value to store in the Future.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">orch_cls</span> <span class="o">=</span> <span class="n">LocalSemantivaOrchestrator</span>
 
-<div class="viewcode-block" id="SequentialSemantivaExecutor.submit">
-<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SequentialSemantivaExecutor.submit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-        <span class="n">ser_hooks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SemantivaExecutor</span><span class="o">.</span><span class="n">SERHooks</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Future</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Execute the function immediately and return a completed Future.</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">transport_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;transport&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transport_obj</span>
+    <span class="k">if</span> <span class="n">executor_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;executor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">executor_obj</span>
+    <span class="k">if</span> <span class="n">exec_cfg</span><span class="o">.</span><span class="n">options</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exec_cfg</span><span class="o">.</span><span class="n">options</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            fn:   The function or callable to execute synchronously.</span>
-<span class="sd">            *args/**kwargs: Arguments for the function.</span>
+    <span class="n">orchestrator</span> <span class="o">=</span> <span class="n">_attempt_construct</span><span class="p">(</span><span class="n">orch_cls</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">orchestrator</span></div>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            A completed Future whose result() returns fn(*args, **kwargs).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># ser_hooks is accepted for API parity with async executors.</span>
-        <span class="c1"># Directly call the function in the current thread</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># Wrap the result in an ImmediateFuture so callers can uniformly</span>
-        <span class="c1"># use Future.result() even in synchronous mode</span>
-        <span class="k">return</span> <span class="n">SequentialSemantivaExecutor</span><span class="o">.</span><span class="n">_ImmediateFuture</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
-</div>
 
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;build_orchestrator&quot;</span><span class="p">]</span>
 </pre></div>
         </article>
       </div>

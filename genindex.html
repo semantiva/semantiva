@@ -216,10 +216,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry Bootstrap Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -304,6 +306,8 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="execution.html#semantiva.execution.orchestrator.factory.build_orchestrator">build_orchestrator() (in module semantiva.execution.orchestrator.factory)</a>
+</li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.build_pipeline_inspection">build_pipeline_inspection() (in module semantiva.inspection.builder)</a>
 </li>
     </ul></td>
@@ -320,6 +324,8 @@
 
         <ul>
           <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextType.clear">(semantiva.context_processors.context_types.ContextType method)</a>
+</li>
+          <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.clear">(semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         </ul></li>
         <li><a href="execution.html#semantiva.execution.transport.base.SemantivaTransport.close">close() (semantiva.execution.transport.base.SemantivaTransport method)</a>
@@ -338,6 +344,8 @@
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.config_params">config_params (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
+        <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.configure_run_metadata">configure_run_metadata() (semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator method)</a>
+</li>
         <li><a href="execution.html#semantiva.execution.transport.base.SemantivaTransport.connect">connect() (semantiva.execution.transport.base.SemantivaTransport method)</a>
 
         <ul>
@@ -348,10 +356,10 @@
 </li>
         <li><a href="execution.html#semantiva.execution.transport.base.Message.context">context (semantiva.execution.transport.base.Message attribute)</a>
 </li>
-        <li><a href="glossary.html#term-Context-Observer"><strong>Context Observer</strong></a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="glossary.html#term-Context-Observer"><strong>Context Observer</strong></a>
+</li>
         <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.context_keys">context_keys() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
 
         <ul>
@@ -379,6 +387,8 @@
         <li><a href="context_processors.html#semantiva.context_processors.factory.create_delete_operation">create_delete_operation() (in module semantiva.context_processors.factory)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.factory.create_rename_operation">create_rename_operation() (in module semantiva.context_processors.factory)</a>
+</li>
+        <li><a href="context_processors.html#semantiva.context_processors.factory.create_stringbuild_operation">create_stringbuild_operation() (in module semantiva.context_processors.factory)</a>
 </li>
         <li><a href="glossary.html#term-Created-keys"><strong>Created keys</strong></a>
 </li>
@@ -444,15 +454,17 @@
 </li>
         <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider">env_pins_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.errors">errors (semantiva.inspection.builder.NodeInspection attribute)</a>
 
         <ul>
           <li><a href="introspection_validation.html#semantiva.inspection.builder.PipelineInspection.errors">(semantiva.inspection.builder.PipelineInspection attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.execute">execute() (semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry">ExecutionComponentRegistry (class in semantiva.execution.component_registry)</a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.reporter.extended_report">extended_report() (in module semantiva.inspection.reporter)</a>
 </li>
@@ -496,15 +508,25 @@
         </ul></li>
         <li><a href="data_io.html#semantiva.data_io.data_io.DataSource.get_data">get_data() (semantiva.data_io.data_io.DataSource class method)</a>
 </li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_executor">get_executor() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.get_item">get_item() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_orchestrator">get_orchestrator() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource.get_payload">get_payload() (semantiva.data_io.data_io.PayloadSource class method)</a>
 </li>
         <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_probe_results">get_probe_results() (semantiva.pipeline.pipeline.Pipeline method)</a>
 </li>
+        <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names">get_processing_parameter_names() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names">get_processing_parameter_names() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_executors">get_registered_executors() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_orchestrators">get_registered_orchestrators() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_transports">get_registered_transports() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_required_keys">get_required_keys() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
 </li>
@@ -513,6 +535,8 @@
         <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_suppressed_keys">get_suppressed_keys() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
 </li>
         <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_timers">get_timers() (semantiva.pipeline.pipeline.Pipeline method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_transport">get_transport() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.get_value">get_value() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
@@ -541,6 +565,8 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.index">index (semantiva.inspection.builder.NodeInspection attribute)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.initialize_defaults">initialize_defaults() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource.injected_context_keys">injected_context_keys() (semantiva.data_io.data_io.PayloadSource class method)</a>
 </li>
@@ -658,9 +684,13 @@
 </li>
           <li><a href="exceptions.html#module-semantiva.exceptions.pipeline_exceptions">semantiva.exceptions.pipeline_exceptions</a>
 </li>
+          <li><a href="execution.html#module-semantiva.execution.component_registry">semantiva.execution.component_registry</a>
+</li>
           <li><a href="execution.html#module-semantiva.execution.executor.executor">semantiva.execution.executor.executor</a>
 </li>
           <li><a href="execution.html#module-semantiva.execution.job_queue.queue_orchestrator">semantiva.execution.job_queue.queue_orchestrator</a>
+</li>
+          <li><a href="execution.html#module-semantiva.execution.orchestrator.factory">semantiva.execution.orchestrator.factory</a>
 </li>
           <li><a href="execution.html#module-semantiva.execution.orchestrator.orchestrator">semantiva.execution.orchestrator.orchestrator</a>
 </li>
@@ -815,10 +845,16 @@
 </li>
         <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.redaction_policy_provider">redaction_policy_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
-        <li><a href="glossary.html#term-Required-keys"><strong>Required keys</strong></a>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.register_executor">register_executor() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.register_orchestrator">register_orchestrator() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.register_transport">register_transport() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="glossary.html#term-Required-keys"><strong>Required keys</strong></a>
+</li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.PipelineInspection.required_context_keys">required_context_keys (semantiva.inspection.builder.PipelineInspection attribute)</a>
 </li>
         <li><a href="glossary.html#term-Resolver"><strong>Resolver</strong></a>
@@ -899,6 +935,13 @@
 </li>
         </ul></li>
         <li>
+    semantiva.execution.component_registry
+
+        <ul>
+          <li><a href="execution.html#module-semantiva.execution.component_registry">module</a>
+</li>
+        </ul></li>
+        <li>
     semantiva.execution.executor.executor
 
         <ul>
@@ -910,6 +953,13 @@
 
         <ul>
           <li><a href="execution.html#module-semantiva.execution.job_queue.queue_orchestrator">module</a>
+</li>
+        </ul></li>
+        <li>
+    semantiva.execution.orchestrator.factory
+
+        <ul>
+          <li><a href="execution.html#module-semantiva.execution.orchestrator.factory">module</a>
 </li>
         </ul></li>
         <li>
@@ -1005,6 +1055,8 @@
         <li><a href="logger.html#semantiva.logger.logger.Logger.set_file_output">set_file_output() (semantiva.logger.logger.Logger method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.set_item_value">set_item_value() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
+</li>
+        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.set_run_metadata">set_run_metadata() (semantiva.pipeline.pipeline.Pipeline method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.set_value">set_value() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 

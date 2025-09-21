@@ -218,10 +218,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry Bootstrap Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -410,6 +412,23 @@ also participate in validation:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">rename:a:b</span></code> — requires <code class="docutils literal notranslate"><span class="pre">a</span></code>, creates <code class="docutils literal notranslate"><span class="pre">b</span></code>, suppresses <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">delete:k</span></code> — suppresses <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p></li>
+</ul>
+</section>
+<section id="factories-stringbuild">
+<h2>Factories: stringbuild<a class="headerlink" href="#factories-stringbuild" title="Link to this heading">¶</a></h2>
+<p>Compose deterministic strings from existing context values without writing a
+custom processor:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stringbuild:&quot;exp_{subject}_{run}.png&quot;:filename&#39;</span>
+</pre></div>
+</div>
+<p>Rules:</p>
+<ul class="simple">
+<li><p>Placeholders must be simple identifiers like <code class="docutils literal notranslate"><span class="pre">{subject}</span></code> or <code class="docutils literal notranslate"><span class="pre">{run}</span></code>.</p></li>
+<li><p>Every placeholder is required at runtime; missing keys raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p></li>
+<li><p>Format conversions or specs (e.g., <code class="docutils literal notranslate"><span class="pre">{value!r}</span></code>, <code class="docutils literal notranslate"><span class="pre">{value:.3f}</span></code>) are not supported.</p></li>
+<li><p>The destination key may already exist and will be overwritten, mirroring rename/delete behavior.</p></li>
 </ul>
 </section>
 <section id="testing-context-processors">
@@ -643,6 +662,11 @@ coverage and follow the intended usage patterns.</p>
 <span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.factory.</span></span><span class="sig-name descname"><span class="pre">create_rename_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/factory.html#create_rename_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.factory.create_rename_operation" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="semantiva.context_processors.factory.create_stringbuild_operation">
+<span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.factory.</span></span><span class="sig-name descname"><span class="pre">create_stringbuild_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/factory.html#create_stringbuild_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.factory.create_stringbuild_operation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 </section>
 
@@ -718,6 +742,7 @@ coverage and follow the intended usage patterns.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#factories-rename-delete">Factories: rename/delete</a></li>
+<li><a class="reference internal" href="#factories-stringbuild">Factories: stringbuild</a></li>
 <li><a class="reference internal" href="#testing-context-processors">Testing Context Processors</a></li>
 <li><a class="reference internal" href="#module-semantiva.context_processors.context_processors">Autodoc</a><ul>
 <li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor"><code class="docutils literal notranslate"><span class="pre">ContextProcessor</span></code></a><ul>
@@ -759,6 +784,7 @@ coverage and follow the intended usage patterns.</p>
 </li>
 <li><a class="reference internal" href="#semantiva.context_processors.factory.create_delete_operation"><code class="docutils literal notranslate"><span class="pre">create_delete_operation()</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.context_processors.factory.create_rename_operation"><code class="docutils literal notranslate"><span class="pre">create_rename_operation()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.context_processors.factory.create_stringbuild_operation"><code class="docutils literal notranslate"><span class="pre">create_stringbuild_operation()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Context Processing Architecture" href="context_processing.html" /><link rel="prev" title="Canonical Graph Builder" href="../graph.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
-        <title>Registry Bootstrap Profiles - Semantiva 0.5.0 documentation</title>
+        <title>Registry System - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -218,10 +218,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Registry Bootstrap Profiles</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
@@ -269,13 +271,57 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="registry-bootstrap-profiles">
-<h1>Registry Bootstrap Profiles<a class="headerlink" href="#registry-bootstrap-profiles" title="Link to this heading">¶</a></h1>
-<p>The registry keeps track of modules, filesystem paths, and extension entry
-points that declare Semantiva components. The <strong>Registry v1</strong> design introduces
-<code class="docutils literal notranslate"><span class="pre">RegistryProfile</span></code> to make that state explicit, portable, and reproducible.</p>
+          <section id="registry-system">
+<h1>Registry System<a class="headerlink" href="#registry-system" title="Link to this heading">¶</a></h1>
+<p>Semantiva’s registry system manages component discovery, registration, and resolution
+across the framework. This system consists of two main parts: a dual-registry
+architecture for component separation and a bootstrap profile system for reproducible
+component loading.</p>
+<section id="architecture-overview">
+<h2>Architecture Overview<a class="headerlink" href="#architecture-overview" title="Link to this heading">¶</a></h2>
+<p>Semantiva uses a dual-registry system to manage different types of components while
+avoiding circular import dependencies. This architecture separates concerns between
+general component resolution and execution-specific component management.</p>
+<section id="registry-components">
+<h3>Registry Components<a class="headerlink" href="#registry-components" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">ClassRegistry</span></code></dt><dd><p>Primary registry for data processors, context processors, and workflow components.
+Handles dynamic class resolution from YAML configurations, custom resolvers,
+and module/path registration.</p>
+</dd>
+<dt><a class="reference internal" href="../execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry" title="semantiva.execution.component_registry.ExecutionComponentRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExecutionComponentRegistry</span></code></a></dt><dd><p>Specialized registry for execution layer components: orchestrators, executors,
+and transports. Designed to avoid circular import dependencies with graph
+building and general class resolution.</p>
+</dd>
+</dl>
+</section>
+<section id="dependency-separation">
+<h3>Dependency Separation<a class="headerlink" href="#dependency-separation" title="Link to this heading">¶</a></h3>
+<p>The dual-registry architecture solves a fundamental circular import problem:</p>
+<ul class="simple">
+<li><p><strong>Graph builder</strong> needs <code class="docutils literal notranslate"><span class="pre">ClassRegistry</span></code> to resolve processor classes from YAML</p></li>
+<li><p><strong>Orchestrators</strong> need graph builder functions for canonical specs and pipeline IDs</p></li>
+<li><p><strong>ClassRegistry</strong> needed to import orchestrators for default registration</p></li>
+</ul>
+<p>By introducing <code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry</span></code>, we break this cycle:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Before (Circular):
+ClassRegistry → LocalSemantivaOrchestrator → graph_builder → ClassRegistry
+
+After (Clean):
+ClassRegistry → graph_builder
+ExecutionComponentRegistry → LocalSemantivaOrchestrator
+orchestrator/factory → ExecutionComponentRegistry
+</pre></div>
+</div>
+</section>
+</section>
+<section id="bootstrap-profiles">
+<h2>Bootstrap Profiles<a class="headerlink" href="#bootstrap-profiles" title="Link to this heading">¶</a></h2>
+<p>The <strong>Registry v1</strong> design introduces <code class="docutils literal notranslate"><span class="pre">RegistryProfile</span></code> to make registry state
+explicit, portable, and reproducible. This system tracks modules, filesystem paths,
+and extension entry points that declare Semantiva components.</p>
 <section id="key-concepts">
-<h2>Key Concepts<a class="headerlink" href="#key-concepts" title="Link to this heading">¶</a></h2>
+<h3>Key Concepts<a class="headerlink" href="#key-concepts" title="Link to this heading">¶</a></h3>
 <dl>
 <dt><code class="docutils literal notranslate"><span class="pre">RegistryProfile</span></code></dt><dd><p>Frozen dataclass capturing four attributes:</p>
 <dl class="simple">
@@ -304,6 +350,62 @@ fingerprint is pinned into every SER under <code class="docutils literal notrans
 </dd>
 </dl>
 </section>
+<section id="initialization-flow">
+<h3>Initialization Flow<a class="headerlink" href="#initialization-flow" title="Link to this heading">¶</a></h3>
+<p>Component registration follows a carefully orchestrated initialization sequence:</p>
+<ol class="arabic simple">
+<li><p><strong>ClassRegistry.initialize_default_modules()</strong></p>
+<ul class="simple">
+<li><p>Registers core data processors and context processors</p></li>
+<li><p>Sets up built-in resolvers (rename, delete, slicer, model)</p></li>
+<li><p>Calls <code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.initialize_defaults()</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>ExecutionComponentRegistry.initialize_defaults()</strong></p>
+<ul class="simple">
+<li><p>Imports execution components using lazy imports (no circular dependencies)</p></li>
+<li><p>Registers default orchestrators, executors, and transports</p></li>
+<li><p>Safe to call multiple times (idempotent)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="component-resolution">
+<h3>Component Resolution<a class="headerlink" href="#component-resolution" title="Link to this heading">¶</a></h3>
+<p>Different component types use their respective registries:</p>
+<p><strong>Data Processors (via ClassRegistry)</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry.class_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassRegistry</span>
+
+<span class="c1"># Resolves processors from YAML</span>
+<span class="n">processor_cls</span> <span class="o">=</span> <span class="n">ClassRegistry</span><span class="o">.</span><span class="n">get_class</span><span class="p">(</span><span class="s2">&quot;FloatValueDataSource&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Execution Components (via ExecutionComponentRegistry)</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.execution.component_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionComponentRegistry</span>
+
+<span class="c1"># Resolves orchestrators for factory</span>
+<span class="n">orch_cls</span> <span class="o">=</span> <span class="n">ExecutionComponentRegistry</span><span class="o">.</span><span class="n">get_orchestrator</span><span class="p">(</span><span class="s2">&quot;LocalSemantivaOrchestrator&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="factory-integration">
+<h3>Factory Integration<a class="headerlink" href="#factory-integration" title="Link to this heading">¶</a></h3>
+<p>The <a class="reference internal" href="../execution.html#semantiva.execution.orchestrator.factory.build_orchestrator" title="semantiva.execution.orchestrator.factory.build_orchestrator"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_orchestrator()</span></code></a> function
+uses <code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry</span></code> for component resolution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.execution.orchestrator.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_orchestrator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ExecutionConfig</span><span class="p">(</span>
+    <span class="n">orchestrator</span><span class="o">=</span><span class="s2">&quot;LocalSemantivaOrchestrator&quot;</span><span class="p">,</span>
+    <span class="n">executor</span><span class="o">=</span><span class="s2">&quot;SequentialSemantivaExecutor&quot;</span><span class="p">,</span>
+    <span class="n">transport</span><span class="o">=</span><span class="s2">&quot;InMemorySemantivaTransport&quot;</span>
+<span class="p">)</span>
+
+<span class="n">orchestrator</span> <span class="o">=</span> <span class="n">build_orchestrator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="distributed-execution">
 <h2>Distributed Execution<a class="headerlink" href="#distributed-execution" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">QueueSemantivaOrchestrator.enqueue</span></code> now accepts an optional
@@ -316,6 +418,8 @@ inline extensions declared in the file.</p>
 </section>
 <section id="programmatic-usage">
 <h2>Programmatic Usage<a class="headerlink" href="#programmatic-usage" title="Link to this heading">¶</a></h2>
+<section id="registry-profiles">
+<h3>Registry Profiles<a class="headerlink" href="#registry-profiles" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegistryProfile</span><span class="p">,</span> <span class="n">apply_profile</span><span class="p">,</span> <span class="n">current_profile</span>
 
 <span class="c1"># Capture the current process state (defaults, modules, and paths)</span>
@@ -329,12 +433,51 @@ inline extensions declared in the file.</p>
 </pre></div>
 </div>
 </section>
+<section id="component-registration">
+<h3>Component Registration<a class="headerlink" href="#component-registration" title="Link to this heading">¶</a></h3>
+<p><strong>Custom Data Processors</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register custom processors via ClassRegistry</span>
+<span class="n">ClassRegistry</span><span class="o">.</span><span class="n">register_modules</span><span class="p">([</span><span class="s2">&quot;my_extension.processors&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>Custom Execution Components</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register custom orchestrators</span>
+<span class="n">ExecutionComponentRegistry</span><span class="o">.</span><span class="n">register_orchestrator</span><span class="p">(</span>
+    <span class="s2">&quot;CustomOrchestrator&quot;</span><span class="p">,</span> <span class="n">MyCustomOrchestrator</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Registry Selection</strong>: Use <code class="docutils literal notranslate"><span class="pre">ClassRegistry</span></code> for data/context processors,
+<code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry</span></code> for execution components.</p></li>
+<li><p><strong>Initialization Order</strong>: Always call <code class="docutils literal notranslate"><span class="pre">ClassRegistry.initialize_default_modules()</span></code>
+before using either registry.</p></li>
+<li><p><strong>Lazy Imports</strong>: When adding new execution components, use lazy imports in
+<code class="docutils literal notranslate"><span class="pre">initialize_defaults()</span></code> to avoid circular dependencies.</p></li>
+<li><p><strong>Testing</strong>: Both registries provide <code class="docutils literal notranslate"><span class="pre">clear()</span></code> methods for test isolation.</p></li>
+<li><p><strong>Profile Management</strong>: Use <code class="docutils literal notranslate"><span class="pre">current_profile()</span></code> to capture reproducible
+registry states for distributed execution.</p></li>
+</ol>
+</section>
 <section id="idempotent-defaults">
 <h2>Idempotent Defaults<a class="headerlink" href="#idempotent-defaults" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">ClassRegistry.initialize_default_modules()</span></code> no longer clears custom
 resolvers when loading defaults, and built-in resolvers are installed once.
 Calling the method repeatedly is safe and preserves any user-provided
 resolvers.</p>
+</section>
+<section id="migration-notes">
+<h2>Migration Notes<a class="headerlink" href="#migration-notes" title="Link to this heading">¶</a></h2>
+<p>The dual-registry architecture was introduced to resolve circular import issues
+while maintaining backward compatibility. Existing code using <code class="docutils literal notranslate"><span class="pre">ClassRegistry</span></code>
+for data processors continues to work unchanged. Only the internal orchestrator
+factory implementation was modified to use the new execution registry.</p>
+<p>The separation provides a foundation for future scalability, allowing independent
+evolution of data processing and execution layer components without coupling concerns.</p>
 </section>
 </section>
 
@@ -393,11 +536,28 @@ resolvers.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Registry Bootstrap Profiles</a><ul>
+<li><a class="reference internal" href="#">Registry System</a><ul>
+<li><a class="reference internal" href="#architecture-overview">Architecture Overview</a><ul>
+<li><a class="reference internal" href="#registry-components">Registry Components</a></li>
+<li><a class="reference internal" href="#dependency-separation">Dependency Separation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bootstrap-profiles">Bootstrap Profiles</a><ul>
 <li><a class="reference internal" href="#key-concepts">Key Concepts</a></li>
+<li><a class="reference internal" href="#initialization-flow">Initialization Flow</a></li>
+<li><a class="reference internal" href="#component-resolution">Component Resolution</a></li>
+<li><a class="reference internal" href="#factory-integration">Factory Integration</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#distributed-execution">Distributed Execution</a></li>
-<li><a class="reference internal" href="#programmatic-usage">Programmatic Usage</a></li>
+<li><a class="reference internal" href="#programmatic-usage">Programmatic Usage</a><ul>
+<li><a class="reference internal" href="#registry-profiles">Registry Profiles</a></li>
+<li><a class="reference internal" href="#component-registration">Component Registration</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
 <li><a class="reference internal" href="#idempotent-defaults">Idempotent Defaults</a></li>
+<li><a class="reference internal" href="#migration-notes">Migration Notes</a></li>
 </ul>
 </li>
 </ul>

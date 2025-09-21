@@ -2,10 +2,11 @@
 <html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Logger" href="../logger.html" /><link rel="prev" title="Workflows — Fitting Models via model:" href="../workflows_fitting_models.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
-        <title>Overview: module code - Semantiva 0.5.0 documentation</title>
+        <title>Fan-Out Quickstart (Local) - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -178,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -212,7 +213,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../sweeps.html">Sweeps in YAML</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
@@ -222,7 +223,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
@@ -249,7 +250,13 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/tutorials/fanout_quickstart.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
@@ -258,44 +265,131 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>All modules for which code is available</h1>
-<ul><li><a href="semantiva/context_processors/context_processors.html">semantiva.context_processors.context_processors</a></li>
-<li><a href="semantiva/context_processors/context_types.html">semantiva.context_processors.context_types</a></li>
-<li><a href="semantiva/context_processors/factory.html">semantiva.context_processors.factory</a></li>
-<li><a href="semantiva/data_io/data_io.html">semantiva.data_io.data_io</a></li>
-<li><a href="semantiva/data_processors/data_processors.html">semantiva.data_processors.data_processors</a></li>
-<li><a href="semantiva/data_processors/data_slicer_factory.html">semantiva.data_processors.data_slicer_factory</a></li>
-<li><a href="semantiva/data_processors/parametric_sweep_factory.html">semantiva.data_processors.parametric_sweep_factory</a></li>
-<li><a href="semantiva/data_types/data_types.html">semantiva.data_types.data_types</a></li>
-<li><a href="semantiva/exceptions/pipeline_exceptions.html">semantiva.exceptions.pipeline_exceptions</a></li>
-<li><a href="semantiva/execution/component_registry.html">semantiva.execution.component_registry</a></li>
-<li><a href="semantiva/execution/executor/executor.html">semantiva.execution.executor.executor</a></li>
-<li><a href="semantiva/execution/job_queue/queue_orchestrator.html">semantiva.execution.job_queue.queue_orchestrator</a></li>
-<li><a href="semantiva/execution/orchestrator/factory.html">semantiva.execution.orchestrator.factory</a></li>
-<li><a href="semantiva/execution/orchestrator/orchestrator.html">semantiva.execution.orchestrator.orchestrator</a></li>
-<li><a href="semantiva/execution/transport/base.html">semantiva.execution.transport.base</a></li>
-<li><a href="semantiva/execution/transport/in_memory.html">semantiva.execution.transport.in_memory</a></li>
-<li><a href="semantiva/inspection/builder.html">semantiva.inspection.builder</a></li>
-<li><a href="semantiva/inspection/reporter.html">semantiva.inspection.reporter</a></li>
-<li><a href="semantiva/inspection/validator.html">semantiva.inspection.validator</a></li>
-<li><a href="semantiva/logger/logger.html">semantiva.logger.logger</a></li>
-<li><a href="semantiva/pipeline/payload.html">semantiva.pipeline.payload</a></li>
-<li><a href="semantiva/pipeline/pipeline.html">semantiva.pipeline.pipeline</a></li>
-<li><a href="semantiva/workflows/fitting_model.html">semantiva.workflows.fitting_model</a></li>
+          <section id="fan-out-quickstart-local">
+<h1>Fan-Out Quickstart (Local)<a class="headerlink" href="#fan-out-quickstart-local" title="Link to this heading">¶</a></h1>
+<p>This example shows how to run the same pipeline multiple times with different
+parameters (fan-out) using the built-in Float demo processors.</p>
+<section id="what-you-ll-run">
+<h2>What you’ll run<a class="headerlink" href="#what-you-ll-run" title="Link to this heading">¶</a></h2>
+<p>For each (<code class="docutils literal notranslate"><span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">factor</span></code>) pair:</p>
+<ol class="arabic simple">
+<li><p><strong>FloatValueDataSource</strong> emits <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p></li>
+<li><p><strong>FloatAddOperation</strong> adds a constant <code class="docutils literal notranslate"><span class="pre">addend</span></code> (<code class="docutils literal notranslate"><span class="pre">1.0</span></code>).</p></li>
+<li><p><strong>FloatMultiplyOperation</strong> multiplies by <code class="docutils literal notranslate"><span class="pre">factor</span></code>.</p></li>
+<li><p><strong>FloatCollectValueProbe</strong> captures the computed float into the context under the key <code class="docutils literal notranslate"><span class="pre">result</span></code> (this mirrors the pipeline’s inspected output so it can be used downstream).</p></li>
+<li><p>A string builder context factory creates a filename using all fan-out inputs and the computed <code class="docutils literal notranslate"><span class="pre">result</span></code> (pattern: <code class="docutils literal notranslate"><span class="pre">{value}_plus_{addend}_times_{factor}_equals_{result}.txt</span></code>). That filename is placed into the context as a path for the saver.</p></li>
+<li><p><strong>FloatTxtFileSaver</strong> reads the path from the context and writes the textual result to disk; one file is produced per fan-out run.</p></li>
+</ol>
+<p>Notes and rationale
+- Multi-parameter ZIP fan-out: the <code class="docutils literal notranslate"><span class="pre">multi</span></code> block now supplies three lists (<code class="docutils literal notranslate"><span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">addend</span></code>, <code class="docutils literal notranslate"><span class="pre">factor</span></code>). The engine zips them and runs one pipeline per index; equal lengths are enforced.
+- Supplying parameters via context: the demo processors do not declare these parameters explicitly — the fan-out injects <code class="docutils literal notranslate"><span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">addend</span></code> and <code class="docutils literal notranslate"><span class="pre">factor</span></code> into the run context and processors pick them up automatically. This lets you vary any number of parameters without changing node parameter blocks.
+- Filename building: using a stringbuild context factory (registered as a context-producing processor) lets you assemble filenames/IDs from runtime values cleanly and portably.
+- Execution and tracing: the default local orchestrator runs jobs serially. The trace driver (<cite>jsonl</cite>) writes a SER file under <code class="docutils literal notranslate"><span class="pre">./ser/</span></code> containing per-run pinned arguments (e.g., fanout index and the values used) so runs can be inspected or replayed later.
+The final result is: <code class="docutils literal notranslate"><span class="pre">(value</span> <span class="pre">+</span> <span class="pre">1.0)</span> <span class="pre">x</span> <span class="pre">factor</span></code>.</p>
+</section>
+<section id="yaml">
+<h2>YAML<a class="headerlink" href="#yaml" title="Link to this heading">¶</a></h2>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">docs/source/examples/fanout_floats.yaml</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># docs/source/examples/fanout_floats.yaml</span>
+<span class="c1"># Fan-out (local): FloatValueDataSource -&gt; FloatAddOperation -&gt; FloatMultiplyOperation -&gt; FloatValueProbe -&gt; FloatTxtFileSaver</span>
+<span class="c1"># For each (value, added, factor) tuple, run the pipeline serially (default local orchestrator).</span>
+
+<span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># 1) Source: expects &#39;value&#39; (supplied by fan-out via context)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
+
+<span class="w">    </span><span class="c1"># 2) Add: use a constant addend to keep the example clear</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatAddOperation</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+
+<span class="w">    </span><span class="c1"># 3) Multiply: expects &#39;factor&#39; (supplied by fan-out via context)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatMultiplyOperation</span>
+
+<span class="w">    </span><span class="c1"># 4) Collect float value into the context</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatCollectValueProbe</span>
+<span class="w">      </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;result&quot;</span>
+
+<span class="w">    </span><span class="c1"># 5) Build a filename string using fan-out parameters</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stringbuild:&quot;{value}_plus_{addend}_times_{factor}_equals_{result}.txt&quot;:path</span>
+
+<span class="w">    </span><span class="c1"># 6) Write the result to a text file</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatTxtFileSaver</span>
+
+<span class="nt">trace</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jsonl</span>
+<span class="w">  </span><span class="nt">options</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">detail</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ser/</span>
+
+<span class="nt">fanout</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Multi-parameter ZIP fan-out (equal lengths enforced)</span>
+<span class="w">  </span><span class="nt">multi</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w">  </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w">  </span><span class="nv">3.5</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">addend</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w">  </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w">  </span><span class="nv">1.0</span><span class="p p-Indicator">]</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">10.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">30.0</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="key-ideas">
+<h2>Key ideas<a class="headerlink" href="#key-ideas" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Fan-out (ZIP): the <code class="docutils literal notranslate"><span class="pre">multi</span></code> block provides two lists of equal length
+(<code class="docutils literal notranslate"><span class="pre">value</span></code> and <code class="docutils literal notranslate"><span class="pre">factor</span></code>). The engine creates one run per index.</p></li>
+<li><p>Parameter resolution from context: the nodes do not declare <code class="docutils literal notranslate"><span class="pre">value</span></code> or
+<code class="docutils literal notranslate"><span class="pre">factor</span></code> in their parameters; these are injected into the context by
+fan-out and picked up automatically by the processors.</p></li>
+<li><p>Local execution: no <code class="docutils literal notranslate"><span class="pre">execution:</span></code> block is needed; the default local
+orchestrator runs each job serially.</p></li>
+<li><p>SER: A JSONL file is written into the <code class="docutils literal notranslate"><span class="pre">./ser/</span></code> directory — the trace driver creates one JSONL file per pipeline run (one file per fan-out job) containing per-run pinned arguments (e.g. <code class="docutils literal notranslate"><span class="pre">fanout.index</span></code>, <code class="docutils literal notranslate"><span class="pre">fanout.values</span></code>).</p></li>
 </ul>
+</section>
+<section id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>To run on Ray, add an <code class="docutils literal notranslate"><span class="pre">execution:</span></code> block selecting the registered Ray
+orchestrator/executor/transport (see <a class="reference internal" href="../architecture/pipeline_schema.html"><span class="doc">Pipeline Configuration Schema</span></a>).</p></li>
+<li><p>To build filenames or IDs from fan-out values, use the string builder
+context factory (see <a class="reference internal" href="../context_processors.html"><span class="doc">Context Processors</span></a>).</p></li>
+</ul>
+</section>
+</section>
+
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="../logger.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Logger</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../workflows_fitting_models.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -314,8 +408,30 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Fan-Out Quickstart (Local)</a><ul>
+<li><a class="reference internal" href="#what-you-ll-run">What you’ll run</a></li>
+<li><a class="reference internal" href="#yaml">YAML</a></li>
+<li><a class="reference internal" href="#key-ideas">Key ideas</a></li>
+<li><a class="reference internal" href="#next-steps">Next steps</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

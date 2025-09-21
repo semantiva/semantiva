@@ -218,10 +218,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry Bootstrap Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -299,9 +301,18 @@
                   [--context key=value]...
                   [-v | --verbose]
                   [-q | --quiet]
-                  [--trace-driver {none,jsonl,pythonpath}]
-                  [--trace-output PATH-or-DriverSpec]
-                 [--trace-detail FLAGS]
+                  [--execution.orchestrator CLASS]
+                  [--execution.executor CLASS]
+                  [--execution.transport CLASS]
+                  [--execution.option key=value]...
+                  [--trace.driver NAME]
+                  [--trace.output PATH-or-DriverSpec]
+                  [--trace.option key=value]...
+                  [--fanout.param NAME]
+                  [--fanout.values SEQ]
+                  [--fanout.values-file PATH]
+                  [--fanout.multi NAME=SEQ]...
+                  [--fanout.multi-file PATH]
                   [--version]
 </pre></div>
 </div>
@@ -323,19 +334,32 @@
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">/</span> <span class="pre">--verbose</span></code>           Increase log verbosity.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">/</span> <span class="pre">--quiet</span></code>             Only show errors.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-driver</span></code>           <code class="docutils literal notranslate"><span class="pre">none</span></code> (default), <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, or <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-output</span></code>           For <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, a file path; for <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>, a driver spec
-(<code class="docutils literal notranslate"><span class="pre">package.module:ClassName</span></code>) instantiated with no args.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-detail</span></code>           Comma-separated flags: <code class="docutils literal notranslate"><span class="pre">hash,</span> <span class="pre">repr,</span> <span class="pre">context,</span> <span class="pre">all</span></code>
-(default: <code class="docutils literal notranslate"><span class="pre">hash</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.orchestrator</span></code> Resolve orchestrator by class name via the registry.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.executor</span></code>     Resolve executor by class name via the registry.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.transport</span></code>    Resolve transport by class name via the registry.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.option</span></code>       Key/value pairs forwarded to the orchestrator <code class="docutils literal notranslate"><span class="pre">options</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.driver</span></code>           Trace driver name (<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>, or registry class).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.output</span></code>           Trace output path or <code class="docutils literal notranslate"><span class="pre">module:Class</span></code> when <code class="docutils literal notranslate"><span class="pre">driver=pythonpath</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.option</span></code>           Additional driver keyword arguments (repeatable).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.param</span></code>           Single-parameter fan-out target name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.values</span></code>          Values for single-parameter fan-out (JSON list or comma-separated).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.values-file</span></code>     External JSON/YAML file supplying fan-out values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.multi</span></code>           Multi-parameter ZIP values (repeatable <code class="docutils literal notranslate"><span class="pre">name=[...]</span></code> arguments).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.multi-file</span></code>      External JSON/YAML mapping supplying multi fan-out values.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--version</span></code>                Show CLI version.</p></li>
 </ul>
-<p>Environment pins and pre/post check results are always included in every
-SER regardless of the <code class="docutils literal notranslate"><span class="pre">--trace-detail</span></code> flags; the flags only control the
-additional summary hashes and representations. This behaviour is implemented
-once in <a class="reference internal" href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator" title="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a>,
-so every orchestrator used by the CLI (local now, remote later) produces the
-same evidence layout.</p>
+<p>CLI flags mirror the YAML schema. Any value provided on the command line
+overrides the matching YAML block before validation and execution. Trace detail
+flags are supplied via <code class="docutils literal notranslate"><span class="pre">--trace.option</span> <span class="pre">detail=...</span></code> (<code class="docutils literal notranslate"><span class="pre">hash</span></code> is implied when no
+detail is provided). Environment pins and why-ok invariants are always
+captured by <a class="reference internal" href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator" title="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a>,
+ensuring consistent SER output across orchestrator implementations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In YAML, use the plural key <code class="docutils literal notranslate"><span class="pre">options</span></code> under <code class="docutils literal notranslate"><span class="pre">trace</span></code> and <code class="docutils literal notranslate"><span class="pre">execution</span></code>. The
+CLI uses repeatable singular flags <code class="docutils literal notranslate"><span class="pre">--trace.option</span></code> and <code class="docutils literal notranslate"><span class="pre">--execution.option</span></code>
+to populate those mappings.</p>
+</div>
 <p><strong>YAML Extension Loading</strong>
 If your YAML contains:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;my_package.ext&quot;</span><span class="p p-Indicator">]</span>
