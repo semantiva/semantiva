@@ -131,13 +131,8 @@ def test_lint_bad_extension_name():
     """Test that invalid extension names don't crash the command."""
     result = run_cli(["dev", "lint", "--extensions", "nonexistent_extension"])
 
-    assert result.returncode == 0  # Should not crash
-    # Warnings might go to stderr or stdout, check both
-    output = result.stderr + result.stdout
-    assert "Warning:" in output  # Should show warning
-    assert (
-        "No Semantiva extension named" in output or "Failed to import module" in output
-    )
+    assert result.returncode == 3
+    assert "Could not load extensions" in result.stderr
 
 
 def test_lint_module_discovery():

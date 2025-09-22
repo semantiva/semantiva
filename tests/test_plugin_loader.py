@@ -15,6 +15,7 @@
 import importlib.metadata
 from unittest.mock import patch, MagicMock
 import logging
+import pytest
 from semantiva.logger import Logger
 from semantiva.registry import load_extensions, SemantivaExtension, plugin_registry
 
@@ -44,6 +45,8 @@ def test_load_plugins_happy_path():
         mock_entry_point.load.return_value = MockExtension
         mock_entry_points.return_value = [mock_entry_point]
 
+        plugin_registry._LOADED_EXTENSIONS = set()
+
         load_extensions(["mock_extension"])
 
         # Now we check if the constructor was called, and whether register(...) was called
@@ -51,29 +54,17 @@ def test_load_plugins_happy_path():
         mock_register.assert_called_once()
 
 
-def test_load_missing_spec(caplog):
-    """Test that a warning is printed if the user requests a extension that doesn't exist."""
+def test_load_missing_spec():
+    """Missing extensions raise a RuntimeError with context."""
+
+    plugin_registry._LOADED_EXTENSIONS = set()
     with patch.object(importlib.metadata, "entry_points", return_value=[]):
-        plugin_registry.logger = Logger()
-        with caplog.at_level(
-            logging.WARNING, logger=plugin_registry.logger.logger.name
-        ):
+        with pytest.raises(RuntimeError, match="Could not load extensions"):
             load_extensions(["non_existent_extension"])
 
-    # The loader should warn that 'non_existent_extension' was not found
 
-    # caplog.text is a single string with all captured logs
-    assert (
-        "Warning: No Semantiva extension named 'non_existent_extension' was found."
-        in caplog.text
-    )
-
-
-def test_load_spec_bad_class(caplog):
-    """
-    Test that a warning is printed if the extension returned by the entry point
-    does not subclass SemantivaExtension.
-    """
+def test_load_spec_bad_class():
+    """Entry points returning invalid objects raise errors."""
 
     class MockClassNoSubclass:
         """Does not subclass SemantivaExtension."""
@@ -82,16 +73,9 @@ def test_load_spec_bad_class(caplog):
     mock_entry_point.name = "bad_spec"
     mock_entry_point.load.return_value = MockClassNoSubclass
 
+    plugin_registry._LOADED_EXTENSIONS = set()
     with patch.object(
         importlib.metadata, "entry_points", return_value=[mock_entry_point]
     ):
-        plugin_registry.logger = Logger()
-        with caplog.at_level(
-            logging.WARNING, logger=plugin_registry.logger.logger.name
-        ):
+        with pytest.raises(RuntimeError, match="did not return a callable"):
             load_extensions(["bad_spec"])
-
-    assert (
-        "Warning: Entry point 'bad_spec' does not reference a SemantivaExtension subclass. Skipping."
-        in caplog.text
-    )

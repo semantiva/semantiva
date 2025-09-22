@@ -22,7 +22,7 @@ rather than creating webs of interdependence.
 
 from __future__ import annotations
 
-from typing import Dict, Optional, Type
+from typing import Dict, List, Type
 
 from semantiva.logger import Logger
 
@@ -74,40 +74,61 @@ class ExecutionComponentRegistry:
         Logger().debug(f"Registered transport: {name}")
 
     @classmethod
-    def get_orchestrator(cls, name: str) -> Optional[Type]:
+    def get_orchestrator(cls, name: str) -> Type:
         """Get an orchestrator class by name.
 
         Args:
             name: String identifier for the orchestrator
 
         Returns:
-            The orchestrator class or None if not found
+            The orchestrator class registered under ``name``.
+
+        Raises:
+            KeyError: If no orchestrator is registered under ``name``.
         """
-        return cls._orchestrators.get(name)
+
+        try:
+            return cls._orchestrators[name]
+        except KeyError as exc:  # pragma: no cover - exercised via CLI helpers
+            raise KeyError(name) from exc
 
     @classmethod
-    def get_executor(cls, name: str) -> Optional[Type]:
+    def get_executor(cls, name: str) -> Type:
         """Get an executor class by name.
 
         Args:
             name: String identifier for the executor
 
         Returns:
-            The executor class or None if not found
+            The executor class registered under ``name``.
+
+        Raises:
+            KeyError: If no executor is registered under ``name``.
         """
-        return cls._executors.get(name)
+
+        try:
+            return cls._executors[name]
+        except KeyError as exc:  # pragma: no cover - exercised via CLI helpers
+            raise KeyError(name) from exc
 
     @classmethod
-    def get_transport(cls, name: str) -> Optional[Type]:
+    def get_transport(cls, name: str) -> Type:
         """Get a transport class by name.
 
         Args:
             name: String identifier for the transport
 
         Returns:
-            The transport class or None if not found
+            The transport class registered under ``name``.
+
+        Raises:
+            KeyError: If no transport is registered under ``name``.
         """
-        return cls._transports.get(name)
+
+        try:
+            return cls._transports[name]
+        except KeyError as exc:  # pragma: no cover - exercised via CLI helpers
+            raise KeyError(name) from exc
 
     @classmethod
     def initialize_defaults(cls) -> None:
@@ -135,14 +156,17 @@ class ExecutionComponentRegistry:
             "LocalSemantivaOrchestrator", LocalSemantivaOrchestrator
         )
         cls.register_orchestrator("SemantivaOrchestrator", SemantivaOrchestrator)
+        cls.register_orchestrator("local", LocalSemantivaOrchestrator)
 
         # Register default executors
         cls.register_executor(
             "SequentialSemantivaExecutor", SequentialSemantivaExecutor
         )
+        cls.register_executor("sequential", SequentialSemantivaExecutor)
 
         # Register default transports
         cls.register_transport("InMemorySemantivaTransport", InMemorySemantivaTransport)
+        cls.register_transport("in_memory", InMemorySemantivaTransport)
 
         cls._initialized = True
         Logger().debug("ExecutionComponentRegistry initialized with defaults")
@@ -161,6 +185,24 @@ class ExecutionComponentRegistry:
     def get_registered_transports(cls) -> Dict[str, Type]:
         """Get all registered transports."""
         return dict(cls._transports)
+
+    @classmethod
+    def list_orchestrators(cls) -> List[str]:
+        """Return orchestrator identifiers in sorted order."""
+
+        return sorted(cls._orchestrators.keys())
+
+    @classmethod
+    def list_executors(cls) -> List[str]:
+        """Return executor identifiers in sorted order."""
+
+        return sorted(cls._executors.keys())
+
+    @classmethod
+    def list_transports(cls) -> List[str]:
+        """Return transport identifiers in sorted order."""
+
+        return sorted(cls._transports.keys())
 
     @classmethod
     def clear(cls) -> None:
