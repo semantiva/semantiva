@@ -22,6 +22,7 @@ import json
 import re
 import sys
 import time
+from difflib import get_close_matches
 from pathlib import Path
 from typing import Any, Dict, List, NoReturn
 from importlib.metadata import PackageNotFoundError, version as pkg_version
@@ -30,6 +31,7 @@ import yaml
 
 from semantiva.configurations import parse_pipeline_config
 from semantiva.configurations.schema import ExecutionConfig, TraceConfig
+from semantiva.execution.component_registry import ExecutionComponentRegistry
 from semantiva.execution.fanout import expand_fanout
 from semantiva.execution.orchestrator.factory import build_orchestrator
 from semantiva.logger import Logger
@@ -235,18 +237,62 @@ def _build_trace_driver(trace_cfg: TraceConfig):
     return trace_cls(**kwargs)
 
 
-def _build_execution_components(exec_cfg: ExecutionConfig):
-    transport_obj = None
-    if exec_cfg.transport:
-        transport_cls = ClassRegistry.get_class(exec_cfg.transport)
-        transport_obj = transport_cls()
-    executor_obj = None
-    if exec_cfg.executor:
-        executor_cls = ClassRegistry.get_class(exec_cfg.executor)
-        executor_obj = executor_cls()
-    orchestrator = build_orchestrator(
-        exec_cfg, transport=transport_obj, executor=executor_obj
+def _suggest_component(kind: str, name: str, available: List[str]) -> str:
+    matches = get_close_matches(name, available, n=3, cutoff=0.6)
+    suggestion = (
+        f"Unknown {kind} '{name}'. Did you mean: {', '.join(matches)}?"
+        if matches
+        else f"Unknown {kind} '{name}'."
     )
+    return suggestion
+
+
+def _resolve_registry_class(kind: str, name: str | None):
+    if not name:
+        return None
+
+    registry = ExecutionComponentRegistry
+    getters = {
+        "orchestrator": registry.get_orchestrator,
+        "executor": registry.get_executor,
+        "transport": registry.get_transport,
+    }
+    listers = {
+        "orchestrator": registry.list_orchestrators,
+        "executor": registry.list_executors,
+        "transport": registry.list_transports,
+    }
+    getter = getters[kind]
+    try:
+        return getter(name)
+    except KeyError as exc:
+        raise ValueError(_suggest_component(kind, name, listers[kind]())) from exc
+
+
+def _build_execution_components(exec_cfg: ExecutionConfig):
+    ExecutionComponentRegistry.initialize_defaults()
+
+    transport_obj = None
+    transport_cls = _resolve_registry_class("transport", exec_cfg.transport)
+    if transport_cls is not None:
+        transport_obj = transport_cls()
+
+    executor_obj = None
+    executor_cls = _resolve_registry_class("executor", exec_cfg.executor)
+    if executor_cls is not None:
+        executor_obj = executor_cls()
+
+    try:
+        orchestrator = build_orchestrator(
+            exec_cfg, transport=transport_obj, executor=executor_obj
+        )
+    except ValueError as exc:
+        available = ExecutionComponentRegistry.list_orchestrators()
+        if exec_cfg.orchestrator:
+            raise ValueError(
+                _suggest_component("orchestrator", exec_cfg.orchestrator, available)
+            ) from exc
+        raise
     return orchestrator, transport_obj
 
 
@@ -732,7 +778,11 @@ def _inspect(args: argparse.Namespace) -> int:
         if not specs and isinstance(config.get("pipeline"), dict):
             specs = config["pipeline"].get("extensions")
         if specs:
-            load_extensions(specs)
+            try:
+                load_extensions(specs)
+            except RuntimeError as exc:
+                print(str(exc), file=sys.stderr)
+                return EXIT_CONFIG_ERROR
 
     # For inspection, use error-resilient builder directly
     try:
@@ -819,7 +869,11 @@ def _lint(args: argparse.Namespace) -> int:
     if args.paths:
         classes += discover_from_paths(args.paths)
     if args.extensions:
-        classes += discover_from_extensions(args.extensions)
+        try:
+            classes += discover_from_extensions(args.extensions)
+        except RuntimeError as exc:
+            print(str(exc), file=sys.stderr)
+            return EXIT_CONFIG_ERROR
     if args.yaml:
         classes += discover_from_pipeline_yaml(args.yaml)
     if not classes:

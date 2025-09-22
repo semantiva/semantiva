@@ -25,17 +25,17 @@ def _instantiate_if_present(name: str | None, component_type: str) -> Any | None
     if not name:
         return None
 
-    if component_type == "orchestrator":
-        cls = ExecutionComponentRegistry.get_orchestrator(name)
-    elif component_type == "executor":
-        cls = ExecutionComponentRegistry.get_executor(name)
-    elif component_type == "transport":
-        cls = ExecutionComponentRegistry.get_transport(name)
-    else:
-        raise ValueError(f"Unknown component type: {component_type}")
-
-    if cls is None:
-        raise ValueError(f"Unknown {component_type}: {name}")
+    try:
+        if component_type == "orchestrator":
+            cls = ExecutionComponentRegistry.get_orchestrator(name)
+        elif component_type == "executor":
+            cls = ExecutionComponentRegistry.get_executor(name)
+        elif component_type == "transport":
+            cls = ExecutionComponentRegistry.get_transport(name)
+        else:  # pragma: no cover - defensive guard
+            raise ValueError(f"Unknown component type: {component_type}")
+    except KeyError as exc:
+        raise ValueError(f"Unknown {component_type}: {name}") from exc
 
     return cls()
 
@@ -100,9 +100,12 @@ def build_orchestrator(
     executor_obj = executor or _instantiate_if_present(exec_cfg.executor, "executor")
 
     if exec_cfg.orchestrator:
-        orch_cls = ExecutionComponentRegistry.get_orchestrator(exec_cfg.orchestrator)
-        if orch_cls is None:
-            raise ValueError(f"Unknown orchestrator: {exec_cfg.orchestrator}")
+        try:
+            orch_cls = ExecutionComponentRegistry.get_orchestrator(
+                exec_cfg.orchestrator
+            )
+        except KeyError as exc:
+            raise ValueError(f"Unknown orchestrator: {exec_cfg.orchestrator}") from exc
     else:
         from .orchestrator import LocalSemantivaOrchestrator
 

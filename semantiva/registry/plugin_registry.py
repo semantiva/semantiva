@@ -74,13 +74,15 @@ load_extensions(["pkg1", "pkg2"])         # Multiple
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Type, Dict, Iterable, cast
+from typing import Iterable, List, Dict, cast
 import importlib
-import importlib.metadata
+from importlib import metadata
 from types import ModuleType
 from semantiva.logger import Logger
 
+ENTRYPOINT_GROUP = "semantiva.extensions"
 logger = Logger()
+_LOADED_EXTENSIONS: set[str] = set()
 
 
 def _register_from_module(mod: ModuleType) -> bool:
@@ -129,121 +131,118 @@ def _register_from_module(mod: ModuleType) -> bool:
     return False
 
 
-def load_extensions(specs_to_load: str | List[str]) -> None:
-    """Load and register Semantiva extensions by module name.
+def load_extensions(specs_to_load: Iterable[str] | str | None) -> None:
+    """Load and register Semantiva extensions deterministically.
 
-    This is the primary entry point for loading extensions in both
-    development and production environments. It provides a safe, predictable
-    mechanism that respects the user's Python environment setup.
-
-    Resolution Process:
-    1. **Entry Point Resolution**: First attempts to resolve each name as an
-       entry point registered under the group 'semantiva.extensions'.
-    2. **Module Import**: If no entry point is found, imports the module by name
-       using the standard Python import mechanism.
-    3. **Registration**: After successful import, searches the module for
-       extension hooks and invokes them to register components.
+    Extensions are loaded in sorted order, and each extension is only
+    registered once per interpreter session. Both module paths and entry point
+    names are supported.
 
     Args:
-        specs_to_load: Either a single module name (str) or a list of module
-                      names (List[str]) to load and register.
-
-    Environment Requirements:
-        This function does NOT manipulate sys.path. Modules must be importable
-        via the current Python environment through one of:
-        - Installed packages (`pip install package_name`)
-        - Editable installs (`pip install -e .`)
-        - PYTHONPATH environment variable
-        - Virtual environment packages
+        specs_to_load: Sequence of extension identifiers or a single name.
 
     Raises:
-        No exceptions are raised. All errors are logged as warnings to ensure
-        robust operation in production environments.
-
-    Examples:
-        ```python
-        # Load single extension
-        load_extensions("semantiva_imaging")
-
-        # Load multiple extensions
-        load_extensions(["semantiva_imaging", "semantiva_audio"])
-
-        # Load via YAML (see load_pipeline_from_yaml)
-        # extensions: ["semantiva_imaging"]
-        ```
-
-    Note:
-        For extension developers: Ensure your package exposes either a
-        SemantivaExtension subclass or a top-level 'register' function.
-        See module docstring for implementation patterns.
+        RuntimeError: If any requested extension cannot be imported or does not
+            expose a registration hook.
     """
 
+    if not specs_to_load:
+        return
+
     if isinstance(specs_to_load, str):
-        specs = [specs_to_load]
+        requested = [specs_to_load]
     else:
-        specs = specs_to_load
+        requested = list(specs_to_load)
 
-    # Collect entry points once for efficiency.
-    # importlib.metadata.entry_points() changed across Python versions:
-    # - Newer versions accept a 'group' kwarg and return an EntryPoints object.
-    # - Older versions return a dict mapping group->list of EntryPoint objects.
-    # Use a runtime TypeError guard and typing.cast in the fallback so mypy
-    # doesn't assume the return value has a .get attribute.
-    eps: Dict[str, importlib.metadata.EntryPoint]
-    try:
-        # Build mapping directly from the returned collection. This avoids
-        # assigning the return value to a variable with an incompatible
-        # static type between Python versions.
-        eps = {
-            ep.name: ep
-            for ep in importlib.metadata.entry_points(group="semantiva.extensions")
-        }
-    except TypeError:
-        all_eps = importlib.metadata.entry_points()
-        # all_eps should be a mapping from group name to iterable of EntryPoint
-        groups = cast(Dict[str, Iterable[importlib.metadata.EntryPoint]], all_eps)
-        entries = groups.get("semantiva.extensions", [])
-        eps = {ep.name: ep for ep in entries}
+    seen: set[str] = set()
+    ordered: List[str] = []
+    for item in requested:
+        if item not in seen:
+            seen.add(item)
+            ordered.append(item)
 
-    for name in specs:
-        # Strategy 1: Try entry point resolution
-        ep = eps.get(name)
-        if ep is not None:
-            try:
-                spec_cls: Type[SemantivaExtension] = ep.load()
-                if not issubclass(spec_cls, SemantivaExtension):
-                    logger.warning(
-                        "Warning: Entry point '%s' does not reference a SemantivaExtension subclass. Skipping.",
-                        name,
-                    )
-                    continue
-                logger.debug("Loading extension via entry point: %s", name)
-                spec_cls().register()
-                logger.debug("Successfully registered extension: %s", name)
-                continue
-            except Exception as e:
-                logger.warning("Warning: Failed to load entry point '%s': %s", name, e)
+    ordered.sort()
 
-        # Strategy 2: Import by module name
+    resolved: set[str] = set()
+    module_notes: Dict[str, str] = {}
+
+    for ref in ordered:
+        if ref in _LOADED_EXTENSIONS:
+            logger.debug("Extension '%s' already loaded; skipping", ref)
+            resolved.add(ref)
+            continue
         try:
-            mod = importlib.import_module(name)
-        except Exception as e:
-            logger.warning("Warning: Failed to import module '%s': %s", name, e)
-            mod = None
+            module = importlib.import_module(ref)
+        except Exception as exc:
+            module_notes.setdefault(ref, f"import error: {exc}")
+            continue
+        try:
+            if _register_from_module(module):
+                logger.debug("Registered extension via module import: %s", ref)
+                _LOADED_EXTENSIONS.add(ref)
+                resolved.add(ref)
+                continue
+        except Exception as exc:  # pragma: no cover - extension bugs
+            raise RuntimeError(
+                f"Extension '{ref}' raised an error during register(): {exc}"
+            ) from exc
+        module_notes.setdefault(ref, "no register() hook found")
 
-        if isinstance(mod, ModuleType):
-            if not _register_from_module(mod):
-                logger.warning(
-                    "Warning: No Semantiva extension hooks found in module '%s'.", name
-                )
+    remaining = [name for name in ordered if name not in resolved]
+    if not remaining:
+        return
+
+    try:
+        entry_points = list(metadata.entry_points(group=ENTRYPOINT_GROUP))
+    except TypeError:  # pragma: no cover - legacy importlib.metadata API
+        groups = cast(Dict[str, Iterable[metadata.EntryPoint]], metadata.entry_points())
+        entry_points = list(groups.get(ENTRYPOINT_GROUP, []))
+
+    entry_points.sort(key=lambda ep: (ep.name or "", ep.value or ""))
+
+    for ep in entry_points:
+        if ep.name not in remaining or ep.name in _LOADED_EXTENSIONS:
+            continue
+        try:
+            target = ep.load()
+        except Exception as exc:  # pragma: no cover - entry point import errors
+            raise RuntimeError(
+                f"Entry point '{ep.name}' could not be loaded: {exc}"
+            ) from exc
+        try:
+            if isinstance(target, type):
+                if issubclass(target, SemantivaExtension):
+                    target().register()
+                else:
+                    raise RuntimeError(
+                        f"Entry point '{ep.name}' did not return a callable or an object with register()"
+                    )
+            elif callable(target):
+                target()
+            elif hasattr(target, "register") and callable(target.register):
+                target.register()
             else:
-                logger.debug(
-                    "Successfully registered Semantiva extension from module: %s", name
+                raise RuntimeError(
+                    f"Entry point '{ep.name}' did not return a callable or an object with register()"
                 )
-        else:
-            logger.warning(
-                "Warning: No Semantiva extension named '%s' was found.", name
-            )
+        except Exception as exc:  # pragma: no cover - extension bugs
+            raise RuntimeError(
+                f"Extension '{ep.name}' raised an error during register(): {exc}"
+            ) from exc
+        logger.debug("Registered extension via entry point: %s", ep.name)
+        _LOADED_EXTENSIONS.add(ep.name)
+        resolved.add(ep.name)
+
+    missing = [name for name in ordered if name not in resolved]
+    if missing:
+        details = [
+            f"{name} ({module_notes.get(name, 'not found')})" for name in missing
+        ]
+        raise RuntimeError(
+            "Could not load extensions: "
+            + ", ".join(details)
+            + f". Ensure they expose entry point group '{ENTRYPOINT_GROUP}' or a module-level register()."
+        )
 
 
 class SemantivaExtension(ABC):
