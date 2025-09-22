@@ -58,9 +58,9 @@ Execute a pipeline.
 
 - ``-v / --verbose``           Increase log verbosity.
 - ``-q / --quiet``             Only show errors.
-- ``--execution.orchestrator`` Resolve orchestrator by class name via the registry.
-- ``--execution.executor``     Resolve executor by class name via the registry.
-- ``--execution.transport``    Resolve transport by class name via the registry.
+- ``--execution.orchestrator`` Resolve orchestrator via the Execution Component Registry (ECR).
+- ``--execution.executor``     Resolve executor via the Execution Component Registry (ECR).
+- ``--execution.transport``    Resolve transport via the Execution Component Registry (ECR).
 - ``--execution.option``       Key/value pairs forwarded to the orchestrator ``options``.
 - ``--trace.driver``           Trace driver name (``none``, ``jsonl``, ``pythonpath``, or registry class).
 - ``--trace.output``           Trace output path or ``module:Class`` when ``driver=pythonpath``.
@@ -84,6 +84,13 @@ ensuring consistent SER output across orchestrator implementations.
   CLI uses repeatable singular flags ``--trace.option`` and ``--execution.option``
   to populate those mappings.
 
+**Component Resolution**
+The CLI loads extensions before constructing execution components so that the
+Execution Component Registry (ECR) contains all orchestrators, executors, and
+transports. Built-in identifiers include ``local`` (orchestrator), ``sequential``
+(executor), and ``in_memory`` (transport). Unknown component names result in an
+error with ``did-you-mean`` suggestions based on the registered inventory.
+
 **YAML Extension Loading**
 If your YAML contains:
 
@@ -98,7 +105,10 @@ or:
     pipeline:
       extensions: ["my_package.ext"]
 
-those extensions are loaded before validation/execution (entry point or module import).
+those extensions are loaded before validation/execution. Extension registration
+is deterministic and idempotent: each extension is imported once and must expose
+either an entry point under ``semantiva.extensions`` or a module-level
+``register()`` hook.
 
 Inspect
 -------
