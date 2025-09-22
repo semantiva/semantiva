@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] – TBD
 
 ### Added
+- Execution Component Registry list helpers and short-hand identifiers (``local``,
+  ``sequential``, ``in_memory``) for bundled orchestrator, executor, and transport
+  classes.
 - ClassRegistry resolver for the ``stringbuild:`` prefix and corresponding unit tests and examples (docs/tutorials updated).
   - Context string-builder factory (YAML resolver ``stringbuild:"<template>":<out_key>``): dynamic ContextProcessor factory that builds deterministic strings from strict ``{placeholder}`` identifiers and writes them to context. Templates reject format specs/conversions and require all placeholders to exist at runtime.
   - Documentation: added `Factories: stringbuild` docs, fan-out quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
@@ -81,6 +84,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
 
 ### Changed
+- CLI execution component resolution now uses the Execution Component Registry
+  exclusively and emits "did you mean" suggestions for unknown component names.
+- Extension loader is deterministic and idempotent; missing hooks raise explicit
+  ``RuntimeError`` exceptions pointing to the required entry point or
+  ``register()`` function.
 - CLI trace configuration replaced legacy flags with structured
   ``--execution.*``, ``--trace.*``, and ``--fanout.*`` options aligned with the
   YAML schema.
