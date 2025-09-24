@@ -295,7 +295,7 @@ Run it
 
 After execution, check logs and your context: a list at ``sweep_results`` and a
 scalar ``final_sum`` should be present. Use :doc:`studio_viewer` to visualize the
-graph, and :doc:`ser` to record timings if needed.
+graph, and :doc:`tracing` to record timings if needed.
 
 Autodoc
 -------

@@ -74,4 +74,4 @@ Observers support:
 
 Performance
 -----------
-All validation is O(1) on declared sets; no global scans. Tracing remains opt-in; see :doc:`../ser`.
+All validation is O(1) on declared sets; no global scans. Tracing remains opt-in; see :doc:`../tracing`.

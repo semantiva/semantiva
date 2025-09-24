@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
-        <title>semantiva.inspection.validator - Semantiva 0.5.0 documentation</title>
+        <title>semantiva.trace.model - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -261,7 +261,7 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for semantiva.inspection.validator</h1><div class="highlight"><pre>
+          <h1>Source code for semantiva.trace.model</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2025 Semantiva authors</span>
 <span class="c1">#</span>
 <span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
@@ -276,101 +276,149 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="sd">&quot;&quot;&quot;Pipeline Inspection Validator.</span>
+<span class="sd">&quot;&quot;&quot;Trace model (v1): stable event payloads and driver contract.</span>
 
-<span class="sd">This module provides validation functionality for pipeline inspection results.</span>
-<span class="sd">The validator operates on inspection data structures rather than during pipeline</span>
-<span class="sd">construction, allowing for validation of partially constructed or invalid pipelines.</span>
+<span class="sd">Includes:</span>
+<span class="sd">  - NodeAddress: triplet identifying a node within a specific run.</span>
+<span class="sd">  - NodeTraceEvent: &quot;node&quot; envelope payload (phase, timings, errors, optional summaries).</span>
+<span class="sd">  - TraceDriver: protocol for trace sinks; must implement start/node/end, flush, close.</span>
 
-<span class="sd">Key Design Principles:</span>
-<span class="sd">- **Post-inspection Validation**: Operates on inspection results, not during building</span>
-<span class="sd">- **Error Aggregation**: Collects all errors before raising comprehensive exceptions</span>
-<span class="sd">- **Structured Error Messages**: Provides detailed, actionable error information</span>
-<span class="sd">- **Separation of Concerns**: Validation logic is separate from inspection building</span>
-
-<span class="sd">The validator enables inspection tools to analyze invalid configurations without</span>
-<span class="sd">failing, while still providing validation when explicitly requested.</span>
+<span class="sd">Notes for consumers:</span>
+<span class="sd">  - Switch on &quot;type&quot; and ignore unknown fields for forward compatibility.</span>
+<span class="sd">  - Reserved ODO fields: plan_id (None), plan_epoch (0).</span>
+<span class="sd">  - Orchestrator may pass ``pipeline_input`` to ``on_pipeline_start``; drivers may ignore.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineConfigurationError</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">.builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineInspection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.payload</span><span class="w"> </span><span class="kn">import</span> <span class="n">Payload</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_validate_data_flow_compatibility</span><span class="p">(</span><span class="n">inspection</span><span class="p">:</span> <span class="n">PipelineInspection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate data type compatibility between consecutive nodes in the pipeline.</span>
+<div class="viewcode-block" id="NodeAddress">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.NodeAddress">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NodeAddress</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stable address for a node event.</span>
 
-<span class="sd">    This function checks that the output data type of each node is compatible</span>
-<span class="sd">    with the input data type of the next node. Any incompatibilities are recorded</span>
-<span class="sd">    as errors in the affected nodes.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        inspection: Complete pipeline inspection data to validate</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        - Nodes with None input/output types are skipped (e.g., context processors)</span>
-<span class="sd">        - Errors are added to the node that has the incompatible input type</span>
-<span class="sd">        - Only validates consecutive data-processing nodes</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">      pipeline_run_id: Unique run identifier (e.g., &quot;run-&lt;uuidv7/hex&gt;&quot;).</span>
+<span class="sd">      pipeline_id: Deterministic hash of canonical GraphV1 (&quot;plid-&lt;sha256&gt;&quot;).</span>
+<span class="sd">      node_uuid: Deterministic UUIDv5 derived from the node&#39;s canonical definition.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">current_node</span> <span class="o">=</span> <span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">next_node</span> <span class="o">=</span> <span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># Skip validation if either node has no data types (e.g., context processors)</span>
-        <span class="k">if</span> <span class="n">current_node</span><span class="o">.</span><span class="n">output_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">next_node</span><span class="o">.</span><span class="n">input_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Check if output type of current node matches input type of next node</span>
-        <span class="k">if</span> <span class="n">current_node</span><span class="o">.</span><span class="n">output_type</span> <span class="o">!=</span> <span class="n">next_node</span><span class="o">.</span><span class="n">input_type</span><span class="p">:</span>
-            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Data type incompatibility: receives </span><span class="si">{</span><span class="n">next_node</span><span class="o">.</span><span class="n">input_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but previous node (Node </span><span class="si">{</span><span class="n">current_node</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">) outputs </span><span class="si">{</span><span class="n">current_node</span><span class="o">.</span><span class="n">output_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-            <span class="n">next_node</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+    <span class="n">pipeline_run_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">node_uuid</span><span class="p">:</span> <span class="nb">str</span></div>
 
 
-<div class="viewcode-block" id="validate_pipeline">
-<a class="viewcode-back" href="../../../introspection_validation.html#semantiva.inspection.validator.validate_pipeline">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">validate_pipeline</span><span class="p">(</span><span class="n">inspection</span><span class="p">:</span> <span class="n">PipelineInspection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise :class:`PipelineConfigurationError` if inspection contains errors.</span>
 
-<span class="sd">    This function examines the inspection results and raises a comprehensive</span>
-<span class="sd">    exception if any errors were encountered during inspection. It aggregates</span>
-<span class="sd">    both pipeline-level and node-level errors into a single exception message.</span>
+<div class="viewcode-block" id="NodeTraceEvent">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.NodeTraceEvent">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NodeTraceEvent</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Node event payload (v1).</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        inspection: Complete pipeline inspection data to validate</span>
+<span class="sd">    Fields mirror &quot;node&quot; record:</span>
+<span class="sd">      phase: &quot;before&quot; | &quot;after&quot; | &quot;error&quot;.</span>
+<span class="sd">      address: NodeAddress triple.</span>
+<span class="sd">      params: Optional shallow mapping of node parameters (or None).</span>
+<span class="sd">      input_payload / output_payload: Optional payload snapshots (drivers may summarize).</span>
+<span class="sd">      error_type / error_msg: Populated on &quot;error&quot;, else None.</span>
+<span class="sd">      event_time_utc: ISO8601 Zulu with millisecond precision.</span>
+<span class="sd">      t_wall / t_cpu: Wall/CPU seconds; None on &quot;before&quot;.</span>
+<span class="sd">      plan_id / plan_epoch: Reserved for ODO; v1 sets None/0.</span>
 
-<span class="sd">    Raises:</span>
-<span class="sd">        PipelineConfigurationError: If any errors are found in the inspection.</span>
-<span class="sd">            The exception message contains all errors separated by semicolons,</span>
-<span class="sd">            with node-specific errors prefixed with their node index.</span>
+<span class="sd">    Optional output-only summaries (emitted on ``phase == &#39;after&#39;``):</span>
+<span class="sd">      out_data_repr: Human-readable ``repr`` of output data when ``repr`` detail is enabled.</span>
+<span class="sd">      out_data_hash: Content fingerprint of output data when ``hash`` detail is enabled.</span>
+<span class="sd">      post_context_hash: Context fingerprint after node execution when ``hash`` detail is enabled.</span>
+<span class="sd">      post_context_repr: Human-readable key→value context string when ``repr`` and ``context`` details are both enabled.</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        This function is the only place in the inspection system that raises</span>
-<span class="sd">        exceptions. The inspection builder always succeeds and records errors</span>
-<span class="sd">        for later validation, allowing tools to inspect invalid configurations.</span>
+<span class="sd">    Notes:</span>
+<span class="sd">      - Drivers may add summaries (hashes, reprs); consumers must ignore unknown fields.</span>
+<span class="sd">      - Orchestrator sets input/output payload to None for v1 minimal cost.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Perform data flow validation first (adds errors to nodes)</span>
-    <span class="n">_validate_data_flow_compatibility</span><span class="p">(</span><span class="n">inspection</span><span class="p">)</span>
 
-    <span class="n">msgs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;before&quot;</span><span class="p">,</span> <span class="s2">&quot;after&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">]</span>
+    <span class="n">address</span><span class="p">:</span> <span class="n">NodeAddress</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">input_payload</span><span class="p">:</span> <span class="n">Payload</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">output_payload</span><span class="p">:</span> <span class="n">Payload</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">error_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">error_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">event_time_utc</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">t_wall</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">t_cpu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">plan_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Optional output-only summaries (populated by driver, output phase only)</span>
+    <span class="n">out_data_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">out_data_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">post_context_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">post_context_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-    <span class="c1"># Collect pipeline-level errors</span>
-    <span class="n">msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">inspection</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
 
-    <span class="c1"># Collect node-level errors with node identification</span>
-    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
-            <span class="n">msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Node </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Raise comprehensive exception if any errors found</span>
-    <span class="k">if</span> <span class="n">msgs</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">PipelineConfigurationError</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msgs</span><span class="p">))</span></div>
+<div class="viewcode-block" id="TraceDriver">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.TraceDriver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TraceDriver</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Driver API for Semantiva tracing (v1).</span>
+
+<span class="sd">    Implementations should be resilient to extra fields and ignore unknown kwargs.</span>
+<span class="sd">    Drivers must properly handle error events and ensure resource cleanup (flush/close)</span>
+<span class="sd">    is performed even when pipeline execution fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TraceDriver.on_pipeline_start">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.TraceDriver.on_pipeline_start">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_pipeline_start</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">canonical_spec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">pipeline_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Payload</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Emit a trace &quot;pipeline_start&quot; record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          pipeline_id: &quot;plid-&lt;sha256&gt;&quot; for the canonical GraphV1.</span>
+<span class="sd">          run_id: Unique run identifier for this execution.</span>
+<span class="sd">          canonical_spec: Canonical GraphV1 ({&quot;version&quot;: 1, &quot;nodes&quot;: [...], &quot;edges&quot;: [...]}).</span>
+<span class="sd">          meta: Minimal run metadata (e.g., {&quot;num_nodes&quot;: int}).</span>
+<span class="sd">          pipeline_input: Optional payload snapshot (drivers MAY ignore).</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">          - This optional parameter extends the Epic&#39;s minimal interface.</span>
+<span class="sd">            Orchestrator passes it when available; drivers without this parameter</span>
+<span class="sd">            remain runtime-compatible (the orchestrator catches TypeError).</span>
+<span class="sd">          - Consumers should NOT rely on snapshots; Trace v1 guarantees are in the envelopes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="TraceDriver.on_node_event">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.TraceDriver.on_node_event">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_node_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">NodeTraceEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="TraceDriver.on_pipeline_end">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.TraceDriver.on_pipeline_end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_pipeline_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">summary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="TraceDriver.flush">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.TraceDriver.flush">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="TraceDriver.close">
+<a class="viewcode-back" href="../../../tracing.html#semantiva.trace.model.TraceDriver.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+</div>
 
 </pre></div>
         </article>

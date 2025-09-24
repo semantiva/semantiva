@@ -214,15 +214,12 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tracing.html">Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../architecture/context_processing.html">Context Processing Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference.html">API Reference</a></li>
@@ -305,7 +302,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.logger.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegistryProfile</span><span class="p">,</span> <span class="n">current_profile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.logging_setup</span><span class="w"> </span><span class="kn">import</span> <span class="n">_setup_log</span>
 
 
@@ -363,7 +359,6 @@
         <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseDataType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContextType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">return_future</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">registry_profile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RegistryProfile</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Future</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enqueue a new pipeline job for asynchronous execution.</span>
@@ -375,9 +370,6 @@
 <span class="sd">            context:        Optional initial context.</span>
 <span class="sd">            return_future:  If True, returns a Future whose result() yields</span>
 <span class="sd">                ``(data, context)``.</span>
-<span class="sd">            registry_profile: Optional :class:`~semantiva.registry.bootstrap.RegistryProfile`</span>
-<span class="sd">                describing the registry state workers must apply before running</span>
-<span class="sd">                the pipeline. Defaults to ``current_profile()``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Future if return_future=True; otherwise None.</span>
@@ -390,20 +382,10 @@
         <span class="k">if</span> <span class="n">fut</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pending_futures</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">fut</span>
 
-        <span class="c1"># 3) Determine the registry profile to propagate</span>
-        <span class="n">profile</span> <span class="o">=</span> <span class="n">registry_profile</span>
-        <span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">profile</span> <span class="o">=</span> <span class="n">current_profile</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="n">profile</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-
-        <span class="c1"># 4) Place the job on the internal FIFO queue</span>
+        <span class="c1"># 3) Place the job on the internal FIFO queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">job_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">pipeline_cfg</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">context</span> <span class="ow">or</span> <span class="n">ContextType</span><span class="p">(),</span> <span class="n">profile_dict</span><span class="p">)</span>
-        <span class="p">)</span>  <span class="c1"># Enqueue a tuple with (job_id, pipeline_cfg, data, context, registry_profile)</span>
+            <span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">pipeline_cfg</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">context</span> <span class="ow">or</span> <span class="n">ContextType</span><span class="p">())</span>
+        <span class="p">)</span>  <span class="c1"># Enqueue a tuple with (job_id, pipeline_cfg, data, context)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enqueued job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fut</span></div>
@@ -426,9 +408,7 @@
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
             <span class="c1"># -- Publish phase --</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">job_id</span><span class="p">,</span> <span class="n">pipeline_cfg</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">profile_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                    <span class="n">timeout</span><span class="o">=</span><span class="mf">0.2</span>
-                <span class="p">)</span>
+                <span class="n">job_id</span><span class="p">,</span> <span class="n">pipeline_cfg</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
                 <span class="n">job_id</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -438,11 +418,7 @@
                     <span class="sa">f</span><span class="s2">&quot;jobs.</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">.cfg&quot;</span><span class="p">,</span>
                     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
                     <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
-                    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
-                        <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="n">job_id</span><span class="p">,</span>
-                        <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="n">pipeline_cfg</span><span class="p">,</span>
-                        <span class="s2">&quot;registry_profile&quot;</span><span class="p">:</span> <span class="n">profile_dict</span><span class="p">,</span>
-                    <span class="p">},</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="n">job_id</span><span class="p">,</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="n">pipeline_cfg</span><span class="p">},</span>
                     <span class="n">require_ack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">)</span>
 

@@ -214,15 +214,12 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tracing.html">Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/context_processing.html">Context Processing Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
@@ -338,7 +335,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">transport</span> <span class="ow">or</span> <span class="n">InMemorySemantivaTransport</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orchestrator</span> <span class="o">=</span> <span class="n">orchestrator</span> <span class="ow">or</span> <span class="n">LocalSemantivaOrchestrator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Precompute canonical spec and resolved descriptors for validation</span>
         <span class="n">canonical</span><span class="p">,</span> <span class="n">resolved</span> <span class="o">=</span> <span class="n">build_canonical_spec</span><span class="p">(</span><span class="n">pipeline_configuration</span><span class="p">)</span>
@@ -366,7 +362,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting pipeline with </span><span class="si">%s</span><span class="s2"> nodes&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_watch</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  <span class="c1"># existing pipeline timer start</span>
 
-        <span class="n">run_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span>
         <span class="n">result_payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orchestrator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
             <span class="n">pipeline_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resolved_spec</span><span class="p">,</span>
             <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
@@ -374,11 +369,9 @@
             <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
             <span class="n">trace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">,</span>
             <span class="n">canonical_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">canonical_spec</span><span class="p">,</span>
-            <span class="n">run_metadata</span><span class="o">=</span><span class="n">run_meta</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orchestrator</span><span class="o">.</span><span class="n">last_nodes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_watch</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>  <span class="c1"># existing pipeline timer stop</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Pipeline execution complete.&quot;</span><span class="p">)</span>
@@ -388,14 +381,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_timers</span><span class="p">(),</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">result_payload</span>
-
-<div class="viewcode-block" id="Pipeline.set_run_metadata">
-<a class="viewcode-back" href="../../../pipeline.html#semantiva.pipeline.pipeline.Pipeline.set_run_metadata">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_run_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set metadata that should be attached to the next run for tracing.&quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span></div>
-
 
 <div class="viewcode-block" id="Pipeline.get_timers">
 <a class="viewcode-back" href="../../../pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_timers">[docs]</a>

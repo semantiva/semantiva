@@ -9,7 +9,7 @@ See the following sections for detailed APIs:
 - :doc:`data_processors`
 - :doc:`context_processors`
 - :doc:`execution`
-- :doc:`ser`
+- :doc:`tracing`
 - :doc:`introspection_validation`
 - :doc:`data_io`
 - :doc:`exceptions`

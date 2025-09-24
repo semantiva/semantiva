@@ -83,4 +83,4 @@ Minimal Epistemic Unit (MEU)
 ----------------------------
 
 Every computation produces an epistemic tuple: **Claim**, **Justification**, **Context**, **Trace**.
-See :doc:`glossary` and :doc:`ser` for how context/trace surface in practice.
+See :doc:`glossary` and :doc:`tracing` for how context/trace surface in practice.

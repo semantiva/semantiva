@@ -214,15 +214,12 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tracing.html">Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/context_processing.html">Context Processing Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
@@ -520,20 +517,10 @@
 
         <span class="c1"># Analyze parameter resolution with defaults</span>
         <span class="n">param_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParameterInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1"># Prefer signature-based details when available (explicit params)</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;_retrieve_parameter_details&quot;</span><span class="p">):</span>
             <span class="n">param_details</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_retrieve_parameter_details</span><span class="p">(</span>
                 <span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_process_logic</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">]</span>
             <span class="p">)</span>
-        <span class="c1"># If signature has only **kwargs (dynamic factories), fall back to get_processing_parameter_names</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">param_details</span><span class="p">:</span>
-            <span class="n">gppn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;get_processing_parameter_names&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">gppn</span><span class="p">):</span>
-                <span class="c1"># Build a minimal param_details mapping names -&gt; unknown/default</span>
-                <span class="n">param_details</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">name</span><span class="p">:</span> <span class="n">ParameterInfo</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">gppn</span><span class="p">()</span>
-                <span class="p">}</span>
 
         <span class="n">config_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">processor_config</span><span class="p">)</span>
         <span class="n">default_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>

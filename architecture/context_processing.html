@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Pipeline Configuration Schema" href="pipeline_schema.html" /><link rel="prev" title="Registry System" href="registry.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Execution" href="../execution.html" /><link rel="prev" title="Canonical Graph Builder" href="../graph.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>Context Processing Architecture - Semantiva 0.5.0 documentation</title>
@@ -215,15 +215,12 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tracing.html">Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry System</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Context Processing Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
@@ -349,7 +346,7 @@ The observer maintains its own context copy for validation purposes.</p>
 </section>
 <section id="performance">
 <h2>Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h2>
-<p>All validation is O(1) on declared sets; no global scans. Tracing remains opt-in; see <a class="reference internal" href="../ser.html"><span class="doc">Step Evidence Record (SER) v0 — draft</span></a>.</p>
+<p>All validation is O(1) on declared sets; no global scans. Tracing remains opt-in; see <a class="reference internal" href="../tracing.html"><span class="doc">Tracing</span></a>.</p>
 </section>
 </section>
 
@@ -358,23 +355,23 @@ The observer maintains its own context copy for validation purposes.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="pipeline_schema.html">
+          <a class="next-page" href="../execution.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Pipeline Configuration Schema</div>
+                <div class="title">Execution</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="registry.html">
+          <a class="prev-page" href="../graph.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Registry System</div>
+                <div class="title">Canonical Graph Builder</div>
                 
               </div>
             </a>

@@ -215,15 +215,12 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -312,7 +309,7 @@ with required/created/suppressed keys). Pipelines return a Payload on <code clas
 or realization. Examples include parameter slicing, renaming, and object modeling.</p>
 </dd>
 <dt id="term-Trace-Driver">Trace Driver<a class="headerlink" href="#term-Trace-Driver" title="Link to this term">¶</a></dt><dd><p>A pluggable sink that writes trace events. In 0.5.0, the built-in driver is
-<code class="docutils literal notranslate"><span class="pre">jsonl</span></code> (one record per line). See <a class="reference internal" href="ser.html"><span class="doc">Step Evidence Record (SER) v0 — draft</span></a>.</p>
+<code class="docutils literal notranslate"><span class="pre">jsonl</span></code> (pretty-printed JSON blocks). See <a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a>.</p>
 </dd>
 <dt id="term-node_uuid">node_uuid<a class="headerlink" href="#term-node_uuid" title="Link to this term">¶</a></dt><dd><p>Positional, stable identifier for a node within GraphV1. Used to align inspection,
 tracing, and Viewer node details. See <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>.</p>

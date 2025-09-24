@@ -214,15 +214,12 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tracing.html">Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../architecture/context_processing.html">Context Processing Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference.html">API Reference</a></li>
@@ -295,40 +292,37 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Future</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
 
 
 <div class="viewcode-block" id="SemantivaExecutor">
 <a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SemantivaExecutor">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SemantivaExecutor</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base for Semantiva task executors.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base for Semantiva task executors.</span>
 
-<div class="viewcode-block" id="SemantivaExecutor.SERHooks">
-<a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks">[docs]</a>
-    <span class="nd">@dataclass</span>
-    <span class="k">class</span><span class="w"> </span><span class="nc">SERHooks</span><span class="p">:</span>
-        <span class="n">upstream</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-        <span class="n">trigger</span><span class="p">:</span> <span class="nb">str</span>
-        <span class="n">upstream_evidence</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>
-        <span class="n">io_delta_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-        <span class="n">pre_checks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
-        <span class="n">post_checks_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span>
-        <span class="n">env_pins_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-        <span class="n">redaction_policy_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span></div>
+<span class="sd">    Executors decide how individual payload-processing steps are run.</span>
+<span class="sd">    They decouple &#39;what to run&#39; (the callable + arguments) from &#39;how to run it&#39;</span>
+<span class="sd">    (synchronously, in a thread, on a cluster, etc.).</span>
 
+<span class="sd">    Subclasses must implement:</span>
+<span class="sd">        submit(fn, *args, **kwargs) -&gt; Future</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SemantivaExecutor.submit">
 <a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SemantivaExecutor.submit">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-        <span class="n">ser_hooks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SemantivaExecutor.SERHooks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Future</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Submit a callable for (possibly asynchronous) execution.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Future</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Submit a callable for (possibly asynchronous) execution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fn:   The function or callable to execute.</span>
+<span class="sd">            *args/**kwargs:  Arguments to pass to the function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A Future object whose .result() will yield the function&#39;s return value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 </div>
 
@@ -364,13 +358,7 @@
 
 <div class="viewcode-block" id="SequentialSemantivaExecutor.submit">
 <a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SequentialSemantivaExecutor.submit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-        <span class="n">ser_hooks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SemantivaExecutor</span><span class="o">.</span><span class="n">SERHooks</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Future</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Future</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute the function immediately and return a completed Future.</span>
 
@@ -381,7 +369,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            A completed Future whose result() returns fn(*args, **kwargs).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># ser_hooks is accepted for API parity with async executors.</span>
         <span class="c1"># Directly call the function in the current thread</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># Wrap the result in an ImmediateFuture so callers can uniformly</span>
