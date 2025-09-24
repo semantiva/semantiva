@@ -21,8 +21,7 @@ from typing import Any, Iterable, Mapping
 
 import yaml
 
-from semantiva.registry import load_extensions
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry import RegistryProfile, apply_profile, load_extensions
 
 from .schema import ExecutionConfig, FanoutSpec, PipelineConfiguration, TraceConfig
 
@@ -135,7 +134,7 @@ def parse_pipeline_config(
             "section with a 'nodes' list."
         )
 
-    ClassRegistry.initialize_default_modules()
+    apply_profile(RegistryProfile())
 
     extensions = list(_extract_extensions(config))
     if extensions:

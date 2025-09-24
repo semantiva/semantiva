@@ -387,6 +387,7 @@ class TestComplexScenarioRegression:
         import os
 
         yaml_content = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSource:FloatDataCollection"

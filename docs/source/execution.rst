@@ -13,7 +13,7 @@ circular import dependencies:
 
 :py:class:`~semantiva.execution.component_registry.ExecutionComponentRegistry`
     Specialized registry for orchestrators, executors, and transports. This registry
-    is designed to break circular import dependencies with the main ClassRegistry
+    is designed to break circular import dependencies with the main ProcessorRegistry
     and graph builder modules.
 
 :py:func:`~semantiva.execution.orchestrator.factory.build_orchestrator`

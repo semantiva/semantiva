@@ -22,6 +22,7 @@ def test_cli_run_context(tmp_path: Path):
     yaml_path = make_pipeline(
         tmp_path,
         """
+        extensions: ["semantiva-examples"]
         pipeline:
           nodes:
             - processor: FloatValueDataSourceWithDefault
@@ -40,6 +41,7 @@ def test_cli_run_context_invalid(tmp_path: Path):
     yaml_path = make_pipeline(
         tmp_path,
         """
+        extensions: ["semantiva-examples"]
         pipeline:
           nodes:
             - processor: FloatValueDataSource

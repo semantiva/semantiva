@@ -1,3 +1,5 @@
+extensions: ["semantiva-examples"]
+
 pipeline:
   nodes:
     - processor: "FloatValueDataSourceWithDefault"

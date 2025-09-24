@@ -23,7 +23,7 @@ from semantiva.contracts.expectations import (
     discover_from_paths,
     validate_components,
 )
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry, resolve_symbol
 
 
 def test_all_components_meet_contracts() -> None:
@@ -56,28 +56,18 @@ def test_validate_components_debug_mode():
         assert diag_normal.severity == diag_debug.severity
 
 
-def test_class_registry_imports_modules():
-    """Test that ClassRegistry.register_modules actually imports modules."""
+def test_processor_registry_imports_modules():
+    """Test that ProcessorRegistry.register_modules discovers components."""
 
-    # Verify the module gets registered
-    _ = ClassRegistry.get_registered_modules().copy()
+    ProcessorRegistry.clear()
+    ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
 
-    # Register a module that contains components
-    ClassRegistry.register_modules(["semantiva.examples.test_utils"])
-
-    # Verify module is now registered
-    final_modules = ClassRegistry.get_registered_modules()
-    assert "semantiva.examples.test_utils" in final_modules
-
-    # The components should be available from the component registry
-    from semantiva.contracts.expectations import discover_from_registry
+    assert "semantiva.examples.test_utils" in ProcessorRegistry.registered_modules()
 
     components = discover_from_registry()
     component_names = [f"{c.__module__}.{c.__qualname__}" for c in components]
-
-    # Should find test_utils components
-    test_utils_components = [name for name in component_names if "test_utils" in name]
-    assert len(test_utils_components) > 0
+    assert any("test_utils" in name for name in component_names)
+    assert resolve_symbol("FloatMultiplyOperation").__name__ == "FloatMultiplyOperation"
 
 
 def test_discover_from_modules_with_import_errors():
@@ -226,13 +216,7 @@ def test_validate_components_empty_list():
 
 
 def test_registry_module_import_error_handling():
-    """Test that ClassRegistry handles module import errors gracefully."""
-    # This should not crash even if the module doesn't exist
-    try:
-        ClassRegistry.register_modules(["nonexistent_module_for_testing"])
-        # Should complete without raising an exception
-    except Exception as e:
-        # If an exception is raised, it should be logged, not crash the test
-        assert (
-            False
-        ), f"ClassRegistry.register_modules should handle import errors gracefully, but raised: {e}"
+    """ProcessorRegistry.register_modules should handle missing modules."""
+    ProcessorRegistry.clear()
+    # Should not raise even if module is missing
+    ProcessorRegistry.register_modules(["nonexistent_module_for_testing"])

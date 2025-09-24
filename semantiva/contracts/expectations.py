@@ -740,18 +740,17 @@ def discover_from_modules(mods: Iterable[str]) -> List[type]:
             logger.warning(f"Failed to import module '{m}': {e}")
             continue
 
-    from semantiva.registry.class_registry import ClassRegistry
+    from semantiva.registry import ProcessorRegistry
 
-    ClassRegistry.register_modules(successfully_imported)
+    ProcessorRegistry.register_modules(successfully_imported)
     return discover_from_registry()
 
 
 def discover_from_paths(paths: Iterable[str]) -> List[type]:
-    from semantiva.registry.class_registry import ClassRegistry
+    from semantiva.registry import ProcessorRegistry
     import logging
 
     logger = logging.getLogger("Semantiva")
-    ClassRegistry.register_paths(list(paths))
 
     for p in paths:
         pp = pathlib.Path(p)
@@ -762,6 +761,7 @@ def discover_from_paths(paths: Iterable[str]) -> List[type]:
                     mod = importlib.util.module_from_spec(spec)
                     sys.modules[pp.stem] = mod
                     spec.loader.exec_module(mod)
+                    ProcessorRegistry.register_modules([mod.__name__])
             except Exception as e:
                 logger.warning(f"Failed to import module from file {pp}: {e}")
                 continue
@@ -769,6 +769,7 @@ def discover_from_paths(paths: Iterable[str]) -> List[type]:
             for mi in pkgutil.walk_packages([str(pp)]):
                 try:
                     __import__(mi.name)
+                    ProcessorRegistry.register_modules([mi.name])
                 except Exception as e:
                     logger.warning(f"Failed to import module '{mi.name}': {e}")
                     continue
@@ -786,7 +787,7 @@ def discover_from_pipeline_yaml(yaml_paths: Iterable[str]) -> List[type]:
     from semantiva.configurations.load_pipeline_from_yaml import (
         load_pipeline_from_yaml,
     )
-    from semantiva.registry.class_registry import ClassRegistry
+    from semantiva.registry import resolve_symbol
 
     for yp in yaml_paths:
         # Load the pipeline configuration
@@ -798,7 +799,7 @@ def discover_from_pipeline_yaml(yaml_paths: Iterable[str]) -> List[type]:
             if isinstance(processor_spec, str):
                 try:
                     # This will import the module and register the component via metaclass
-                    ClassRegistry.get_class(processor_spec)
+                    resolve_symbol(processor_spec)
                 except Exception:
                     # Ignore resolution errors during discovery
                     pass
