@@ -1,3 +1,17 @@
+# Copyright 2025 Semantiva authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Tests for deterministic extension loading."""
 
 from __future__ import annotations
@@ -43,12 +57,12 @@ def clear_ecr():
 
 def test_load_extension_from_module_register(monkeypatch, clear_ecr):
     module_name = "ext_mod_demo"
-    calls: list[int] = []
+    registration_calls = []
 
     mod = types.ModuleType(module_name)
 
     def _register() -> None:
-        calls.append(1)
+        registration_calls.append(1)
 
         class _DummyExec:
             pass
@@ -64,7 +78,7 @@ def test_load_extension_from_module_register(monkeypatch, clear_ecr):
     finally:
         sys.modules.pop(module_name, None)
 
-    assert calls == [1]
+    assert registration_calls == [1]
     assert "demo" in ECR.list_executors()
 
 

@@ -34,6 +34,7 @@ def test_cli_run_success(tmp_path: Path):
     yaml_path = make_pipeline(
         tmp_path,
         f"""
+        extensions: ["semantiva-examples"]
         pipeline:
           nodes:
             - processor: FloatValueDataSourceWithDefault
@@ -60,6 +61,7 @@ def test_cli_validate(tmp_path: Path):
     valid = make_pipeline(
         tmp_path,
         """
+        extensions: ["semantiva-examples"]
         pipeline:
           nodes:
             - processor: FloatValueDataSourceWithDefault
@@ -85,6 +87,7 @@ def test_cli_dry_run(tmp_path: Path):
     yaml_path = make_pipeline(
         tmp_path,
         f"""
+        extensions: ["semantiva-examples"]
         pipeline:
           nodes:
             - processor: FloatValueDataSourceWithDefault
@@ -102,6 +105,7 @@ def test_cli_runtime_fail(tmp_path: Path):
     yaml_path = make_pipeline(
         tmp_path,
         """
+        extensions: ["semantiva-examples"]
         pipeline:
           nodes:
             - processor: FloatValueDataSourceWithDefault
@@ -119,6 +123,7 @@ def test_cli_overrides(tmp_path: Path):
     yaml_path = make_pipeline(
         tmp_path,
         f"""
+        extensions: ["semantiva-examples"]
         pipeline:
           nodes:
             - processor: FloatValueDataSourceWithDefault

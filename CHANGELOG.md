@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Execution Component Registry list helpers and short-hand identifiers (``local``,
   ``sequential``, ``in_memory``) for bundled orchestrator, executor, and transport
   classes.
-- ClassRegistry resolver for the ``stringbuild:`` prefix and corresponding unit tests and examples (docs/tutorials updated).
+- Built-in ``stringbuild:`` resolver registered via the name resolver registry and corresponding unit tests and examples (docs/tutorials updated).
   - Context string-builder factory (YAML resolver ``stringbuild:"<template>":<out_key>``): dynamic ContextProcessor factory that builds deterministic strings from strict ``{placeholder}`` identifiers and writes them to context. Templates reject format specs/conversions and require all placeholders to exist at runtime.
   - Documentation: added `Factories: stringbuild` docs, fan-out quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
 - Unified pipeline schema blocks (``execution``, ``trace``, ``fanout``) with
@@ -67,8 +67,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
   - Added package `registry` to gather plugin and class/module registry.
   - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
-  - Pluggable class name resolvers in `ClassRegistry` with built-in support for `slicer:` YAML prefixes.
-  - Pluggable parameter resolvers via `ClassRegistry.register_param_resolver` with built-in support for a ``model:`` prefix to instantiate fitting models from YAML
+  - Pluggable name resolvers registered with `NameResolverRegistry` with built-in support for `slicer:` YAML prefixes.
+  - Pluggable parameter resolvers via `ParameterResolverRegistry.register_resolver` with built-in support for a ``model:`` prefix to instantiate fitting models from YAML
 - Comprehensive tracing documentation covering CLI options, record schema, detail levels, examples, and troubleshooting
 - Documented Studio Viewer quick start, modes, export, trace inspection anchors, limitations, and troubleshooting
   - Documentation: added model fitting tutorial, parametric sweep walkthrough, and example run instructions
@@ -84,6 +84,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
 
 ### Changed
+- Replaced the monolithic ClassRegistry with `ProcessorRegistry`,
+  `NameResolverRegistry`, and `ParameterResolverRegistry`, exposing a single
+  `resolve_symbol()` entry point for pipeline configuration and CLI usage.
 - CLI execution component resolution now uses the Execution Component Registry
   exclusively and emits "did you mean" suggestions for unknown component names.
 - Extension loader is deterministic and idempotent; missing hooks raise explicit
@@ -94,9 +97,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   YAML schema.
 - Consolidated registry documentation: merged the component registry architecture
   into a unified ``Registry System`` page and updated cross-references.
-- ``ClassRegistry.initialize_default_modules()`` keeps user resolvers intact and
-  installs built-ins only once; distributed orchestrators propagate registry
-  profiles to workers before pipeline construction.
+- Registry bootstrap now relies on ``ProcessorRegistry`` and resolver registries;
+  distributed orchestrators propagate registry profiles to workers before
+  pipeline construction.
 - CLI ``--version`` uses ``importlib.metadata`` with a sanitized source fallback
   instead of executing ``version.txt``.
 - Context processor factories validate context keys before generating dynamic

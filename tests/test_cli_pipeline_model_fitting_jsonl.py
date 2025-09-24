@@ -53,6 +53,7 @@ def test_cli_pipeline_model_fitting_jsonl(tmp_path: Path):
 
 def test_cli_pipeline_with_duplicate_nodes(tmp_path: Path):
     yaml_content = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatValueDataSourceWithDefault

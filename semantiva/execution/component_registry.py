@@ -15,7 +15,7 @@
 """Execution Component Registry for orchestrators, executors, and transports.
 
 This module provides a registry specifically for execution components to avoid
-circular import dependencies with the main ClassRegistry and graph builder modules.
+circular import dependencies with the main ProcessorRegistry and graph builder modules.
 The registry follows the dependency inversion principle by being a dependency sink
 rather than creating webs of interdependence.
 """

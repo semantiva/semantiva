@@ -14,28 +14,19 @@
 
 import pytest
 
+from semantiva.registry import ProcessorRegistry, resolve_symbol
 from semantiva.registry.bootstrap import RegistryProfile, apply_profile, current_profile
-from semantiva.registry.class_registry import ClassRegistry
 
 
 @pytest.fixture(autouse=True)
-def snapshot_registry():
-    custom = list(ClassRegistry._custom_resolvers)
-    params = list(ClassRegistry._param_resolvers)
-    modules = set(ClassRegistry._registered_modules)
-    paths = set(ClassRegistry._registered_paths)
-    builtin = set(ClassRegistry._builtin_resolver_names)
-    initialized = ClassRegistry._initialized_defaults
+def reset_processor_registry():
+    ProcessorRegistry.clear()
     yield
-    ClassRegistry._custom_resolvers = list(custom)
-    ClassRegistry._param_resolvers = list(params)
-    ClassRegistry._registered_modules = set(modules)
-    ClassRegistry._registered_paths = set(paths)
-    ClassRegistry._builtin_resolver_names = set(builtin)
-    ClassRegistry._initialized_defaults = initialized
+    ProcessorRegistry.clear()
 
 
 def test_profile_fingerprint_stable_after_apply():
+    apply_profile(RegistryProfile())
     profile = current_profile()
     fingerprint = profile.fingerprint()
     apply_profile(profile)
@@ -43,10 +34,10 @@ def test_profile_fingerprint_stable_after_apply():
 
 
 def test_apply_profile_registers_modules_once(monkeypatch):
-    monkeypatch.setattr(ClassRegistry, "_registered_modules", set())
     profile = RegistryProfile(
         load_defaults=False, modules=["semantiva.examples.test_utils"]
     )
     apply_profile(profile)
     apply_profile(profile)
-    assert "semantiva.examples.test_utils" in ClassRegistry.get_registered_modules()
+    cls = resolve_symbol("FloatMultiplyOperation")
+    assert cls.__name__ == "FloatMultiplyOperation"

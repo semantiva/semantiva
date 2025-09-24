@@ -22,7 +22,7 @@ from semantiva.pipeline import Pipeline, Payload
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import NoDataType
 from semantiva.examples.test_utils import FloatDataCollection
-from semantiva.registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry
 
 
 @pytest.fixture
@@ -34,13 +34,17 @@ def empty_context():
 @pytest.fixture(autouse=True)
 def setup_test_utils():
     """Register test utils module for all tests."""
-    ClassRegistry.register_modules(["semantiva.examples.test_utils"])
+    ProcessorRegistry.clear()
+    ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
+    yield
+    ProcessorRegistry.clear()
 
 
 def test_parametric_sweep_yaml(empty_context):
     """Test parametric sweep configuration in YAML."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -75,6 +79,7 @@ def test_multi_variable_sweep(empty_context):
     """Test parametric sweep with multiple variables."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -112,6 +117,7 @@ def test_sweep_with_static_params(empty_context):
     """Test parametric sweep with static parameters."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -140,6 +146,7 @@ def test_sweep_no_expressions(empty_context):
     """Test parametric sweep without expressions (should work)."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -164,6 +171,7 @@ def test_sweep_invalid_vars_empty():
     """Test that empty vars raises appropriate error."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -183,6 +191,7 @@ def test_sweep_invalid_vars_format():
     """Test that invalid variable format raises appropriate error."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -203,6 +212,7 @@ def test_sweep_missing_required_params():
     """Test that missing required parameters raises appropriate error."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -214,16 +224,16 @@ pipeline:
 
     node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
 
-    # Should fail when trying to resolve the sweep class without vars
-    with pytest.raises(ValueError, match="Class.*not found"):
-        pipeline = Pipeline(node_configs)
-        pipeline.process(Payload(NoDataType(), ContextType()))
+    # Should fail when trying to build the sweep class without vars
+    with pytest.raises(ValueError, match="vars must be a non-empty dictionary"):
+        Pipeline(node_configs)
 
 
 def test_complex_sweep_example(empty_context):
     """Test a complex example similar to the user's request."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
@@ -257,6 +267,7 @@ def test_from_context_yaml_sequence(empty_context):
     empty_context.set_value("discovered_files", ["a.txt", "b.txt"])
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"

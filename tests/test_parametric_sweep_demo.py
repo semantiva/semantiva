@@ -22,13 +22,13 @@ from semantiva import Pipeline, Payload, load_pipeline_from_yaml
 from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import NoDataType
 from semantiva.examples.test_utils import FloatDataType
-from semantiva.registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry
 
 
 @pytest.fixture(autouse=True)
 def setup_test_utils():
     """Register test utils module for all tests."""
-    ClassRegistry.register_modules(["semantiva.examples.test_utils"])
+    ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
 
 
 def test_parametric_sweep_demo_yaml():

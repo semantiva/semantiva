@@ -17,25 +17,31 @@
 import pytest
 
 from semantiva.context_processors import factory as factory_module
-from semantiva.registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry, resolve_symbol
 
-ClassRegistry.initialize_default_modules()
+
+@pytest.fixture(autouse=True)
+def load_example_modules():
+    ProcessorRegistry.clear()
+    ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
+    yield
+    ProcessorRegistry.clear()
 
 
 def test_rename_factory_signature_exposes_original_key():
-    cls = ClassRegistry.get_class("rename:alpha.beta:features.beta")
+    cls = resolve_symbol("rename:alpha.beta:features.beta")
     names = cls.get_processing_parameter_names()
     assert "alpha.beta" in names  # parameter comes from original key
 
 
 def test_delete_factory_signature_exposes_deleted_key():
-    cls = ClassRegistry.get_class("delete:temp.key")
+    cls = resolve_symbol("delete:temp.key")
     names = cls.get_processing_parameter_names()
     assert names == ["temp.key"]  # reports the key that will be consumed/deleted
 
 
 def test_rename_factory_behavior():
-    cls = ClassRegistry.get_class("rename:a:b")
+    cls = resolve_symbol("rename:a:b")
     proc = cls()
     from semantiva.context_processors.context_observer import _ValidatingContextObserver
     from semantiva.context_processors.context_types import ContextType
@@ -54,7 +60,7 @@ def test_rename_factory_behavior():
 
 
 def test_delete_factory_behavior():
-    cls = ClassRegistry.get_class("delete:temp")
+    cls = resolve_symbol("delete:temp")
     proc = cls()
     from semantiva.context_processors.context_observer import _ValidatingContextObserver
     from semantiva.context_processors.context_types import ContextType
