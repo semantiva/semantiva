@@ -40,7 +40,8 @@ from pathlib import Path
 from typing import Any, List
 
 import yaml
-from semantiva.registry import ClassRegistry
+from semantiva.pipeline.node_preprocess import preprocess_node_config
+from semantiva.registry import resolve_parameters
 from semantiva.registry.descriptors import descriptor_to_json
 
 # Namespace used for deterministic node UUID generation
@@ -134,8 +135,8 @@ def build_canonical_spec(
     node_uuids: List[str] = []
     for declaration_index, raw in enumerate(spec):
         declaration_subindex = 0
-        cfg = ClassRegistry.preprocess_node_config(dict(raw))
-        params = ClassRegistry.resolve_parameters(cfg.get("parameters", {}))
+        cfg = preprocess_node_config(dict(raw))
+        params = resolve_parameters(cfg.get("parameters", {}))
         cfg["parameters"] = params
         resolved.append(cfg)
         canon = _canonical_node(cfg, declaration_index, declaration_subindex)

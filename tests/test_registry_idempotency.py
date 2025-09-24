@@ -14,32 +14,35 @@
 
 import pytest
 
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry import NameResolverRegistry, ParameterResolverRegistry
+from semantiva.registry.builtin_resolvers import register_builtin_resolvers
 
 
-@pytest.fixture
-def reset_registry(monkeypatch):
-    monkeypatch.setattr(ClassRegistry, "_custom_resolvers", [])
-    monkeypatch.setattr(ClassRegistry, "_param_resolvers", [])
-    monkeypatch.setattr(ClassRegistry, "_builtin_resolver_names", set())
-    monkeypatch.setattr(ClassRegistry, "_initialized_defaults", False)
+@pytest.fixture(autouse=True)
+def clear_registries():
+    NameResolverRegistry.clear()
+    ParameterResolverRegistry.clear()
+    register_builtin_resolvers()
     yield
+    NameResolverRegistry.clear()
+    ParameterResolverRegistry.clear()
+    register_builtin_resolvers()
 
 
-def test_initialize_default_modules_keeps_user_resolvers(reset_registry):
-    def custom_resolver(name: str):
+def test_builtin_registration_keeps_custom_resolvers():
+    def custom_name_resolver(value: str):
         return None
 
-    def param_resolver(value):
+    def custom_param_resolver(value):
         return None
 
-    ClassRegistry.register_resolver(custom_resolver)
-    ClassRegistry.register_param_resolver(param_resolver)
+    NameResolverRegistry.register_resolver("custom:", custom_name_resolver)
+    ParameterResolverRegistry.register_resolver(custom_param_resolver)
 
-    ClassRegistry.initialize_default_modules()
-    ClassRegistry.initialize_default_modules()
+    before_params = list(ParameterResolverRegistry.resolvers())
+    register_builtin_resolvers()
+    after_params = list(ParameterResolverRegistry.resolvers())
 
-    assert custom_resolver in ClassRegistry._custom_resolvers
-    assert param_resolver in ClassRegistry._param_resolvers
-    assert ClassRegistry._custom_resolvers.count(custom_resolver) == 1
-    assert ClassRegistry._param_resolvers.count(param_resolver) == 1
+    assert NameResolverRegistry.all_resolvers()["custom:"] is custom_name_resolver
+    assert custom_param_resolver in after_params
+    assert len(after_params) == len(before_params)  # no duplicates on re-register

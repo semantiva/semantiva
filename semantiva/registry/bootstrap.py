@@ -21,8 +21,14 @@ import hashlib
 import json
 from typing import Dict, List
 
-from .class_registry import ClassRegistry
 from .plugin_registry import load_extensions
+from .processor_registry import ProcessorRegistry
+
+
+DEFAULT_MODULES = [
+    "semantiva.context_processors.context_processors",
+    "semantiva.workflows.fitting_model",
+]
 
 
 @dataclass(frozen=True)
@@ -60,11 +66,9 @@ def apply_profile(profile: RegistryProfile) -> None:
     """Apply the provided registry profile in the current process."""
 
     if profile.load_defaults:
-        ClassRegistry.initialize_default_modules()
-    if profile.paths:
-        ClassRegistry.register_paths(profile.paths)
+        ProcessorRegistry.register_modules(DEFAULT_MODULES)
     if profile.modules:
-        ClassRegistry.register_modules(profile.modules)
+        ProcessorRegistry.register_modules(profile.modules)
     if profile.extensions:
         load_extensions(profile.extensions)
 
@@ -72,8 +76,8 @@ def apply_profile(profile: RegistryProfile) -> None:
 def current_profile() -> RegistryProfile:
     """Capture the current registry state as a profile."""
 
-    modules = sorted(ClassRegistry.get_registered_modules())
-    paths = sorted(str(path) for path in ClassRegistry.get_registered_paths())
+    modules = sorted(ProcessorRegistry.module_history())
+    paths: List[str] = []
     return RegistryProfile(
         load_defaults=True, modules=modules, paths=paths, extensions=[]
     )

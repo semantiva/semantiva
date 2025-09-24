@@ -27,6 +27,7 @@ def test_cli_strict_flag_exits_on_invalid_params(tmp_path):
     bad_yaml = tmp_path / "bad_pipeline.yaml"
     bad_yaml.write_text(
         """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatMultiplyOperationWithDefault
@@ -61,6 +62,7 @@ def test_cli_strict_flag_succeeds_on_valid_params(tmp_path):
     good_yaml = tmp_path / "good_pipeline.yaml"
     good_yaml.write_text(
         """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatMultiplyOperationWithDefault
@@ -91,6 +93,7 @@ def test_cli_non_strict_ignores_invalid_params(tmp_path):
     bad_yaml = tmp_path / "bad_pipeline.yaml"
     bad_yaml.write_text(
         """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatMultiplyOperationWithDefault

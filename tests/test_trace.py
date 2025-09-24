@@ -205,6 +205,7 @@ def test_pre_checks_detect_missing_context(tmp_path: Path) -> None:
     cfg = tmp_path / "missing_addend.yaml"
     cfg.write_text(
         """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "FloatValueDataSourceWithDefault"
@@ -234,6 +235,7 @@ def test_required_keys_satisfied_by_context(tmp_path: Path) -> None:
     cfg = tmp_path / "context_addend.yaml"
     cfg.write_text(
         """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "FloatValueDataSourceWithDefault"

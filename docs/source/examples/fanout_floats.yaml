@@ -2,7 +2,7 @@
 # Fan-out (local): FloatValueDataSource -> FloatAddOperation -> FloatMultiplyOperation -> FloatValueProbe -> FloatTxtFileSaver
 # For each (value, added, factor) tuple, run the pipeline serially (default local orchestrator).
 
-extensions: []
+extensions: ["semantiva-examples"]
 
 pipeline:
   nodes:
