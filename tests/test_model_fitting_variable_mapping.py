@@ -20,7 +20,7 @@ from semantiva.workflows.fitting_model import (
     PolynomialFittingModel,
     _model_fitting_processor_factory,
 )
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry
 from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
 
 
@@ -352,7 +352,6 @@ class TestPipelineIntegration:
     def test_pipeline_node_factory_integration(self):
         """Test that the pipeline node factory correctly handles the configuration."""
         # Initialize registry
-        ClassRegistry.initialize_default_modules()
 
         # Pipeline configuration like in the client's example
         node_definition = {
@@ -376,7 +375,6 @@ class TestPipelineIntegration:
 
     def test_multiple_fitting_nodes(self):
         """Test creating multiple fitting nodes with different parameters."""
-        ClassRegistry.initialize_default_modules()
 
         # First node configuration
         node_def1 = {
@@ -424,7 +422,6 @@ class TestPipelineIntegration:
 
     def test_fallback_to_standard_processor(self):
         """Test that standard ModelFittingContextProcessor is used when no mapping parameters."""
-        ClassRegistry.initialize_default_modules()
 
         # Standard configuration without mapping parameters
         node_definition = {
@@ -452,7 +449,6 @@ class TestPipelineIntegration:
 
     def test_context_keyword_only_configuration(self):
         """Test configuration with only context_keyword (no variable mapping)."""
-        ClassRegistry.initialize_default_modules()
 
         node_definition = {
             "processor": "ModelFittingContextProcessor",
@@ -475,7 +471,6 @@ class TestDocumentationExamples:
 
     def test_basic_usage_configuration(self):
         """Test the basic usage configuration from documentation."""
-        ClassRegistry.initialize_default_modules()
 
         # Basic Usage example from docs
         node_definition = {
@@ -495,7 +490,6 @@ class TestDocumentationExamples:
 
     def test_custom_parameter_names_configuration(self):
         """Test the custom parameter names configuration from documentation."""
-        ClassRegistry.initialize_default_modules()
 
         # Custom Parameter Names example from docs
         node_definition = {
@@ -518,7 +512,6 @@ class TestDocumentationExamples:
 
     def test_nested_path_extraction_configuration(self):
         """Test the nested path extraction configuration from documentation."""
-        ClassRegistry.initialize_default_modules()
 
         # Nested Path Extraction example from docs
         node_definition = {
@@ -621,7 +614,6 @@ class TestDocumentationExamples:
 
     def test_slicer_integration_configuration(self):
         """Test the slicer integration configuration from documentation."""
-        ClassRegistry.initialize_default_modules()
 
         # Slicer Integration example from docs
         node_definition = {
@@ -681,7 +673,6 @@ class TestDocumentationExamples:
 
     def test_multiple_fitting_operations_scenario(self):
         """Test multiple fitting operations on the same data as shown in documentation."""
-        ClassRegistry.initialize_default_modules()
 
         # Create two different fitting processors as shown in docs
         std_dev_node_def = {
@@ -841,3 +832,16 @@ class TestBackwardCompatibility:
         assert updates[0][0] == "fit.parameters"
         assert "coeff_0" in updates[0][1]
         assert "coeff_1" in updates[0][1]
+
+
+@pytest.fixture(autouse=True)
+def register_defaults():
+    ProcessorRegistry.clear()
+    ProcessorRegistry.register_modules(
+        [
+            "semantiva.examples.test_utils",
+            "semantiva.workflows.fitting_model",
+        ]
+    )
+    yield
+    ProcessorRegistry.clear()

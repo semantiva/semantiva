@@ -57,7 +57,8 @@ from semantiva.data_processors.data_processors import (
     DataProbe,
     _BaseDataProcessor,
 )
-from semantiva.registry import ClassRegistry
+from semantiva.pipeline.node_preprocess import preprocess_node_config
+from semantiva.registry import resolve_parameters, resolve_symbol
 from semantiva.logger import Logger
 from semantiva.context_processors import (
     ContextProcessor,
@@ -80,7 +81,7 @@ from .nodes import (
 def _resolve_class(class_name: Union[str, Type, None]) -> Optional[Type]:
     """Resolve a class name to an actual class using the registry."""
     if isinstance(class_name, str):
-        return ClassRegistry.get_class(class_name)
+        return resolve_symbol(class_name)
     return class_name
 
 
@@ -521,11 +522,11 @@ def _pipeline_node_factory(
     #
     # The preprocessing approach is the least invasive solution that maintains
     # architectural integrity while enabling the structured YAML format.
-    node_definition = ClassRegistry.preprocess_node_config(node_definition)
+    node_definition = preprocess_node_config(node_definition)
 
     processor = node_definition.get("processor")
     parameters = node_definition.get("parameters", {})
-    parameters = ClassRegistry.resolve_parameters(parameters)
+    parameters = resolve_parameters(parameters)
     node_definition["parameters"] = parameters
     context_keyword = node_definition.get("context_keyword")
 

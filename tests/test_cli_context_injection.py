@@ -25,6 +25,7 @@ from .test_utils import run_cli
 
 def test_cli_run_with_context(tmp_path: Path):
     yaml = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatValueDataSourceWithDefault

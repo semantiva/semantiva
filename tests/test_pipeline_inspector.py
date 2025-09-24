@@ -22,6 +22,7 @@ def test_inspection_with_slicer_prefix():
     """Ensure inspection resolves processors using the ``slicer:`` prefix."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "slicer:FloatMultiplyOperation:FloatDataCollection"
@@ -29,9 +30,12 @@ pipeline:
         factor: 2
 """
 
-    node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
+    from semantiva.configurations.load_pipeline_from_yaml import parse_pipeline_config
 
-    pipeline = Pipeline(node_configs)
+    full_config = yaml.safe_load(yaml_config)
+    pipeline_config = parse_pipeline_config(full_config)
+
+    pipeline = Pipeline(pipeline_config.nodes)
     from semantiva.examples.test_utils import FloatDataCollection, FloatDataType
 
     payload = Payload(FloatDataCollection([FloatDataType(1.0)]), ContextType())
