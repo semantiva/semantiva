@@ -18,14 +18,19 @@ import pytest
 
 from semantiva.context_processors.context_observer import _ValidatingContextObserver
 from semantiva.context_processors.context_types import ContextType
-from semantiva.registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry, resolve_symbol
 
 
-ClassRegistry.initialize_default_modules()
+@pytest.fixture(autouse=True)
+def setup_modules():
+    ProcessorRegistry.clear()
+    ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
+    yield
+    ProcessorRegistry.clear()
 
 
 def test_stringbuild_factory_contract_and_execution():
-    cls = ClassRegistry.get_class('stringbuild:"exp_{subject}_{run}.png":filename')
+    cls = resolve_symbol('stringbuild:"exp_{subject}_{run}.png":filename')
 
     assert cls.get_processing_parameter_names() == ["subject", "run"]
     assert cls.get_created_keys() == ["filename"]
@@ -47,7 +52,7 @@ def test_stringbuild_factory_contract_and_execution():
 
 
 def test_stringbuild_missing_key_raises_keyerror():
-    cls = ClassRegistry.get_class('stringbuild:"exp_{s}_{r}.png":filename')
+    cls = resolve_symbol('stringbuild:"exp_{s}_{r}.png":filename')
     processor = cls()
     context = ContextType({"s": "m1"})
     observer = _ValidatingContextObserver(
@@ -72,4 +77,4 @@ def test_stringbuild_missing_key_raises_keyerror():
 )
 def test_stringbuild_invalid_templates(spec: str) -> None:
     with pytest.raises(ValueError):
-        ClassRegistry.get_class(spec)
+        resolve_symbol(spec)

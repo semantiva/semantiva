@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib
 import json
 import re
 import sys
@@ -35,7 +34,8 @@ from semantiva.execution.component_registry import ExecutionComponentRegistry
 from semantiva.execution.fanout import expand_fanout
 from semantiva.execution.orchestrator.factory import build_orchestrator
 from semantiva.logger import Logger
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry import RegistryProfile, apply_profile
+from semantiva.trace.factory import build_trace_driver
 
 # Exit code constants
 EXIT_SUCCESS = 0
@@ -207,34 +207,7 @@ def _build_fanout_args(
 def _build_trace_driver(trace_cfg: TraceConfig):
     if not trace_cfg.driver or trace_cfg.driver == "none":
         return None
-    driver_name = trace_cfg.driver
-    if driver_name == "jsonl":
-        from semantiva.trace.drivers.jsonl import JSONLTrace
-
-        detail = (
-            trace_cfg.options.get("detail")
-            if isinstance(trace_cfg.options, dict)
-            else None
-        )
-        return JSONLTrace(trace_cfg.output_path, detail=detail)
-    if driver_name == "pythonpath":
-        if not trace_cfg.output_path:
-            raise ValueError(
-                "trace.output must specify module:Class when driver=pythonpath"
-            )
-        module_path, _, cls_name = trace_cfg.output_path.partition(":")
-        if not module_path or not cls_name:
-            raise ValueError(
-                "trace.output must be in module:Class format for pythonpath driver"
-            )
-        mod = importlib.import_module(module_path)
-        trace_cls = getattr(mod, cls_name)
-        return trace_cls(**dict(trace_cfg.options))
-    trace_cls = ClassRegistry.get_class(driver_name)
-    kwargs = dict(trace_cfg.options)
-    if trace_cfg.output_path and "output_path" not in kwargs:
-        kwargs["output_path"] = trace_cfg.output_path
-    return trace_cls(**kwargs)
+    return build_trace_driver(trace_cfg)
 
 
 def _suggest_component(kind: str, name: str, available: List[str]) -> str:
@@ -946,11 +919,8 @@ def _lint(args: argparse.Namespace) -> int:
 
 
 def main(argv: List[str] | None = None) -> None:
-    # Initialize default modules at runtime to ensure core components are registered
-    # for all CLI commands, while avoiding import-time circular dependencies
-    from semantiva.registry.class_registry import ClassRegistry
-
-    ClassRegistry.initialize_default_modules()
+    # Initialize default processor modules and extensions for CLI usage.
+    apply_profile(RegistryProfile())
 
     args = _parse_args(argv)
     if args.command == "run":
