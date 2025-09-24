@@ -16,11 +16,12 @@ import pytest
 from semantiva.configurations import load_pipeline_from_yaml
 from semantiva.pipeline import Pipeline
 from semantiva.exceptions import InvalidNodeParameterError
-from semantiva.registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry
 
 
 def test_runtime_raises_on_unknown_param(tmp_path):
     yaml = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatMultiplyOperationWithDefault
@@ -30,7 +31,7 @@ pipeline:
 """
     p = tmp_path / "bad.yaml"
     p.write_text(yaml)
-    ClassRegistry.register_modules(["semantiva.examples.test_utils"])
+    ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
     nodes = load_pipeline_from_yaml(str(p))
     pipe = Pipeline(nodes)
     with pytest.raises(InvalidNodeParameterError) as ei:

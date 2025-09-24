@@ -1,5 +1,7 @@
 # Parametric sweep demonstration
 # This shows the YAML format for parametric sweeps
+extensions: ["semantiva-examples"]
+
 pipeline:
   nodes:
     # Parametric sweep with configuration

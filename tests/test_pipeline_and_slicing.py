@@ -249,6 +249,7 @@ def test_yaml_slicer_prefix(float_data_collection, empty_context):
     """Test loading a slicer-defined processor from YAML configuration."""
 
     yaml_config = """
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: "slicer:FloatMultiplyOperation:FloatDataCollection"
@@ -256,9 +257,12 @@ pipeline:
         factor: 2
 """
 
-    node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
+    from semantiva.configurations.load_pipeline_from_yaml import parse_pipeline_config
 
-    pipeline = Pipeline(node_configs)
+    full_config = yaml.safe_load(yaml_config)
+    pipeline_config = parse_pipeline_config(full_config)
+
+    pipeline = Pipeline(pipeline_config.nodes)
 
     payload = pipeline.process(Payload(float_data_collection, empty_context))
 

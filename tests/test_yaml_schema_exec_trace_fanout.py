@@ -32,6 +32,7 @@ fanout:
   multi:
     value: [1, 2]
     factor: [3, 4]
+extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatValueDataSource

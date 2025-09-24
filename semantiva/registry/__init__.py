@@ -12,16 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .class_registry import ClassRegistry
-from .plugin_registry import SemantivaExtension, load_extensions
+"""Public registry interfaces for Semantiva."""
+
 from .bootstrap import RegistryProfile, apply_profile, current_profile
+from .builtin_resolvers import register_builtin_resolvers, reset_to_builtins
+from .name_resolver_registry import NameResolverRegistry
+from .parameter_resolver_registry import (
+    ParameterResolverRegistry,
+    resolve_parameters,
+)
+from .plugin_registry import SemantivaExtension, load_extensions
+from .processor_registry import ProcessorRegistry
+from .resolve import UnknownProcessorError, resolve_symbol
+
+# Ensure built-in resolvers are installed at import time.
+register_builtin_resolvers()
 
 
 __all__ = [
-    "ClassRegistry",
+    "ProcessorRegistry",
+    "NameResolverRegistry",
+    "ParameterResolverRegistry",
+    "resolve_parameters",
+    "resolve_symbol",
+    "UnknownProcessorError",
     "SemantivaExtension",
     "load_extensions",
     "RegistryProfile",
     "apply_profile",
     "current_profile",
+    "reset_to_builtins",
 ]

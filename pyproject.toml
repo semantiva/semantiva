@@ -91,3 +91,11 @@ include-package-data = true
 
 [tool.setuptools.package-data]
 "semantiva.trace.schema" = ["*.json"]
+
+[project.entry-points."semantiva.extensions"]
+semantiva-examples = "semantiva.examples.extension:SemantivaExamplesExtension"
+
+[tool.pytest.ini_options]
+markers = [
+    "no_auto_examples: Skip automatic loading of semantiva-examples extension",
+]

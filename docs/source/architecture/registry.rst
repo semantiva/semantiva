@@ -16,10 +16,20 @@ general component resolution and execution-specific component management.
 Registry Components
 ~~~~~~~~~~~~~~~~~~~
 
-``ClassRegistry``
-   Primary registry for data processors, context processors, and workflow components.
-   Handles dynamic class resolution from YAML configurations, custom resolvers,
-   and module/path registration.
+``ProcessorRegistry``
+   Primary registry for data processors, context processors, workflow components,
+   data collections, and fitting models. Handles dynamic class discovery from
+   modules imported at runtime.
+
+``NameResolverRegistry``
+   Stores prefix-based resolvers (``rename:``, ``delete:``, ``stringbuild:``,
+   ``slicer:``) that expand declarative YAML strings into processor classes.
+
+``ParameterResolverRegistry``
+   Maintains resolvers that transform configuration values recursively before 
+   processor instantiation. Resolvers are applied to dict values, list/tuple items,
+   and nested structures. For example, the ``model:`` specification used by 
+   fitting pipelines.
 
 :py:class:`~semantiva.execution.component_registry.ExecutionComponentRegistry`
    Specialized registry for execution layer components: orchestrators, executors,
@@ -31,28 +41,122 @@ Dependency Separation
 
 The dual-registry architecture solves a fundamental circular import problem:
 
-* **Graph builder** needs ``ClassRegistry`` to resolve processor classes from YAML
-* **Orchestrators** need graph builder functions for canonical specs and pipeline IDs  
-* **ClassRegistry** needed to import orchestrators for default registration
+* **Graph builder** needs ``ProcessorRegistry`` to resolve processor classes from YAML
+* **Orchestrators** need graph builder functions for canonical specs and pipeline IDs
+* **ProcessorRegistry** previously needed to import orchestrators for default registration
 
 By introducing ``ExecutionComponentRegistry``, we break this cycle:
 
 .. code-block:: text
 
    Before (Circular):
-   ClassRegistry → LocalSemantivaOrchestrator → graph_builder → ClassRegistry
+   ProcessorRegistry → LocalSemantivaOrchestrator → graph_builder → ProcessorRegistry
 
    After (Clean):
-   ClassRegistry → graph_builder
+   ProcessorRegistry → graph_builder
    ExecutionComponentRegistry → LocalSemantivaOrchestrator
    orchestrator/factory → ExecutionComponentRegistry
+
+Parameter Resolver System
+-------------------------
+
+Parameter resolvers provide a mechanism to transform configuration values before
+processor instantiation. This system enables dynamic configuration resolution,
+environment variable substitution, and complex parameter transformations.
+
+Resolution Behavior
+~~~~~~~~~~~~~~~~~~~
+
+Parameters are **recursively transformed** before processor instantiation. 
+Resolution applies to:
+
+* Dictionary values
+* List and tuple items  
+* Nested structures (dictionaries within lists, lists within dictionaries, etc.)
+
+Resolvers are run in registration order and should be pure and idempotent.
+
+Adding Custom Parameter Resolvers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To add a custom parameter resolver:
+
+.. code-block:: python
+
+   from semantiva.registry.parameter_resolver_registry import ParameterResolverRegistry
+
+   def my_param_resolver(value):
+       # Return (resolved_value, handled: bool)
+       if isinstance(value, str) and value.startswith("myenv:"):
+           env_var = value.split(":",1)[1]
+           return os.environ.get(env_var, ""), True
+       return value, False
+
+   ParameterResolverRegistry.register_resolver("myenv", my_param_resolver)
+
+Built-in Resolvers
+~~~~~~~~~~~~~~~~~~
+
+The framework provides several built-in parameter resolvers:
+
+``model:``
+   Resolves model specifications into ``ModelDescriptor`` objects for fitting workflows.
+   
+   Example: ``model:LinearRegression:param1=value1,param2=value2``
+
+Resolver Function Interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Parameter resolver functions must follow this interface:
+
+.. code-block:: python
+
+   def parameter_resolver(value: Any) -> tuple[Any, bool]:
+       """Transform a parameter value.
+       
+       Args:
+           value: The input parameter value to potentially transform
+           
+       Returns:
+           tuple: (resolved_value, was_handled)
+               - resolved_value: The transformed value (or original if unchanged)
+               - was_handled: True if this resolver processed the value, False otherwise
+       """
+
+If ``was_handled`` is ``True``, the resolved value is used. If ``False``, the 
+original value is passed to the next resolver in the chain.
+
+Recursive Resolution Example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   # Input parameters with nested structure
+   payload = {
+       "database_url": "myenv:DATABASE_URL",
+       "processing_config": {
+           "batch_size": 100,
+           "model_spec": "model:LinearRegression:learning_rate=0.01"
+       },
+       "file_paths": ["myenv:INPUT_DIR/file1.txt", "myenv:INPUT_DIR/file2.txt"]
+   }
+   
+   # After recursive parameter resolution
+   resolved = {
+       "database_url": "postgresql://localhost:5432/mydb",
+       "processing_config": {
+           "batch_size": 100,
+           "model_spec": ModelDescriptor("sklearn.LinearRegression", {"learning_rate": 0.01})
+       },
+       "file_paths": ["/data/input/file1.txt", "/data/input/file2.txt"]
+   }
 
 Bootstrap Profiles
 ------------------
 
 The **Registry v1** design introduces ``RegistryProfile`` to make registry state
-explicit, portable, and reproducible. This system tracks modules, filesystem paths,
-and extension entry points that declare Semantiva components.
+explicit, portable, and reproducible. This system tracks modules and extension
+entry points that declare Semantiva components.
 
 Key Concepts
 ~~~~~~~~~~~~
@@ -68,21 +172,18 @@ Key Concepts
         Python modules to import. Importing runs the Semantiva metaclass hooks,
         registering every component exposed by those modules.
 
-    ``paths``
-        Filesystem paths that should be scanned for component definitions.
-
     ``extensions``
         Entry-point or module specifications that should be loaded via
         ``semantiva.registry.plugin_registry.load_extensions``.
 
 ``apply_profile(profile)``
-    Applies ``load_defaults`` (idempotent) and then registers ``paths``,
-    ``modules``, and ``extensions`` in that order.
+    Applies ``load_defaults`` (idempotent) and then registers ``modules`` and
+    ``extensions`` in that order.
 
 ``current_profile()``
     Captures the current process registry and returns a ``RegistryProfile``
     instance. The snapshot always enables ``load_defaults`` and returns the
-    currently registered modules and paths.
+    module history that has been applied.
 
 ``fingerprint()``
     Produces a SHA-256 hash of a normalised representation of the profile. The
@@ -93,10 +194,10 @@ Initialization Flow
 
 Component registration follows a carefully orchestrated initialization sequence:
 
-1. **ClassRegistry.initialize_default_modules()**
+1. **ProcessorRegistry.register_modules(DEFAULT_MODULES)**
 
-   * Registers core data processors and context processors
-   * Sets up built-in resolvers (rename, delete, slicer, model)
+   * Registers core data processors, context processors, and fitting models
+   * Ensures built-in resolvers (rename, delete, stringbuild, slicer, model) are available
    * Calls ``ExecutionComponentRegistry.initialize_defaults()``
 
 2. **ExecutionComponentRegistry.initialize_defaults()**
@@ -110,14 +211,15 @@ Component Resolution
 
 Different component types use their respective registries:
 
-**Data Processors (via ClassRegistry)**:
+**Data Processors (via resolve_symbol)**:
 
 .. code-block:: python
 
-   from semantiva.registry.class_registry import ClassRegistry
-   
-   # Resolves processors from YAML
-   processor_cls = ClassRegistry.get_class("FloatValueDataSource")
+   from semantiva.registry import ProcessorRegistry, resolve_symbol
+
+   # Ensure modules are registered (idempotent)
+   ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
+   processor_cls = resolve_symbol("FloatValueDataSource")
 
 **Execution Components (via ExecutionComponentRegistry)**:
 
@@ -184,8 +286,10 @@ Component Registration
 
 .. code-block:: python
 
-   # Register custom processors via ClassRegistry
-   ClassRegistry.register_modules(["my_extension.processors"])
+   # Register custom processors via ProcessorRegistry
+   from semantiva.registry import ProcessorRegistry
+
+   ProcessorRegistry.register_modules(["my_extension.processors"])
 
 **Custom Execution Components**:
 
@@ -199,11 +303,12 @@ Component Registration
 Best Practices
 --------------
 
-1. **Registry Selection**: Use ``ClassRegistry`` for data/context processors,
-   ``ExecutionComponentRegistry`` for execution components.
+1. **Registry Selection**: Use ``resolve_symbol``/``ProcessorRegistry`` for
+   data/context processors and ``ExecutionComponentRegistry`` for execution components.
 
-2. **Initialization Order**: Always call ``ClassRegistry.initialize_default_modules()``
-   before using either registry.
+2. **Initialization Order**: Use ``apply_profile`` or
+   ``ProcessorRegistry.register_modules`` to ensure required modules are loaded
+   before constructing pipelines.
 
 3. **Lazy Imports**: When adding new execution components, use lazy imports in
    ``initialize_defaults()`` to avoid circular dependencies.
@@ -216,18 +321,19 @@ Best Practices
 Idempotent Defaults
 -------------------
 
-``ClassRegistry.initialize_default_modules()`` no longer clears custom
-resolvers when loading defaults, and built-in resolvers are installed once.
-Calling the method repeatedly is safe and preserves any user-provided
-resolvers.
+``register_builtin_resolvers()`` installs built-in name and parameter resolvers
+exactly once. Re-invoking it is safe and preserves any user-provided
+resolvers registered with ``NameResolverRegistry`` or
+``ParameterResolverRegistry``.
 
 Migration Notes
 ---------------
 
 The dual-registry architecture was introduced to resolve circular import issues
-while maintaining backward compatibility. Existing code using ``ClassRegistry`` 
-for data processors continues to work unchanged. Only the internal orchestrator 
-factory implementation was modified to use the new execution registry.
+while maintaining backward compatibility. Existing code using the new
+``ProcessorRegistry`` and ``resolve_symbol`` APIs continues to work unchanged.
+Only the internal orchestrator factory implementation was modified to use the
+execution registry explicitly.
 
 The separation provides a foundation for future scalability, allowing independent
 evolution of data processing and execution layer components without coupling concerns.

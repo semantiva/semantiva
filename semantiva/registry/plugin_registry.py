@@ -32,12 +32,11 @@ Extension Implementation Patterns:
 
 Pattern 1 - SemantivaExtension Subclass (Recommended):
 ```python
-from semantiva.registry import SemantivaExtension
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry import SemantivaExtension, ProcessorRegistry
 
 class YourExtension(SemantivaExtension):
     def register(self) -> None:
-        ClassRegistry.register_modules([
+        ProcessorRegistry.register_modules([
             "your_package.operations",
             "your_package.probes",
             "your_package.data_io"
@@ -46,10 +45,10 @@ class YourExtension(SemantivaExtension):
 
 Pattern 2 - Module-level Register Function:
 ```python
-from semantiva.registry.class_registry import ClassRegistry
+from semantiva.registry import ProcessorRegistry
 
 def register() -> None:
-    ClassRegistry.register_modules([
+    ProcessorRegistry.register_modules([
         "your_package.operations",
         "your_package.probes",
         "your_package.data_io"
@@ -259,28 +258,26 @@ class SemantivaExtension(ABC):
     Implementation Requirements:
     ---------------------------
     Subclasses must implement the `register()` method to:
-    1. Register all their modules with the ClassRegistry
-    2. Register any custom resolvers or parameter handlers
+    1. Register all their modules with :class:`~semantiva.registry.ProcessorRegistry`
+    2. Register any custom name or parameter resolvers if required
     3. Perform any other initialization required for the extension
 
     Example Implementation:
     ----------------------
     ```python
-    from semantiva.registry import SemantivaExtension
-    from semantiva.registry.class_registry import ClassRegistry
+    from semantiva.registry import SemantivaExtension, ProcessorRegistry
 
     class SemantivaImaging(SemantivaExtension):
         def register(self) -> None:
             # Register modules containing processors and data types
-            ClassRegistry.register_modules([
+            ProcessorRegistry.register_modules([
                 "semantiva_imaging.operations",
                 "semantiva_imaging.probes",
                 "semantiva_imaging.data_io",
                 "semantiva_imaging.data_types"
             ])
 
-            # Optional: Register custom resolvers
-            # ClassRegistry.register_resolver(my_custom_resolver)
+            # Optional: Register custom resolvers via NameResolverRegistry
     ```
 
     Usage:
@@ -305,9 +302,9 @@ class SemantivaExtension(ABC):
         and any custom resolvers required for the extension to function.
 
         The implementation should:
-        1. Call `ClassRegistry.register_modules()` with all relevant module names
-        2. Register any custom class name resolvers via `ClassRegistry.register_resolver()`
-        3. Register any parameter resolvers via `ClassRegistry.register_param_resolver()`
+        1. Call :func:`ProcessorRegistry.register_modules` with all relevant module names
+        2. Register any custom class name resolvers via :class:`NameResolverRegistry`
+        3. Register any parameter resolvers via :class:`ParameterResolverRegistry`
         4. Perform any other one-time initialization
 
         Raises:

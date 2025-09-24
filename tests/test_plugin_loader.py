@@ -14,9 +14,7 @@
 
 import importlib.metadata
 from unittest.mock import patch, MagicMock
-import logging
 import pytest
-from semantiva.logger import Logger
 from semantiva.registry import load_extensions, SemantivaExtension, plugin_registry
 
 
