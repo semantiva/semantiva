@@ -17,13 +17,21 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Dict, Iterable, List, Mapping, cast
 
 import yaml
 
 from semantiva.registry import RegistryProfile, apply_profile, load_extensions
 
-from .schema import ExecutionConfig, FanoutSpec, PipelineConfiguration, TraceConfig
+from .schema import (
+    ExecutionConfig,
+    PipelineConfiguration,
+    RunBlock,
+    RunSource,
+    RunSpaceV1Config,
+    TraceConfig,
+    RunBlockMode,
+)
 
 
 def _ensure_mapping(name: str, value: Any) -> Mapping[str, Any]:
@@ -67,36 +75,106 @@ def _parse_trace_block(block: Any) -> TraceConfig:
     )
 
 
-def _parse_fanout_block(block: Any) -> FanoutSpec:
+def _parse_run_space_block(block: Any) -> RunSpaceV1Config:
     if block is None:
-        return FanoutSpec()
+        return RunSpaceV1Config()
     if not isinstance(block, Mapping):
-        raise ValueError("fanout block must be a mapping if provided")
-    spec = FanoutSpec()
-    if "param" in block:
-        spec.param = block.get("param")
-    if "values" in block:
-        values = block.get("values")
-        if values is not None and not isinstance(values, list):
-            raise ValueError("fanout.values must be a list")
-        spec.values = list(values) if values is not None else None
-    if "values_file" in block:
-        vf = block.get("values_file")
-        if vf is not None and not isinstance(vf, str):
-            raise ValueError("fanout.values_file must be a string path")
-        spec.values_file = vf
-    multi = block.get("multi")
-    if multi is not None:
-        if not isinstance(multi, Mapping):
-            raise ValueError("fanout.multi must be a mapping of parameter -> list")
-        spec.multi = {}
-        for key, seq in multi.items():
-            if not isinstance(seq, list):
-                raise ValueError("fanout.multi entries must be lists")
-            spec.multi[str(key)] = list(seq)
-    if "mode" in block:
-        spec.mode = str(block.get("mode") or "zip")
-    return spec
+        raise ValueError("run_space block must be a mapping if provided")
+
+    cfg = RunSpaceV1Config()
+    combine = str(block.get("combine", "product")).lower()
+    if combine not in ("zip", "product"):
+        raise ValueError("run_space.combine must be 'zip' or 'product'")
+    cfg.combine = combine  # type: ignore[assignment]
+
+    cap = block.get("cap", 1000)
+    try:
+        cfg.cap = int(cap)
+    except (TypeError, ValueError) as exc:  # pragma: no cover - defensive
+        raise ValueError("run_space.cap must be an integer") from exc
+
+    cfg.plan_only = bool(block.get("plan_only", False))
+
+    blocks_raw = block.get("blocks", [])
+    if blocks_raw is None:
+        blocks_raw = []
+    if not isinstance(blocks_raw, list):
+        raise ValueError("run_space.blocks must be a list")
+
+    for idx, entry in enumerate(blocks_raw):
+        if not isinstance(entry, Mapping):
+            raise ValueError(f"run_space.blocks[{idx}] must be a mapping")
+        mode = str(entry.get("mode", "")).lower()
+        if mode not in ("zip", "product"):
+            raise ValueError(f"run_space.blocks[{idx}] has invalid mode '{mode}'")
+
+        context = entry.get("context") or {}
+        if not isinstance(context, Mapping):
+            raise ValueError(f"run_space.blocks[{idx}].context must be a mapping")
+        context_map: Dict[str, List[Any]] = {}
+        for key, value in context.items():
+            if not isinstance(value, list):
+                raise ValueError(
+                    f"run_space.blocks[{idx}].context['{key}'] must be a list"
+                )
+            context_map[str(key)] = list(value)
+
+        source_entry = entry.get("source")
+        run_source: RunSource | None = None
+        if source_entry is not None:
+            if not isinstance(source_entry, Mapping):
+                raise ValueError(f"run_space.blocks[{idx}].source must be a mapping")
+            source_type = str(source_entry.get("type", "")).lower()
+            if source_type not in ("csv", "json", "yaml", "ndjson"):
+                raise ValueError(
+                    f"run_space.blocks[{idx}].source.type must be one of 'csv', 'json', 'yaml', 'ndjson'"
+                )
+            raw_path = source_entry.get("path")
+            if not isinstance(raw_path, str):
+                raise ValueError(
+                    f"run_space.blocks[{idx}].source.path must be a string"
+                )
+            select = source_entry.get("select")
+            if select is not None and not isinstance(select, list):
+                raise ValueError(
+                    f"run_space.blocks[{idx}].source.select must be a list"
+                )
+            rename = source_entry.get("rename") or {}
+            if not isinstance(rename, Mapping):
+                raise ValueError(
+                    f"run_space.blocks[{idx}].source.rename must be a mapping"
+                )
+            rename_dict = {str(k): str(v) for k, v in rename.items()}
+            mode_override_raw = str(source_entry.get("mode", "zip")).lower()
+            if mode_override_raw not in ("zip", "product"):
+                raise ValueError(
+                    f"run_space.blocks[{idx}].source.mode must be 'zip' or 'product'"
+                )
+            # mypy: cast the string literal to the RunBlockMode literal type
+            mode_override = cast(RunBlockMode, mode_override_raw)
+            run_source = RunSource(
+                type=source_type,  # type: ignore[arg-type]
+                path=raw_path,
+                select=list(select) if select is not None else None,
+                rename=rename_dict,
+                mode=mode_override,
+            )
+
+        cfg.blocks.append(RunBlock(mode=mode, context=context_map, source=run_source))  # type: ignore[arg-type]
+
+    # Strict duplicate keys across blocks (context definitions only). Source keys
+    # are validated during execution planning where files are available.
+    seen_keys: set[str] = set()
+    for idx, block_cfg in enumerate(cfg.blocks):
+        dup = seen_keys.intersection(block_cfg.context.keys())
+        if dup:
+            dup_sorted = ", ".join(sorted(dup))
+            raise ValueError(
+                f"Duplicate context key(s) across run_space blocks: {dup_sorted} (at block {idx})"
+            )
+        seen_keys.update(block_cfg.context.keys())
+
+    return cfg
 
 
 def _extract_extensions(config: Mapping[str, Any]) -> Iterable[str]:
@@ -146,13 +224,16 @@ def parse_pipeline_config(
 
     execution_cfg = _parse_execution_block(config.get("execution"))
     trace_cfg = _parse_trace_block(config.get("trace"))
-    fanout_cfg = _parse_fanout_block(config.get("fanout"))
+    run_space_block = config.get("run_space")
+    if run_space_block is None and isinstance(config.get("pipeline"), Mapping):
+        run_space_block = config["pipeline"].get("run_space")
+    run_space_cfg = _parse_run_space_block(run_space_block)
 
     return PipelineConfiguration(
         [dict(node) for node in nodes],
         execution=execution_cfg,
         trace=trace_cfg,
-        fanout=fanout_cfg,
+        run_space=run_space_cfg,
         extensions=extensions,
         source_path=source_path,
         base_dir=base_dir,

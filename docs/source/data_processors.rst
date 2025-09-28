@@ -258,8 +258,8 @@ This example demonstrates a parametric sweep using resolvers:
 
    *Generates a collection by sweeping an independent variable.*
 
-   - ``vars: { t: [-1, 2] }`` – defines the sweep variable as a range from -1 to 2
-   - ``parametric_expressions: { value: "2.0 * t" }`` – calculates a value from ``t``
+   - ``vars: { t: [-1, 2] }`` - defines the sweep variable as a range from -1 to 2
+   - ``parametric_expressions: { value: "2.0 * t" }`` - calculates a value from ``t``
 
    The sweep produces a ``FloatDataCollection`` of items whose **data** results from
    the expression and whose **context** carries the sweep variable(s).
@@ -268,7 +268,7 @@ This example demonstrates a parametric sweep using resolvers:
 
    *Collects values from a collection and writes them into the **context**.*
 
-   - ``context_keyword: "sweep_results"`` – the collected values appear at
+   - ``context_keyword: "sweep_results"`` - the collected values appear at
      ``payload.context["sweep_results"]``.
 
 3. ``FloatCollectionSumOperation``
@@ -279,7 +279,7 @@ This example demonstrates a parametric sweep using resolvers:
 
    *Records the final scalar into the **context**.*
 
-   - ``context_keyword: "final_sum"`` – the scalar is stored at
+   - ``context_keyword: "final_sum"`` - the scalar is stored at
      ``payload.context["final_sum"]``.
 
 Run it

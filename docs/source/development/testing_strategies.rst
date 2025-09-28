@@ -63,7 +63,7 @@ Example: YAML-Based Configuration Testing
    def test_yaml_configuration():
        """Test component using YAML configuration (closest to real usage)."""
        yaml_config = '''
-       extensions: ["your_extension"]
+       extensions: ["your-extension"]
        
        pipeline:
          nodes:

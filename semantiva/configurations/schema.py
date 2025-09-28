@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence
+from typing import Any, Dict, Iterable, List, Literal, Optional, Sequence
 
 
 @dataclass
@@ -39,15 +39,45 @@ class TraceConfig:
     options: Dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass
-class FanoutSpec:
-    """Declarative fan-out specification supporting single and multi-zip modes."""
+RunBlockMode = Literal["zip", "product"]
 
-    param: Optional[str] = None
-    values: Optional[List[Any]] = None
-    values_file: Optional[str] = None
-    multi: Dict[str, List[Any]] = field(default_factory=dict)
-    mode: str = "zip"
+
+@dataclass
+class RunSource:
+    """External source feeding values into a run-space block.
+
+    Files default to *rows-as-runs* semantics (``mode='zip'``), treating each
+    row/object as one run unless ``mode`` is explicitly set to ``'product'``.
+    """
+
+    type: Literal["csv", "json", "yaml", "ndjson"]
+    path: str
+    select: Optional[List[str]] = None
+    rename: Dict[str, str] = field(default_factory=dict)
+    mode: RunBlockMode = "zip"
+
+
+@dataclass
+class RunBlock:
+    """Single block that expands context keys via zip or product semantics."""
+
+    mode: RunBlockMode
+    context: Dict[str, List[Any]] = field(default_factory=dict)
+    source: Optional[RunSource] = None
+
+
+@dataclass
+class RunSpaceV1Config:
+    """Version 1 run-space configuration describing blocks and global options.
+
+    Blocks expand deterministically: they are combined in declaration order
+    and, within each block, context keys are iterated in sorted order.
+    """
+
+    combine: RunBlockMode = "product"
+    cap: int = 1000
+    plan_only: bool = False
+    blocks: List[RunBlock] = field(default_factory=list)
 
 
 class PipelineConfiguration(list[dict[str, Any]]):
@@ -59,7 +89,7 @@ class PipelineConfiguration(list[dict[str, Any]]):
         *,
         execution: Optional[ExecutionConfig] = None,
         trace: Optional[TraceConfig] = None,
-        fanout: Optional[FanoutSpec] = None,
+        run_space: Optional[RunSpaceV1Config] = None,
         extensions: Optional[Iterable[str]] = None,
         source_path: Optional[str] = None,
         base_dir: Optional[Path] = None,
@@ -68,7 +98,7 @@ class PipelineConfiguration(list[dict[str, Any]]):
         super().__init__(nodes)
         self.execution = execution or ExecutionConfig()
         self.trace = trace or TraceConfig()
-        self.fanout = fanout or FanoutSpec()
+        self.run_space = run_space or RunSpaceV1Config()
         self.extensions = tuple(extensions or ())
         self.source_path = source_path
         self.base_dir = Path(base_dir) if base_dir is not None else None
@@ -84,6 +114,8 @@ class PipelineConfiguration(list[dict[str, Any]]):
 __all__ = [
     "ExecutionConfig",
     "TraceConfig",
-    "FanoutSpec",
+    "RunSource",
+    "RunBlock",
+    "RunSpaceV1Config",
     "PipelineConfiguration",
 ]

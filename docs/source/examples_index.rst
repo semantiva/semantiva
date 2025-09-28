@@ -22,6 +22,8 @@ Examples Index
      - ``docs/source/examples/pipeline_model_fitting_multiple_operations.yaml``
    * - Parametric sweep
      - ``tests/parametric_sweep_demo.yaml``
+   * - Run space (floats)
+     - ``docs/source/examples/run_space_floats.yaml``
 
 How to run these examples
 -------------------------

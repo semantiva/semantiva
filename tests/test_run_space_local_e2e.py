@@ -18,18 +18,22 @@ from semantiva import Pipeline, Payload
 from semantiva.configurations import load_pipeline_from_yaml
 from semantiva.context_processors import ContextType
 from semantiva.data_types import NoDataType
-from semantiva.execution.fanout import expand_fanout
+from semantiva.execution.run_space import expand_run_space
 from semantiva.trace.drivers.jsonl import JSONLTrace
 
 
-def test_local_fanout_runs_end_to_end(tmp_path):
-    cfg_path = Path("docs/source/examples/fanout_basic_local.yaml").resolve()
+def test_local_run_space_runs_end_to_end(tmp_path, monkeypatch):
+    cfg_path = Path("examples/pipelines/run_space_demo.yaml").resolve()
     pipeline_cfg = load_pipeline_from_yaml(str(cfg_path))
 
-    runs, meta = expand_fanout(pipeline_cfg.fanout, cwd=cfg_path.parent)
-    assert runs, "Expected fan-out runs"
+    runs, meta = expand_run_space(pipeline_cfg.run_space, cwd=cfg_path.parent)
+    assert runs, "Expected run-space expansions"
+
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "outputs").mkdir(exist_ok=True)
 
     trace_dir = tmp_path / "trace"
+    trace_dir.mkdir(parents=True, exist_ok=True)
     trace_driver = JSONLTrace(str(trace_dir))
     pipeline = Pipeline(
         pipeline_cfg.nodes,
@@ -37,24 +41,22 @@ def test_local_fanout_runs_end_to_end(tmp_path):
     )
 
     outputs = []
+    total = len(runs)
     for idx, values in enumerate(runs):
-        fanout_args = {
-            "fanout.index": idx,
-            "fanout.mode": meta.get("mode", "single"),
-            "fanout.values": values,
+        run_args = {
+            "run_space.index": idx,
+            "run_space.total": total,
+            "run_space.combine": meta.get("combine", "product"),
+            "run_space.context": dict(values),
         }
-        if "source_file" in meta:
-            fanout_args["fanout.source_file"] = meta["source_file"]
-        if "source_sha256" in meta:
-            fanout_args["fanout.source_sha256"] = meta["source_sha256"]
-        pipeline.set_run_metadata({"args": fanout_args})
-        payload = Payload(NoDataType(), ContextType(values))
+        pipeline.set_run_metadata({"args": run_args, "run_space": meta})
+        payload = Payload(NoDataType(), ContextType(dict(values)))
         result = pipeline.process(payload)
         outputs.append(result.data.data)
 
     trace_driver.close()
 
-    expected = [vals["value"] * vals["factor"] for vals in runs]
+    expected = [(vals["value"] + vals["addend"]) * vals["factor"] for vals in runs]
     assert outputs == expected
     ser_files = list(trace_dir.glob("*.ser.jsonl"))
-    assert ser_files, "SER file not created for fan-out run"
+    assert ser_files, "SER file not created for run-space run"
