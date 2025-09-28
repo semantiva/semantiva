@@ -13,13 +13,22 @@
 # limitations under the License.
 
 from .load_pipeline_from_yaml import load_pipeline_from_yaml, parse_pipeline_config
-from .schema import ExecutionConfig, TraceConfig, FanoutSpec, PipelineConfiguration
+from .schema import (
+    ExecutionConfig,
+    PipelineConfiguration,
+    RunBlock,
+    RunSpaceV1Config,
+    RunSource,
+    TraceConfig,
+)
 
 __all__ = [
     "load_pipeline_from_yaml",
     "parse_pipeline_config",
     "ExecutionConfig",
     "TraceConfig",
-    "FanoutSpec",
+    "RunSource",
+    "RunBlock",
+    "RunSpaceV1Config",
     "PipelineConfiguration",
 ]

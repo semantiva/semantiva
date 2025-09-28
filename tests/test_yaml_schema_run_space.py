@@ -15,7 +15,7 @@
 from semantiva.configurations import load_pipeline_from_yaml
 
 
-def test_yaml_parses_execution_trace_and_fanout(tmp_path):
+def test_yaml_parses_execution_trace_and_run_space(tmp_path):
     yaml_content = """
 execution:
   orchestrator: LocalSemantivaOrchestrator
@@ -28,17 +28,20 @@ trace:
   output_path: ./ser/out.ser.jsonl
   options:
     detail: all
-fanout:
-  multi:
-    value: [1, 2]
-    factor: [3, 4]
+run_space:
+  combine: product
+  blocks:
+    - mode: zip
+      context:
+        value: [1, 2]
+        factor: [3, 4]
 extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     - processor: FloatValueDataSource
     - processor: FloatMockDataSink
       parameters:
-        path: ./fanout.txt
+        path: ./run-space.txt
 """
     cfg_path = tmp_path / "schema.yaml"
     cfg_path.write_text(yaml_content)
@@ -54,6 +57,9 @@ pipeline:
     assert pipeline_cfg.trace.output_path == "./ser/out.ser.jsonl"
     assert pipeline_cfg.trace.options["detail"] == "all"
 
-    assert pipeline_cfg.fanout.multi == {"value": [1, 2], "factor": [3, 4]}
-    assert pipeline_cfg.fanout.mode == "zip"
+    assert pipeline_cfg.run_space.combine == "product"
+    assert len(pipeline_cfg.run_space.blocks) == 1
+    block = pipeline_cfg.run_space.blocks[0]
+    assert block.mode == "zip"
+    assert block.context == {"value": [1, 2], "factor": [3, 4]}
     assert len(pipeline_cfg.nodes) == 2

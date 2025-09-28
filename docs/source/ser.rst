@@ -93,17 +93,17 @@ Example SER
 
 The ``checks`` block now always contains:
 
-* ``why_run.pre`` – built-in validation executed before the node runs.
-* ``why_ok.post`` – output validations that ran after the node returned.
-* ``why_ok.env`` – minimal, non-sensitive environment pins for reproducibility.
+* ``why_run.pre`` - built-in validation executed before the node runs.
+* ``why_ok.post`` - output validations that ran after the node returned.
+* ``why_ok.env`` - minimal, non-sensitive environment pins for reproducibility.
 
 Detail flags control which summary fields are emitted when using the JSONL
 driver:
 
-* ``hash`` (default) – include ``sha256`` hashes only.
-* ``repr`` – additionally include ``repr`` for input/output data.
-* ``context`` – with ``repr`` also include ``repr`` for pre/post context.
-* ``all`` – enable all of the above.
+* ``hash`` (default) - include ``sha256`` hashes only.
+* ``repr`` - additionally include ``repr`` for input/output data.
+* ``context`` - with ``repr`` also include ``repr`` for pre/post context.
+* ``all`` - enable all of the above.
 
 Versioning Policy
 -----------------

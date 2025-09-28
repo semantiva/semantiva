@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-## [Unreleased] – TBD
+## [Unreleased] - TBD
 
 ### Added
 - Execution Component Registry list helpers and short-hand identifiers (``local``,
@@ -14,10 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   classes.
 - Built-in ``stringbuild:`` resolver registered via the name resolver registry and corresponding unit tests and examples (docs/tutorials updated).
   - Context string-builder factory (YAML resolver ``stringbuild:"<template>":<out_key>``): dynamic ContextProcessor factory that builds deterministic strings from strict ``{placeholder}`` identifiers and writes them to context. Templates reject format specs/conversions and require all placeholders to exist at runtime.
-  - Documentation: added `Factories: stringbuild` docs, fan-out quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
-- Unified pipeline schema blocks (``execution``, ``trace``, ``fanout``) with
-  orchestration factory, fan-out expansion helper, CLI parity, documentation,
-  and tests covering SER fan-out pinning and local end-to-end runs.
+  - Documentation: added `Factories: stringbuild` docs, run space quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
+- Run Space v1: schema objects (``run_space.blocks`` with ``zip``/``product``),
+  planner with cap/plan-only, CLI overrides, documentation (concept +
+  quickstart), and tests covering block expansion, external sources,
+  SER pinning, and local end-to-end runs.
 - **ExecutionComponentRegistry** for orchestrators/executors/transports with
   lazy default registration to avoid circular imports; factory integration
   for orchestrator construction.
@@ -93,7 +94,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   ``RuntimeError`` exceptions pointing to the required entry point or
   ``register()`` function.
 - CLI trace configuration replaced legacy flags with structured
-  ``--execution.*``, ``--trace.*``, and ``--fanout.*`` options aligned with the
+  ``--execution.*``, ``--trace.*``, and ``--run-space-*`` options aligned with the
   YAML schema.
 - Consolidated registry documentation: merged the component registry architecture
   into a unified ``Registry System`` page and updated cross-references.
@@ -203,7 +204,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     - `semantiva/payload_operations/pipeline.Pipeline` now accepts optional `transport` and `orchestrator` arguments.  
     - Delegates its internal `_process()` loop to `SemantivaOrchestrator.execute`, while still respecting existing timers, probes, and inspection APIs (no public API change).  
   - **Job-queue orchestration**  
-    - Introduced `QueueSemantivaOrchestrator` in `semantiva/execution_tools/job_queue/queue_orchestrator.py` for FIFO job enqueue, UUID tracking, and `Future`–based result handling.  
+    - Introduced `QueueSemantivaOrchestrator` in `semantiva/execution_tools/job_queue/queue_orchestrator.py` for FIFO job enqueue, UUID tracking, and `Future`-based result handling.  
     - Added `worker_loop()` in `semantiva/execution_tools/job_queue/worker.py` to continuously pull `jobs.*.cfg`, instantiate pipelines, process them, and publish status.  
     - Added `_setup_log()` helper in `semantiva/execution_tools/job_queue/logging_setup.py` for master/worker log files.  
 - **PipelineInspector** helper class: Introduced `semantiva.tools.pipeline_inspector.PipelineInspector` to surface context parameters and semantic IDs for each node in a pipeline.  

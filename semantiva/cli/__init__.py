@@ -16,7 +16,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import sys
@@ -31,7 +30,7 @@ import yaml
 from semantiva.configurations import parse_pipeline_config
 from semantiva.configurations.schema import ExecutionConfig, TraceConfig
 from semantiva.execution.component_registry import ExecutionComponentRegistry
-from semantiva.execution.fanout import expand_fanout
+from semantiva.execution.run_space import expand_run_space
 from semantiva.execution.orchestrator.factory import build_orchestrator
 from semantiva.logger import Logger
 from semantiva.registry import RegistryProfile, apply_profile
@@ -161,47 +160,67 @@ def _parse_options_list(items: List[str]) -> Dict[str, Any]:
     return options
 
 
-def _parse_fanout_values_arg(value: str) -> List[Any]:
-    parsed = _parse_yaml_value(value)
-    if isinstance(parsed, list):
-        return parsed
-    if isinstance(parsed, str) and "," in parsed:
-        return [_parse_yaml_value(part.strip()) for part in value.split(",")]
-    return [parsed]
-
-
-def _parse_fanout_multi_args(items: List[str]) -> Dict[str, List[Any]]:
-    multi: Dict[str, List[Any]] = {}
-    for item in items:
-        key, value = _parse_key_value(item)
-        if isinstance(value, list):
-            multi[key] = value
-        else:
-            multi[key] = _parse_fanout_values_arg(str(value))
-    return multi
-
-
-def _build_fanout_args(
-    index: int, values: Dict[str, Any], meta: Dict[str, Any]
+def _build_run_space_args(
+    index: int, total: int, context: Dict[str, Any], meta: Dict[str, Any]
 ) -> Dict[str, Any]:
     args_map: Dict[str, Any] = {
-        "fanout.index": index,
-        "fanout.mode": meta.get("mode", "none"),
-        "fanout.values": values,
+        "run_space.index": index,
+        "run_space.total": total,
+        "run_space.combine": meta.get("combine", "product"),
+        "run_space.context": context,
     }
-    if "source_file" in meta:
-        args_map["fanout.source_file"] = meta["source_file"]
-    if "source_sha256" in meta:
-        args_map["fanout.source_sha256"] = meta["source_sha256"]
-    try:
-        encoded = json.dumps(
-            values, sort_keys=True, default=lambda obj: repr(obj)
-        ).encode("utf-8")
-    except TypeError:
-        encoded = repr(values).encode("utf-8")
-    if len(encoded) > 1024:
-        args_map["fanout.values_sha256"] = hashlib.sha256(encoded).hexdigest()
+    if meta.get("override_source"):
+        args_map["run_space.override_source"] = meta["override_source"]
     return args_map
+
+
+def _print_run_space_plan(meta: Dict[str, Any], runs: List[Dict[str, Any]]) -> None:
+    combine = meta.get("combine", "product")
+    cap = meta.get("cap")
+    expanded = meta.get("expanded_runs", len(runs))
+
+    def _oneline(value: Dict[str, Any]) -> str:
+        text = json.dumps(value, separators=(",", ":"), default=str)
+        return text if len(text) <= 60 else text[:57] + "…"
+
+    print("Run Space Plan")
+    print(f"  combine: {combine}")
+    print(f"  cap: {cap}")
+    print(f"  expanded_runs: {expanded}")
+    print("  blocks:")
+    for idx, block_meta in enumerate(meta.get("blocks", [])):
+        keys = sorted(block_meta.get("context_keys", []))
+        size = block_meta.get("size", 0)
+        mode = block_meta.get("mode", "zip")
+        print(f"    - #{idx}: mode={mode}, size={size}, keys={repr(keys)}")
+        if "source" in block_meta:
+            source_meta = block_meta["source"]
+            sha = source_meta.get("sha256", "")
+            sha_preview = f"(sha256 {sha[:8]}…)" if sha else ""
+            print(
+                "      source: {type} {path} {sha}".format(
+                    type=source_meta.get("type"),
+                    path=source_meta.get("path"),
+                    sha=sha_preview,
+                )
+            )
+
+    if not runs:
+        print("  preview: none (0 runs)")
+        return
+
+    preview_limit = 2
+    total = len(runs)
+    print("  preview:")
+    head_count = min(preview_limit, total)
+    for idx in range(head_count):
+        print(f"    {idx + 1}: {_oneline(runs[idx])}")
+    if total > preview_limit * 2:
+        print("    …")
+    if total > preview_limit:
+        tail_start = max(preview_limit, total - preview_limit)
+        for idx in range(tail_start, total):
+            print(f"    {idx + 1}: {_oneline(runs[idx])}")
 
 
 def _build_trace_driver(trace_cfg: TraceConfig):
@@ -370,32 +389,21 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
         help="Trace driver option (repeatable)",
     )
     run_p.add_argument(
-        "--fanout.param",
-        dest="fanout_param",
-        help="Single-parameter fan-out target name",
+        "--run-space-file",
+        dest="run_space_file",
+        help="Path to a YAML file containing a run_space block",
     )
     run_p.add_argument(
-        "--fanout.values",
-        dest="fanout_values",
-        help="Fan-out values (JSON list or comma-separated)",
+        "--run-space-cap",
+        dest="run_space_cap",
+        type=int,
+        help="Override run_space.cap safety limit",
     )
     run_p.add_argument(
-        "--fanout.values-file",
-        dest="fanout_values_file",
-        help="Path to JSON/YAML file with fan-out values",
-    )
-    run_p.add_argument(
-        "--fanout.multi",
-        dest="fanout_multi",
-        action="append",
-        default=[],
-        metavar="param=[...]",
-        help="Multi-parameter fan-out ZIP values (repeatable)",
-    )
-    run_p.add_argument(
-        "--fanout.multi-file",
-        dest="fanout_multi_file",
-        help="Path to JSON/YAML file containing mapping of multi fan-out values",
+        "--run-space-plan-only",
+        dest="run_space_plan_only",
+        action="store_true",
+        help="Plan run_space expansions, print summary with previews, and exit",
     )
     run_p.add_argument("--version", action="version", version=_get_version())
 
@@ -521,7 +529,7 @@ def _run(args: argparse.Namespace) -> int:
     if args.verbose and args.overrides:
         logger.debug("Overrides: %s", args.overrides)
 
-    # Merge CLI execution/trace/fanout sections
+    # Merge CLI execution/trace/run_space sections
     if any(
         [
             args.exec_orchestrator,
@@ -576,37 +584,42 @@ def _run(args: argparse.Namespace) -> int:
                 print(str(exc), file=sys.stderr)
                 return EXIT_CONFIG_ERROR
 
-    if any(
-        [
-            args.fanout_param,
-            args.fanout_values,
-            args.fanout_values_file,
-            args.fanout_multi,
-            args.fanout_multi_file,
-        ]
-    ):
-        fanout_section = config.setdefault("fanout", {})
-        if not isinstance(fanout_section, dict):
-            print("Invalid config: fanout block must be a mapping", file=sys.stderr)
+    run_space_override = False
+    if args.run_space_file:
+        run_space_path = Path(args.run_space_file).expanduser().resolve()
+        override_payload = _load_yaml(run_space_path)
+        if override_payload is None:
+            run_space_block: Dict[str, Any] = {}
+        elif isinstance(override_payload, dict) and "run_space" in override_payload:
+            run_space_section = override_payload["run_space"]
+            if not isinstance(run_space_section, dict):
+                print(
+                    "Invalid run-space override: run_space block must be a mapping",
+                    file=sys.stderr,
+                )
+                return EXIT_CONFIG_ERROR
+            run_space_block = dict(run_space_section)
+        elif isinstance(override_payload, dict):
+            run_space_block = dict(override_payload)
+        else:
+            print(
+                "Invalid run-space override file: expected a mapping or run_space block",
+                file=sys.stderr,
+            )
             return EXIT_CONFIG_ERROR
-        if args.fanout_param:
-            fanout_section["param"] = args.fanout_param
-        if args.fanout_values:
-            fanout_section["values"] = _parse_fanout_values_arg(args.fanout_values)
-        if args.fanout_values_file:
-            fanout_section["values_file"] = args.fanout_values_file
-        if args.fanout_multi:
-            multi = fanout_section.setdefault("multi", {})
-            if not isinstance(multi, dict):
-                print("Invalid config: fanout.multi must be a mapping", file=sys.stderr)
-                return EXIT_CONFIG_ERROR
-            try:
-                multi.update(_parse_fanout_multi_args(args.fanout_multi))
-            except ValueError as exc:
-                print(str(exc), file=sys.stderr)
-                return EXIT_CONFIG_ERROR
-        if args.fanout_multi_file:
-            fanout_section["values_file"] = args.fanout_multi_file
+        config["run_space"] = run_space_block
+        run_space_override = True
+
+    if args.run_space_cap is not None or args.run_space_plan_only:
+        run_space_section = config.setdefault("run_space", {})
+        if not isinstance(run_space_section, dict):
+            print("Invalid config: run_space block must be a mapping", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+        if args.run_space_cap is not None:
+            run_space_section["cap"] = args.run_space_cap
+        if args.run_space_plan_only:
+            run_space_section["plan_only"] = True
+        run_space_override = True
 
     pipeline_path = Path(args.pipeline).expanduser().resolve()
 
@@ -666,20 +679,27 @@ def _run(args: argparse.Namespace) -> int:
         trace=trace_driver,
     )
 
-    runs, fanout_meta = expand_fanout(
-        pipeline_cfg.fanout,
+    runs, run_space_meta = expand_run_space(
+        pipeline_cfg.run_space,
         cwd=pipeline_cfg.base_dir or pipeline_path.parent,
     )
-    if not runs:
-        fanout_meta.setdefault("mode", "none")
-        runs = [{}]
+    if run_space_override:
+        run_space_meta = dict(run_space_meta)
+        run_space_meta["override_source"] = "CLI"
     run_count = len(runs)
+
+    if pipeline_cfg.run_space.plan_only:
+        _print_run_space_plan(run_space_meta, runs)
+        print("plan_only enabled: no execution performed.")
+        return EXIT_SUCCESS
 
     if args.dry_run:
         if ctx_dict and args.verbose:
             logger.debug("Ignoring --context for dry run")
         print(f"Graph: {len(pipeline.resolved_spec)} nodes.")
-        print(f"Fan-out runs: {run_count}")
+        print(f"Run space runs: {run_count}")
+        if run_count:
+            print(f"Combine mode: {run_space_meta.get('combine', 'product')}")
         print("Dry run OK (no execution performed).")
         return EXIT_SUCCESS
 
@@ -687,8 +707,13 @@ def _run(args: argparse.Namespace) -> int:
         for idx, run_values in enumerate(runs):
             run_context = dict(ctx_dict)
             run_context.update(run_values)
-            fanout_args = _build_fanout_args(idx, dict(run_values), fanout_meta)
-            pipeline.set_run_metadata({"args": fanout_args})
+            run_args = _build_run_space_args(
+                idx,
+                run_count,
+                dict(run_context),
+                run_space_meta,
+            )
+            pipeline.set_run_metadata({"args": run_args, "run_space": run_space_meta})
             initial_payload = (
                 Payload(NoDataType(), ContextType(run_context)) if run_context else None
             )

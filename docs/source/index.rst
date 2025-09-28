@@ -18,6 +18,7 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    context_processors
    contracts
    sweeps
+   run_space
 
 .. toctree::
    :maxdepth: 2
@@ -32,7 +33,7 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    architecture/pipeline_schema
    execution
    workflows_fitting_models
-   tutorials/fanout_quickstart
+   tutorials/run_space_quickstart
    logger
    examples_index
    api_reference

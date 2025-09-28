@@ -1,0 +1,30 @@
+run_space:
+  combine: product
+  cap: 500
+  plan_only: false
+  blocks:
+    - mode: zip
+      context:
+        value: [3.0, 5.0]
+        factor: [2.0, 4.0]
+        addend: [1.0, 1.0]
+    - mode: product
+      context:
+        seed: [1, 2]
+        batch_size: [16, 32]
+
+trace:
+  driver: jsonl
+  output_path: ./ser/run_space_demo.ser.jsonl
+  options:
+    detail: compact
+
+pipeline:
+  nodes:
+    - processor: FloatValueDataSource
+    - processor: FloatAddOperation
+    - processor: FloatMultiplyOperation
+    - processor: FloatCollectValueProbe
+      context_keyword: "result"
+    - processor: stringbuild:"./outputs/value_{value}_factor_{factor}_seed_{seed}.txt":path
+    - processor: FloatTxtFileSaver

@@ -37,11 +37,9 @@ Execute a pipeline.
                       [--trace.driver NAME]
                       [--trace.output PATH-or-DriverSpec]
                       [--trace.option key=value]...
-                      [--fanout.param NAME]
-                      [--fanout.values SEQ]
-                      [--fanout.values-file PATH]
-                      [--fanout.multi NAME=SEQ]...
-                      [--fanout.multi-file PATH]
+                      [--run-space-file PATH]
+                      [--run-space-cap INT]
+                      [--run-space-plan-only]
                       [--version]
 
 **Arguments**
@@ -65,11 +63,9 @@ Execute a pipeline.
 - ``--trace.driver``           Trace driver name (``none``, ``jsonl``, ``pythonpath``, or registry class).
 - ``--trace.output``           Trace output path or ``module:Class`` when ``driver=pythonpath``.
 - ``--trace.option``           Additional driver keyword arguments (repeatable).
-- ``--fanout.param``           Single-parameter fan-out target name.
-- ``--fanout.values``          Values for single-parameter fan-out (JSON list or comma-separated).
-- ``--fanout.values-file``     External JSON/YAML file supplying fan-out values.
-- ``--fanout.multi``           Multi-parameter ZIP values (repeatable ``name=[...]`` arguments).
-- ``--fanout.multi-file``      External JSON/YAML mapping supplying multi fan-out values.
+- ``--run-space-file``         Path to a YAML file containing a ``run_space`` block (overrides pipeline YAML).
+- ``--run-space-cap``          Override the run-space safety cap on total runs.
+- ``--run-space-plan-only``    Plan the run space and print the expansion without executing nodes.
 - ``--version``                Show CLI version.
 
 CLI flags mirror the YAML schema. Any value provided on the command line
@@ -83,6 +79,26 @@ ensuring consistent SER output across orchestrator implementations.
   In YAML, use the plural key ``options`` under ``trace`` and ``execution``. The
   CLI uses repeatable singular flags ``--trace.option`` and ``--execution.option``
   to populate those mappings.
+
+Plan-only example
+-----------------
+
+.. code-block:: console
+
+   $ semantiva run --run-space-file rs.yaml --run-space-plan-only
+   Run Space Plan
+     combine: product
+     cap: 1000
+     expanded_runs: 8
+     blocks:
+       - #0: mode=zip, size=2, keys=['lr', 'momentum']
+       - #1: mode=product, size=4, keys=['batch_size', 'seed']
+     preview:
+       1: {"lr":0.001,"momentum":0.9,"batch_size":16,"seed":1}
+       2: {"lr":0.001,"momentum":0.9,"batch_size":16,"seed":2}
+       …
+       7: {"lr":0.01,"momentum":0.95,"batch_size":16,"seed":1}
+       8: {"lr":0.01,"momentum":0.95,"batch_size":16,"seed":2}
 
 **Component Resolution**
 The CLI loads extensions before constructing execution components so that the

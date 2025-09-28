@@ -12,19 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# tests/examples/test_fanout_floats_example.py
 from __future__ import annotations
 
 from pathlib import Path
 
 
-def test_fanout_floats_yaml_executes_locally(tmp_path, monkeypatch):
-    """
-    Loads the example YAML and executes with the default local orchestrator
-    via the Pipeline API. Asserts that SER is produced and that at least one
-    SER record is written per run.
-    """
-    # Arrange: isolate working directory
+def test_run_space_floats_yaml_executes_locally(tmp_path, monkeypatch):
+    """Execute the run_space example and assert SER is produced."""
+
     cwd = tmp_path
     monkeypatch.chdir(cwd)
 
@@ -33,24 +28,22 @@ def test_fanout_floats_yaml_executes_locally(tmp_path, monkeypatch):
         / "docs"
         / "source"
         / "examples"
-        / "fanout_floats.yaml"
+        / "run_space_floats.yaml"
     )
     assert yaml_path.exists(), f"Example YAML missing at {yaml_path}"
 
     from semantiva.configurations import load_pipeline_from_yaml
-    from semantiva.execution.fanout import expand_fanout
+    from semantiva.execution.run_space import expand_run_space
     from semantiva import Pipeline, Payload
     from semantiva.context_processors import ContextType
     from semantiva.data_types import NoDataType
     from semantiva.trace.drivers.jsonl import JSONLTrace
 
     cfg = load_pipeline_from_yaml(str(yaml_path))
-    runs, meta = expand_fanout(cfg.fanout, cwd=yaml_path.parent)
+    runs, meta = expand_run_space(cfg.run_space, cwd=yaml_path.parent)
 
-    # Create trace driver at the YAML-declared output path
     assert cfg.trace.output_path, "trace.output_path must be set in the example YAML"
     ser_path = Path(cfg.trace.output_path)
-    # Ensure directory exists when a file path is given
     ser_path.parent.mkdir(parents=True, exist_ok=True)
     detail = (
         cfg.trace.options.get("detail") if isinstance(cfg.trace.options, dict) else None
@@ -59,19 +52,18 @@ def test_fanout_floats_yaml_executes_locally(tmp_path, monkeypatch):
 
     pipeline = Pipeline(cfg.nodes, trace=tracer)
 
+    total = len(runs)
     for idx, values in enumerate(runs):
-        # Attach run metadata (pins fanout.* into SER why_ok.args)
-        fanout_args = {
-            "fanout.index": idx,
-            "fanout.mode": meta.get("mode", "single"),
-            "fanout.values": values,
+        run_args = {
+            "run_space.index": idx,
+            "run_space.total": total,
+            "run_space.combine": meta.get("combine", "product"),
+            "run_space.context": dict(values),
         }
-        if "source_file" in meta:
-            fanout_args["fanout.source_file"] = meta["source_file"]
-        if "source_sha256" in meta:
-            fanout_args["fanout.source_sha256"] = meta["source_sha256"]
-        pipeline.set_run_metadata({"args": fanout_args})
-        payload = Payload(NoDataType(), ContextType(values))
+        pipeline.set_run_metadata({"args": run_args, "run_space": meta})
+        payload = Payload(NoDataType(), ContextType(dict(values)))
         pipeline.process(payload)
 
     tracer.close()
+
+    assert ser_path.exists()
