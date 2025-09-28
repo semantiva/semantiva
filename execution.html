@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Workflows — Fitting Models via model:" href="workflows_fitting_models.html" /><link rel="prev" title="Context Processing Architecture" href="architecture/context_processing.html" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Workflows — Fitting Models via model:" href="workflows_fitting_models.html"><link rel="prev" title="Pipeline Configuration Schema" href="architecture/pipeline_schema.html">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Execution - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=7205999f" />
     
@@ -23,14 +23,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -145,14 +145,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -162,8 +158,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -171,8 +166,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -180,8 +174,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -215,12 +208,15 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -254,8 +250,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -263,8 +258,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -273,26 +267,184 @@
 <p>The execution module provides the orchestration infrastructure for running Semantiva pipelines.
 It includes comprehensive error handling and integration with the tracing system to capture
 complete execution records, including error events with timing data and exception details.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator</span></code> ensures that trace resources are properly managed even
-when pipeline execution fails, providing robust error tracing capabilities for debugging
-and monitoring pipeline behavior.</p>
+<section id="component-registry-system">
+<h2>Component Registry System<a class="headerlink" href="#component-registry-system" title="Link to this heading">¶</a></h2>
+<p>Semantiva uses a dual-registry architecture to manage execution components while avoiding
+circular import dependencies:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry" title="semantiva.execution.component_registry.ExecutionComponentRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExecutionComponentRegistry</span></code></a></dt><dd><p>Specialized registry for orchestrators, executors, and transports. This registry
+is designed to break circular import dependencies with the main ProcessorRegistry
+and graph builder modules.</p>
+</dd>
+<dt><a class="reference internal" href="#semantiva.execution.orchestrator.factory.build_orchestrator" title="semantiva.execution.orchestrator.factory.build_orchestrator"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_orchestrator()</span></code></a></dt><dd><p>Factory function that uses ExecutionComponentRegistry to construct orchestrators
+from configuration, supporting dependency injection of executors and transports.</p>
+</dd>
+</dl>
+<p>The component registry follows the dependency inversion principle, acting as a dependency
+sink rather than creating webs of interdependence. See <a class="reference internal" href="architecture/registry.html"><span class="doc">Registry System</span></a>
+for detailed architectural information.</p>
+</section>
+<section id="template-method-orchestrator">
+<h2>Template-method orchestrator<a class="headerlink" href="#template-method-orchestrator" title="Link to this heading">¶</a></h2>
+<p>The core lifecycle now lives in
+<a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator" title="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a>.
+It canonicalises the pipeline, snapshots context before/after each node, collects
+<code class="docutils literal notranslate"><span class="pre">io_delta</span></code> details, emits built-in pre/post checks, and attaches environment
+pins for every SER. Concrete orchestrators implement only two hooks:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">_submit_and_wait(node_callable,</span> <span class="pre">*,</span> <span class="pre">ser_hooks)</span></code></dt><dd><p>Runs a node and returns its <a class="reference internal" href="pipeline.html#semantiva.pipeline.payload.Payload" title="semantiva.pipeline.payload.Payload"><code class="xref py py-class docutils literal notranslate"><span class="pre">Payload</span></code></a>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">_publish(node,</span> <span class="pre">data,</span> <span class="pre">context,</span> <span class="pre">transport)</span></code></dt><dd><p>Forwards the node output through the orchestrator’s transport.</p>
+</dd>
+</dl>
+<p>All error handling, timing, and tracing responsibilities are handled by the
+base class. <code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator</span></code> simply delegates to the injected
+executor/transport while benefiting from the shared SER logic.</p>
+</section>
 <section id="public-api-surface">
 <h2>Public API Surface<a class="headerlink" href="#public-api-surface" title="Link to this heading">¶</a></h2>
 <ul class="simple">
+<li><p>Component Registry: <a class="reference internal" href="#module-semantiva.execution.component_registry" title="semantiva.execution.component_registry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">semantiva.execution.component_registry</span></code></a></p></li>
+<li><p>Orchestrator Factory: <a class="reference internal" href="#module-semantiva.execution.orchestrator.factory" title="semantiva.execution.orchestrator.factory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">semantiva.execution.orchestrator.factory</span></code></a></p></li>
 <li><p>Executors: <a class="reference internal" href="#module-semantiva.execution.executor.executor" title="semantiva.execution.executor.executor"><code class="xref py py-mod docutils literal notranslate"><span class="pre">semantiva.execution.executor.executor</span></code></a></p></li>
 <li><p>Orchestrators: <a class="reference internal" href="#module-semantiva.execution.orchestrator.orchestrator" title="semantiva.execution.orchestrator.orchestrator"><code class="xref py py-mod docutils literal notranslate"><span class="pre">semantiva.execution.orchestrator.orchestrator</span></code></a></p></li>
 <li><p>Transports: <a class="reference internal" href="#module-semantiva.execution.transport.in_memory" title="semantiva.execution.transport.in_memory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">semantiva.execution.transport.in_memory</span></code></a></p></li>
 <li><p>Job Queue: <a class="reference internal" href="#module-semantiva.execution.job_queue.queue_orchestrator" title="semantiva.execution.job_queue.queue_orchestrator"><code class="xref py py-mod docutils literal notranslate"><span class="pre">semantiva.execution.job_queue.queue_orchestrator</span></code></a></p></li>
 </ul>
 </section>
-<section id="module-semantiva.execution.executor.executor">
-<span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.execution.executor.executor" title="Link to this heading">¶</a></h2>
+<section id="module-semantiva.execution.component_registry">
+<span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.execution.component_registry" title="Link to this heading">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution.component_registry.</span></span><span class="sig-name descname"><span class="pre">ExecutionComponentRegistry</span></span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry" title="Link to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.clear">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.clear" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.get_executor">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_executor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.get_executor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_executor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.get_orchestrator">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_orchestrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.get_orchestrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_orchestrator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_executors">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_registered_executors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.get_registered_executors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_executors" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_orchestrators">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_registered_orchestrators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.get_registered_orchestrators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_orchestrators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_transports">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_registered_transports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.get_registered_transports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_transports" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.get_transport">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_transport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.get_transport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_transport" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.initialize_defaults">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initialize_defaults</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.initialize_defaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.initialize_defaults" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.list_executors">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_executors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.list_executors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.list_executors" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.list_orchestrators">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_orchestrators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.list_orchestrators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.list_orchestrators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.list_transports">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_transports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.list_transports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.list_transports" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.register_executor">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_executor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor_cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.register_executor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.register_executor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.register_orchestrator">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_orchestrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orchestrator_cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.register_orchestrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.register_orchestrator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.component_registry.ExecutionComponentRegistry.register_transport">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_transport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport_cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/component_registry.html#ExecutionComponentRegistry.register_transport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.register_transport" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function" id="module-semantiva.execution.orchestrator.factory">
+<dt class="sig sig-object py" id="semantiva.execution.orchestrator.factory.build_orchestrator">
+<span class="sig-prename descclassname"><span class="pre">semantiva.execution.orchestrator.factory.</span></span><span class="sig-name descname"><span class="pre">build_orchestrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exec_cfg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/orchestrator/factory.html#build_orchestrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.orchestrator.factory.build_orchestrator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class" id="module-semantiva.execution.executor.executor">
 <dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution.executor.executor.</span></span><span class="sig-name descname"><span class="pre">SemantivaExecutor</span></span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SemantivaExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><dl class="py class">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SERHooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trigger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream_evidence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_delta_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_checks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_checks_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_pins_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redaction_policy_provider</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SemantivaExecutor.SERHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider">
+<span class="sig-name descname"><span class="pre">env_pins_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.io_delta_provider">
+<span class="sig-name descname"><span class="pre">io_delta_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.io_delta_provider" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.post_checks_provider">
+<span class="sig-name descname"><span class="pre">post_checks_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.post_checks_provider" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.pre_checks">
+<span class="sig-name descname"><span class="pre">pre_checks</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.pre_checks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.redaction_policy_provider">
+<span class="sig-name descname"><span class="pre">redaction_policy_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.redaction_policy_provider" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.trigger">
+<span class="sig-name descname"><span class="pre">trigger</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.trigger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream">
+<span class="sig-name descname"><span class="pre">upstream</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream_evidence">
+<span class="sig-name descname"><span class="pre">upstream_evidence</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream_evidence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.submit">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SemantivaExecutor.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.submit" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ser_hooks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SemantivaExecutor.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.submit" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -302,7 +454,7 @@ and monitoring pipeline behavior.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution.executor.executor.</span></span><span class="sig-name descname"><span class="pre">SequentialSemantivaExecutor</span></span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SequentialSemantivaExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SequentialSemantivaExecutor" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="semantiva.execution.executor.executor.SequentialSemantivaExecutor.submit">
-<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SequentialSemantivaExecutor.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SequentialSemantivaExecutor.submit" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ser_hooks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SequentialSemantivaExecutor.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SequentialSemantivaExecutor.submit" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -310,24 +462,19 @@ and monitoring pipeline behavior.</p>
 <dl class="py class" id="module-semantiva.execution.orchestrator.orchestrator">
 <dt class="sig sig-object py" id="semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution.orchestrator.orchestrator.</span></span><span class="sig-name descname"><span class="pre">LocalSemantivaOrchestrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/orchestrator/orchestrator.html#LocalSemantivaOrchestrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_spec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canonical_spec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/orchestrator/orchestrator.html#LocalSemantivaOrchestrator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.execute" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.last_nodes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">last_nodes</span></span><a class="headerlink" href="#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.last_nodes" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution.orchestrator.orchestrator.</span></span><span class="sig-name descname"><span class="pre">SemantivaOrchestrator</span></span><a class="reference internal" href="_modules/semantiva/execution/orchestrator/orchestrator.html#SemantivaOrchestrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
+<dt class="sig sig-object py" id="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.configure_run_metadata">
+<span class="sig-name descname"><span class="pre">configure_run_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/orchestrator/orchestrator.html#SemantivaOrchestrator.configure_run_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.configure_run_metadata" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.execute">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_spec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canonical_spec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/orchestrator/orchestrator.html#SemantivaOrchestrator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.execute" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_spec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canonical_spec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/orchestrator/orchestrator.html#SemantivaOrchestrator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.execute" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -437,7 +584,7 @@ and monitoring pipeline behavior.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution.job_queue.queue_orchestrator.</span></span><span class="sig-name descname"><span class="pre">QueueSemantivaOrchestrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transport</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/job_queue/queue_orchestrator.html#QueueSemantivaOrchestrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.job_queue.queue_orchestrator.QueueSemantivaOrchestrator" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="semantiva.execution.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.enqueue">
-<span class="sig-name descname"><span class="pre">enqueue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_cfg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_future</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/job_queue/queue_orchestrator.html#QueueSemantivaOrchestrator.enqueue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.enqueue" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">enqueue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_cfg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_future</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">registry_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/job_queue/queue_orchestrator.html#QueueSemantivaOrchestrator.enqueue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.enqueue" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -469,14 +616,14 @@ and monitoring pipeline behavior.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="architecture/context_processing.html">
+          <a class="prev-page" href="architecture/pipeline_schema.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Context Processing Architecture</div>
+                <div class="title">Pipeline Configuration Schema</div>
                 
               </div>
             </a>
@@ -511,9 +658,40 @@ and monitoring pipeline behavior.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Execution</a><ul>
+<li><a class="reference internal" href="#component-registry-system">Component Registry System</a></li>
+<li><a class="reference internal" href="#template-method-orchestrator">Template-method orchestrator</a></li>
 <li><a class="reference internal" href="#public-api-surface">Public API Surface</a></li>
-<li><a class="reference internal" href="#module-semantiva.execution.executor.executor">Autodoc</a><ul>
+<li><a class="reference internal" href="#module-semantiva.execution.component_registry">Autodoc</a><ul>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry</span></code></a><ul>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.clear"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.clear()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_executor"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.get_executor()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_orchestrator"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.get_orchestrator()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_executors"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.get_registered_executors()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_orchestrators"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.get_registered_orchestrators()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_transports"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.get_registered_transports()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.get_transport"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.get_transport()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.initialize_defaults"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.initialize_defaults()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.list_executors"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.list_executors()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.list_orchestrators"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.list_orchestrators()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.list_transports"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.list_transports()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.register_executor"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.register_executor()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.register_orchestrator"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.register_orchestrator()</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.component_registry.ExecutionComponentRegistry.register_transport"><code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.register_transport()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#semantiva.execution.orchestrator.factory.build_orchestrator"><code class="docutils literal notranslate"><span class="pre">build_orchestrator()</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor</span></code></a><ul>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks</span></code></a><ul>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.env_pins_provider</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.io_delta_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.io_delta_provider</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.post_checks_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.post_checks_provider</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.pre_checks"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.pre_checks</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.redaction_policy_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.redaction_policy_provider</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.trigger"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.trigger</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.upstream</span></code></a></li>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream_evidence"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.upstream_evidence</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.submit"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.submit()</span></code></a></li>
 </ul>
 </li>
@@ -521,12 +699,9 @@ and monitoring pipeline behavior.</p>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SequentialSemantivaExecutor.submit"><code class="docutils literal notranslate"><span class="pre">SequentialSemantivaExecutor.submit()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator"><code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.execute"><code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator.execute()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.last_nodes"><code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator.last_nodes</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator"><code class="docutils literal notranslate"><span class="pre">LocalSemantivaOrchestrator</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator"><code class="docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a><ul>
+<li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.configure_run_metadata"><code class="docutils literal notranslate"><span class="pre">SemantivaOrchestrator.configure_run_metadata()</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.execute"><code class="docutils literal notranslate"><span class="pre">SemantivaOrchestrator.execute()</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.last_nodes"><code class="docutils literal notranslate"><span class="pre">SemantivaOrchestrator.last_nodes</span></code></a></li>
 </ul>

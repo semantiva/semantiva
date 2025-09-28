@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Extending Semantiva (Registries &amp; Extensions)" href="extensions.html" /><link rel="prev" title="Creating Components (Authoring Guide)" href="creating_components.html" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Extending Semantiva (Registries &amp; Extensions)" href="extensions.html"><link rel="prev" title="Creating Components (Authoring Guide)" href="creating_components.html">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Semantiva CLI - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=7205999f" />
     
@@ -23,14 +23,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -145,14 +145,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -162,8 +158,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -171,8 +166,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -180,8 +174,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -215,12 +208,15 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -254,8 +250,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -263,14 +258,17 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="semantiva-cli">
 <h1>Semantiva CLI<a class="headerlink" href="#semantiva-cli" title="Link to this heading">¶</a></h1>
-<p>(SSoT) This page mirrors <cite>semantiva/cli.py</cite>. Update this doc if CLI changes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Single Source of Truth (SSoT)</strong> — This page mirrors the CLI implementation at
+<code class="docutils literal notranslate"><span class="pre">semantiva/cli/__init__.py</span></code>. Update code and docs together to avoid drift.</p>
+</div>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <ul class="simple">
@@ -294,9 +292,18 @@
                   [--context key=value]...
                   [-v | --verbose]
                   [-q | --quiet]
-                  [--trace-driver {none,jsonl,pythonpath}]
-                  [--trace-output PATH-or-DriverSpec]
-                  [--trace-detail FLAGS]
+                  [--execution.orchestrator CLASS]
+                  [--execution.executor CLASS]
+                  [--execution.transport CLASS]
+                  [--execution.option key=value]...
+                  [--trace.driver NAME]
+                  [--trace.output PATH-or-DriverSpec]
+                  [--trace.option key=value]...
+                  [--fanout.param NAME]
+                  [--fanout.values SEQ]
+                  [--fanout.values-file PATH]
+                  [--fanout.multi NAME=SEQ]...
+                  [--fanout.multi-file PATH]
                   [--version]
 </pre></div>
 </div>
@@ -318,13 +325,38 @@
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">/</span> <span class="pre">--verbose</span></code>           Increase log verbosity.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">/</span> <span class="pre">--quiet</span></code>             Only show errors.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-driver</span></code>           <code class="docutils literal notranslate"><span class="pre">none</span></code> (default), <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, or <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-output</span></code>           For <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, a file path; for <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>, a driver spec
-(<code class="docutils literal notranslate"><span class="pre">package.module:ClassName</span></code>) instantiated with no args.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace-detail</span></code>           Comma-separated flags: <code class="docutils literal notranslate"><span class="pre">timings,</span> <span class="pre">hash,</span> <span class="pre">repr,</span> <span class="pre">context,</span> <span class="pre">all</span></code>
-(default: <code class="docutils literal notranslate"><span class="pre">timings</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.orchestrator</span></code> Resolve orchestrator via the Execution Component Registry (ECR).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.executor</span></code>     Resolve executor via the Execution Component Registry (ECR).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.transport</span></code>    Resolve transport via the Execution Component Registry (ECR).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--execution.option</span></code>       Key/value pairs forwarded to the orchestrator <code class="docutils literal notranslate"><span class="pre">options</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.driver</span></code>           Trace driver name (<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>, or registry class).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.output</span></code>           Trace output path or <code class="docutils literal notranslate"><span class="pre">module:Class</span></code> when <code class="docutils literal notranslate"><span class="pre">driver=pythonpath</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.option</span></code>           Additional driver keyword arguments (repeatable).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.param</span></code>           Single-parameter fan-out target name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.values</span></code>          Values for single-parameter fan-out (JSON list or comma-separated).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.values-file</span></code>     External JSON/YAML file supplying fan-out values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.multi</span></code>           Multi-parameter ZIP values (repeatable <code class="docutils literal notranslate"><span class="pre">name=[...]</span></code> arguments).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.multi-file</span></code>      External JSON/YAML mapping supplying multi fan-out values.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--version</span></code>                Show CLI version.</p></li>
 </ul>
+<p>CLI flags mirror the YAML schema. Any value provided on the command line
+overrides the matching YAML block before validation and execution. Trace detail
+flags are supplied via <code class="docutils literal notranslate"><span class="pre">--trace.option</span> <span class="pre">detail=...</span></code> (<code class="docutils literal notranslate"><span class="pre">hash</span></code> is implied when no
+detail is provided). Environment pins and why-ok invariants are always
+captured by <a class="reference internal" href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator" title="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a>,
+ensuring consistent SER output across orchestrator implementations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In YAML, use the plural key <code class="docutils literal notranslate"><span class="pre">options</span></code> under <code class="docutils literal notranslate"><span class="pre">trace</span></code> and <code class="docutils literal notranslate"><span class="pre">execution</span></code>. The
+CLI uses repeatable singular flags <code class="docutils literal notranslate"><span class="pre">--trace.option</span></code> and <code class="docutils literal notranslate"><span class="pre">--execution.option</span></code>
+to populate those mappings.</p>
+</div>
+<p><strong>Component Resolution</strong>
+The CLI loads extensions before constructing execution components so that the
+Execution Component Registry (ECR) contains all orchestrators, executors, and
+transports. Built-in identifiers include <code class="docutils literal notranslate"><span class="pre">local</span></code> (orchestrator), <code class="docutils literal notranslate"><span class="pre">sequential</span></code>
+(executor), and <code class="docutils literal notranslate"><span class="pre">in_memory</span></code> (transport). Unknown component names result in an
+error with <code class="docutils literal notranslate"><span class="pre">did-you-mean</span></code> suggestions based on the registered inventory.</p>
 <p><strong>YAML Extension Loading</strong>
 If your YAML contains:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;my_package.ext&quot;</span><span class="p p-Indicator">]</span>
@@ -335,7 +367,10 @@ If your YAML contains:</p>
 <span class="w">  </span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;my_package.ext&quot;</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
-<p>those extensions are loaded before validation/execution (entry point or module import).</p>
+<p>those extensions are loaded before validation/execution. Extension registration
+is deterministic and idempotent: each extension is imported once and must expose
+either an entry point under <code class="docutils literal notranslate"><span class="pre">semantiva.extensions</span></code> or a module-level
+<code class="docutils literal notranslate"><span class="pre">register()</span></code> hook.</p>
 </section>
 <section id="inspect">
 <h2>Inspect<a class="headerlink" href="#inspect" title="Link to this heading">¶</a></h2>

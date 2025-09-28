@@ -1,6 +1,9 @@
 Semantiva CLI
 =============
-(SSoT) This page mirrors `semantiva/cli.py`. Update this doc if CLI changes.
+
+.. note::
+   **Single Source of Truth (SSoT)** — This page mirrors the CLI implementation at
+   ``semantiva/cli/__init__.py``. Update code and docs together to avoid drift.
 
 Overview
 --------
@@ -27,9 +30,18 @@ Execute a pipeline.
                       [--context key=value]...
                       [-v | --verbose]
                       [-q | --quiet]
-                      [--trace-driver {none,jsonl,pythonpath}]
-                      [--trace-output PATH-or-DriverSpec]
-                      [--trace-detail FLAGS]
+                      [--execution.orchestrator CLASS]
+                      [--execution.executor CLASS]
+                      [--execution.transport CLASS]
+                      [--execution.option key=value]...
+                      [--trace.driver NAME]
+                      [--trace.output PATH-or-DriverSpec]
+                      [--trace.option key=value]...
+                      [--fanout.param NAME]
+                      [--fanout.values SEQ]
+                      [--fanout.values-file PATH]
+                      [--fanout.multi NAME=SEQ]...
+                      [--fanout.multi-file PATH]
                       [--version]
 
 **Arguments**
@@ -46,12 +58,38 @@ Execute a pipeline.
 
 - ``-v / --verbose``           Increase log verbosity.
 - ``-q / --quiet``             Only show errors.
-- ``--trace-driver``           ``none`` (default), ``jsonl``, or ``pythonpath``.
-- ``--trace-output``           For ``jsonl``, a file path; for ``pythonpath``, a driver spec
-  (``package.module:ClassName``) instantiated with no args.
-- ``--trace-detail``           Comma-separated flags: ``timings, hash, repr, context, all``
-  (default: ``timings``).
+- ``--execution.orchestrator`` Resolve orchestrator via the Execution Component Registry (ECR).
+- ``--execution.executor``     Resolve executor via the Execution Component Registry (ECR).
+- ``--execution.transport``    Resolve transport via the Execution Component Registry (ECR).
+- ``--execution.option``       Key/value pairs forwarded to the orchestrator ``options``.
+- ``--trace.driver``           Trace driver name (``none``, ``jsonl``, ``pythonpath``, or registry class).
+- ``--trace.output``           Trace output path or ``module:Class`` when ``driver=pythonpath``.
+- ``--trace.option``           Additional driver keyword arguments (repeatable).
+- ``--fanout.param``           Single-parameter fan-out target name.
+- ``--fanout.values``          Values for single-parameter fan-out (JSON list or comma-separated).
+- ``--fanout.values-file``     External JSON/YAML file supplying fan-out values.
+- ``--fanout.multi``           Multi-parameter ZIP values (repeatable ``name=[...]`` arguments).
+- ``--fanout.multi-file``      External JSON/YAML mapping supplying multi fan-out values.
 - ``--version``                Show CLI version.
+
+CLI flags mirror the YAML schema. Any value provided on the command line
+overrides the matching YAML block before validation and execution. Trace detail
+flags are supplied via ``--trace.option detail=...`` (``hash`` is implied when no
+detail is provided). Environment pins and why-ok invariants are always
+captured by :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`,
+ensuring consistent SER output across orchestrator implementations.
+
+.. note::
+  In YAML, use the plural key ``options`` under ``trace`` and ``execution``. The
+  CLI uses repeatable singular flags ``--trace.option`` and ``--execution.option``
+  to populate those mappings.
+
+**Component Resolution**
+The CLI loads extensions before constructing execution components so that the
+Execution Component Registry (ECR) contains all orchestrators, executors, and
+transports. Built-in identifiers include ``local`` (orchestrator), ``sequential``
+(executor), and ``in_memory`` (transport). Unknown component names result in an
+error with ``did-you-mean`` suggestions based on the registered inventory.
 
 **YAML Extension Loading**
 If your YAML contains:
@@ -67,7 +105,10 @@ or:
     pipeline:
       extensions: ["my_package.ext"]
 
-those extensions are loaded before validation/execution (entry point or module import).
+those extensions are loaded before validation/execution. Extension registration
+is deterministic and idempotent: each extension is imported once and must expose
+either an entry point under ``semantiva.extensions`` or a module-level
+``register()`` hook.
 
 Inspect
 -------

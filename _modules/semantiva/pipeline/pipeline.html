@@ -1,13 +1,13 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../../../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>semantiva.pipeline.pipeline - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=7205999f" />
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -214,12 +207,15 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
@@ -247,8 +243,7 @@
         </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -256,8 +251,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -335,6 +329,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">transport</span> <span class="ow">or</span> <span class="n">InMemorySemantivaTransport</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orchestrator</span> <span class="o">=</span> <span class="n">orchestrator</span> <span class="ow">or</span> <span class="n">LocalSemantivaOrchestrator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Precompute canonical spec and resolved descriptors for validation</span>
         <span class="n">canonical</span><span class="p">,</span> <span class="n">resolved</span> <span class="o">=</span> <span class="n">build_canonical_spec</span><span class="p">(</span><span class="n">pipeline_configuration</span><span class="p">)</span>
@@ -362,6 +357,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting pipeline with </span><span class="si">%s</span><span class="s2"> nodes&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_watch</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  <span class="c1"># existing pipeline timer start</span>
 
+        <span class="n">run_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span>
         <span class="n">result_payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orchestrator</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
             <span class="n">pipeline_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resolved_spec</span><span class="p">,</span>
             <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
@@ -369,9 +365,11 @@
             <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
             <span class="n">trace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">,</span>
             <span class="n">canonical_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">canonical_spec</span><span class="p">,</span>
+            <span class="n">run_metadata</span><span class="o">=</span><span class="n">run_meta</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orchestrator</span><span class="o">.</span><span class="n">last_nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_watch</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>  <span class="c1"># existing pipeline timer stop</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Pipeline execution complete.&quot;</span><span class="p">)</span>
@@ -381,6 +379,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_timers</span><span class="p">(),</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">result_payload</span>
+
+<div class="viewcode-block" id="Pipeline.set_run_metadata">
+<a class="viewcode-back" href="../../../pipeline.html#semantiva.pipeline.pipeline.Pipeline.set_run_metadata">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_run_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set metadata that should be attached to the next run for tracing.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span></div>
+
 
 <div class="viewcode-block" id="Pipeline.get_timers">
 <a class="viewcode-back" href="../../../pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_timers">[docs]</a>

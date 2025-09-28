@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Data IO (Sources &amp; Sinks)" href="data_io.html" /><link rel="prev" title="Data Types" href="data_types.html" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data IO (Sources &amp; Sinks)" href="data_io.html"><link rel="prev" title="Data Types" href="data_types.html">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Data Processors - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=7205999f" />
     
@@ -23,14 +23,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -145,14 +145,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -162,8 +158,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -171,8 +166,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -180,8 +174,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -215,12 +208,15 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -254,8 +250,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -263,8 +258,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -454,9 +448,11 @@ context key at runtime. The example below (included from the repository)
 shows a minimal runnable pipeline.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">FromContext sweep demo</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;semantiva-examples&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sweep:FloatValueDataSource:FloatDataCollection&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sweep:FloatValueDataSourceWithDefault:FloatDataCollection&quot;</span>
 <span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">vars</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">input_value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> from_context</span><span class="p">:</span><span class="w"> </span><span class="nv">discovered_values</span><span class="w"> </span><span class="p p-Indicator">}</span>
@@ -481,6 +477,8 @@ published to context as <code class="docutils literal notranslate"><span class="
 <div class="code-block-caption"><span class="caption-text">Parametric sweep demo</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Parametric sweep demonstration</span>
 <span class="c1"># This shows the YAML format for parametric sweeps</span>
+<span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;semantiva-examples&quot;</span><span class="p p-Indicator">]</span>
+
 <span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># Parametric sweep with configuration</span>
@@ -558,7 +556,7 @@ semantiva<span class="w"> </span>run<span class="w"> </span>tests/parametric_swe
 </div>
 <p>After execution, check logs and your context: a list at <code class="docutils literal notranslate"><span class="pre">sweep_results</span></code> and a
 scalar <code class="docutils literal notranslate"><span class="pre">final_sum</span></code> should be present. Use <a class="reference internal" href="studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a> to visualize the
-graph, and <a class="reference internal" href="tracing.html"><span class="doc">Tracing</span></a> to record timings if needed.</p>
+graph, and <a class="reference internal" href="ser.html"><span class="doc">Step Evidence Record (SER) v0 — draft</span></a> to record timings if needed.</p>
 </section>
 <section id="module-semantiva.data_processors.data_processors">
 <span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.data_processors.data_processors" title="Link to this heading">¶</a></h2>

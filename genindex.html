@@ -1,12 +1,12 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#"><link rel="search" title="Search" href="search.html">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 --><title>Index - Semantiva 0.5.0 documentation</title>
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 --><title>Index - Semantiva 0.5.0 documentation</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=7205999f" />
     
@@ -21,14 +21,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -143,14 +143,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -160,8 +156,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -169,8 +164,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -178,8 +172,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -213,12 +206,15 @@
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -246,8 +242,7 @@
         </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -255,15 +250,14 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
@@ -281,12 +275,10 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="execution.html#semantiva.execution.transport.base.Message.ack">ack (semantiva.execution.transport.base.Message attribute)</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.address">address (semantiva.trace.model.NodeTraceEvent attribute)</a>
+        <li><a href="data_processors.html#semantiva.data_processors.data_processors.ParameterInfo.annotation">annotation (semantiva.data_processors.data_processors.ParameterInfo attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_processors.html#semantiva.data_processors.data_processors.ParameterInfo.annotation">annotation (semantiva.data_processors.data_processors.ParameterInfo attribute)</a>
-</li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.append">append() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
         <ul>
@@ -305,6 +297,8 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="execution.html#semantiva.execution.orchestrator.factory.build_orchestrator">build_orchestrator() (in module semantiva.execution.orchestrator.factory)</a>
+</li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.build_pipeline_inspection">build_pipeline_inspection() (in module semantiva.inspection.builder)</a>
 </li>
     </ul></td>
@@ -322,6 +316,8 @@
         <ul>
           <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextType.clear">(semantiva.context_processors.context_types.ContextType method)</a>
 </li>
+          <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.clear">(semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
         </ul></li>
         <li><a href="execution.html#semantiva.execution.transport.base.SemantivaTransport.close">close() (semantiva.execution.transport.base.SemantivaTransport method)</a>
 
@@ -332,16 +328,14 @@
 </li>
           <li><a href="execution.html#semantiva.execution.transport.in_memory.InMemorySubscription.close">(semantiva.execution.transport.in_memory.InMemorySubscription method)</a>
 </li>
-          <li><a href="tracing.html#semantiva.trace.drivers.jsonl.JSONLTrace.close">(semantiva.trace.drivers.jsonl.JSONLTrace method)</a>
-</li>
-          <li><a href="tracing.html#semantiva.trace.model.TraceDriver.close">(semantiva.trace.model.TraceDriver method)</a>
-</li>
         </ul></li>
         <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType.collection_base_type">collection_base_type() (semantiva.data_types.data_types.DataCollectionType class method)</a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.component_type">component_type (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.config_params">config_params (semantiva.inspection.builder.NodeInspection attribute)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.configure_run_metadata">configure_run_metadata() (semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator method)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.transport.base.SemantivaTransport.connect">connect() (semantiva.execution.transport.base.SemantivaTransport method)</a>
 
@@ -384,6 +378,8 @@
         <li><a href="context_processors.html#semantiva.context_processors.factory.create_delete_operation">create_delete_operation() (in module semantiva.context_processors.factory)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.factory.create_rename_operation">create_rename_operation() (in module semantiva.context_processors.factory)</a>
+</li>
+        <li><a href="context_processors.html#semantiva.context_processors.factory.create_stringbuild_operation">create_stringbuild_operation() (in module semantiva.context_processors.factory)</a>
 </li>
         <li><a href="glossary.html#term-Created-keys"><strong>Created keys</strong></a>
 </li>
@@ -447,9 +443,7 @@
 </li>
         <li><a href="execution.html#semantiva.execution.job_queue.queue_orchestrator.QueueSemantivaOrchestrator.enqueue">enqueue() (semantiva.execution.job_queue.queue_orchestrator.QueueSemantivaOrchestrator method)</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.error_msg">error_msg (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.error_type">error_type (semantiva.trace.model.NodeTraceEvent attribute)</a>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider">env_pins_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.errors">errors (semantiva.inspection.builder.NodeInspection attribute)</a>
 
@@ -459,14 +453,10 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.event_time_utc">event_time_utc (semantiva.trace.model.NodeTraceEvent attribute)</a>
+        <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.execute">execute() (semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator method)</a>
 </li>
-        <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.execute">execute() (semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator method)</a>
-
-        <ul>
-          <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.execute">(semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator method)</a>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry">ExecutionComponentRegistry (class in semantiva.execution.component_registry)</a>
 </li>
-        </ul></li>
         <li><a href="introspection_validation.html#semantiva.inspection.reporter.extended_report">extended_report() (in module semantiva.inspection.reporter)</a>
 </li>
     </ul></td>
@@ -483,16 +473,10 @@
           <li><a href="workflows_fitting_models.html#semantiva.workflows.fitting_model.PolynomialFittingModel.fit">(semantiva.workflows.fitting_model.PolynomialFittingModel method)</a>
 </li>
         </ul></li>
-        <li><a href="workflows_fitting_models.html#semantiva.workflows.fitting_model.FittingModel">FittingModel (class in semantiva.workflows.fitting_model)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.drivers.jsonl.JSONLTrace.flush">flush() (semantiva.trace.drivers.jsonl.JSONLTrace method)</a>
-
-        <ul>
-          <li><a href="tracing.html#semantiva.trace.model.TraceDriver.flush">(semantiva.trace.model.TraceDriver method)</a>
+        <li><a href="workflows_fitting_models.html#semantiva.workflows.fitting_model.FittingModel">FittingModel (class in semantiva.workflows.fitting_model)</a>
 </li>
-        </ul></li>
         <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType.from_list">from_list() (semantiva.data_types.data_types.DataCollectionType class method)</a>
 </li>
         <li><a href="data_processors.html#semantiva.data_processors.parametric_sweep_factory.FromContext">FromContext (class in semantiva.data_processors.parametric_sweep_factory)</a>
@@ -515,15 +499,25 @@
         </ul></li>
         <li><a href="data_io.html#semantiva.data_io.data_io.DataSource.get_data">get_data() (semantiva.data_io.data_io.DataSource class method)</a>
 </li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_executor">get_executor() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.get_item">get_item() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_orchestrator">get_orchestrator() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource.get_payload">get_payload() (semantiva.data_io.data_io.PayloadSource class method)</a>
 </li>
         <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_probe_results">get_probe_results() (semantiva.pipeline.pipeline.Pipeline method)</a>
 </li>
+        <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names">get_processing_parameter_names() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names">get_processing_parameter_names() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_executors">get_registered_executors() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_orchestrators">get_registered_orchestrators() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_transports">get_registered_transports() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_required_keys">get_required_keys() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
 </li>
@@ -532,6 +526,8 @@
         <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.get_suppressed_keys">get_suppressed_keys() (semantiva.context_processors.context_processors.ContextProcessor class method)</a>
 </li>
         <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_timers">get_timers() (semantiva.pipeline.pipeline.Pipeline method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_transport">get_transport() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.get_value">get_value() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
@@ -561,6 +557,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.index">index (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.initialize_defaults">initialize_defaults() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
         <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource.injected_context_keys">injected_context_keys() (semantiva.data_io.data_io.PayloadSource class method)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.transport.in_memory.InMemorySemantivaTransport">InMemorySemantivaTransport (class in semantiva.execution.transport.in_memory)</a>
@@ -577,13 +575,13 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.input_payload">input_payload (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.input_type">input_type (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.invalid_parameters">invalid_parameters (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
         <li><a href="exceptions.html#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError">InvalidNodeParameterError</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.io_delta_provider">io_delta_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.is_configuration_valid">is_configuration_valid (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
@@ -602,10 +600,6 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="introspection_validation.html#semantiva.inspection.reporter.json_report">json_report() (in module semantiva.inspection.reporter)</a>
-</li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.drivers.jsonl.JSONLTrace">JSONLTrace (class in semantiva.trace.drivers.jsonl)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -633,16 +627,18 @@
   <h2>L</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator.last_nodes">last_nodes (semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator property)</a>
-
-        <ul>
-          <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.last_nodes">(semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator property)</a>
+        <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator.last_nodes">last_nodes (semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator property)</a>
 </li>
-        </ul></li>
-        <li><a href="data_processors.html#semantiva.data_processors.parametric_sweep_factory.RangeSpec.lo">lo (semantiva.data_processors.parametric_sweep_factory.RangeSpec attribute)</a>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.list_executors">list_executors() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.list_orchestrators">list_orchestrators() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.list_transports">list_transports() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="data_processors.html#semantiva.data_processors.parametric_sweep_factory.RangeSpec.lo">lo (semantiva.data_processors.parametric_sweep_factory.RangeSpec attribute)</a>
+</li>
         <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.LocalSemantivaOrchestrator">LocalSemantivaOrchestrator (class in semantiva.execution.orchestrator.orchestrator)</a>
 </li>
         <li><a href="logger.html#semantiva.logger.logger.Logger">Logger (class in semantiva.logger.logger)</a>
@@ -685,9 +681,13 @@
 </li>
           <li><a href="exceptions.html#module-semantiva.exceptions.pipeline_exceptions">semantiva.exceptions.pipeline_exceptions</a>
 </li>
+          <li><a href="execution.html#module-semantiva.execution.component_registry">semantiva.execution.component_registry</a>
+</li>
           <li><a href="execution.html#module-semantiva.execution.executor.executor">semantiva.execution.executor.executor</a>
 </li>
           <li><a href="execution.html#module-semantiva.execution.job_queue.queue_orchestrator">semantiva.execution.job_queue.queue_orchestrator</a>
+</li>
+          <li><a href="execution.html#module-semantiva.execution.orchestrator.factory">semantiva.execution.orchestrator.factory</a>
 </li>
           <li><a href="execution.html#module-semantiva.execution.orchestrator.orchestrator">semantiva.execution.orchestrator.orchestrator</a>
 </li>
@@ -707,10 +707,6 @@
 </li>
           <li><a href="pipeline.html#module-semantiva.pipeline.pipeline">semantiva.pipeline.pipeline</a>
 </li>
-          <li><a href="tracing.html#module-semantiva.trace.drivers.jsonl">semantiva.trace.drivers.jsonl</a>
-</li>
-          <li><a href="tracing.html#module-semantiva.trace.model">semantiva.trace.model</a>
-</li>
           <li><a href="workflows_fitting_models.html#module-semantiva.workflows.fitting_model">semantiva.workflows.fitting_model</a>
 </li>
         </ul></li>
@@ -728,15 +724,9 @@
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.node_class">node_class (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
-        <li><a href="glossary.html#term-node_uuid"><strong>node_uuid</strong></a>
-
-        <ul>
-          <li><a href="tracing.html#semantiva.trace.model.NodeAddress.node_uuid">(semantiva.trace.model.NodeAddress attribute)</a>
-</li>
-        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.model.NodeAddress">NodeAddress (class in semantiva.trace.model)</a>
+        <li><a href="glossary.html#term-node_uuid"><strong>node_uuid</strong></a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection">NodeInspection (class in semantiva.inspection.builder)</a>
 </li>
@@ -746,8 +736,6 @@
           <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.nodes">(semantiva.pipeline.pipeline.Pipeline attribute)</a>
 </li>
         </ul></li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent">NodeTraceEvent (class in semantiva.trace.model)</a>
-</li>
     </ul></td>
   </tr></table>
 </section>
@@ -756,33 +744,9 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.drivers.jsonl.JSONLTrace.on_node_event">on_node_event() (semantiva.trace.drivers.jsonl.JSONLTrace method)</a>
-
-        <ul>
-          <li><a href="tracing.html#semantiva.trace.model.TraceDriver.on_node_event">(semantiva.trace.model.TraceDriver method)</a>
-</li>
-        </ul></li>
-        <li><a href="tracing.html#semantiva.trace.drivers.jsonl.JSONLTrace.on_pipeline_end">on_pipeline_end() (semantiva.trace.drivers.jsonl.JSONLTrace method)</a>
-
-        <ul>
-          <li><a href="tracing.html#semantiva.trace.model.TraceDriver.on_pipeline_end">(semantiva.trace.model.TraceDriver method)</a>
-</li>
-        </ul></li>
-        <li><a href="tracing.html#semantiva.trace.drivers.jsonl.JSONLTrace.on_pipeline_start">on_pipeline_start() (semantiva.trace.drivers.jsonl.JSONLTrace method)</a>
-
-        <ul>
-          <li><a href="tracing.html#semantiva.trace.model.TraceDriver.on_pipeline_start">(semantiva.trace.model.TraceDriver method)</a>
-</li>
-        </ul></li>
         <li><a href="context_processors.html#semantiva.context_processors.context_processors.ContextProcessor.operate_context">operate_context() (semantiva.context_processors.context_processors.ContextProcessor method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="data_processors.html#semantiva.data_processors.data_processors.OperationTopologyFactory">OperationTopologyFactory (class in semantiva.data_processors.data_processors)</a>
-</li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.out_data_hash">out_data_hash (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.out_data_repr">out_data_repr (semantiva.trace.model.NodeTraceEvent attribute)</a>
 </li>
         <li><a href="data_io.html#semantiva.data_io.data_io.DataSource.output_data_type">output_data_type() (semantiva.data_io.data_io.DataSource class method)</a>
 
@@ -792,8 +756,8 @@
           <li><a href="data_processors.html#semantiva.data_processors.data_processors.DataOperation.output_data_type">(semantiva.data_processors.data_processors.DataOperation class method)</a>
 </li>
         </ul></li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.output_payload">output_payload (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.output_type">output_type (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
     </ul></td>
@@ -812,8 +776,6 @@
 </li>
         <li><a href="data_processors.html#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory">ParametricSweepFactory (class in semantiva.data_processors.parametric_sweep_factory)</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.params">params (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
         <li><a href="glossary.html#term-Payload"><strong>Payload</strong></a>
 
         <ul>
@@ -824,8 +786,6 @@
 </li>
         <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource">PayloadSource (class in semantiva.data_io.data_io)</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.phase">phase (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
         <li><a href="glossary.html#term-Pipeline"><strong>Pipeline</strong></a>
 
         <ul>
@@ -834,12 +794,8 @@
         </ul></li>
         <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.pipeline_configuration">pipeline_configuration (semantiva.pipeline.pipeline.Pipeline attribute)</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeAddress.pipeline_id">pipeline_id (semantiva.trace.model.NodeAddress attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.model.NodeAddress.pipeline_run_id">pipeline_run_id (semantiva.trace.model.NodeAddress attribute)</a>
-</li>
         <li><a href="exceptions.html#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError">PipelineConfigurationError</a>
 </li>
         <li><a href="glossary.html#term-PipelineId"><strong>PipelineId</strong></a>
@@ -848,15 +804,11 @@
 </li>
         <li><a href="exceptions.html#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError">PipelineTopologyError</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.plan_epoch">plan_epoch (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.plan_id">plan_id (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
         <li><a href="workflows_fitting_models.html#semantiva.workflows.fitting_model.PolynomialFittingModel">PolynomialFittingModel (class in semantiva.workflows.fitting_model)</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.post_context_hash">post_context_hash (semantiva.trace.model.NodeTraceEvent attribute)</a>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.post_checks_provider">post_checks_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.post_context_repr">post_context_repr (semantiva.trace.model.NodeTraceEvent attribute)</a>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.pre_checks">pre_checks (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
         <li><a href="glossary.html#term-Processor"><strong>Processor</strong></a>
 </li>
@@ -888,10 +840,18 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="data_processors.html#semantiva.data_processors.parametric_sweep_factory.RangeSpec">RangeSpec (class in semantiva.data_processors.parametric_sweep_factory)</a>
 </li>
-        <li><a href="glossary.html#term-Required-keys"><strong>Required keys</strong></a>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.redaction_policy_provider">redaction_policy_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.register_executor">register_executor() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.register_orchestrator">register_orchestrator() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.register_transport">register_transport() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="glossary.html#term-Required-keys"><strong>Required keys</strong></a>
+</li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.PipelineInspection.required_context_keys">required_context_keys (semantiva.inspection.builder.PipelineInspection attribute)</a>
 </li>
         <li><a href="glossary.html#term-Resolver"><strong>Resolver</strong></a>
@@ -972,6 +932,13 @@
 </li>
         </ul></li>
         <li>
+    semantiva.execution.component_registry
+
+        <ul>
+          <li><a href="execution.html#module-semantiva.execution.component_registry">module</a>
+</li>
+        </ul></li>
+        <li>
     semantiva.execution.executor.executor
 
         <ul>
@@ -983,6 +950,13 @@
 
         <ul>
           <li><a href="execution.html#module-semantiva.execution.job_queue.queue_orchestrator">module</a>
+</li>
+        </ul></li>
+        <li>
+    semantiva.execution.orchestrator.factory
+
+        <ul>
+          <li><a href="execution.html#module-semantiva.execution.orchestrator.factory">module</a>
 </li>
         </ul></li>
         <li>
@@ -1027,6 +1001,8 @@
           <li><a href="introspection_validation.html#module-semantiva.inspection.validator">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     semantiva.logger.logger
 
@@ -1034,8 +1010,6 @@
           <li><a href="logger.html#module-semantiva.logger.logger">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     semantiva.pipeline.payload
 
@@ -1051,20 +1025,6 @@
 </li>
         </ul></li>
         <li>
-    semantiva.trace.drivers.jsonl
-
-        <ul>
-          <li><a href="tracing.html#module-semantiva.trace.drivers.jsonl">module</a>
-</li>
-        </ul></li>
-        <li>
-    semantiva.trace.model
-
-        <ul>
-          <li><a href="tracing.html#module-semantiva.trace.model">module</a>
-</li>
-        </ul></li>
-        <li>
     semantiva.workflows.fitting_model
 
         <ul>
@@ -1072,6 +1032,8 @@
 </li>
         </ul></li>
         <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor">SemantivaExecutor (class in semantiva.execution.executor.executor)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks">SemantivaExecutor.SERHooks (class in semantiva.execution.executor.executor)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator">SemantivaOrchestrator (class in semantiva.execution.orchestrator.orchestrator)</a>
 </li>
@@ -1090,6 +1052,8 @@
         <li><a href="logger.html#semantiva.logger.logger.Logger.set_file_output">set_file_output() (semantiva.logger.logger.Logger method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.set_item_value">set_item_value() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
+</li>
+        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.set_run_metadata">set_run_metadata() (semantiva.pipeline.pipeline.Pipeline method)</a>
 </li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.set_value">set_value() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
@@ -1141,10 +1105,6 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.t_cpu">t_cpu (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
-        <li><a href="tracing.html#semantiva.trace.model.NodeTraceEvent.t_wall">t_wall (semantiva.trace.model.NodeTraceEvent attribute)</a>
-</li>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.to_dict">to_dict() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
         <ul>
@@ -1155,7 +1115,21 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="glossary.html#term-Trace-Driver"><strong>Trace Driver</strong></a>
 </li>
-        <li><a href="tracing.html#semantiva.trace.model.TraceDriver">TraceDriver (class in semantiva.trace.model)</a>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.trigger">trigger (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream">upstream (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.upstream_evidence">upstream_evidence (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
     </ul></td>
   </tr></table>
