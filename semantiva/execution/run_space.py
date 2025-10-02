@@ -116,6 +116,7 @@ import yaml
 from semantiva.configurations.schema import RunSource, RunSpaceV1Config
 from semantiva.exceptions.pipeline_exceptions import (
     PipelineConfigurationError as ConfigurationError,
+    RunSpaceCapExceededError,
 )
 
 
@@ -452,8 +453,9 @@ def expand_run_space(
                 total *= len(runs)
 
             if total > spec.cap:
-                raise ConfigurationError(
-                    f"Expanded runs ({total}) exceed run_space cap ({spec.cap})"
+                raise RunSpaceCapExceededError(
+                    actual_runs=total,
+                    cap=spec.cap,
                 )
 
             combined_runs = []
@@ -472,8 +474,9 @@ def expand_run_space(
 
         total = sizes[0] if sizes else 0
         if total > spec.cap:
-            raise ConfigurationError(
-                f"Expanded runs ({total}) exceed run_space cap ({spec.cap})"
+            raise RunSpaceCapExceededError(
+                actual_runs=total,
+                cap=spec.cap,
             )
 
         combined_runs = []

@@ -29,6 +29,7 @@ import yaml
 
 from semantiva.configurations import parse_pipeline_config
 from semantiva.configurations.schema import ExecutionConfig, TraceConfig
+from semantiva.exceptions.pipeline_exceptions import RunSpaceCapExceededError
 from semantiva.execution.component_registry import ExecutionComponentRegistry
 from semantiva.execution.run_space import expand_run_space
 from semantiva.execution.orchestrator.factory import build_orchestrator
@@ -679,10 +680,24 @@ def _run(args: argparse.Namespace) -> int:
         trace=trace_driver,
     )
 
-    runs, run_space_meta = expand_run_space(
-        pipeline_cfg.run_space,
-        cwd=pipeline_cfg.base_dir or pipeline_path.parent,
-    )
+    try:
+        runs, run_space_meta = expand_run_space(
+            pipeline_cfg.run_space,
+            cwd=pipeline_cfg.base_dir or pipeline_path.parent,
+        )
+    except RunSpaceCapExceededError as exc:
+        print(
+            f"Error: {exc.message}\n\n"
+            f"The run space configuration would generate {exc.actual_runs:,} runs, "
+            f"which exceeds the safety limit of {exc.cap:,}.\n\n"
+            f"To resolve this, you can:\n"
+            f"  1. Reduce the size of your run space by using fewer values or 'zip' mode\n"
+            f"  2. Increase the cap with: --run-space-cap {exc.actual_runs}\n"
+            f"  3. Preview the run space with: --run-space-plan-only\n\n"
+            f"Note: Large run spaces may consume significant computational resources.",
+            file=sys.stderr,
+        )
+        return EXIT_CONFIG_ERROR
     if run_space_override:
         run_space_meta = dict(run_space_meta)
         run_space_meta["override_source"] = "CLI"

@@ -33,6 +33,18 @@ class PipelineTopologyError(Exception):
         self.message = message
 
 
+class RunSpaceCapExceededError(Exception):
+    """Raised when run space expansion exceeds the configured safety cap."""
+
+    def __init__(self, actual_runs: int, cap: int, message: str = None):
+        self.actual_runs = actual_runs
+        self.cap = cap
+        if message is None:
+            message = f"Run space expansion would create {actual_runs:,} runs, exceeding safety cap of {cap:,}"
+        super().__init__(message)
+        self.message = message
+
+
 class InvalidNodeParameterError(ValueError):
     """Raised when a node's configuration contains unsupported parameters."""
 
