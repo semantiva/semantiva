@@ -20,6 +20,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - JSONL trace driver class renamed to ``JsonlTraceDriver``.
 
 ### Added
+- Trace stream validation assets: common header schema, lifecycle schemas, and
+  registry dispatch map with accompanying documentation and tests for the flat
+  JSONL trace stream.
 - Execution Component Registry list helpers and short-hand identifiers (``local``,
   ``sequential``, ``in_memory``) for bundled orchestrator, executor, and transport
   classes.

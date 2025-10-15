@@ -1,0 +1,9 @@
+{
+  "$id": "https://semantiva.tech/schemas/trace_registry_v1.json",
+  "version": 1,
+  "records": {
+    "pipeline_start": "https://semantiva.tech/schemas/pipeline_start_v1.schema.json",
+    "ser": "https://semantiva.tech/schemas/ser/1/ser_v1.schema.json",
+    "pipeline_end": "https://semantiva.tech/schemas/pipeline_end_v1.schema.json"
+  }
+}
