@@ -1,96 +1,239 @@
+.. _glossary:
+
 Glossary
 ========
 
+This glossary defines Semantiva’s public concepts as used in the graph model,
+runtime execution, and the SER (Step Evidence Record).
+
+Core Runtime Objects
+--------------------
+
 .. glossary::
 
-   Class Resolver
-     Resolves a ``processor`` reference (typically via Fully Qualified Class Name) to an
-     importable Python class in the current environment.
+   Graph (GraphV1)
+      The canonical, deterministic representation of a pipeline, including nodes,
+      edges, processor references, parameters, and stable identifiers.
 
-   Context
-     Execution key/value store with safe mutation (required/created/suppressed keys).
+      **Ontological role:** Declarative plan that a runtime executes.
 
-   DataOperation
-     A processor that transforms one typed ``data`` value into another within a Payload.
+      **Technical mapping:**
+         - Docs: :doc:`graph`, :doc:`trace_graph_alignment`
 
-   DataType
-     A typed wrapper for domain data; used to enforce contracts between operations.
-
-   GraphV1
-     The canonical, normalized graph representation constructed from a pipeline spec
-     (e.g., YAML). GraphV1 guarantees deterministic identity for nodes and pipelines.
-     See :doc:`graph`.
+      **Usage guidance:** Use *Graph* for the canonical compiled form (not ad-hoc
+      YAML or runtime objects).
 
    Node
-     A factory-generated wrapper (users do not subclass nodes).
+      A graph element that binds a :term:`Processor` with parameters and
+      participates in edges.
 
-   Parameter Resolver
-     Transforms parameter maps, e.g.,
+      **Ontological role:** Structural placement of a processor in the graph.
 
-     - ``slice:`` — reference/slice a value from context/parameters
-     - ``rename:`` — rename keys according to a mapping
-     - ``delete:`` — remove keys or subtrees
-     - ``model:`` — wrap a live object behind a serializable descriptor
+      **Technical mapping:**
+         - Graph: each node has a stable identifier (UUID) used in SER
+           ``identity.node_id``
 
-   Payload
-     The envelope passed between nodes during execution, carrying both **data**
-     (a typed value, subclass of ``BaseDataType``) and **context** (metadata dict
-     with required/created/suppressed keys). Pipelines return a Payload on ``process``.
-
-   Pipeline
-     The ordered execution of factory-generated nodes wrapping processors.
-
-   PipelineId
-     Deterministic identifier for a pipeline derived from its canonical spec
-     (formatting changes do not affect it). Appears in inspection output and trace records.
+      **Usage guidance:** Do not confuse Node (graph element) with Processor
+      (class/logic).
 
    Processor
-     A single-responsibility unit of computation (DataOperation, DataProbe, IO, ContextProcessor).
+      A Python class implementing a deterministic operation or an observation.
 
-   Resolver
-     A mechanism that rewrites or resolves parts of a configuration during spec parsing
-     or realization. Examples include parameter slicing, renaming, and object modeling.
+      **Ontological role:** Executes logic over channels and/or context.
 
-   Trace Driver
-     A pluggable sink that writes trace events. In 0.5.0, the built-in driver is
-     ``jsonl`` (one record per line). See :doc:`ser`.
+      **Technical mapping:**
+         - Graph: ``processor_ref`` (fully-qualified class name)
+         - SER: ``processor.ref``, ``processor.parameters``,
+           ``processor.parameter_sources``
+
+      **Usage guidance:** *Processor* refers to the class/implementation, not the
+      Node.
+
+   Processor Reference
+      A fully-qualified class name (FQCN) or descriptor that uniquely identifies a
+      Processor class.
+
+      **Ontological role:** Allows reproducible instantiation of processors.
+
+      **Technical mapping:**
+         - Graph: ``processor_ref`` (string)
+         - SER: ``processor.ref`` (string)
+
+   GraphV1
+      Alias for :term:`Graph (GraphV1)` used when referring to the canonical graph
+      schema.
+
+   PipelineId
+      Deterministic identifier for a pipeline derived from its canonical spec.
+
+      **Technical mapping:** Appears under SER ``identity.pipeline_id`` and graph
+      inspection outputs.
 
    node_uuid
-     Positional, stable identifier for a node within GraphV1. Used to align inspection,
-     tracing, and Viewer node details. See :doc:`graph`.
+      Stable identifier for a :term:`Node` within the canonical graph.
 
-   Context Observer
-     Mediates context writes/deletes from processors to the active context.
+      **Technical mapping:** Appears as ``identity.node_id`` in SER and in graph
+      inspection tables.
 
-   Validating Observer
-     Observer that enforces declared created/suppressed keys.
+   Payload
+      Runtime envelope carrying a typed :term:`Data Channel` value plus the active
+      :term:`Context Channel` mapping.
 
-   Required keys
-     Keys that must exist before the processor runs.
+      **Ontological role:** Execution payload passed between nodes.
 
-   Created keys
-     Keys a processor may create/update.
+   Resolver
+      Mechanism that rewrites configuration fragments (e.g., parameter slicing,
+      renaming, template expansion) while building the :term:`Graph (GraphV1)`.
 
-   Suppressed keys
-     Keys a processor may delete.
+Channels & Data
+---------------
 
-   Studio Viewer
-     Read-only UI for YAML pipeline visualization.
+.. glossary::
 
-Conventions
------------
+   Data Channel
+      The typed data flowing between processors. **Data** is subject to:
+      (1) transformation by :term:`Data Operation`, and
+      (2) observation by :term:`Data Probe`.
 
-Use these terms and casing consistently:
+      Observations made by Data Probes are typically **injected into the Context
+      Channel** under keys declared in the pipeline configuration.
 
-* **Payload**, **GraphV1**, **PipelineId**, **Trace Driver** (caps as shown)
-* **node_uuid** (monospace when referencing the exact field name)
-* Use :term:`Payload` on first mention in a section; likewise for other terms.
-* Use monospace for field names: ``node_uuid``, ``pipeline_id``, ``t_wall``.
-* Use singular for concept names (e.g., "a :term:`Payload`", not "payloads" in headings).
+      **Ontological role:** Carries domain data through the pipeline.
 
-See also
---------
+      **Technical mapping:**
+         - Summaries may appear under SER ``summaries`` if trace policy enables it.
 
-For examples of resolver usage, see :ref:`objects-in-pipeline-configurations`
-and the *Resolvers Overview* in :doc:`extensions`.
+      **Usage guidance:** Keep Data Channel (data flow) distinct from Context
+      Channel (key/value store).
 
+   Context Channel
+      A mutable key/value store holding parameters, metadata, and runtime state.
+
+      Context can be modified by :term:`Context Processor` or by
+      :term:`Data Processor` that injects key/value entries. Context is observed
+      in two independent phases:
+
+      1. **Parameter resolution** — when a processor requires a parameter not
+         declared on the node, Semantiva searches the Context Channel to satisfy it.
+      2. **SER emission** — optionally, the state of Context **before** and
+         **after** node execution and the **mutation delta** are observed and
+         recorded.
+
+      **Ontological role:** Shared execution state and metadata plane.
+
+      **Technical mapping:**
+         - SER: ``context_delta.read_keys|created_keys|updated_keys|key_summaries``
+
+      **Usage guidance:** Any context-only observation outside SER emission is implemented by a :term:`Context Processor`.
+
+Processor Families
+------------------
+
+.. glossary::
+
+   Data Processor
+      Any :term:`Processor` that touches the :term:`Data Channel`. Includes
+      :term:`Data Operation` and :term:`Data Probe`.
+
+      **Ontological role:** Umbrella term for processors that read from or write
+      to the Data Channel.
+
+      **Technical mapping:**
+         - Graph: nodes referencing Data Operations or Data Probes
+         - SER: ``processor.ref`` reflects the concrete class
+
+   Data Operation
+      Transforms values on the :term:`Data Channel` (e.g., filter, normalize, join).
+
+      **Ontological role:** Data transformation.
+
+      **Technical mapping:**
+         - Effects may be summarized under SER ``summaries`` depending on trace policy.
+
+   Data Probe
+      Observes the :term:`Data Channel` without altering its data output. Probe
+      observations are written into the :term:`Context Channel` under declared keys.
+
+      **Ontological role:** Data observation with side-effects in Context.
+
+   Context Processor
+      Reads and/or mutates the :term:`Context Channel`. Any observation of context
+      outside SER emission must be implemented as a Context Processor.
+
+      **Ontological role:** Context transformation and inspection.
+
+   IO Processor
+      Interacts with external systems (read/write). Should capture sufficient
+      metadata in Context for provenance (e.g., source path, checksums).
+
+Execution Records (SER Vocabulary)
+----------------------------------
+
+.. glossary::
+
+   Step Evidence Record (SER)
+      One JSON record emitted for every completed node execution. Captures
+      identity, dependencies, processor details, context delta, assertions, timing,
+      status, and optional tags/summaries.
+
+      **Technical mapping:**
+         - Schema: :doc:`schema_ser_v1`
+         - Driver: JSONL trace driver appends one line per SER
+
+   SERRecord
+      In-memory structure passed to drivers that serializes to SER JSON.
+
+   Identity
+      Stable identifiers of run, pipeline, and node for the step currently
+      recorded.
+
+      **Technical mapping:**
+         - SER: ``identity.run_id``, ``identity.pipeline_id``, ``identity.node_id``
+
+   Dependencies
+      Upstream node identifiers that provided inputs to this step.
+
+      **Technical mapping:**
+         - SER: ``dependencies.upstream``
+
+   Assertions
+      Structured check results grouped by phase (preconditions, postconditions,
+      invariants), plus environment metadata and redaction policy.
+
+      **Technical mapping:**
+         - SER: ``assertions.*`` (including required ``environment``)
+
+   Timing
+      Wall/CPU timing of the step; start/finish timestamps and duration in ms.
+
+      **Technical mapping:**
+         - SER: ``timing.started_at|finished_at|duration_ms|cpu_ms``
+
+   Status
+      Final state of the step execution: ``succeeded``, ``error``, ``skipped``,
+      ``cancelled``.
+
+   Tags
+      Optional labels for correlation and search.
+
+   Summaries
+      Optional digests of inputs/outputs/context per trace policy.
+
+   Context Delta
+      The context read/write sets and per-key summaries observed at SER emission.
+
+      **Technical mapping:**
+         - SER: ``context_delta.*``
+
+Trace & Drivers
+---------------
+
+.. glossary::
+
+   Trace
+      The append-only sequence of SER entries (and lifecycle events) produced
+      during execution.
+
+   JsonlTraceDriver
+      A driver that writes each SER as a JSON line to a file (or to a timestamped
+      file if given a directory).
