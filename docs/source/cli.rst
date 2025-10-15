@@ -88,7 +88,7 @@ Plan-only example
    $ semantiva run --run-space-file rs.yaml --run-space-dry-run
    Run Space Plan
      combine: product
-     cap: 1000
+     max_runs: 1000
      expanded_runs: 8
      blocks:
        - #0: mode=zip, size=2, keys=['lr', 'momentum']

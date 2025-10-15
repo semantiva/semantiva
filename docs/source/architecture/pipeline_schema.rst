@@ -106,7 +106,7 @@ The loader enforces strict shapes for these blocks:
 Refer to :doc:`../cli` for the corresponding command-line flags and to
 :doc:`../examples_index` for runnable YAML examples.
 
-Each run-space expansion produces SER evidence with ``why_ok.args`` populated
+Each run-space expansion produces SER evidence with ``assertions.args`` populated
 with ``run_space.index``, ``run_space.total``, ``run_space.combine``, and the
 per-run context. Block metadata includes source provenance (path, type,
 SHA-256) when external files are involved. See :doc:`../cli` for CLI flags

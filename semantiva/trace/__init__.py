@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Semantiva tracing (SER v0).
+"""Semantiva tracing (SER v1).
 
 This package provides the core tracing infrastructure for Semantiva pipelines
 based on the Step Evidence Record (SER). Each completed node emits a single
-``SERRecord`` capturing the action, topology, input/output deltas, checks,
-timing (wall and CPU) information and optional payload/context summaries.
+``SERRecord`` capturing the operation, dependencies, context_delta, assertions,
+timing (wall and CPU) information, optional tags/summaries, and status.
 Drivers implement the :class:`~semantiva.trace.model.TraceDriver` protocol to
 persist these records.
 """
