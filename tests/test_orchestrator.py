@@ -205,5 +205,5 @@ def test_remote_stub_inherits_template(fake_pipeline):
     local_ser = tracer_local.events[0]
     assert remote_ser.assertions == local_ser.assertions
     assert remote_ser.context_delta == local_ser.context_delta
-    assert remote_ser.operation == local_ser.operation
+    assert remote_ser.processor == local_ser.processor
     assert len(stub.published) == len(fake_pipeline.resolved_spec)

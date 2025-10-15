@@ -57,7 +57,7 @@ pipeline:
         r
         for r in records
         if r.get("record_type") == "ser"
-        and r["operation"]["ref"] == "FloatAddOperation"
+        and r.get("processor", {}).get("ref", "").endswith("FloatAddOperation")
     )
 
     pre_checks = {
@@ -107,7 +107,7 @@ pipeline:
         for r in records
         if r.get("record_type") == "ser"
         and r.get("status") == "succeeded"
-        and r["operation"]["ref"] == "FloatAddOperation"
+        and r.get("processor", {}).get("ref", "").endswith("FloatAddOperation")
     )
 
     pre_checks = {
@@ -211,7 +211,8 @@ pipeline:
     probe_ser = next(
         r
         for r in records
-        if r.get("record_type") == "ser" and r["operation"]["ref"] == "FloatBasicProbe"
+        if r.get("record_type") == "ser"
+        and r.get("processor", {}).get("ref", "").endswith("FloatBasicProbe")
     )
 
     post_checks = {

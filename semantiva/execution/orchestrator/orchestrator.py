@@ -758,13 +758,15 @@ class SemantivaOrchestrator(ABC):
             "success": "succeeded",
             "ok": "succeeded",
         }.get(status, status)
+        proc_cls = node.processor.__class__
+        fqcn = f"{proc_cls.__module__}.{proc_cls.__qualname__}"
         return SERRecord(
             record_type="ser",
             schema_version=1,
             identity={"run_id": run_id, "pipeline_id": pipeline_id, "node_id": node_id},
             dependencies={"upstream": upstream_ids},
-            operation={
-                "ref": node.processor.__class__.__name__,
+            processor={
+                "ref": fqcn,
                 "parameters": params,
                 "parameter_sources": param_sources,
             },
@@ -782,7 +784,7 @@ class SemantivaOrchestrator(ABC):
             timing=timing,
             status=normalized_status,  # type: ignore[arg-type]
             error=error,
-            tags={"node_ref": node.processor.__class__.__name__},
+            tags={"node_ref": fqcn},
             summaries=summaries or None,
         )
 

@@ -125,13 +125,13 @@ def test_output_format(tmp_path: Path) -> None:
     ser = next(
         r
         for r in records
-        if r["record_type"] == "ser" and "factor" in r["operation"]["parameters"]
+        if r["record_type"] == "ser" and "factor" in r["processor"]["parameters"]
     )
     assert ser["status"] == "succeeded"
     assert "cpu_ms" in ser["timing"] and ser["timing"]["cpu_ms"] >= 0
     assert "input_data" in ser.get("summaries", {})
-    assert ser["operation"]["parameters"]["factor"] == 2.0
-    assert ser["operation"]["parameter_sources"]["factor"] == "node"
+    assert ser["processor"]["parameters"]["factor"] == 2.0
+    assert ser["processor"]["parameter_sources"]["factor"] == "node"
 
 
 def test_detail_flags(tmp_path: Path) -> None:
@@ -196,7 +196,7 @@ def test_ser_env_and_builtin_checks(tmp_path: Path) -> None:
             pre_checks["required_keys_present"]["details"].get("expected_keys"), list
         )
     probe_record = next(
-        r for r in ser_records if r["operation"]["ref"] == "FloatBasicProbe"
+        r for r in ser_records if r["processor"]["ref"].endswith("FloatBasicProbe")
     )
     post_checks = {
         entry["code"]: entry for entry in probe_record["assertions"]["postconditions"]
@@ -264,7 +264,7 @@ pipeline:
         for r in records
         if r.get("record_type") == "ser"
         and r.get("status") == "succeeded"
-        and r["operation"]["ref"] == "FloatAddOperation"
+        and r["processor"]["ref"].endswith("FloatAddOperation")
     )
     pre_checks = {
         entry["code"]: entry for entry in add_ser["assertions"]["preconditions"]
@@ -272,4 +272,4 @@ pipeline:
     required = pre_checks["required_keys_present"]["details"]
     assert "addend" in required["expected_keys"]
     assert required["missing_keys"] == []
-    assert add_ser["operation"]["parameter_sources"].get("addend") == "context"
+    assert add_ser["processor"]["parameter_sources"].get("addend") == "context"

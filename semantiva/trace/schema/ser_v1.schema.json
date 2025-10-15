@@ -8,7 +8,7 @@
     "schema_version",
     "identity",
     "dependencies",
-    "operation",
+    "processor",
     "context_delta",
     "assertions",
     "timing",
@@ -30,7 +30,7 @@
       "required": ["upstream"],
       "additionalProperties": true
     },
-    "operation": {
+    "processor": {
       "type": "object",
       "required": ["ref", "parameters", "parameter_sources"],
       "properties": {

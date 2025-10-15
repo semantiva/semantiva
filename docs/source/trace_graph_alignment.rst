@@ -36,5 +36,7 @@ To recreate the execution graph from SER files:
 
 1. Read ``pipeline_start`` records (``record_type='pipeline_start'``) to obtain the canonical graph.
 2. For each SER record, use ``identity.node_id`` and ``dependencies.upstream`` to build edges.
-3. Combine with per-step information from ``operation``, ``context_delta`` and ``assertions``.
+3. Combine with per-step information from ``processor``, ``context_delta`` and ``assertions``.
+
+The canonical graph exposes ``processor_ref`` (FQCN); SER mirrors this as ``processor.ref``.
 
