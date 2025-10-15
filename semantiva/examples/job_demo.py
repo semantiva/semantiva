@@ -92,11 +92,11 @@ def main():
         },
         {
             "processor": FloatCollectValueProbe,
-            "context_keyword": "mock_keyword",
+            "context_key": "mock_keyword",
         },
         {
             "processor": FloatCollectValueProbe,
-            "context_keyword": "dummy_keyword",
+            "context_key": "dummy_keyword",
         },
         {
             "processor": "rename:mock_keyword:final_keyword",

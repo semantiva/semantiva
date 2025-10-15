@@ -29,7 +29,7 @@ Key Features
 
 **Data Structure Compatibility**
   - **Single dictionaries**: ``{"key": [value1, value2, ...]}``
-  - **Lists of dictionaries**: ``[{"key": value1}, {"key": value2}, ...]`` (common from slicers)
+  - **Lists of dictionaries**: ``[{"key": value1}, {"key": value2}, ...]`` (common from slice outputs)
   - **Nested structures**: Multi-level path extraction with dot notation
 
 Traditional Usage
@@ -39,7 +39,7 @@ The traditional approach uses the ``model:`` resolver to describe and instantiat
 model in a single, declarative string:
 
 - ``fitting_model: "model:PolynomialFittingModel:degree=2"`` → a 2nd-degree polynomial
-- ``context_keyword: "fit_coefficients"`` → where results are stored in the context
+- ``context_key: "fit_coefficients"`` → where results are stored in the context
   (the context must provide ``x_values`` and ``y_values`` arrays)
 
 At runtime, :py:class:`~semantiva.workflows.fitting_model.ModelFittingContextProcessor`
@@ -112,21 +112,21 @@ Integration with Pipeline Components
 
 **Slicer Integration**
 
-The flexible parameter mapping is particularly useful when working with slicer outputs.
+The flexible parameter mapping is particularly useful when working with slice outputs.
 The system automatically detects and handles data from slice aggregators:
 
 .. code-block:: yaml
 
    - processor: SliceAggregatorContextProcessor
      parameters:
-       # ... slicer configuration
+       # ... slice configuration
        
    - processor: ModelFittingContextProcessor
      parameters:
        fitting_model: "model:PolynomialFittingModel:degree=1"
        independent_var_key: "slice_indices"
        dependent_var_key: "aggregated_data.mean_values"
-       context_keyword: "trend_analysis"
+       context_key: "trend_analysis"
 
 **Multiple Fitting Operations**
 
@@ -141,7 +141,7 @@ multiple processors with different dependent variable paths:
        fitting_model: "model:PolynomialFittingModel:degree=1"
        independent_var_key: "t_values"
        dependent_var_key: "gaussian_fit_parameters.std_dev_x"
-       context_keyword: "std_dev_trend"
+       context_key: "std_dev_trend"
 
    # Fit orientation trend
    - processor: ModelFittingContextProcessor
@@ -149,7 +149,7 @@ multiple processors with different dependent variable paths:
        fitting_model: "model:PolynomialFittingModel:degree=1"
        independent_var_key: "t_values"
        dependent_var_key: "gaussian_fit_parameters.angle"
-       context_keyword: "orientation_trend"
+       context_key: "orientation_trend"
 
 Technical Implementation
 ------------------------
@@ -242,7 +242,7 @@ Link-outs:
 - :doc:`extensions` (``model:`` resolver and extensions)
 - :doc:`studio_viewer` (serve and export diagrams)
 - :doc:`context_processors` (Context processor fundamentals)
-- :doc:`data_processors` (Data slicer integration)
+- :doc:`data_processors` (Data slice integration)
 
 Example YAML Configurations
 ---------------------------
@@ -295,7 +295,7 @@ Programmatic Usage
    >>> ProcessorClass = _model_fitting_processor_factory(
    ...     independent_var_key="time",
    ...     dependent_var_key="data.measurements",
-   ...     context_keyword="analysis_results"
+   ...     context_key="analysis_results"
    ... )
    >>> processor = ProcessorClass()
 

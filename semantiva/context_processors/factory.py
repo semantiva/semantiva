@@ -56,11 +56,11 @@ def _extract_strict_placeholders(template: str) -> List[str]:
             raise ValueError("Positional placeholders '{}' are not supported")
         if conversion is not None:
             raise ValueError(
-                "Format conversions (e.g., '!r') are not supported in stringbuild templates"
+                "Format conversions (e.g., '!r') are not supported in template resolvers"
             )
         if format_spec:
             raise ValueError(
-                "Format specifications (e.g., ':03d') are not supported in stringbuild templates"
+                "Format specifications (e.g., ':03d') are not supported in template resolvers"
             )
         if not _PLACEHOLDER_PATTERN.fullmatch(field_name):
             raise ValueError(
@@ -73,7 +73,7 @@ def _extract_strict_placeholders(template: str) -> List[str]:
 
     if not required:
         raise ValueError(
-            "Stringbuild templates must include at least one placeholder like '{key}'"
+            "Template resolvers must include at least one placeholder like '{key}'"
         )
     return required
 
@@ -188,10 +188,8 @@ def create_delete_operation(key: str) -> type[ContextProcessor]:
     return _context_deleter_factory(key)
 
 
-def _context_stringbuild_factory(
-    template: str, output_key: str
-) -> type[ContextProcessor]:
-    """Create a ContextProcessor subclass that builds strings from context keys."""
+def _context_template_factory(template: str, output_key: str) -> type[ContextProcessor]:
+    """Create a ContextProcessor subclass that renders templates from context keys."""
 
     _ensure_valid_key(output_key)
     required_keys = _extract_strict_placeholders(template)
@@ -201,15 +199,14 @@ def _context_stringbuild_factory(
         missing = [key for key in required_keys if key not in kwargs]
         if missing:
             raise KeyError(
-                "Context stringbuild missing required keys: "
-                + ", ".join(sorted(missing))
+                "Context template missing required keys: " + ", ".join(sorted(missing))
             )
 
         values = {name: str(kwargs[name]) for name in required_keys}
         rendered = template.format(**values)
         self._notify_context_update(output_key, rendered)
         self.logger.debug(
-            "Stringbuild wrote %s=%r using keys %s",
+            "Template wrote %s=%r using keys %s",
             output_key,
             rendered,
             required_keys,
@@ -227,7 +224,7 @@ def _context_stringbuild_factory(
     def get_processing_parameter_names(cls) -> List[str]:
         return list(required_keys)
 
-    dynamic_class_name = f"StringBuild_{class_suffix_out}"
+    dynamic_class_name = f"Template_{class_suffix_out}"
     class_attrs = {
         "_process_logic": _process_logic,
         "get_created_keys": classmethod(get_created_keys),
@@ -242,9 +239,7 @@ def _context_stringbuild_factory(
     return type(dynamic_class_name, (ContextProcessor,), class_attrs)
 
 
-def create_stringbuild_operation(
-    template: str, output_key: str
-) -> type[ContextProcessor]:
-    """Public factory for string-building context processors."""
+def create_template_operation(template: str, output_key: str) -> type[ContextProcessor]:
+    """Public factory for template-driven context processors."""
 
-    return _context_stringbuild_factory(template, output_key)
+    return _context_template_factory(template, output_key)

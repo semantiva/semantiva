@@ -19,7 +19,7 @@ from semantiva.configurations import load_pipeline_from_yaml
 from semantiva.context_processors import ContextType
 from semantiva.data_types import NoDataType
 from semantiva.execution.run_space import expand_run_space
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
 
 def test_local_run_space_runs_end_to_end(tmp_path, monkeypatch):
@@ -34,7 +34,7 @@ def test_local_run_space_runs_end_to_end(tmp_path, monkeypatch):
 
     trace_dir = tmp_path / "trace"
     trace_dir.mkdir(parents=True, exist_ok=True)
-    trace_driver = JSONLTrace(str(trace_dir))
+    trace_driver = JsonlTraceDriver(str(trace_dir))
     pipeline = Pipeline(
         pipeline_cfg.nodes,
         trace=trace_driver,

@@ -26,7 +26,7 @@ def _ensure_builtin_resolvers():
     """Ensure built-in resolvers are available for each test.
 
     This fixture automatically runs before each test to guarantee that
-    built-in name resolvers (rename:, delete:, stringbuild:, slicer:)
+    built-in name resolvers (rename:, delete:, template:, slice:)
     are always present, even if previous tests called clear() on the
     NameResolverRegistry.
 

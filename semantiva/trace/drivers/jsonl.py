@@ -30,7 +30,7 @@ import logging
 from ..model import SERRecord, TraceDriver
 
 
-class JSONLTrace(TraceDriver):
+class JsonlTraceDriver(TraceDriver):
     """Persist SER records to ``*.ser.jsonl`` files."""
 
     def __init__(
@@ -75,8 +75,8 @@ class JSONLTrace(TraceDriver):
         self._open_file(run_id)
         assert self._file is not None
         record = {
-            "type": "pipeline_start",
-            "schema_version": 0,
+            "record_type": "pipeline_start",
+            "schema_version": 1,
             "pipeline_id": pipeline_id,
             "run_id": run_id,
             "canonical_spec": canonical_spec,
@@ -113,8 +113,8 @@ class JSONLTrace(TraceDriver):
         if not self._file:
             return
         record = {
-            "type": "pipeline_end",
-            "schema_version": 0,
+            "record_type": "pipeline_end",
+            "schema_version": 1,
             "run_id": run_id,
             "summary": summary,
         }

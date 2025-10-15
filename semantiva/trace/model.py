@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Trace model for Step Evidence Record (SER v0 - draft).
+"""Trace model for Step Evidence Record (SER v1).
 
 This module defines the dataclasses used by the tracing subsystem. The Step
 Evidence Record (SER) is a single record emitted for each completed pipeline
-step. Drivers switch on the ``type`` field and ignore unknown fields for
-forward compatibility. Version ``0`` is the draft schema used during
-pre-release development.
-
-The exhaustive description of SER fields and semantics lives in
+step. Drivers switch on the ``record_type`` field and ignore unknown fields for
+forward compatibility.
+The description of SER fields and semantics lives in
 docs/source/ser.rst.
 """
 
@@ -54,30 +52,30 @@ class UpstreamEvidence:
 
 
 @dataclass
-class IODelta:
-    """Input/output delta for a node execution."""
+class ContextDelta:
+    """Context delta for a node execution."""
 
-    read: List[str]
-    created: List[str]
-    updated: List[str]
-    summaries: Dict[str, Dict[str, Any]]
+    read_keys: List[str]
+    created_keys: List[str]
+    updated_keys: List[str]
+    key_summaries: Dict[str, Dict[str, Any]]
 
 
 @dataclass
 class SERRecord:
     """Step Evidence Record emitted for each executed pipeline node."""
 
-    type: Literal["ser"]
+    record_type: Literal["ser"]
     schema_version: int
-    ids: Dict[str, str]
-    topology: Dict[str, List[str]]
-    action: Dict[str, Any]
-    io_delta: IODelta
-    checks: Dict[str, Any]
+    identity: Dict[str, str]
+    dependencies: Dict[str, List[str]]
+    operation: Dict[str, Any]
+    context_delta: ContextDelta
+    assertions: Dict[str, Any]
     timing: Dict[str, Any]
-    status: Literal["completed", "error"]
+    status: Literal["succeeded", "error", "skipped", "cancelled"]
     error: Optional[Dict[str, Any]] = None
-    labels: Optional[Dict[str, Any]] = None
+    tags: Optional[Dict[str, Any]] = None
     summaries: Optional[Dict[str, Any]] = None
 
 

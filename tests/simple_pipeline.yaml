@@ -14,7 +14,7 @@ pipeline:
         addend: 10.0
 
     - processor: "FloatBasicProbe"
-      context_keyword: "probed_data"
+      context_key: "probed_data"
 
     - processor: "FloatTxtFileSaver"
       parameters:

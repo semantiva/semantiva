@@ -29,7 +29,7 @@ import yaml
 
 from semantiva.configurations import parse_pipeline_config
 from semantiva.configurations.schema import ExecutionConfig, TraceConfig
-from semantiva.exceptions.pipeline_exceptions import RunSpaceCapExceededError
+from semantiva.exceptions.pipeline_exceptions import RunSpaceMaxRunsExceededError
 from semantiva.execution.component_registry import ExecutionComponentRegistry
 from semantiva.execution.run_space import expand_run_space
 from semantiva.execution.orchestrator.factory import build_orchestrator
@@ -395,14 +395,14 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
         help="Path to a YAML file containing a run_space block",
     )
     run_p.add_argument(
-        "--run-space-cap",
-        dest="run_space_cap",
+        "--run-space-max-runs",
+        dest="run_space_max_runs",
         type=int,
-        help="Override run_space.cap safety limit",
+        help="Override run_space.max_runs safety limit",
     )
     run_p.add_argument(
-        "--run-space-plan-only",
-        dest="run_space_plan_only",
+        "--run-space-dry-run",
+        dest="run_space_dry_run",
         action="store_true",
         help="Plan run_space expansions, print summary with previews, and exit",
     )
@@ -611,15 +611,15 @@ def _run(args: argparse.Namespace) -> int:
         config["run_space"] = run_space_block
         run_space_override = True
 
-    if args.run_space_cap is not None or args.run_space_plan_only:
+    if args.run_space_max_runs is not None or args.run_space_dry_run:
         run_space_section = config.setdefault("run_space", {})
         if not isinstance(run_space_section, dict):
             print("Invalid config: run_space block must be a mapping", file=sys.stderr)
             return EXIT_CONFIG_ERROR
-        if args.run_space_cap is not None:
-            run_space_section["cap"] = args.run_space_cap
-        if args.run_space_plan_only:
-            run_space_section["plan_only"] = True
+        if args.run_space_max_runs is not None:
+            run_space_section["max_runs"] = args.run_space_max_runs
+        if args.run_space_dry_run:
+            run_space_section["dry_run"] = True
         run_space_override = True
 
     pipeline_path = Path(args.pipeline).expanduser().resolve()
@@ -685,15 +685,15 @@ def _run(args: argparse.Namespace) -> int:
             pipeline_cfg.run_space,
             cwd=pipeline_cfg.base_dir or pipeline_path.parent,
         )
-    except RunSpaceCapExceededError as exc:
+    except RunSpaceMaxRunsExceededError as exc:
         print(
             f"Error: {exc.message}\n\n"
             f"The run space configuration would generate {exc.actual_runs:,} runs, "
-            f"which exceeds the safety limit of {exc.cap:,}.\n\n"
+            f"which exceeds the safety limit of {exc.max_runs:,}.\n\n"
             f"To resolve this, you can:\n"
             f"  1. Reduce the size of your run space by using fewer values or 'zip' mode\n"
-            f"  2. Increase the cap with: --run-space-cap {exc.actual_runs}\n"
-            f"  3. Preview the run space with: --run-space-plan-only\n\n"
+            f"  2. Increase the max runs with: --run-space-max-runs {exc.actual_runs}\n"
+            f"  3. Preview the run space with: --run-space-dry-run\n\n"
             f"Note: Large run spaces may consume significant computational resources.",
             file=sys.stderr,
         )
@@ -703,9 +703,9 @@ def _run(args: argparse.Namespace) -> int:
         run_space_meta["override_source"] = "CLI"
     run_count = len(runs)
 
-    if pipeline_cfg.run_space.plan_only:
+    if pipeline_cfg.run_space.dry_run:
         _print_run_space_plan(run_space_meta, runs)
-        print("plan_only enabled: no execution performed.")
+        print("dry_run enabled: no execution performed.")
         return EXIT_SUCCESS
 
     if args.dry_run:

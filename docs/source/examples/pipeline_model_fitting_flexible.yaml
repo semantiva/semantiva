@@ -5,4 +5,4 @@ pipeline:
         fitting_model: "model:PolynomialFittingModel:degree=1"
         independent_var_key: "time_values"
         dependent_var_key: "measurements"
-        context_keyword: "time_series_fit"
+        context_key: "time_series_fit"

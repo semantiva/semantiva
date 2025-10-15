@@ -80,7 +80,7 @@ def test_ser_records_include_run_space_arguments(tmp_path):
 
     run_space_meta = {
         "combine": "product",
-        "cap": 10,
+        "max_runs": 10,
         "expanded_runs": 2,
         "blocks": [
             {
@@ -99,10 +99,10 @@ def test_ser_records_include_run_space_arguments(tmp_path):
         pipeline.process(payload)
 
     assert trace.events, "expected SER events to be captured"
-    run_ids = {event.ids["run_id"] for event in trace.events}
+    run_ids = {event.identity["run_id"] for event in trace.events}
     assert len(run_ids) == len(RUNS)
     for event in trace.events:
-        args = event.checks["why_ok"].get("args", {})
+        args = event.assertions.get("args", {})
         assert "run_space.index" in args
         assert "run_space.combine" in args
         assert "run_space.context" in args

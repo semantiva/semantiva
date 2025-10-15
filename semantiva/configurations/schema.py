@@ -50,7 +50,7 @@ class RunSource:
     row/object as one run unless ``mode`` is explicitly set to ``'product'``.
     """
 
-    type: Literal["csv", "json", "yaml", "ndjson"]
+    format: Literal["csv", "json", "yaml", "ndjson"]
     path: str
     select: Optional[List[str]] = None
     rename: Dict[str, str] = field(default_factory=dict)
@@ -75,8 +75,8 @@ class RunSpaceV1Config:
     """
 
     combine: RunBlockMode = "product"
-    cap: int = 1000
-    plan_only: bool = False
+    max_runs: int = 1000
+    dry_run: bool = False
     blocks: List[RunBlock] = field(default_factory=list)
 
 

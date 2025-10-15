@@ -16,7 +16,7 @@ Examples Index
      - ``docs/source/examples/pipeline_model_fitting_flexible.yaml``
    * - Model fitting (nested paths)
      - ``docs/source/examples/pipeline_model_fitting_nested_path.yaml``
-   * - Model fitting (slicer integration)
+   * - Model fitting (slice integration)
      - ``docs/source/examples/pipeline_model_fitting_slicer_integration.yaml``
    * - Model fitting (multiple operations)
      - ``docs/source/examples/pipeline_model_fitting_multiple_operations.yaml``
@@ -45,8 +45,8 @@ Inspect: ``semantiva inspect docs/source/examples/pipeline_model_fitting_flexibl
 Demonstrates nested path extraction using dot notation for complex data structures.
 Inspect: ``semantiva inspect docs/source/examples/pipeline_model_fitting_nested_path.yaml --extended``
 
-**Model fitting (slicer integration)** — see :doc:`workflows_fitting_models`  
-Shows integration with slicer outputs and aggregated data processing.
+**Model fitting (slice integration)** — see :doc:`workflows_fitting_models`
+Shows integration with slice outputs and aggregated data processing.
 Inspect: ``semantiva inspect docs/source/examples/pipeline_model_fitting_slicer_integration.yaml --extended``
 
 **Model fitting (multiple operations)** — see :doc:`workflows_fitting_models`  

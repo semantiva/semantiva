@@ -98,7 +98,7 @@ def _make_data_operation_node():
 
 def _make_probe_context_injector_node():
     return _pipeline_node_factory(
-        {"processor": FloatBasicProbe, "context_keyword": "probe_key"},
+        {"processor": FloatBasicProbe, "context_key": "probe_key"},
         _make_logger(),
     )
 

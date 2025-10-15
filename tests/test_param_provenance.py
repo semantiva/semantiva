@@ -30,7 +30,7 @@ from pathlib import Path
 
 from semantiva import Payload
 from semantiva.context_processors.context_types import ContextType
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 from semantiva.execution.orchestrator.orchestrator import LocalSemantivaOrchestrator
 from semantiva.execution.transport.in_memory import InMemorySemantivaTransport
 from semantiva.logger import Logger
@@ -69,7 +69,7 @@ def test_param_provenance(tmp_path: Path) -> None:
     pipeline_spec = [{"processor": ParamOp, "parameters": {"factor": 2.0}}]
     payload = Payload(FloatDataType(1.0), ContextType({"from_ctx": 5.0}))
     trace_path = tmp_path / "trace.ser.jsonl"
-    trace = JSONLTrace(str(trace_path))
+    trace = JsonlTraceDriver(str(trace_path))
     orch = LocalSemantivaOrchestrator()
     orch.execute(
         pipeline_spec=pipeline_spec,
@@ -82,11 +82,15 @@ def test_param_provenance(tmp_path: Path) -> None:
     ser = next(
         json.loads(line)
         for line in trace_path.read_text().splitlines()
-        if line and json.loads(line).get("type") == "ser"
+        if line and json.loads(line).get("record_type") == "ser"
     )
-    action = ser["action"]
-    assert action["params"] == {"factor": 2.0, "from_ctx": 5.0, "defaulted": 3.0}
-    assert action["param_source"] == {
+    operation = ser["operation"]
+    assert operation["parameters"] == {
+        "factor": 2.0,
+        "from_ctx": 5.0,
+        "defaulted": 3.0,
+    }
+    assert operation["parameter_sources"] == {
         "factor": "node",
         "from_ctx": "context",
         "defaulted": "default",

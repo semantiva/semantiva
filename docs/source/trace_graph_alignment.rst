@@ -12,7 +12,7 @@ Node Identity
   GraphV1 builder.
 * The same ``node_uuid`` appears:
   * In the canonical spec (``canonical_spec.nodes[*].node_uuid``).
-  * In each SER record as ``ids.node_id``.
+  * In each SER record as ``identity.node_id``.
 
   **Rule:** Consumers must always join SER data to the graph using ``node_uuid``.
 
@@ -27,14 +27,14 @@ Pipeline & Run Identity
 
 * ``pipeline_id``: deterministic hash of the canonical spec.
 * ``run_id``: unique per execution.
-* Both appear in ``pipeline_start`` records and in the ``ids`` of each SER.
+* Both appear in ``pipeline_start`` records and in the ``identity`` of each SER.
 
 Trace → Graph Usage
 -------------------
 
 To recreate the execution graph from SER files:
 
-1. Read ``pipeline_start`` to obtain the canonical graph.
-2. For each SER record, use ``ids.node_id`` and ``topology.upstream`` to build edges.
-3. Combine with per-step information from ``action``, ``io_delta`` and ``checks``.
+1. Read ``pipeline_start`` records (``record_type='pipeline_start'``) to obtain the canonical graph.
+2. For each SER record, use ``identity.node_id`` and ``dependencies.upstream`` to build edges.
+3. Combine with per-step information from ``operation``, ``context_delta`` and ``assertions``.
 

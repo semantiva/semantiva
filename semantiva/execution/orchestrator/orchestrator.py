@@ -53,7 +53,7 @@ from semantiva.trace._utils import (
     sha256_bytes,
 )
 from semantiva.trace.delta_collector import DeltaCollector
-from semantiva.trace.model import IODelta, SERRecord, TraceDriver
+from semantiva.trace.model import ContextDelta, SERRecord, TraceDriver
 
 T = TypeVar("T")
 
@@ -184,7 +184,7 @@ class SemantivaOrchestrator(ABC):
                         {"node_id": u, "state": "completed"}
                         for u in upstream_map.get(node_id, [])
                     ],
-                    io_delta_provider=lambda: collector.compute(
+                    context_delta_provider=lambda: collector.compute(
                         pre_ctx=pre_ctx_view,
                         post_ctx=self._context_snapshot(context),
                         required_keys=required_keys,
@@ -212,12 +212,16 @@ class SemantivaOrchestrator(ABC):
                     payload = result
                     data, context = payload.data, payload.context
                     post_ctx_view = self._context_snapshot(context)
-                    io_delta = self._ensure_io_delta(
-                        hooks.io_delta_provider() if hooks.io_delta_provider else {}
+                    context_delta = self._ensure_context_delta(
+                        hooks.context_delta_provider()
+                        if hooks.context_delta_provider
+                        else {}
                     )
                     post_checks = self._build_post_checks(
-                        node, post_ctx_view, data, io_delta
-                    ) + self._extra_post_checks(node, post_ctx_view, data, io_delta)
+                        node, post_ctx_view, data, context_delta
+                    ) + self._extra_post_checks(
+                        node, post_ctx_view, data, context_delta
+                    )
                     hooks.post_checks_provider = _const_supplier(post_checks)
 
                     if trace_driver is not None:
@@ -228,7 +232,7 @@ class SemantivaOrchestrator(ABC):
                             summaries, data, post_ctx_view, trace_opts
                         )
                         ser = self._make_ser_record(
-                            status="completed",
+                            status="succeeded",
                             node=node,
                             node_id=node_id,
                             pipeline_id=pipeline_token,
@@ -239,10 +243,10 @@ class SemantivaOrchestrator(ABC):
                             pre_checks=pre_checks,
                             post_checks=post_checks,
                             env_pins=env_pins_static,
-                            io_delta=io_delta,
+                            context_delta=context_delta,
                             timing={
-                                "start": start_iso,
-                                "end": end_iso,
+                                "started_at": start_iso,
+                                "finished_at": end_iso,
                                 "duration_ms": duration_ms,
                                 "cpu_ms": cpu_ms,
                             },
@@ -256,8 +260,10 @@ class SemantivaOrchestrator(ABC):
                 except Exception as exc:
                     if trace_driver is not None:
                         post_ctx_view = self._context_snapshot(context)
-                        io_delta = self._ensure_io_delta(
-                            hooks.io_delta_provider() if hooks.io_delta_provider else {}
+                        context_delta = self._ensure_context_delta(
+                            hooks.context_delta_provider()
+                            if hooks.context_delta_provider
+                            else {}
                         )
                         post_checks = (
                             [
@@ -268,10 +274,10 @@ class SemantivaOrchestrator(ABC):
                                 }
                             ]
                             + self._build_post_checks(
-                                node, post_ctx_view, data, io_delta
+                                node, post_ctx_view, data, context_delta
                             )
                             + self._extra_post_checks(
-                                node, post_ctx_view, data, io_delta
+                                node, post_ctx_view, data, context_delta
                             )
                         )
                         hooks.post_checks_provider = _const_supplier(post_checks)
@@ -293,10 +299,10 @@ class SemantivaOrchestrator(ABC):
                             pre_checks=pre_checks,
                             post_checks=post_checks,
                             env_pins=env_pins_static,
-                            io_delta=io_delta,
+                            context_delta=context_delta,
                             timing={
-                                "start": start_iso,
-                                "end": end_iso,
+                                "started_at": start_iso,
+                                "finished_at": end_iso,
                                 "duration_ms": duration_ms,
                                 "cpu_ms": cpu_ms,
                             },
@@ -402,7 +408,8 @@ class SemantivaOrchestrator(ABC):
         config = self._processor_config_for(node, node_def)
         param_getter = getattr(node.processor, "get_processing_parameter_names", None)
         try:
-            param_names = list(param_getter()) if callable(param_getter) else []
+            # param_getter() may return None or an iterable; ensure we pass an iterable to list()
+            param_names = list(param_getter() or []) if callable(param_getter) else []
         except Exception:
             param_names = []
         defaults_map = self._parameter_defaults(node.processor)
@@ -437,7 +444,7 @@ class SemantivaOrchestrator(ABC):
                     keys.update(self._normalize_keys(func()))
                 except Exception:
                     continue
-        attr = getattr(node, "input_context_keyword", None)
+        attr = getattr(node, "input_context_key", None)
         if isinstance(attr, str):
             keys.add(attr)
         declared = getattr(node, "required_context_keys", None)
@@ -493,7 +500,7 @@ class SemantivaOrchestrator(ABC):
             {
                 "code": "required_keys_present",
                 "result": "PASS" if not missing else "FAIL",
-                "details": {"expected": required_keys, "missing": missing},
+                "details": {"expected_keys": required_keys, "missing_keys": missing},
             }
         )
         input_expected = getattr(node.processor, "input_data_type", lambda: None)()
@@ -510,13 +517,25 @@ class SemantivaOrchestrator(ABC):
             )
         return checks
 
-    def _extract_delta_lists(self, io_delta: Any) -> tuple[list[str], list[str]]:
-        if isinstance(io_delta, IODelta):
-            created = list(io_delta.created)
-            updated = list(io_delta.updated)
-        elif isinstance(io_delta, dict):
-            created = list(io_delta.get("created", []))
-            updated = list(io_delta.get("updated", []))
+    def _extract_context_delta_lists(
+        self, context_delta: Any
+    ) -> tuple[list[str], list[str]]:
+        if isinstance(context_delta, ContextDelta):
+            created = list(context_delta.created_keys or [])
+            updated = list(context_delta.updated_keys or [])
+        elif isinstance(context_delta, dict):
+            created = list(
+                (
+                    context_delta.get("created_keys", context_delta.get("created", []))
+                    or []
+                )
+            )
+            updated = list(
+                (
+                    context_delta.get("updated_keys", context_delta.get("updated", []))
+                    or []
+                )
+            )
         else:
             created, updated = [], []
         return sorted(created), sorted(updated)
@@ -526,14 +545,18 @@ class SemantivaOrchestrator(ABC):
         node: _PipelineNode,
         context_view: dict[str, Any],
         data: Any,
-        io_delta: Any,
+        context_delta: Any,
     ) -> list[dict[str, Any]]:
         checks: list[dict[str, Any]] = []
         output_expected = getattr(node.processor, "output_data_type", lambda: None)()
         checks.append(self._type_check_entry("output_type_ok", output_expected, data))
-        created, updated = self._extract_delta_lists(io_delta)
+        created, updated = self._extract_context_delta_lists(context_delta)
         missing = [k for k in created + updated if k not in context_view]
-        details = {"created": created, "updated": updated, "missing": missing}
+        details = {
+            "created_keys": created,
+            "updated_keys": updated,
+            "missing_keys": missing,
+        }
         checks.append(
             {
                 "code": "context_writes_realized",
@@ -581,23 +604,31 @@ class SemantivaOrchestrator(ABC):
         node: _PipelineNode,
         context_view: dict[str, Any],
         data: Any,
-        io_delta: Any,
+        context_delta: Any,
     ) -> list[dict[str, Any]]:
         return []
 
     def _collect_env_pins(self) -> dict[str, str | None]:
         return _collect_env_pins_util()
 
-    def _ensure_io_delta(self, delta: Any) -> IODelta:
-        if isinstance(delta, IODelta):
+    def _ensure_context_delta(self, delta: Any) -> ContextDelta:
+        if isinstance(delta, ContextDelta):
             return delta
         if not isinstance(delta, dict):
-            return IODelta(read=[], created=[], updated=[], summaries={})
-        return IODelta(
-            read=list(delta.get("read", [])),
-            created=list(delta.get("created", [])),
-            updated=list(delta.get("updated", [])),
-            summaries=dict(delta.get("summaries", {})),
+            return ContextDelta(
+                read_keys=[], created_keys=[], updated_keys=[], key_summaries={}
+            )
+        return ContextDelta(
+            read_keys=list((delta.get("read_keys", delta.get("read", [])) or [])),
+            created_keys=list(
+                (delta.get("created_keys", delta.get("created", [])) or [])
+            ),
+            updated_keys=list(
+                (delta.get("updated_keys", delta.get("updated", [])) or [])
+            ),
+            key_summaries=dict(
+                delta.get("key_summaries", delta.get("summaries", {})) or {}
+            ),
         )
 
     def _data_summary(self, data: Any, trace_opts: dict[str, Any]) -> dict[str, object]:
@@ -706,7 +737,7 @@ class SemantivaOrchestrator(ABC):
         pre_checks: list[dict[str, Any]],
         post_checks: list[dict[str, Any]],
         env_pins: dict[str, Any],
-        io_delta: IODelta,
+        context_delta: ContextDelta,
         timing: dict[str, Any],
         params: dict[str, Any],
         param_sources: dict[str, str],
@@ -715,38 +746,43 @@ class SemantivaOrchestrator(ABC):
     ) -> SERRecord:
         if pipeline_id is None or run_id is None:
             raise RuntimeError("SER construction requires pipeline and run identifiers")
-        why_run = {
-            "trigger": trigger,
-            "upstream_evidence": upstream_evidence,
-            "pre": pre_checks,
-            "policy": [],
-        }
         args_payload: dict[str, Any] = {}
         if self._current_run_metadata:
             args_payload.update(self._current_run_metadata.get("args", {}))
-        why_ok = {
-            "post": post_checks,
-            "invariants": [],
-            "env": env_pins,
-            "redaction": {},
-            "args": args_payload,
-        }
+        preconditions = list(pre_checks)
+        postconditions = list(post_checks)
+        invariants: list[Any] = []
+        redaction_policy: dict[str, Any] = {}
+        normalized_status = {
+            "completed": "succeeded",
+            "success": "succeeded",
+            "ok": "succeeded",
+        }.get(status, status)
         return SERRecord(
-            type="ser",
-            schema_version=0,
-            ids={"run_id": run_id, "pipeline_id": pipeline_id, "node_id": node_id},
-            topology={"upstream": upstream_ids},
-            action={
-                "op_ref": node.processor.__class__.__name__,
-                "params": params,
-                "param_source": param_sources,
+            record_type="ser",
+            schema_version=1,
+            identity={"run_id": run_id, "pipeline_id": pipeline_id, "node_id": node_id},
+            dependencies={"upstream": upstream_ids},
+            operation={
+                "ref": node.processor.__class__.__name__,
+                "parameters": params,
+                "parameter_sources": param_sources,
             },
-            io_delta=io_delta,
-            checks={"why_run": why_run, "why_ok": why_ok},
+            context_delta=context_delta,
+            assertions={
+                "preconditions": preconditions,
+                "postconditions": postconditions,
+                "invariants": invariants,
+                "environment": env_pins,
+                "redaction_policy": redaction_policy,
+                "trigger": trigger,
+                "upstream_evidence": upstream_evidence,
+                "args": args_payload,
+            },
             timing=timing,
-            status=status,  # type: ignore[arg-type]
+            status=normalized_status,  # type: ignore[arg-type]
             error=error,
-            labels={"node_fqn": node.processor.__class__.__name__},
+            tags={"node_ref": node.processor.__class__.__name__},
             summaries=summaries or None,
         )
 

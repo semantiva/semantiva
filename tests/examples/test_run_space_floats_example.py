@@ -37,7 +37,7 @@ def test_run_space_floats_yaml_executes_locally(tmp_path, monkeypatch):
     from semantiva import Pipeline, Payload
     from semantiva.context_processors import ContextType
     from semantiva.data_types import NoDataType
-    from semantiva.trace.drivers.jsonl import JSONLTrace
+    from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
     cfg = load_pipeline_from_yaml(str(yaml_path))
     runs, meta = expand_run_space(cfg.run_space, cwd=yaml_path.parent)
@@ -48,7 +48,7 @@ def test_run_space_floats_yaml_executes_locally(tmp_path, monkeypatch):
     detail = (
         cfg.trace.options.get("detail") if isinstance(cfg.trace.options, dict) else None
     )
-    tracer = JSONLTrace(str(ser_path), detail=detail)
+    tracer = JsonlTraceDriver(str(ser_path), detail=detail)
 
     pipeline = Pipeline(cfg.nodes, trace=tracer)
 

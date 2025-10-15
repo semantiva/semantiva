@@ -5,4 +5,4 @@ pipeline:
         fitting_model: "model:PolynomialFittingModel:degree=1"
         independent_var_key: "slice_indices"
         dependent_var_key: "aggregated_data.mean_values"
-        context_keyword: "trend_analysis"
+        context_key: "trend_analysis"

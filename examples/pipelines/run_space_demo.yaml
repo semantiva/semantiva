@@ -1,7 +1,7 @@
 run_space:
   combine: product
-  cap: 500
-  plan_only: false
+  max_runs: 500
+  dry_run: false
   blocks:
     - mode: zip
       context:
@@ -25,6 +25,6 @@ pipeline:
     - processor: FloatAddOperation
     - processor: FloatMultiplyOperation
     - processor: FloatCollectValueProbe
-      context_keyword: "result"
-    - processor: stringbuild:"./outputs/value_{value}_factor_{factor}_seed_{seed}.txt":path
+      context_key: "result"
+    - processor: template:"./outputs/value_{value}_factor_{factor}_seed_{seed}.txt":path
     - processor: FloatTxtFileSaver

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests for the stringbuild context processor factory."""
+"""Tests for the template context processor factory."""
 
 import pytest
 
@@ -29,8 +29,8 @@ def setup_modules():
     ProcessorRegistry.clear()
 
 
-def test_stringbuild_factory_contract_and_execution():
-    cls = resolve_symbol('stringbuild:"exp_{subject}_{run}.png":filename')
+def test_template_factory_contract_and_execution():
+    cls = resolve_symbol('template:"exp_{subject}_{run}.png":filename')
 
     assert cls.get_processing_parameter_names() == ["subject", "run"]
     assert cls.get_created_keys() == ["filename"]
@@ -51,8 +51,8 @@ def test_stringbuild_factory_contract_and_execution():
     assert context.get_value("filename") == "exp_mouse01_3.png"
 
 
-def test_stringbuild_missing_key_raises_keyerror():
-    cls = resolve_symbol('stringbuild:"exp_{s}_{r}.png":filename')
+def test_template_missing_key_raises_keyerror():
+    cls = resolve_symbol('template:"exp_{s}_{r}.png":filename')
     processor = cls()
     context = ContextType({"s": "m1"})
     observer = _ValidatingContextObserver(
@@ -70,11 +70,11 @@ def test_stringbuild_missing_key_raises_keyerror():
 @pytest.mark.parametrize(
     "spec",
     [
-        'stringbuild:"exp_{value:.2f}.png":filename',
-        'stringbuild:"exp_{1invalid}.png":filename',
-        'stringbuild:"exp_static.png":filename',
+        'template:"exp_{value:.2f}.png":filename',
+        'template:"exp_{1invalid}.png":filename',
+        'template:"exp_static.png":filename',
     ],
 )
-def test_stringbuild_invalid_templates(spec: str) -> None:
+def test_template_invalid_templates(spec: str) -> None:
     with pytest.raises(ValueError):
         resolve_symbol(spec)

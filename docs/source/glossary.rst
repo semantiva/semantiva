@@ -27,7 +27,7 @@ Glossary
    Parameter Resolver
      Transforms parameter maps, e.g.,
 
-     - ``slicer:`` — reference/slice a value from context/parameters
+     - ``slice:`` — reference/slice a value from context/parameters
      - ``rename:`` — rename keys according to a mapping
      - ``delete:`` — remove keys or subtrees
      - ``model:`` — wrap a live object behind a serializable descriptor

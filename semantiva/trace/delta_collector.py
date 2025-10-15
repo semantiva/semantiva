@@ -46,7 +46,7 @@ def _stable_equal(a: Any, b: Any) -> bool:
 
 
 @dataclass
-class IOSummary:
+class ContextKeySummary:
     dtype: str | None = None
     length: int | None = None
     rows: int | None = None
@@ -55,7 +55,7 @@ class IOSummary:
 
 
 class DeltaCollector:
-    """Computes a minimal IO delta by diffing pre/post context and using declared required keys."""
+    """Compute a minimal context delta by diffing pre/post context."""
 
     def __init__(self, *, enable_hash: bool, enable_repr: bool):
         self.enable_hash = enable_hash
@@ -82,7 +82,7 @@ class DeltaCollector:
         )
         created_list = sorted(created)
 
-        summaries: Dict[str, Dict[str, Any]] = {}
+        key_summaries: Dict[str, Dict[str, Any]] = {}
         # summarize only changed keys (created + updated)
         for k in sorted(created | set(updated)):
             v = post_ctx.get(k)
@@ -102,11 +102,11 @@ class DeltaCollector:
                 except Exception:
                     pass
             # drop Nones to keep records small
-            summaries[k] = {kk: vv for kk, vv in rec.items() if vv is not None}
+            key_summaries[k] = {kk: vv for kk, vv in rec.items() if vv is not None}
 
         return {
-            "read": required,  # declared reads
-            "created": created_list,  # new keys
-            "updated": updated,  # changed keys
-            "summaries": summaries,  # details for changed keys
+            "read_keys": required,  # declared reads
+            "created_keys": created_list,  # new keys
+            "updated_keys": updated,  # changed keys
+            "key_summaries": key_summaries,  # details for changed keys
         }

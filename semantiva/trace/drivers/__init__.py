@@ -19,5 +19,5 @@ Each driver provides a different storage/output strategy for trace events,
 including comprehensive error handling and resource cleanup.
 
 Available Drivers:
-- JSONLTrace: Append-only JSONL files with background buffering and error event capture
+- JsonlTraceDriver: Append-only JSONL files with background buffering and error event capture
 """

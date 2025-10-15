@@ -35,21 +35,21 @@ from semantiva.execution.transport.in_memory import InMemorySemantivaTransport
 from semantiva.logger import Logger
 from semantiva.pipeline import Pipeline
 from semantiva.pipeline.payload import ContextType
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
 
 def test_ser_schema_validation(tmp_path: Path) -> None:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path))
+    tracer = JsonlTraceDriver(str(trace_path))
     Pipeline(nodes, trace=tracer).process()
     tracer.close()
-    schema_path = resources.files("semantiva.trace.schema") / "ser_v0.schema.json"
+    schema_path = resources.files("semantiva.trace.schema") / "ser_v1.schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = jsonschema.Draft202012Validator(schema)
     for line in trace_path.read_text().splitlines():
         rec = json.loads(line)
-        if rec.get("type") == "ser":
+        if rec.get("record_type") == "ser":
             validator.validate(rec)
 
 
@@ -67,7 +67,7 @@ class _FailingOperation(DataOperation):
 
 
 def test_ser_schema_validation_error_path(tmp_path: Path) -> None:
-    schema_path = resources.files("semantiva.trace.schema") / "ser_v0.schema.json"
+    schema_path = resources.files("semantiva.trace.schema") / "ser_v1.schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = jsonschema.Draft202012Validator(schema)
 
@@ -75,7 +75,7 @@ def test_ser_schema_validation_error_path(tmp_path: Path) -> None:
     transport = InMemorySemantivaTransport()
     logger = Logger()
     trace_path = tmp_path / "error.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path))
+    tracer = JsonlTraceDriver(str(trace_path))
 
     payload = Payload(FloatDataType(1.0), ContextType({}))
     pipeline_spec = [{"processor": _FailingOperation, "parameters": {}}]
@@ -92,5 +92,5 @@ def test_ser_schema_validation_error_path(tmp_path: Path) -> None:
     tracer.close()
     for line in trace_path.read_text().splitlines():
         rec = json.loads(line)
-        if rec.get("type") == "ser":
+        if rec.get("record_type") == "ser":
             validator.validate(rec)

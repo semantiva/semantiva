@@ -31,7 +31,7 @@ from pathlib import Path
 
 from semantiva.configurations import load_pipeline_from_yaml
 from semantiva.pipeline import Pipeline
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
 
 def _extract_example(path: Path) -> dict:
@@ -58,13 +58,13 @@ def _extract_example(path: Path) -> dict:
 def test_docs_ser_example_parity(tmp_path: Path) -> None:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path), detail="hash")
+    tracer = JsonlTraceDriver(str(trace_path), detail="hash")
     Pipeline(nodes, trace=tracer).process()
     tracer.close()
     real_ser = next(
         json.loads(line)
         for line in trace_path.read_text().splitlines()
-        if line and json.loads(line).get("type") == "ser"
+        if line and json.loads(line).get("record_type") == "ser"
     )
     example = _extract_example(Path("docs/source/ser.rst"))
     assert set(example.keys()) == set(real_ser.keys())

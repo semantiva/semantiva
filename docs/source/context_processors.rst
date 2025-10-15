@@ -155,7 +155,7 @@ also participate in validation:
 * ``rename:a:b`` — requires ``a``, creates ``b``, suppresses ``a``.
 * ``delete:k`` — suppresses ``k``.
 
-Factories: stringbuild
+Factories: template
 ----------------------
 
 Compose deterministic strings from existing context values without writing a
@@ -165,7 +165,7 @@ custom processor:
 
    pipeline:
      nodes:
-       - processor: 'stringbuild:"exp_{subject}_{run}.png":filename'
+       - processor: 'template:"exp_{subject}_{run}.png":filename'
 
 Rules:
 

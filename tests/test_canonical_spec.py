@@ -82,10 +82,10 @@ def test_orchestrator_two_phase_flow():
 
 
 def test_trace_driver_defensive_guard(tmp_path, caplog):
-    from semantiva.trace.drivers.jsonl import JSONLTrace
+    from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
     caplog.set_level("WARNING")
-    driver = JSONLTrace(output_path=tmp_path)
+    driver = JsonlTraceDriver(output_path=tmp_path)
     driver.on_pipeline_start("pid", "rid", {"oops": object()}, {})
     driver.flush()
     driver.close()

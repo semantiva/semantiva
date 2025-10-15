@@ -23,10 +23,10 @@ from typing import Any, Optional, Type, cast
 from semantiva.context_processors.factory import (
     _context_deleter_factory,
     _context_renamer_factory,
-    _context_stringbuild_factory,
+    _context_template_factory,
 )
 from semantiva.data_processors.data_processors import _BaseDataProcessor
-from semantiva.data_processors.data_slicer_factory import slicer
+from semantiva.data_processors.data_slicer_factory import slice
 from semantiva.data_types.data_types import DataCollectionType
 from semantiva.workflows.fitting_model import FittingModel
 
@@ -39,11 +39,11 @@ from .processor_registry import ProcessorRegistry
 
 _RE_RENAME = re.compile(r"^rename:(?P<src>.+?):(?P<dst>.+)$")
 _RE_DELETE = re.compile(r"^delete:(?P<key>.+)$")
-_RE_STRINGBUILD = re.compile(
-    r"^stringbuild:(?P<quote>\"|')(?P<template>.*?)(?P=quote):(?P<out>[A-Za-z_][A-Za-z0-9_.]*)$"
+_RE_TEMPLATE = re.compile(
+    r"^template:(?P<quote>\"|')(?P<template>.*?)(?P=quote):(?P<out>[A-Za-z_][A-Za-z0-9_.]*)$"
 )
-_RE_SLICER = re.compile(
-    r"^slicer:(?P<proc>[A-Za-z_][A-Za-z0-9_]*):(?P<collection>[A-Za-z_][A-Za-z0-9_]*)$"
+_RE_SLICE = re.compile(
+    r"^slice:(?P<proc>[A-Za-z_][A-Za-z0-9_]*):(?P<collection>[A-Za-z_][A-Za-z0-9_]*)$"
 )
 
 
@@ -61,17 +61,17 @@ def _resolve_delete(value: str) -> Optional[Type]:
     return _context_deleter_factory(match.group("key"))
 
 
-def _resolve_stringbuild(value: str) -> Optional[Type]:
-    match = _RE_STRINGBUILD.match(value)
+def _resolve_template(value: str) -> Optional[Type]:
+    match = _RE_TEMPLATE.match(value)
     if not match:
         return None
-    return _context_stringbuild_factory(
+    return _context_template_factory(
         template=match.group("template"), output_key=match.group("out")
     )
 
 
-def _resolve_slicer(value: str) -> Optional[Type]:
-    match = _RE_SLICER.match(value)
+def _resolve_slice(value: str) -> Optional[Type]:
+    match = _RE_SLICE.match(value)
     if not match:
         return None
     processor_cls = cast(
@@ -86,7 +86,7 @@ def _resolve_slicer(value: str) -> Optional[Type]:
         raise ValueError(f"{processor_cls.__name__} is not a data processor")
     if not issubclass(collection_cls, DataCollectionType):
         raise ValueError(f"{collection_cls.__name__} is not a DataCollectionType")
-    return slicer(processor_cls, collection_cls)
+    return slice(processor_cls, collection_cls)
 
 
 def _parse_scalar(value: str) -> Any:
@@ -134,8 +134,8 @@ def _model_param_resolver(spec: Any) -> Optional[ModelDescriptor]:
 def register_builtin_resolvers() -> None:
     NameResolverRegistry.register_resolver("rename:", _resolve_rename)
     NameResolverRegistry.register_resolver("delete:", _resolve_delete)
-    NameResolverRegistry.register_resolver("stringbuild:", _resolve_stringbuild)
-    NameResolverRegistry.register_resolver("slicer:", _resolve_slicer)
+    NameResolverRegistry.register_resolver("template:", _resolve_template)
+    NameResolverRegistry.register_resolver("slice:", _resolve_slice)
     ParameterResolverRegistry.register_resolver(_model_param_resolver, builtin=True)
 
 
@@ -149,8 +149,8 @@ def reset_to_builtins() -> None:
     The built-in resolvers include:
     - rename: - Context key renaming
     - delete: - Context key deletion
-    - stringbuild: - String template building
-    - slicer: - Data processor slicing
+    - template: - String template building
+    - slice: - Data processor slicing
 
     Example:
         >>> from semantiva.registry.builtin_resolvers import reset_to_builtins

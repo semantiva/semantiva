@@ -5,7 +5,7 @@ pipeline:
     - processor: "FloatValueDataSourceWithDefault"
 
     - processor: "FloatCollectValueProbe"
-      context_keyword: "initial_float"
+      context_key: "initial_float"
 
     - processor: "FloatMultiplyOperation"
       parameters:
@@ -24,7 +24,7 @@ pipeline:
         divisor: 3.0
 
     - processor: "FloatBasicProbe"
-      context_keyword: "final_value"
+      context_key: "final_value"
 
     - processor: "delete:addend"
 

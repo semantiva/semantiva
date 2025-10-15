@@ -5,4 +5,4 @@ pipeline:
         fitting_model: "model:PolynomialFittingModel:degree=1"
         independent_var_key: "t_values"
         dependent_var_key: "gaussian_fit_parameters.std_dev_x"
-        context_keyword: "std_dev_coefficients"
+        context_key: "std_dev_coefficients"

@@ -39,8 +39,8 @@ class DoubleOperation(DataOperation):
 
 def test_context_processor_node_operation():
     node = _PipelineNodeFactory.create_context_processor_node(
-        input_context_keyword="foo",
-        output_context_keyword="bar",
+        input_context_key="foo",
+        output_context_key="bar",
         processor_cls=DoubleOperation,
     )
     ctx = ContextType({"foo": FloatDataType(3.0)})
@@ -52,8 +52,8 @@ def test_context_processor_node_operation():
 
 def test_context_processor_node_probe():
     node = _PipelineNodeFactory.create_context_processor_node(
-        input_context_keyword="foo",
-        output_context_keyword="bar",
+        input_context_key="foo",
+        output_context_key="bar",
         processor_cls=FloatCollectValueProbe,
     )
     ctx = ContextType({"foo": FloatDataType(4.0)})
@@ -64,8 +64,8 @@ def test_context_processor_node_probe():
 
 def test_context_processor_node_overwrite():
     node = _PipelineNodeFactory.create_context_processor_node(
-        input_context_keyword="foo",
-        output_context_keyword="foo",
+        input_context_key="foo",
+        output_context_key="foo",
         processor_cls=DoubleOperation,
     )
     ctx = ContextType({"foo": FloatDataType(2.0)})
@@ -75,8 +75,8 @@ def test_context_processor_node_overwrite():
 
 def test_context_processor_node_missing_key():
     node = _PipelineNodeFactory.create_context_processor_node(
-        input_context_keyword="foo",
-        output_context_keyword="bar",
+        input_context_key="foo",
+        output_context_key="bar",
         processor_cls=DoubleOperation,
     )
     with pytest.raises(KeyError):
@@ -86,20 +86,20 @@ def test_context_processor_node_missing_key():
 def test_context_processor_node_validation():
     with pytest.raises(ValueError):
         _PipelineNodeFactory.create_context_processor_node(
-            input_context_keyword="foo",
-            output_context_keyword="bar",
+            input_context_key="foo",
+            output_context_key="bar",
             processor_cls=str,
         )
     for key in ["", 123]:
         with pytest.raises(ValueError):
             _PipelineNodeFactory.create_context_processor_node(
-                input_context_keyword=key,
-                output_context_keyword="bar",
+                input_context_key=key,
+                output_context_key="bar",
                 processor_cls=DoubleOperation,
             )
         with pytest.raises(ValueError):
             _PipelineNodeFactory.create_context_processor_node(
-                input_context_keyword="foo",
-                output_context_keyword=key,
+                input_context_key="foo",
+                output_context_key=key,
                 processor_cls=DoubleOperation,
             )

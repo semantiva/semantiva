@@ -38,8 +38,8 @@ Execute a pipeline.
                       [--trace.output PATH-or-DriverSpec]
                       [--trace.option key=value]...
                       [--run-space-file PATH]
-                      [--run-space-cap INT]
-                      [--run-space-plan-only]
+                      [--run-space-max-runs INT]
+                      [--run-space-dry-run]
                       [--version]
 
 **Arguments**
@@ -64,8 +64,8 @@ Execute a pipeline.
 - ``--trace.output``           Trace output path or ``module:Class`` when ``driver=pythonpath``.
 - ``--trace.option``           Additional driver keyword arguments (repeatable).
 - ``--run-space-file``         Path to a YAML file containing a ``run_space`` block (overrides pipeline YAML).
-- ``--run-space-cap``          Override the run-space safety cap on total runs.
-- ``--run-space-plan-only``    Plan the run space and print the expansion without executing nodes.
+- ``--run-space-max-runs``     Override the run-space safety limit on total runs.
+- ``--run-space-dry-run``      Plan the run space and print the expansion without executing nodes.
 - ``--version``                Show CLI version.
 
 CLI flags mirror the YAML schema. Any value provided on the command line
@@ -85,7 +85,7 @@ Plan-only example
 
 .. code-block:: console
 
-   $ semantiva run --run-space-file rs.yaml --run-space-plan-only
+   $ semantiva run --run-space-file rs.yaml --run-space-dry-run
    Run Space Plan
      combine: product
      cap: 1000

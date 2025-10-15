@@ -82,7 +82,7 @@ def test_inspection_marks_default_and_user_params():
 
 def test_context_overrides_default_in_pipeline():
     cfg = [
-        {"processor": FloatCollectValueProbe, "context_keyword": "factor"},
+        {"processor": FloatCollectValueProbe, "context_key": "factor"},
         {"processor": FloatMultiplyOperationWithDefault},
     ]
 

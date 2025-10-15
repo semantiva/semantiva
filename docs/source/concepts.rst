@@ -62,7 +62,7 @@ Resolvers & Parameters
 ----------------------
 
 Declarative specifications in YAML become executable graphs through **resolvers**.
-Class resolvers (``slicer:``, ``rename:``, ``delete:``) map concise strings to
+Class resolvers (``slice:``, ``rename:``, ``delete:``) map concise strings to
 Python classes, while parameter resolvers (``model:``) inject runtime objects
 without hard-coding them. This mechanism keeps pipelines declarative yet
 flexible. For the full resolver registry and extension mechanism consult

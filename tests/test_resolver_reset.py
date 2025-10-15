@@ -28,8 +28,8 @@ class TestResolverReset:
         initial_resolvers = set(NameResolverRegistry.all_resolvers().keys())
         assert "rename:" in initial_resolvers
         assert "delete:" in initial_resolvers
-        assert "stringbuild:" in initial_resolvers
-        assert "slicer:" in initial_resolvers
+        assert "template:" in initial_resolvers
+        assert "slice:" in initial_resolvers
 
         # Clear all resolvers
         NameResolverRegistry.clear()
@@ -43,8 +43,8 @@ class TestResolverReset:
         assert restored_resolvers == initial_resolvers
         assert "rename:" in restored_resolvers
         assert "delete:" in restored_resolvers
-        assert "stringbuild:" in restored_resolvers
-        assert "slicer:" in restored_resolvers
+        assert "template:" in restored_resolvers
+        assert "slice:" in restored_resolvers
 
     def test_reset_to_builtins_removes_custom_resolvers(self):
         """Test that reset_to_builtins() removes any custom resolvers."""
@@ -86,8 +86,8 @@ class TestResolverReset:
         reset_to_builtins()
 
         # Test that built-in resolvers actually work
-        # Test the stringbuild resolver
-        result = NameResolverRegistry.resolve('stringbuild:"test_{value}":output')
+        # Test the template resolver
+        result = NameResolverRegistry.resolve('template:"test_{value}":output')
         assert result is not None  # Should return a processor class
 
         # The exact behavior depends on the resolver implementation,

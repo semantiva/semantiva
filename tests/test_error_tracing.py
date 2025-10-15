@@ -32,7 +32,7 @@ import json
 from pathlib import Path
 import pytest
 
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 from semantiva.execution.orchestrator.orchestrator import LocalSemantivaOrchestrator
 from semantiva.data_processors.data_processors import DataOperation
 from semantiva.examples.test_utils import FloatDataType
@@ -60,7 +60,7 @@ def test_error_tracing_writes_failure(tmp_path: Path) -> None:
     orchestrator = LocalSemantivaOrchestrator()
     transport = InMemorySemantivaTransport()
     logger = Logger()
-    trace = JSONLTrace(str(tmp_path))
+    trace = JsonlTraceDriver(str(tmp_path))
 
     pipeline_spec = [
         {"processor": FailingFloatOperation, "parameters": {"msg": "fail"}}
@@ -79,18 +79,18 @@ def test_error_tracing_writes_failure(tmp_path: Path) -> None:
     trace.close()
     file = next(tmp_path.glob("*.ser.jsonl"))
     records = [json.loads(line) for line in file.read_text().splitlines() if line]
-    ser = next(r for r in records if r["type"] == "ser")
+    ser = next(r for r in records if r["record_type"] == "ser")
     assert ser["status"] == "error"
     assert ser["error"]["type"] == "ValueError"
-    post_checks = ser["checks"]["why_ok"]["post"]
+    post_checks = ser["assertions"]["postconditions"]
     assert post_checks[0]["code"] == "ValueError"
     assert post_checks[0]["result"] == "FAIL"
     codes = {entry["code"] for entry in post_checks}
     assert {"output_type_ok", "context_writes_realized"}.issubset(codes)
-    env = ser["checks"]["why_ok"]["env"]
+    env = ser["assertions"]["environment"]
     assert {"python", "platform", "semantiva"}.issubset(env)
-    assert ser["action"]["params"]["msg"] == "fail"
-    assert ser["action"]["param_source"]["msg"] == "node"
+    assert ser["operation"]["parameters"]["msg"] == "fail"
+    assert ser["operation"]["parameter_sources"]["msg"] == "node"
     pipeline_end = records[-1]
-    assert pipeline_end["type"] == "pipeline_end"
+    assert pipeline_end["record_type"] == "pipeline_end"
     assert pipeline_end["summary"]["status"] == "error"

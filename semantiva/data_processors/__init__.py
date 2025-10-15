@@ -17,12 +17,12 @@ from .data_processors import (
     DataProbe,
     OperationTopologyFactory,
 )
-from .data_slicer_factory import slicer
+from .data_slicer_factory import slice
 
 
 __all__ = [
     "DataOperation",
     "DataProbe",
     "OperationTopologyFactory",
-    "slicer",
+    "slice",
 ]

@@ -24,6 +24,6 @@ pipeline:
     - processor: FloatAddOperation
     - processor: FloatMultiplyOperation
     - processor: FloatCollectValueProbe
-      context_keyword: "result"
-    - processor: stringbuild:"{value}_plus_{addend}_times_{factor}_equals_{result}.txt":path
+      context_key: "result"
+    - processor: template:"{value}_plus_{addend}_times_{factor}_equals_{result}.txt":path
     - processor: FloatTxtFileSaver

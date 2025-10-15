@@ -56,7 +56,7 @@ def _allowed_param_names(processor_cls) -> Set[str]:
             "ParametricSweep",  # Parametric sweep factory
             "Rename_",  # ContextProcessor rename factory
             "Delete_",  # ContextProcessor delete factory
-            "StringBuild_",  # ContextProcessor stringbuild factory
+            "Template_",  # ContextProcessor template factory
         ]
 
         is_allowed_dynamic = any(
@@ -113,7 +113,7 @@ def classify_unknown_config_params(
                 "ParametricSweep",  # Parametric sweep factory
                 "Rename_",  # ContextProcessor rename factory
                 "Delete_",  # ContextProcessor delete factory
-                "StringBuild_",  # ContextProcessor stringbuild factory
+                "Template_",  # ContextProcessor template factory
             ]
 
             is_allowed_dynamic = any(

@@ -34,12 +34,12 @@ def test_get_node_parameter_resolutions_complex_key_origin():
     """Test parameter resolution with complex key origins."""
     # Create a pipeline with multiple sources for the same key
     node_configuration = [
-        {"processor": FloatCollectValueProbe, "context_keyword": "factor"},
+        {"processor": FloatCollectValueProbe, "context_key": "factor"},
         {"processor": FloatMultiplyOperation},
         {"processor": "rename:factor:renamed_factor"},  # factor -> renamed_factor
         {
             "processor": FloatCollectValueProbe,
-            "context_keyword": "factor",
+            "context_key": "factor",
         },  # Creates factor again
         {"processor": FloatMultiplyOperation},  # Uses factor from node 4, not node 1
     ]
