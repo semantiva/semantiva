@@ -187,7 +187,7 @@ Key Concepts
 
 ``fingerprint()``
     Produces a SHA-256 hash of a normalised representation of the profile. The
-    fingerprint is pinned into every SER under ``why_ok.env.registry.fingerprint``.
+    fingerprint is pinned into every SER under ``assertions.environment.registry.fingerprint``.
 
 Initialization Flow
 ~~~~~~~~~~~~~~~~~~~

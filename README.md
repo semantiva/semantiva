@@ -23,7 +23,7 @@ semantiva --version
 ```
 
 The command above creates JSONL trace artifacts in ``./trace`` that comply with
-``semantiva/trace/schema/ser_v0.schema.json``.
+``semantiva/trace/schema/ser_v1.schema.json``.
 
 ## Why Semantiva?
 

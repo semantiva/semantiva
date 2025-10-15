@@ -177,7 +177,7 @@ def _build_run_space_args(
 
 def _print_run_space_plan(meta: Dict[str, Any], runs: List[Dict[str, Any]]) -> None:
     combine = meta.get("combine", "product")
-    cap = meta.get("cap")
+    max_runs = meta.get("max_runs")
     expanded = meta.get("expanded_runs", len(runs))
 
     def _oneline(value: Dict[str, Any]) -> str:
@@ -186,7 +186,7 @@ def _print_run_space_plan(meta: Dict[str, Any], runs: List[Dict[str, Any]]) -> N
 
     print("Run Space Plan")
     print(f"  combine: {combine}")
-    print(f"  cap: {cap}")
+    print(f"  max_runs: {max_runs}")
     print(f"  expanded_runs: {expanded}")
     print("  blocks:")
     for idx, block_meta in enumerate(meta.get("blocks", [])):
@@ -199,8 +199,8 @@ def _print_run_space_plan(meta: Dict[str, Any], runs: List[Dict[str, Any]]) -> N
             sha = source_meta.get("sha256", "")
             sha_preview = f"(sha256 {sha[:8]}…)" if sha else ""
             print(
-                "      source: {type} {path} {sha}".format(
-                    type=source_meta.get("type"),
+                "      source: {format} {path} {sha}".format(
+                    format=source_meta.get("format"),
                     path=source_meta.get("path"),
                     sha=sha_preview,
                 )

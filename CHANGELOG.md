@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   values (``succeeded|error|skipped|cancelled``). JSON schema updated to ``ser_v1``.
 - **Run Space** configuration now uses ``max_runs``/``dry_run`` and source ``format``;
   CLI flags renamed to ``--run-space-max-runs`` and ``--run-space-dry-run``.
-- Canonical graph nodes expose ``processor_ref`` instead of ``fqn``; SER tags use
+- Canonical graph nodes expose ``processor_ref``; SER tags use
   ``node_ref``.
 - Resolver prefixes renamed to ``template:`` and ``slice:`` with matching factory helpers.
 - JSONL trace driver class renamed to ``JsonlTraceDriver``.
@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Context template factory (YAML resolver ``template:"<template>":<out_key>``): dynamic ContextProcessor factory that builds deterministic strings from strict ``{placeholder}`` identifiers and writes them to context. Templates reject format specs/conversions and require all placeholders to exist at runtime.
   - Documentation: added `Factories: template` docs, run space quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
 - Run Space v1: schema objects (``run_space.blocks`` with ``zip``/``product``),
-  planner with cap/plan-only, CLI overrides, documentation (concept +
+  planner with ``max_runs``/``dry_run``, CLI overrides, documentation (concept +
   quickstart), and tests covering block expansion, external sources,
   SER pinning, and local end-to-end runs.
 - **ExecutionComponentRegistry** for orchestrators/executors/transports with
@@ -46,8 +46,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Trace record v1 envelopes are minimal and stable: `pipeline_start`, `node` (phase=`before|after|error`) and `pipeline_end`. 
   - `JsonlTraceDriver` driver: append-only, asynchronous background writer.
   - CLI wiring added: `--trace-driver`, `--trace-output`, and `--trace-detail` control trace backend, output location, and which semantic summaries are emitted.
-  - Orchestrator uses the executor for all node runs, SER records include ``action.params`` and ``action.param_source``; JSON schema is packaged.
-  - SER runtime safeguards: built-in pre/post checks (`required_keys_present`, `input_type_ok`, `config_valid`, `output_type_ok`, `context_writes_realized`) populate ``checks.why_run.pre``/``checks.why_ok.post`` for every node. ``checks.why_ok.env`` carries reproducibility pins (Python, platform, Semantiva version, optional NumPy/Pandas).
+  - Orchestrator uses the executor for all node runs, SER records include ``operation.parameters`` and ``operation.parameter_sources``; JSON schema is packaged.
+  - SER runtime safeguards: built-in preconditions/postconditions (`required_keys_present`, `input_type_ok`, `config_valid`, `output_type_ok`, `context_writes_realized`) populate ``assertions.preconditions``/``assertions.postconditions`` for every node. ``assertions.environment`` carries reproducibility pins (Python, platform, Semantiva version, optional NumPy/Pandas).
 - Unknown/unused configuration parameter detection: inspection now reports
   `invalid_parameters` per node (with suggestions). Validation/execution fail
   fast with `InvalidNodeParameterError` when processors do not accept those keys.
@@ -191,7 +191,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   updates through `_ContextObserver`
 - `ModelFittingContextProcessor` no longer accepts business parameters in
   ``__init__``
-- Renamed exception `RunSpaceCapExceededError` to `RunSpaceMaxRunsExceededError` with updated error message text referencing `max_runs`.
+- Introduced `RunSpaceMaxRunsExceededError` (error when expansion exceeds `max_runs`).
 
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories
