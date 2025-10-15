@@ -333,7 +333,7 @@ class _PipelineNodeFactory:
     @staticmethod
     def create_probe_context_injector(
         processor_class: Type[_BaseDataProcessor],
-        context_keyword: str,
+        context_key: str,
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ) -> _ProbeContextInjectorNode:
@@ -342,29 +342,29 @@ class _PipelineNodeFactory:
         with a specific data processor class.
         Args:
             processor_class (Type[_BaseDataProcessor]): The class of the data operation to be used.
-            context_keyword (str): The context key for the probe result.
+            context_key (str): The context key for the probe result.
             parameters (Optional[Dict]): Configuration parameters. Defaults to None.
             logger (Optional[Logger]): A Logger instance. Defaults to None
         Returns:
             _ProbeContextInjectorNode: An instance of a dynamically created subclass of _ProbeContextInjectorNode.
         """
 
-        if not context_keyword or not isinstance(context_keyword, str):
-            raise ValueError("context_keyword must be a non-empty string.")
+        if not context_key or not isinstance(context_key, str):
+            raise ValueError("context_key must be a non-empty string.")
 
         node_class = _PipelineNodeFactory._create_class(
             name=f"{processor_class.__name__}_ProbeContextInjectorNode",
             base_cls=_ProbeContextInjectorNode,
             processor=processor_class,
-            context_keyword=context_keyword,
+            context_key=context_key,
         )
-        return node_class(processor_class, context_keyword, parameters, logger)
+        return node_class(processor_class, context_key, parameters, logger)
 
     @staticmethod
     def create_data_operation_context_injector_probe_node(
         *,
         processor_cls: Type[DataOperation],
-        context_keyword: str,
+        context_key: str,
         **processor_kwargs,
     ) -> _DataOperationContextInjectorProbeNode:
         """Wrap a :class:`DataOperation` in a context-injecting probe node."""
@@ -375,16 +375,16 @@ class _PipelineNodeFactory:
             or issubclass(processor_cls, DataProbe)
         ):
             raise ValueError("processor_cls must be a DataOperation subclass")
-        if not context_keyword or not isinstance(context_keyword, str):
-            raise ValueError("context_keyword must be a non-empty string")
+        if not context_key or not isinstance(context_key, str):
+            raise ValueError("context_key must be a non-empty string")
 
         node_class = _PipelineNodeFactory._create_class(
             name=f"{processor_cls.__name__}_DataOperationContextInjectorProbeNode",
             base_cls=_DataOperationContextInjectorProbeNode,
             processor=processor_cls,
-            context_keyword=context_keyword,
+            context_key=context_key,
         )
-        return node_class(processor_cls, context_keyword, processor_kwargs)
+        return node_class(processor_cls, context_key, processor_kwargs)
 
     @staticmethod
     def create_probe_result_collector(
@@ -435,17 +435,17 @@ class _PipelineNodeFactory:
     @staticmethod
     def create_context_processor_node(
         *,
-        input_context_keyword: str,
-        output_context_keyword: str,
+        input_context_key: str,
+        output_context_key: str,
         processor_cls: Type[DataOperation] | Type[DataProbe],
         **processor_kwargs,
     ) -> _ContextDataProcessorNode:
         """Create a node that processes a context value using a data processor."""
 
-        if not (isinstance(input_context_keyword, str) and input_context_keyword):
-            raise ValueError("input_context_keyword must be a non-empty string")
-        if not (isinstance(output_context_keyword, str) and output_context_keyword):
-            raise ValueError("output_context_keyword must be a non-empty string")
+        if not (isinstance(input_context_key, str) and input_context_key):
+            raise ValueError("input_context_key must be a non-empty string")
+        if not (isinstance(output_context_key, str) and output_context_key):
+            raise ValueError("output_context_key must be a non-empty string")
         if not (
             isinstance(processor_cls, type)
             and issubclass(processor_cls, (DataOperation, DataProbe))
@@ -456,13 +456,13 @@ class _PipelineNodeFactory:
             name=f"{processor_cls.__name__}_ContextDataProcessorNode",
             base_cls=_ContextDataProcessorNode,
             processor_cls=processor_cls,
-            input_context_keyword=input_context_keyword,
-            output_context_keyword=output_context_keyword,
+            input_context_key=input_context_key,
+            output_context_key=output_context_key,
         )
         return node_class(
             processor_cls,
-            input_context_keyword,
-            output_context_keyword,
+            input_context_key,
+            output_context_key,
             processor_kwargs,
         )
 
@@ -478,7 +478,7 @@ def _pipeline_node_factory(
     The node definition dictionary should include:
       - "processor": The class (or a string that can be resolved to a class) for the processor.
       - "parameters": (Optional) A dictionary of parameters for the processor.
-      - "context_keyword": (Optional) A string specifying the context key for probe injection.
+      - "context_key": (Optional) A string specifying the context key for probe injection.
 
     Args:
         node_definition (Dict): A dictionary describing the node configuration.
@@ -528,7 +528,7 @@ def _pipeline_node_factory(
     parameters = node_definition.get("parameters", {})
     parameters = resolve_parameters(parameters)
     node_definition["parameters"] = parameters
-    context_keyword = node_definition.get("context_keyword")
+    context_key = node_definition.get("context_key")
 
     # Resolve the processor class if provided as a string.
     processor = _resolve_class(processor)
@@ -553,32 +553,30 @@ def _pipeline_node_factory(
         ):
             independent_var_key = params.pop("independent_var_key")
             dependent_var_key = params.pop("dependent_var_key")
-            context_keyword = params.pop("context_keyword", None)
+            context_key = params.pop("context_key", None)
             processor = _model_fitting_processor_factory(
                 independent_var_key=independent_var_key,
                 dependent_var_key=dependent_var_key,
-                context_keyword=context_keyword,
+                context_key=context_key,
             )
-        elif "context_keyword" in params and hasattr(processor, "with_context_keyword"):
-            key = params.pop("context_keyword")
-            processor = processor.with_context_keyword(key)
+        elif "context_key" in params and hasattr(processor, "with_context_key"):
+            key = params.pop("context_key")
+            processor = processor.with_context_key(key)
 
         return _PipelineNodeFactory.create_context_processor_wrapper_node(
             processor, params, logger
         )
 
     if issubclass(processor, DataOperation):
-        if context_keyword is not None:
-            raise ValueError(
-                "context_keyword must not be defined for DataOperation nodes."
-            )
+        if context_key is not None:
+            raise ValueError("context_key must not be defined for DataOperation nodes.")
         return _PipelineNodeFactory.create_data_operation_node(
             processor, parameters, logger
         )
     if issubclass(processor, DataProbe):
-        if context_keyword is not None:
+        if context_key is not None:
             return _PipelineNodeFactory.create_probe_context_injector(
-                processor, context_keyword, parameters, logger
+                processor, context_key, parameters, logger
             )
         else:
             return _PipelineNodeFactory.create_probe_result_collector(

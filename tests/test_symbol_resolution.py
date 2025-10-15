@@ -47,16 +47,16 @@ def test_builtin_resolvers_create_dynamic_classes():
     ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
     rename_cls = resolve_symbol("rename:alpha.beta:features.beta")
     delete_cls = resolve_symbol("delete:temp.key")
-    slicer_cls = resolve_symbol("slicer:FloatMultiplyOperation:FloatDataCollection")
+    slicer_cls = resolve_symbol("slice:FloatMultiplyOperation:FloatDataCollection")
 
     assert rename_cls.__name__.startswith("Rename_")
     assert delete_cls.__name__.startswith("Delete_")
     assert "Slicer" in slicer_cls.__name__
 
 
-def test_stringbuild_resolver_validates_templates():
+def test_template_resolver_validates_templates():
     ProcessorRegistry.register_modules(["semantiva.examples.test_utils"])
-    cls = resolve_symbol("stringbuild:'exp_{subject}_{run}.png':filename")
+    cls = resolve_symbol("template:'exp_{subject}_{run}.png':filename")
     processor = cls()
     with pytest.raises(KeyError):
         processor._process_logic()  # type: ignore[attr-defined]

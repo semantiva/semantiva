@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://semantiva.ai/schemas/ser/1/ser_v1.schema.json",
+  "title": "Semantiva Step Evidence Record v1",
+  "type": "object",
+  "required": [
+    "record_type",
+    "schema_version",
+    "identity",
+    "dependencies",
+    "operation",
+    "context_delta",
+    "assertions",
+    "timing",
+    "status"
+  ],
+  "properties": {
+    "record_type": {"const": "ser"},
+    "schema_version": {"const": 1},
+    "identity": {
+      "type": "object",
+      "required": ["run_id", "pipeline_id", "node_id"],
+      "additionalProperties": true
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "upstream": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["upstream"],
+      "additionalProperties": true
+    },
+    "operation": {
+      "type": "object",
+      "required": ["ref", "parameters", "parameter_sources"],
+      "properties": {
+        "ref": {"type": "string"},
+        "parameters": {"type": "object"},
+        "parameter_sources": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": ["context", "node", "default"]
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "context_delta": {
+      "type": "object",
+      "properties": {
+        "read_keys": {"type": "array", "items": {"type": "string"}},
+        "created_keys": {"type": "array", "items": {"type": "string"}},
+        "updated_keys": {"type": "array", "items": {"type": "string"}},
+        "key_summaries": {"type": "object"}
+      },
+      "required": ["read_keys", "created_keys", "updated_keys", "key_summaries"],
+      "additionalProperties": true
+    },
+    "assertions": {
+      "type": "object",
+      "required": [
+        "preconditions",
+        "postconditions",
+        "invariants",
+        "environment",
+        "redaction_policy"
+      ],
+      "properties": {
+        "preconditions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/check"},
+          "minItems": 1
+        },
+        "postconditions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/check"},
+          "minItems": 1
+        },
+        "invariants": {"type": "array"},
+        "environment": {
+          "type": "object",
+          "required": ["python", "platform", "semantiva"],
+          "additionalProperties": {"type": ["string", "null"]}
+        },
+        "redaction_policy": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "timing": {
+      "type": "object",
+      "required": ["started_at", "finished_at", "duration_ms", "cpu_ms"],
+      "properties": {
+        "started_at": {"type": "string"},
+        "finished_at": {"type": "string"},
+        "duration_ms": {"type": "integer"},
+        "cpu_ms": {"type": "integer"}
+      }
+    },
+    "status": {"enum": ["succeeded", "error", "skipped", "cancelled"]},
+    "error": {"type": "object"},
+    "tags": {"type": "object"},
+    "summaries": {"type": "object"}
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": ["code", "result"],
+      "properties": {
+        "code": {"type": "string"},
+        "result": {"enum": ["PASS", "FAIL", "WARN"]},
+        "details": {"type": ["object", "null"]}
+      },
+      "additionalProperties": true
+    }
+  }
+}

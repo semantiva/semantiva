@@ -48,7 +48,7 @@ def test_mock_context_processor():
 def test_model_fitting_context_processor():
     context = ContextType({"x_values": [1, 2, 3], "y_values": [4, 5, 6]})
     fitting_model = MockFittingModel()
-    Bound = ModelFittingContextProcessor.with_context_keyword("fit_results")
+    Bound = ModelFittingContextProcessor.with_context_key("fit_results")
     node = _PipelineNodeFactory.create_context_processor_wrapper_node(
         Bound, {"fitting_model": fitting_model}
     )

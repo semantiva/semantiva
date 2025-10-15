@@ -20,7 +20,7 @@ pipeline_config = [
     {"processor": "FloatValueDataSourceWithDefault"},
     {"processor": "FloatMultiplyOperationWithDefault", "parameters": {"factor": 2.5}},
     {"processor": "FloatMultiplyOperationWithDefault"},
-    {"processor": "FloatCollectValueProbe", "context_keyword": "factor"},
+    {"processor": "FloatCollectValueProbe", "context_key": "factor"},
     {"processor": "FloatMultiplyOperationWithDefault"},
     {"processor": "rename:factor:dead_factor"},
     {"processor": "FloatPayloadSink"},

@@ -64,11 +64,11 @@ extend the base ``pipeline.nodes`` definition:
       product across blocks; ``zip`` requires blocks to have identical run
       counts and zips them element-wise.
 
-   ``cap``
+   ``max_runs``
       Safety limit on the total number of runs. The planner raises a
       configuration error when the expansion exceeds this cap.
 
-   ``plan_only``
+   ``dry_run``
       When ``true``, the planner reports the expansion (sizes, block metadata,
       sample runs) and exits before executing nodes.
 

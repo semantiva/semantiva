@@ -21,6 +21,7 @@ from semantiva.configurations.schema import RunBlock, RunSource, RunSpaceV1Confi
 from semantiva.execution.run_space import expand_run_space
 from semantiva.exceptions.pipeline_exceptions import (
     PipelineConfigurationError as ConfigurationError,
+    RunSpaceMaxRunsExceededError,
 )
 
 
@@ -53,11 +54,11 @@ def test_zip_block_mismatched_lengths():
 
 def test_cap_exceeded():
     cfg = RunSpaceV1Config(
-        cap=2,
+        max_runs=2,
         blocks=[RunBlock(mode="product", context={"x": [1, 2], "y": [10, 20]})],
     )
 
-    with pytest.raises(ConfigurationError):
+    with pytest.raises(RunSpaceMaxRunsExceededError):
         expand_run_space(cfg)
 
 
@@ -69,7 +70,7 @@ def test_duplicate_within_block_between_context_and_source(tmp_path):
             RunBlock(
                 mode="zip",
                 context={"a": [1, 2]},
-                source=RunSource(type="json", path=str(path)),
+                source=RunSource(format="json", path=str(path)),
             )
         ]
     )
@@ -107,7 +108,7 @@ def test_rename_collision_with_context_fails(tmp_path):
                 mode="zip",
                 context={"y": [10, 20]},
                 source=RunSource(
-                    type="yaml",
+                    format="yaml",
                     path=str(source_path),
                     mode="product",
                     rename={"x": "y"},

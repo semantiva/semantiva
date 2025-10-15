@@ -85,7 +85,7 @@ def _canonical_node(
     """Return canonical node mapping used to derive node_uuid.
 
     Canonical fields:
-        - role, fqn, params (shallow), ports (declared), declaration_index, declaration_subindex
+        - role, processor_ref, params (shallow), ports (declared), declaration_index, declaration_subindex
     Canonicalization rules:
         - Sort mapping keys; strip whitespace/ordering artifacts; ignore cosmetic YAML noise.
 
@@ -101,7 +101,7 @@ def _canonical_node(
     ports = defn.get("ports") or {}
     canon = {
         "role": role,
-        "fqn": processor,
+        "processor_ref": processor,
         "params": params,
         "ports": ports,
         "declaration_index": declaration_index,

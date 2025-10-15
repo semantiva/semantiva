@@ -39,14 +39,14 @@ def _write_csv(columns: dict[str, list[object]]) -> str:
 def test_csv_source_rows_are_runs_zip(tmp_path):
     path = _write_csv({"lr": [0.001, 0.01], "momentum": [0.9, 0.95]})
     cfg = RunSpaceV1Config(
-        blocks=[RunBlock(mode="zip", source=RunSource(type="csv", path=path))]
+        blocks=[RunBlock(mode="zip", source=RunSource(format="csv", path=path))]
     )
 
     runs, meta = expand_run_space(cfg)
 
     assert len(runs) == 2
     assert runs[1]["momentum"] == pytest.approx(0.95)
-    assert meta["blocks"][0]["source"]["type"] == "csv"
+    assert meta["blocks"][0]["source"]["format"] == "csv"
     assert "sha256" in meta["blocks"][0]["source"]
 
 
@@ -56,7 +56,7 @@ def test_json_list_rows_zip(tmp_path):
         json.dumps([{"seed": 1, "profile": "a"}, {"seed": 2, "profile": "b"}])
     )
     cfg = RunSpaceV1Config(
-        blocks=[RunBlock(mode="zip", source=RunSource(type="json", path=str(path)))]
+        blocks=[RunBlock(mode="zip", source=RunSource(format="json", path=str(path)))]
     )
 
     runs, meta = expand_run_space(cfg)
@@ -74,7 +74,7 @@ def test_yaml_product_source(tmp_path):
         blocks=[
             RunBlock(
                 mode="product",
-                source=RunSource(type="yaml", path=str(path), mode="product"),
+                source=RunSource(format="yaml", path=str(path), mode="product"),
             )
         ]
     )
@@ -95,7 +95,7 @@ def test_source_rename_collision(tmp_path):
             RunBlock(
                 mode="zip",
                 source=RunSource(
-                    type="yaml",
+                    format="yaml",
                     path=str(path),
                     rename={"x": "shared", "y": "shared"},
                 ),

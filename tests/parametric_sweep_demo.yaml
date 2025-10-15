@@ -14,12 +14,12 @@ pipeline:
           value: "2.0 * t"
           
     # Process the generated collection
-    - processor: "slicer:FloatCollectValueProbe:FloatDataCollection"
-      context_keyword: "sweep_results"
+    - processor: "slice:FloatCollectValueProbe:FloatDataCollection"
+      context_key: "sweep_results"
     
     # Aggregate results
     - processor: "FloatCollectionSumOperation"
     
     # Store final result
     - processor: "FloatBasicProbe"
-      context_keyword: "final_sum"
+      context_key: "final_sum"

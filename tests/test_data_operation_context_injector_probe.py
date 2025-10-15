@@ -27,7 +27,7 @@ from semantiva.examples.test_utils import (
 def test_data_operation_context_injector_injects_result():
     node = _PipelineNodeFactory.create_data_operation_context_injector_probe_node(
         processor_cls=FloatMultiplyOperation,
-        context_keyword="mask",
+        context_key="mask",
         factor=2,
     )
     data = FloatDataType(5.0)
@@ -42,7 +42,7 @@ def test_data_operation_context_injector_rejects_probe_class():
     with pytest.raises(ValueError):
         _PipelineNodeFactory.create_data_operation_context_injector_probe_node(
             processor_cls=FloatCollectValueProbe,
-            context_keyword="mask",
+            context_key="mask",
         )
 
 
@@ -51,5 +51,5 @@ def test_data_operation_context_injector_bad_keyword(keyword):
     with pytest.raises(ValueError):
         _PipelineNodeFactory.create_data_operation_context_injector_probe_node(
             processor_cls=FloatMultiplyOperation,
-            context_keyword=keyword,
+            context_key=keyword,
         )

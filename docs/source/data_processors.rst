@@ -244,13 +244,13 @@ Traditional Parametric Sweep Example
 Annotated walkthrough
 ---------------------
 
-Slicers can wrap either a :py:class:`~semantiva.data_processors.data_processors.DataOperation`
+Slice helpers can wrap either a :py:class:`~semantiva.data_processors.data_processors.DataOperation`
 or a :py:class:`~semantiva.data_processors.data_processors.DataProbe`:
 
 - **Operator slicing** returns a new collection whose element type matches the
   underlying operation.
 - **Probe slicing** leaves the collection untouched and collects probe outputs
-  into context via ``context_keyword``.
+  into context via ``context_key``.
 
 This example demonstrates a parametric sweep using resolvers:
 
@@ -264,11 +264,11 @@ This example demonstrates a parametric sweep using resolvers:
    The sweep produces a ``FloatDataCollection`` of items whose **data** results from
    the expression and whose **context** carries the sweep variable(s).
 
-2. ``slicer:FloatCollectValueProbe:FloatDataCollection``
+2. ``slice:FloatCollectValueProbe:FloatDataCollection``
 
    *Collects values from a collection and writes them into the **context**.*
 
-   - ``context_keyword: "sweep_results"`` - the collected values appear at
+   - ``context_key: "sweep_results"`` - the collected values appear at
      ``payload.context["sweep_results"]``.
 
 3. ``FloatCollectionSumOperation``
@@ -279,7 +279,7 @@ This example demonstrates a parametric sweep using resolvers:
 
    *Records the final scalar into the **context**.*
 
-   - ``context_keyword: "final_sum"`` - the scalar is stored at
+   - ``context_key: "final_sum"`` - the scalar is stored at
      ``payload.context["final_sum"]``.
 
 Run it

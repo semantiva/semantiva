@@ -40,7 +40,7 @@ class SemantivaExecutor(ABC):
         upstream: list[str]
         trigger: str
         upstream_evidence: list[dict]
-        io_delta_provider: Callable[[], Any] | None
+        context_delta_provider: Callable[[], Any] | None
         pre_checks: list[Any]
         post_checks_provider: Callable[[], list[Any]] | None
         env_pins_provider: Callable[[], dict] | None

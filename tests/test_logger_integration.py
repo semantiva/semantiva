@@ -49,7 +49,7 @@ def _make_nodes(logger=None):
         _pipeline_node_factory({"processor": FloatPayloadSink}, logger),
         _pipeline_node_factory({"processor": FloatMultiplyOperation}, logger),
         _pipeline_node_factory(
-            {"processor": FloatBasicProbe, "context_keyword": "probe_ctx"}, logger
+            {"processor": FloatBasicProbe, "context_key": "probe_ctx"}, logger
         ),
         _pipeline_node_factory({"processor": FloatBasicProbe}, logger),
     ]

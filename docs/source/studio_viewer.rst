@@ -77,10 +77,10 @@ the diagram:
 1. Open your pipeline YAML in the Viewer.
 2. Click a node to see its details (including :term:`node_uuid`).
 3. Open the corresponding ``*.ser.jsonl`` trace file and filter SER records by
-   ``ids.node_id`` matching that ``node_uuid`` to review timings, checks, or
+   ``identity.node_id`` matching that ``node_uuid`` to review timings, assertions, or
    errors for the selected node. Studio overlays are built directly from SER.
 
-The node side panel groups the built-in pre/post checks with PASS/WARN/FAIL
+The node side panel groups the built-in pre/post assertions with PASS/WARN/FAIL
 badges and exposes the environment pins as a compact key/value table (with
 copy-to-clipboard support). No YAML editing is required—everything is driven by
 the SER payloads.
@@ -133,8 +133,8 @@ Each node record now includes:
 
 - ``invalid_parameters`` — list of ``{name, reason}``
 - ``is_configuration_valid`` — false if invalid parameters exist
-- ``checks.why_run.pre`` / ``checks.why_ok.post`` — rendered as grouped check badges
-- ``checks.why_ok.env`` — environment pins table for reproducibility context
+- ``assertions.preconditions`` / ``assertions.postconditions`` — rendered as grouped check badges
+- ``assertions.environment`` — environment pins table for reproducibility context
 
 These allow the viewer to flag and annotate misconfigured nodes precisely.
 

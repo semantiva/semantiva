@@ -44,8 +44,8 @@ fields:
 * ``combine: Literal['zip','product']``  How to merge expanded blocks.
     ``product`` builds Cartesian combinations of block runs; ``zip`` aligns runs
     positionally (all blocks must then produce the same number of runs).
-* ``cap: int``  Hard upper bound on the number of expanded final runs.
-* ``plan_only: bool``  If true, callers may choose to only inspect metadata
+* ``max_runs: int``  Hard upper bound on the number of expanded final runs.
+* ``dry_run: bool``  If true, callers may choose to only inspect metadata
     (this function still returns full runs; external layers decide whether to
     *execute* them).
 
@@ -76,11 +76,11 @@ Returned value
 ``(runs, meta)`` where:
 * ``runs``  ``List[Dict[str, Any]]`` of expanded run dictionaries.
 * ``meta``  ``Dict[str, Any]`` containing:
-    - ``combine`` / ``cap`` / ``expanded_runs``.
+    - ``combine`` / ``max_runs`` / ``expanded_runs``.
     - ``blocks``  list with one entry per block: ``mode``, ``size``,
         ``context_keys`` and optional ``source`` details (path, hash, select,
         rename, mode, etc.).
-    - ``plan_only`` (present only if spec sets it).
+    - ``dry_run`` (present only if spec sets it).
 
 Error conditions (raise ``PipelineConfigurationError``):
 * Unknown modes, unsupported file types.
@@ -116,7 +116,7 @@ import yaml
 from semantiva.configurations.schema import RunSource, RunSpaceV1Config
 from semantiva.exceptions.pipeline_exceptions import (
     PipelineConfigurationError as ConfigurationError,
-    RunSpaceCapExceededError,
+    RunSpaceMaxRunsExceededError,
 )
 
 
@@ -135,7 +135,7 @@ def _coerce_scalar(value: Any) -> Any:
         return value
 
 
-def _load_source_file(path: Path, file_type: str) -> Dict[str, List[Any]]:
+def _load_source_file(path: Path, file_format: str) -> Dict[str, List[Any]]:
     """Load a source file into a columnar mapping.
 
     Normalizes heterogeneous on-disk formats into a uniform ``Dict[str, List]``
@@ -156,7 +156,7 @@ def _load_source_file(path: Path, file_type: str) -> Dict[str, List[Any]]:
     """
     columns: Dict[str, List[Any]]
 
-    if file_type == "csv":
+    if file_format == "csv":
         with path.open(newline="", encoding="utf-8") as handle:
             reader = csv.DictReader(handle)
             if reader.fieldnames is None:
@@ -170,7 +170,7 @@ def _load_source_file(path: Path, file_type: str) -> Dict[str, List[Any]]:
                     )
         return columns
 
-    elif file_type == "ndjson":
+    elif file_format == "ndjson":
         columns = {}
         with path.open("r", encoding="utf-8") as handle:
             for line in handle:
@@ -183,8 +183,8 @@ def _load_source_file(path: Path, file_type: str) -> Dict[str, List[Any]]:
                     columns.setdefault(str(key), []).append(value)
         return columns
 
-    elif file_type in ("json", "yaml"):
-        if file_type == "json":
+    elif file_format in ("json", "yaml"):
+        if file_format == "json":
             payload = json.loads(path.read_text(encoding="utf-8"))
         else:
             try:
@@ -209,11 +209,11 @@ def _load_source_file(path: Path, file_type: str) -> Dict[str, List[Any]]:
             }
         else:
             raise ConfigurationError(
-                f"{file_type.upper()} source must be a list of mappings or a mapping"
+                f"{file_format.upper()} source must be a list of mappings or a mapping"
             )
 
     else:
-        raise ConfigurationError(f"Unsupported run_space source type: {file_type}")
+        raise ConfigurationError(f"Unsupported run_space source format: {file_format}")
 
 
 def _expand_entries(entries: Dict[str, List[Any]], mode: str) -> List[Dict[str, Any]]:
@@ -278,7 +278,7 @@ def _load_and_process_source(
         raise ConfigurationError(f"run_space source file not found: {src.path}")
 
     # Load columns
-    columns = _load_source_file(resolved, src.type)
+    columns = _load_source_file(resolved, src.format)
 
     # Apply select transformation
     if src.select is not None:
@@ -317,7 +317,7 @@ def _load_and_process_source(
     meta = {
         "path": src.path,
         "resolved_path": str(resolved),
-        "type": src.type,
+        "format": src.format,
         "mode": src.mode,
         "select": list(src.select or []),
         "rename": dict(src.rename),
@@ -452,10 +452,10 @@ def expand_run_space(
             for runs in all_block_runs:
                 total *= len(runs)
 
-            if total > spec.cap:
-                raise RunSpaceCapExceededError(
+            if total > spec.max_runs:
+                raise RunSpaceMaxRunsExceededError(
                     actual_runs=total,
-                    cap=spec.cap,
+                    max_runs=spec.max_runs,
                 )
 
             combined_runs = []
@@ -473,10 +473,10 @@ def expand_run_space(
             )
 
         total = sizes[0] if sizes else 0
-        if total > spec.cap:
-            raise RunSpaceCapExceededError(
+        if total > spec.max_runs:
+            raise RunSpaceMaxRunsExceededError(
                 actual_runs=total,
-                cap=spec.cap,
+                max_runs=spec.max_runs,
             )
 
         combined_runs = []
@@ -492,12 +492,12 @@ def expand_run_space(
     # Build final metadata
     meta: Dict[str, Any] = {
         "combine": spec.combine,
-        "cap": spec.cap,
+        "max_runs": spec.max_runs,
         "expanded_runs": len(combined_runs),
         "blocks": block_meta,
     }
-    if spec.plan_only:
-        meta["plan_only"] = True
+    if spec.dry_run:
+        meta["dry_run"] = True
 
     return combined_runs, meta
 

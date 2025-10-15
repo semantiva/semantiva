@@ -30,7 +30,7 @@ Template-method orchestrator
 The core lifecycle now lives in
 :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`.
 It canonicalises the pipeline, snapshots context before/after each node, collects
-``io_delta`` details, emits built-in pre/post checks, and attaches environment
+``context_delta`` details, emits built-in pre/post assertions, and attaches environment
 pins for every SER. Concrete orchestrators implement only two hooks:
 
 ``_submit_and_wait(node_callable, *, ser_hooks)``

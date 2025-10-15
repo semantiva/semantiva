@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import pytest
-from semantiva.data_processors.data_slicer_factory import slicer
+from semantiva.data_processors.data_slicer_factory import slice
 from semantiva.context_processors.context_types import (
     ContextType,
     ContextCollectionType,
@@ -80,11 +80,11 @@ def test_pipeline_execution(float_data, empty_context):
         },
         {
             "processor": FloatCollectValueProbe,
-            "context_keyword": "mock_keyword",
+            "context_key": "mock_keyword",
         },
         {
             "processor": FloatCollectValueProbe,
-            "context_keyword": "dummy_keyword",
+            "context_key": "dummy_keyword",
         },
         {
             "processor": "rename:mock_keyword:final_keyword",
@@ -118,14 +118,14 @@ def test_pipeline_execution_with_single_context(float_data_collection, empty_con
     # Define node configurations
     node_configurations = [
         {
-            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
-            "context_keyword": "mock_keyword",
+            "processor": slice(FloatCollectValueProbe, FloatDataCollection),
+            "context_key": "mock_keyword",
         },
         {
-            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slice(FloatCollectValueProbe, FloatDataCollection),
         },
         {
-            "processor": slicer(FloatMultiplyOperation, FloatDataCollection),
+            "processor": slice(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
     ]
@@ -163,15 +163,15 @@ def test_pipeline_execution_inverted_order(float_data_collection, empty_context)
     # Define node configurations
     node_configurations = [
         {
-            "processor": slicer(FloatMultiplyOperation, FloatDataCollection),
+            "processor": slice(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
         {
-            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slice(FloatCollectValueProbe, FloatDataCollection),
         },
         {
-            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
-            "context_keyword": "mock_keyword",
+            "processor": slice(FloatCollectValueProbe, FloatDataCollection),
+            "context_key": "mock_keyword",
         },
         {
             "processor": "rename:mock_keyword:final_keyword",
@@ -212,15 +212,15 @@ def test_pipeline_slicing_with_context_collection(
     # Define node configurations
     node_configurations = [
         {
-            "processor": slicer(FloatMultiplyOperation, FloatDataCollection),
+            "processor": slice(FloatMultiplyOperation, FloatDataCollection),
             "parameters": {"factor": 2},
         },
         {
-            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
-            "context_keyword": "mock_keyword",
+            "processor": slice(FloatCollectValueProbe, FloatDataCollection),
+            "context_key": "mock_keyword",
         },
         {
-            "processor": slicer(FloatCollectValueProbe, FloatDataCollection),
+            "processor": slice(FloatCollectValueProbe, FloatDataCollection),
         },
     ]
 
@@ -245,14 +245,14 @@ def test_pipeline_slicing_with_context_collection(
     )
 
 
-def test_yaml_slicer_prefix(float_data_collection, empty_context):
-    """Test loading a slicer-defined processor from YAML configuration."""
+def test_yaml_slice_prefix(float_data_collection, empty_context):
+    """Test loading a slice-defined processor from YAML configuration."""
 
     yaml_config = """
 extensions: ["semantiva-examples"]
 pipeline:
   nodes:
-    - processor: "slicer:FloatMultiplyOperation:FloatDataCollection"
+    - processor: "slice:FloatMultiplyOperation:FloatDataCollection"
       parameters:
         factor: 2
 """

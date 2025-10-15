@@ -13,8 +13,8 @@ Schema
 
    run_space:
      combine: product
-     cap: 1000
-     plan_only: false
+     max_runs: 1000
+     dry_run: false
      blocks:
        - mode: zip
          context:
@@ -42,8 +42,8 @@ Cheat-sheet
   - Duplicate context keys **across blocks** → fail fast.
   - Duplicate key **within a block** (``context`` vs ``source``) → fail fast.
 - **Safety switches**
-  - ``cap`` limits total expansions; exceeding it raises an error.
-  - ``plan_only`` prints the plan (with previews) and exits without execution. See also :doc:`cli`.
+  - ``max_runs`` limits total expansions; exceeding it raises an error.
+  - ``dry_run`` prints the plan (with previews) and exits without execution. See also :doc:`cli`.
 
 External sources (rows-as-runs by default)
 ------------------------------------------
@@ -60,7 +60,7 @@ Blocks can read values from external files. Rows are treated as runs unless
 
    - mode: zip
      source:
-       type: csv | json | yaml | ndjson
+       format: csv | json | yaml | ndjson
        path: params/optim.csv
        select: [lr, momentum]
        rename: { momentum: mom }
@@ -74,7 +74,7 @@ Rules
 * ``zip`` blocks require all lists to have identical length.
 * ``product`` blocks compute the Cartesian product of their lists.
 * Blocks combine via ``combine`` (``product`` or ``zip``).
-* ``cap`` prevents accidental explosions; ``plan_only`` prints the plan and exits.
+* ``max_runs`` prevents accidental explosions; ``dry_run`` prints the plan and exits.
 
 CLI integration
 ---------------
@@ -82,13 +82,13 @@ CLI integration
 ``semantiva run`` exposes run-space helpers:
 
 * ``--run-space-file`` - load a ``run_space`` block from a separate YAML file.
-* ``--run-space-cap`` - override the safety cap on the number of runs.
-* ``--run-space-plan-only`` - compute the expansion, print block sizes plus previews, and exit without executing.
+* ``--run-space-max-runs`` - override the safety limit on the number of runs.
+* ``--run-space-dry-run`` - compute the expansion, print block sizes plus previews, and exit without executing.
 
 SER
 ---
 
 The planner returns metadata with block sizes, modes, context keys, and source
-provenance (path, type, SHA-256, selectors, renames, and per-source mode).
+provenance (path, format, SHA-256, selectors, renames, and per-source mode).
 Per-run metadata includes ``run_space.index``, ``run_space.total``,
 ``run_space.combine``, and ``run_space.context``.

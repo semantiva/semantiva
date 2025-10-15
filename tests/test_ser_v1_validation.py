@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test that SER v0 schema is correctly emitted and validated."""
+"""Test that SER v1 schema is correctly emitted and validated."""
 
 from __future__ import annotations
 
@@ -21,14 +21,14 @@ from pathlib import Path
 
 from semantiva.configurations import load_pipeline_from_yaml
 from semantiva.pipeline import Pipeline
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
 
-def test_ser_v0_schema_version_emitted(tmp_path: Path) -> None:
-    """Test that all emitted SER records use schema_version=0."""
+def test_ser_v1_schema_version_emitted(tmp_path: Path) -> None:
+    """Test that all emitted SER records use schema_version=1."""
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path))
+    tracer = JsonlTraceDriver(str(trace_path))
     Pipeline(nodes, trace=tracer).process()
     tracer.close()
 
@@ -36,17 +36,17 @@ def test_ser_v0_schema_version_emitted(tmp_path: Path) -> None:
         if not line.strip():
             continue
         record = json.loads(line)
-        # All records should have schema_version=0
+        # All records should have schema_version=1
         assert (
-            record["schema_version"] == 0
-        ), f"Record {record.get('type', 'unknown')} has schema_version {record['schema_version']}, expected 0"
+            record["schema_version"] == 1
+        ), f"Record {record.get('record_type', 'unknown')} has schema_version {record['schema_version']}, expected 1"
 
 
 def test_no_legacy_schema_versions(tmp_path: Path) -> None:
-    """Test that no legacy schema versions (1, 2, etc.) are emitted."""
+    """Test that no legacy schema versions (0, 2, etc.) are emitted."""
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path))
+    tracer = JsonlTraceDriver(str(trace_path))
     Pipeline(nodes, trace=tracer).process()
     tracer.close()
 
@@ -56,8 +56,8 @@ def test_no_legacy_schema_versions(tmp_path: Path) -> None:
             continue
         record = json.loads(line)
         version = record["schema_version"]
-        if version != 0:
-            legacy_versions.append((record.get("type", "unknown"), version))
+        if version != 1:
+            legacy_versions.append((record.get("record_type", "unknown"), version))
 
     assert (
         not legacy_versions

@@ -32,7 +32,7 @@ def test_node_factory_creates_all_supported_nodes_and_semantic_ids():
         {"processor": FloatDataSink},
         {"processor": FloatPayloadSink},
         {"processor": FloatMultiplyOperation},
-        {"processor": FloatCollectValueProbe, "context_keyword": "probe_key"},
+        {"processor": FloatCollectValueProbe, "context_key": "probe_key"},
         {"processor": FloatCollectValueProbe},
         {"processor": "rename:foo:bar"},
     ]

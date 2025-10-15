@@ -60,7 +60,7 @@ def test_node_parameter_resolution_precedence():
 
 
 def test_factory_binding_model_fitting():
-    Bound = ModelFittingContextProcessor.with_context_keyword("fit.coeff")
+    Bound = ModelFittingContextProcessor.with_context_key("fit.coeff")
     model = PolynomialFittingModel(1)
     node = _PipelineNodeFactory.create_context_processor_wrapper_node(
         Bound, {"fitting_model": model}

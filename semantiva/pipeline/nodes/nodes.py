@@ -650,18 +650,18 @@ class _DataOperationNode(_DataNode):
 
 class _DataOperationContextInjectorProbeNode(_DataOperationNode):
     """A node that runs a :class:`DataOperation`, stores its output in the
-    context under a specified keyword, and forwards the original data."""
+    context under a specified key, and forwards the original data."""
 
-    context_keyword: str
+    context_key: str
 
     def __init__(
         self,
         processor: Type[DataOperation],
-        context_keyword: str,
+        context_key: str,
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ) -> None:
-        self.context_keyword = context_keyword
+        self.context_key = context_key
         super().__init__(processor, processor_parameters, logger)
 
     @classmethod
@@ -696,7 +696,7 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
     @classmethod
     def get_created_keys(cls) -> List[str]:
         """Return context keys injected by this node."""
-        return [cls.context_keyword]
+        return [cls.context_key]
 
     @override
     def _process_single_item_with_context(self, payload: Payload) -> Payload:
@@ -705,7 +705,7 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
         self.observer_context = context
         parameters = self._get_processor_parameters(self.observer_context)
         result = self.processor.process(data, **parameters)
-        _ContextObserver.update_context(context, self.context_keyword, result)
+        _ContextObserver.update_context(context, self.context_key, result)
         return Payload(data, context)
 
 
@@ -738,31 +738,31 @@ class _ProbeNode(_DataNode):
 
 class _ProbeContextInjectorNode(_ProbeNode):
     """
-    A node that wraps a DataProbe and injects the probe result into the context with the specified keyword.
+    A node that wraps a DataProbe and injects the probe result into the context with the specified key.
     """
 
-    context_keyword: str
+    context_key: str
 
     def __init__(
         self,
         processor: Type[_BaseDataProcessor],
-        context_keyword: str,
+        context_key: str,
         processor_parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ):
         """
-        Initialize a _ProbeContextInjectorNode with the specified data processor and context keyword.
+        Initialize a _ProbeContextInjectorNode with the specified data processor and context key.
 
         Args:
             processor (Type[_BaseDataProcessor]): The data probe class for this node.
-            context_keyword (str): The keyword used to inject the probe result into the context.
+            context_key (str): The key used to inject the probe result into the context.
             processor_parameters (Optional[Dict]): Operation configuration parameters. Defaults to None.
             logger (Optional[Logger]): A logger instance for logging messages. Defaults to None.
 
         Raises:
-            ValueError: If `context_keyword` is not provided or is not a non-empty string.
+            ValueError: If `context_key` is not provided or is not a non-empty string.
         """
-        self.context_keyword = context_keyword
+        self.context_key = context_key
         super().__init__(processor, processor_parameters, logger)
 
     @classmethod
@@ -799,7 +799,7 @@ class _ProbeContextInjectorNode(_ProbeNode):
             List[str]: A list of context keys that the processor will add or create
             as a result of execution.
         """
-        return [cls.context_keyword]
+        return [cls.context_key]
 
     def __str__(self) -> str:
         """
@@ -812,7 +812,7 @@ class _ProbeContextInjectorNode(_ProbeNode):
         return (
             f"{class_name}(\n"
             f"     processor={self.processor},\n"
-            f"     context_keyword={self.context_keyword},\n"
+            f"     context_key={self.context_key},\n"
             f"     processor_config={self.processor_config},\n"
             f"     execution summary: {self.stop_watch}\n"
             f")"
@@ -837,10 +837,10 @@ class _ProbeContextInjectorNode(_ProbeNode):
         if isinstance(context, ContextCollectionType):
             for index, p_item in enumerate(probe_result):
                 _ContextObserver.update_context(
-                    context, self.context_keyword, p_item, index=index
+                    context, self.context_key, p_item, index=index
                 )
         else:
-            _ContextObserver.update_context(context, self.context_keyword, probe_result)
+            _ContextObserver.update_context(context, self.context_key, probe_result)
 
         return Payload(data, context)
 
@@ -949,22 +949,22 @@ class _ContextDataProcessorNode(_PipelineNode):
     """Apply a :class:`DataOperation` or :class:`DataProbe` to a context value."""
 
     processor_cls: Type[_BaseDataProcessor]
-    input_context_keyword: str
-    output_context_keyword: str
+    input_context_key: str
+    output_context_key: str
     processor_kwargs: Dict[str, Any]
 
     def __init__(
         self,
         processor_cls: Type[_BaseDataProcessor],
-        input_context_keyword: str,
-        output_context_keyword: str,
+        input_context_key: str,
+        output_context_key: str,
         processor_kwargs: Optional[Dict[str, Any]] = None,
         logger: Optional[Logger] = None,
     ) -> None:
         super().__init__(logger)
         self.processor_cls = processor_cls
-        self.input_context_keyword = input_context_keyword
-        self.output_context_keyword = output_context_keyword
+        self.input_context_key = input_context_key
+        self.output_context_key = output_context_key
         self.processor_kwargs = processor_kwargs or {}
 
     @classmethod
@@ -987,7 +987,7 @@ class _ContextDataProcessorNode(_PipelineNode):
             component_metadata["wrapped_component_docstring"] = (
                 cls.processor_cls.__doc__ or ""
             )
-            component_metadata["required_context_keys"] = [cls.input_context_keyword]
+            component_metadata["required_context_keys"] = [cls.input_context_key]
             component_metadata["injected_context_keys"] = cls.get_created_keys()
             if issubclass(cls.processor_cls, DataOperation):
                 component_metadata["input_data_type"] = (
@@ -1008,18 +1008,18 @@ class _ContextDataProcessorNode(_PipelineNode):
     @classmethod
     def get_created_keys(cls) -> List[str]:
         """Return context keys produced by this node."""
-        return [cls.output_context_keyword]
+        return [cls.output_context_key]
 
     def _process_single_item_with_context(self, payload: Payload) -> Payload:
         data = payload.data
         context = payload.context
 
-        if self.input_context_keyword not in context.keys():
-            raise KeyError(self.input_context_keyword)
-        context_value = context.get_value(self.input_context_keyword)
+        if self.input_context_key not in context.keys():
+            raise KeyError(self.input_context_key)
+        context_value = context.get_value(self.input_context_key)
         processor = self.processor_cls(**self.processor_kwargs)
         result = processor.process(context_value)
-        _ContextObserver.update_context(context, self.output_context_keyword, result)
+        _ContextObserver.update_context(context, self.output_context_key, result)
         return Payload(data, context)
 
     def _process(self, payload: Payload) -> Payload:

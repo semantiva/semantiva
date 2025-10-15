@@ -25,7 +25,7 @@ from semantiva.context_processors.context_types import ContextType
 from semantiva.data_types import NoDataType
 from semantiva.pipeline import Pipeline, build_graph, compute_pipeline_id
 from semantiva.trace.model import TraceDriver, SERRecord
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 from semantiva.trace._utils import context_to_kv_repr
 
 
@@ -78,25 +78,25 @@ def test_trace_records_one_per_node(tmp_path: Path) -> None:
     assert len(tracer.events) == len(tracer.start[2]["nodes"])
     # Ensure each record has required fields
     for rec in tracer.events:
-        assert rec.type == "ser"
-        assert rec.ids["run_id"] == tracer.start[1]
-        assert "node_id" in rec.ids
+        assert rec.record_type == "ser"
+        assert rec.identity["run_id"] == tracer.start[1]
+        assert "node_id" in rec.identity
 
 
 def test_jsonl_driver_creates_files(tmp_path: Path) -> None:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
-    tracer1 = JSONLTrace(str(tmp_path))
+    tracer1 = JsonlTraceDriver(str(tmp_path))
     pipeline1 = Pipeline(nodes, trace=tracer1)
     pipeline1.process()
     tracer1.close()
-    tracer2 = JSONLTrace(str(tmp_path))
+    tracer2 = JsonlTraceDriver(str(tmp_path))
     pipeline2 = Pipeline(nodes, trace=tracer2)
     pipeline2.process()
     tracer2.close()
     files = list(tmp_path.glob("*.ser.jsonl"))
     assert len(files) == 2
     content = [json.loads(line) for line in files[0].read_text().splitlines() if line]
-    assert any(rec.get("type") == "ser" for rec in content)
+    assert any(rec.get("record_type") == "ser" for rec in content)
 
 
 def test_context_to_kv_repr() -> None:
@@ -110,7 +110,7 @@ def test_context_to_kv_repr() -> None:
 def _run_and_load(tmp_path: Path) -> list[dict]:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path))
+    tracer = JsonlTraceDriver(str(trace_path))
     pipeline = Pipeline(nodes, trace=tracer)
     pipeline.process()
     tracer.close()
@@ -120,40 +120,42 @@ def _run_and_load(tmp_path: Path) -> list[dict]:
 
 def test_output_format(tmp_path: Path) -> None:
     records = _run_and_load(tmp_path)
-    assert records[0]["type"] == "pipeline_start"
-    assert records[0]["schema_version"] == 0
+    assert records[0]["record_type"] == "pipeline_start"
+    assert records[0]["schema_version"] == 1
     ser = next(
-        r for r in records if r["type"] == "ser" and "factor" in r["action"]["params"]
+        r
+        for r in records
+        if r["record_type"] == "ser" and "factor" in r["operation"]["parameters"]
     )
-    assert ser["status"] == "completed"
+    assert ser["status"] == "succeeded"
     assert "cpu_ms" in ser["timing"] and ser["timing"]["cpu_ms"] >= 0
     assert "input_data" in ser.get("summaries", {})
-    assert ser["action"]["params"]["factor"] == 2.0
-    assert ser["action"]["param_source"]["factor"] == "node"
+    assert ser["operation"]["parameters"]["factor"] == 2.0
+    assert ser["operation"]["parameter_sources"]["factor"] == "node"
 
 
 def test_detail_flags(tmp_path: Path) -> None:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path), detail="hash")
+    tracer = JsonlTraceDriver(str(trace_path), detail="hash")
     Pipeline(nodes, trace=tracer).process()
     tracer.close()
     ser = next(
         json.loads(line)
         for line in trace_path.read_text().splitlines()
-        if line and json.loads(line)["type"] == "ser"
+        if line and json.loads(line)["record_type"] == "ser"
     )
     assert "sha256" in ser["summaries"]["input_data"]
     assert "repr" not in ser["summaries"]["input_data"]
 
     trace_path2 = tmp_path / "trace2.ser.jsonl"
-    tracer2 = JSONLTrace(str(trace_path2), detail="repr")
+    tracer2 = JsonlTraceDriver(str(trace_path2), detail="repr")
     Pipeline(nodes, trace=tracer2).process()
     tracer2.close()
     ser2 = next(
         json.loads(line)
         for line in trace_path2.read_text().splitlines()
-        if line and json.loads(line)["type"] == "ser"
+        if line and json.loads(line)["record_type"] == "ser"
     )
     assert "repr" in ser2["summaries"]["input_data"]
     assert "pre_context" not in ser2["summaries"] or "repr" not in ser2[
@@ -161,13 +163,13 @@ def test_detail_flags(tmp_path: Path) -> None:
     ].get("pre_context", {})
 
     trace_path3 = tmp_path / "trace3.ser.jsonl"
-    tracer3 = JSONLTrace(str(trace_path3), detail="repr,context")
+    tracer3 = JsonlTraceDriver(str(trace_path3), detail="repr,context")
     Pipeline(nodes, trace=tracer3).process()
     tracer3.close()
     ser3 = next(
         json.loads(line)
         for line in trace_path3.read_text().splitlines()
-        if line and json.loads(line)["type"] == "ser"
+        if line and json.loads(line)["record_type"] == "ser"
     )
     assert "repr" in ser3["summaries"]["input_data"]
     assert "repr" in ser3["summaries"]["pre_context"]
@@ -176,29 +178,34 @@ def test_detail_flags(tmp_path: Path) -> None:
 def test_ser_env_and_builtin_checks(tmp_path: Path) -> None:
     records = _run_and_load(tmp_path)
     ser_records = [
-        r for r in records if r.get("type") == "ser" and r.get("status") == "completed"
+        r
+        for r in records
+        if r.get("record_type") == "ser" and r.get("status") == "succeeded"
     ]
     assert ser_records
     for rec in ser_records:
-        env = rec["checks"]["why_ok"]["env"]
+        env = rec["assertions"]["environment"]
         assert {"python", "platform", "semantiva"}.issubset(env.keys())
         assert all(isinstance(value, (str, type(None))) for value in env.values())
-        pre_checks = {entry["code"]: entry for entry in rec["checks"]["why_run"]["pre"]}
+        pre_checks = {
+            entry["code"]: entry for entry in rec["assertions"]["preconditions"]
+        }
         assert "required_keys_present" in pre_checks
         assert "input_type_ok" in pre_checks
         assert isinstance(
-            pre_checks["required_keys_present"]["details"].get("expected"), list
+            pre_checks["required_keys_present"]["details"].get("expected_keys"), list
         )
     probe_record = next(
-        r for r in ser_records if r["action"]["op_ref"] == "FloatBasicProbe"
+        r for r in ser_records if r["operation"]["ref"] == "FloatBasicProbe"
     )
     post_checks = {
-        entry["code"]: entry for entry in probe_record["checks"]["why_ok"]["post"]
+        entry["code"]: entry for entry in probe_record["assertions"]["postconditions"]
     }
     assert "output_type_ok" in post_checks
     writes = post_checks["context_writes_realized"]["details"]
-    assert "probed_data" in writes["created"]
-    assert writes["missing"] == []
+    context_delta = probe_record["context_delta"]
+    assert "probed_data" in context_delta["created_keys"]
+    assert writes["missing_keys"] == []
 
 
 def test_pre_checks_detect_missing_context(tmp_path: Path) -> None:
@@ -214,21 +221,23 @@ pipeline:
     )
     nodes = load_pipeline_from_yaml(str(cfg))
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path))
+    tracer = JsonlTraceDriver(str(trace_path))
     pipeline = Pipeline(nodes, trace=tracer)
     with pytest.raises(KeyError):
         pipeline.process()
     tracer.close()
     records = [json.loads(line) for line in trace_path.read_text().splitlines() if line]
     error_ser = next(
-        r for r in records if r.get("type") == "ser" and r.get("status") == "error"
+        r
+        for r in records
+        if r.get("record_type") == "ser" and r.get("status") == "error"
     )
     pre_checks = {
-        entry["code"]: entry for entry in error_ser["checks"]["why_run"]["pre"]
+        entry["code"]: entry for entry in error_ser["assertions"]["preconditions"]
     }
     assert pre_checks["required_keys_present"]["result"] == "FAIL"
-    assert "addend" in pre_checks["required_keys_present"]["details"]["missing"]
-    assert error_ser["checks"]["why_ok"]["post"][0]["code"] == "KeyError"
+    assert "addend" in pre_checks["required_keys_present"]["details"]["missing_keys"]
+    assert error_ser["assertions"]["postconditions"][0]["code"] == "KeyError"
 
 
 def test_required_keys_satisfied_by_context(tmp_path: Path) -> None:
@@ -244,7 +253,7 @@ pipeline:
     )
     nodes = load_pipeline_from_yaml(str(cfg))
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path))
+    tracer = JsonlTraceDriver(str(trace_path))
     pipeline = Pipeline(nodes, trace=tracer)
     payload = Payload(NoDataType(), ContextType({"addend": 3.0}))
     pipeline.process(payload)
@@ -253,12 +262,14 @@ pipeline:
     add_ser = next(
         r
         for r in records
-        if r.get("type") == "ser"
-        and r.get("status") == "completed"
-        and r["action"]["op_ref"] == "FloatAddOperation"
+        if r.get("record_type") == "ser"
+        and r.get("status") == "succeeded"
+        and r["operation"]["ref"] == "FloatAddOperation"
     )
-    pre_checks = {entry["code"]: entry for entry in add_ser["checks"]["why_run"]["pre"]}
+    pre_checks = {
+        entry["code"]: entry for entry in add_ser["assertions"]["preconditions"]
+    }
     required = pre_checks["required_keys_present"]["details"]
-    assert "addend" in required["expected"]
-    assert required["missing"] == []
-    assert add_ser["action"]["param_source"].get("addend") == "context"
+    assert "addend" in required["expected_keys"]
+    assert required["missing_keys"] == []
+    assert add_ser["operation"]["parameter_sources"].get("addend") == "context"

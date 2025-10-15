@@ -50,7 +50,7 @@ def pipeline():
     - Context manipulation (rename and delete operations)
     """
     node_configuration = [
-        {"processor": FloatCollectValueProbe, "context_keyword": "factor"},
+        {"processor": FloatCollectValueProbe, "context_key": "factor"},
         {"processor": FloatMultiplyOperation},
         {"processor": "rename:factor:renamed_key"},
         {"processor": "delete:renamed_key"},
@@ -106,7 +106,7 @@ def test_builder_records_errors_and_validator_raises():
     """
     # Create invalid config: delete 'factor' then try to use it
     config = [
-        {"processor": FloatCollectValueProbe, "context_keyword": "factor"},
+        {"processor": FloatCollectValueProbe, "context_key": "factor"},
         {"processor": "delete:factor"},  # Delete the factor
         {"processor": FloatMultiplyOperation},  # This needs factor - should error
     ]

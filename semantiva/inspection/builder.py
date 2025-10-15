@@ -302,8 +302,8 @@ def build_pipeline_inspection(
 
         # Special handling for probe nodes that inject results into context
         if isinstance(node, _ProbeContextInjectorNode):
-            created_keys.add(node.context_keyword)
-            key_origin[node.context_keyword] = index
+            created_keys.add(node.context_key)
+            key_origin[node.context_key] = index
 
         # Update key origin tracking for all created keys
         for key in created_keys:

@@ -17,23 +17,23 @@ import json
 from pathlib import Path
 from semantiva.configurations import load_pipeline_from_yaml
 from semantiva.pipeline import Pipeline
-from semantiva.trace.drivers.jsonl import JSONLTrace
+from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
 
 def test_checks_fields_present(tmp_path: Path) -> None:
     nodes = load_pipeline_from_yaml("tests/simple_pipeline.yaml")
     trace_path = tmp_path / "trace.ser.jsonl"
-    tracer = JSONLTrace(str(trace_path), detail="hash")
+    tracer = JsonlTraceDriver(str(trace_path), detail="hash")
     Pipeline(nodes, trace=tracer).process()
     tracer.close()
 
     ser = next(
         json.loads(line)
         for line in trace_path.read_text().splitlines()
-        if line.strip() and json.loads(line).get("type") == "ser"
+        if line.strip() and json.loads(line).get("record_type") == "ser"
     )
-    checks = ser["checks"]
-    assert checks["why_run"]["trigger"] == "dependency"
-    assert isinstance(checks["why_run"]["upstream_evidence"], list)
-    assert isinstance(checks["why_ok"]["post"], list)
-    assert isinstance(checks["why_ok"]["env"], dict)
+    assertions = ser["assertions"]
+    assert assertions["trigger"] == "dependency"
+    assert isinstance(assertions["upstream_evidence"], list)
+    assert isinstance(assertions["postconditions"], list)
+    assert isinstance(assertions["environment"], dict)

@@ -203,7 +203,7 @@ def test_remote_stub_inherits_template(fake_pipeline):
     assert len(tracer_remote.events) == len(tracer_local.events)
     remote_ser = tracer_remote.events[0]
     local_ser = tracer_local.events[0]
-    assert remote_ser.checks == local_ser.checks
-    assert remote_ser.io_delta == local_ser.io_delta
-    assert remote_ser.action == local_ser.action
+    assert remote_ser.assertions == local_ser.assertions
+    assert remote_ser.context_delta == local_ser.context_delta
+    assert remote_ser.operation == local_ser.operation
     assert len(stub.published) == len(fake_pipeline.resolved_spec)

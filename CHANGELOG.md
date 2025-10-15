@@ -8,13 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased] - TBD
 
+### Breaking
+- **SER v1** renames top-level fields (``record_type``, ``identity``, ``dependencies``,
+  ``operation``, ``context_delta``, ``assertions``, ``tags``) and normalises status
+  values (``succeeded|error|skipped|cancelled``). JSON schema updated to ``ser_v1``.
+- **Run Space** configuration now uses ``max_runs``/``dry_run`` and source ``format``;
+  CLI flags renamed to ``--run-space-max-runs`` and ``--run-space-dry-run``.
+- Canonical graph nodes expose ``processor_ref`` instead of ``fqn``; SER tags use
+  ``node_ref``.
+- Resolver prefixes renamed to ``template:`` and ``slice:`` with matching factory helpers.
+- JSONL trace driver class renamed to ``JsonlTraceDriver``.
+
 ### Added
 - Execution Component Registry list helpers and short-hand identifiers (``local``,
   ``sequential``, ``in_memory``) for bundled orchestrator, executor, and transport
   classes.
-- Built-in ``stringbuild:`` resolver registered via the name resolver registry and corresponding unit tests and examples (docs/tutorials updated).
-  - Context string-builder factory (YAML resolver ``stringbuild:"<template>":<out_key>``): dynamic ContextProcessor factory that builds deterministic strings from strict ``{placeholder}`` identifiers and writes them to context. Templates reject format specs/conversions and require all placeholders to exist at runtime.
-  - Documentation: added `Factories: stringbuild` docs, run space quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
+- Built-in ``template:`` resolver registered via the name resolver registry and corresponding unit tests and examples (docs/tutorials updated).
+  - Context template factory (YAML resolver ``template:"<template>":<out_key>``): dynamic ContextProcessor factory that builds deterministic strings from strict ``{placeholder}`` identifiers and writes them to context. Templates reject format specs/conversions and require all placeholders to exist at runtime.
+  - Documentation: added `Factories: template` docs, run space quickstart, and updated CLI docs to clarify YAML vs CLI flag mapping.
 - Run Space v1: schema objects (``run_space.blocks`` with ``zip``/``product``),
   planner with cap/plan-only, CLI overrides, documentation (concept +
   quickstart), and tests covering block expansion, external sources,
@@ -33,7 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Canonical graph builder (`build_graph`) produces a GraphV1 canonical spec used as the single source of truth.
   - Zero-cost when disabled: tracing is opt-in;
   - Trace record v1 envelopes are minimal and stable: `pipeline_start`, `node` (phase=`before|after|error`) and `pipeline_end`. 
-  - `JSONLTrace` driver: append-only, asynchronous background writer.
+  - `JsonlTraceDriver` driver: append-only, asynchronous background writer.
   - CLI wiring added: `--trace-driver`, `--trace-output`, and `--trace-detail` control trace backend, output location, and which semantic summaries are emitted.
   - Orchestrator uses the executor for all node runs, SER records include ``action.params`` and ``action.param_source``; JSON schema is packaged.
   - SER runtime safeguards: built-in pre/post checks (`required_keys_present`, `input_type_ok`, `config_valid`, `output_type_ok`, `context_writes_realized`) populate ``checks.why_run.pre``/``checks.why_ok.post`` for every node. ``checks.why_ok.env`` carries reproducibility pins (Python, platform, Semantiva version, optional NumPy/Pandas).
@@ -68,13 +79,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added proper `__all__` exports to submodules: `configurations`, `core`, `exceptions`, `workflows`, and `component_loader`
   - Added package `registry` to gather plugin and class/module registry.
   - Added file `semantiva/context_processors/factory.py` for context renamer and deleter factories
-  - Pluggable name resolvers registered with `NameResolverRegistry` with built-in support for `slicer:` YAML prefixes.
+  - Pluggable name resolvers registered with `NameResolverRegistry` with built-in support for `slice:` YAML prefixes.
   - Pluggable parameter resolvers via `ParameterResolverRegistry.register_resolver` with built-in support for a ``model:`` prefix to instantiate fitting models from YAML
 - Comprehensive tracing documentation covering CLI options, record schema, detail levels, examples, and troubleshooting
 - Documented Studio Viewer quick start, modes, export, trace inspection anchors, limitations, and troubleshooting
   - Documentation: added model fitting tutorial, parametric sweep walkthrough, and example run instructions
 - ContextProcessor now supports observer-mediated, stateless processing with runtime parameter introspection
-- `ModelFittingContextProcessor.with_context_keyword()` factory binds output keys for stateless model fitting
+- `ModelFittingContextProcessor.with_context_key()` factory binds output keys for stateless model fitting
 - Shared contract validator with `semantiva dev lint` CLI, Jupyter magic, and pytests for enforcing component and node metadata rules
 - **Flexible Parameter Mapping for ModelFittingContextProcessor**: Added `_model_fitting_processor_factory` to enable custom parameter names and nested path extraction
   - Supports both single dictionaries and lists of dictionaries (e.g., from slicer operations)
@@ -83,6 +94,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Comprehensive test coverage with 9 new documentation example tests
   - Enhanced RST documentation with examples, data structure guides, and integration patterns
   - Streamlined component docstrings per Semantiva guidelines for clean semantic identity
+- Explicit note explaining that the `facotr` typo in pipeline documentation is intentional, used to demonstrate strict validation catching misspelled parameter names.
 
 ### Changed
 - Replaced the monolithic ClassRegistry with `ProcessorRegistry`,
@@ -179,6 +191,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   updates through `_ContextObserver`
 - `ModelFittingContextProcessor` no longer accepts business parameters in
   ``__init__``
+- Renamed exception `RunSpaceCapExceededError` to `RunSpaceMaxRunsExceededError` with updated error message text referencing `max_runs`.
 
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories

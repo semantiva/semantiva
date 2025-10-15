@@ -87,13 +87,13 @@ def _parse_run_space_block(block: Any) -> RunSpaceV1Config:
         raise ValueError("run_space.combine must be 'zip' or 'product'")
     cfg.combine = combine  # type: ignore[assignment]
 
-    cap = block.get("cap", 1000)
+    max_runs = block.get("max_runs", 1000)
     try:
-        cfg.cap = int(cap)
+        cfg.max_runs = int(max_runs)
     except (TypeError, ValueError) as exc:  # pragma: no cover - defensive
-        raise ValueError("run_space.cap must be an integer") from exc
+        raise ValueError("run_space.max_runs must be an integer") from exc
 
-    cfg.plan_only = bool(block.get("plan_only", False))
+    cfg.dry_run = bool(block.get("dry_run", False))
 
     blocks_raw = block.get("blocks", [])
     if blocks_raw is None:
@@ -124,10 +124,10 @@ def _parse_run_space_block(block: Any) -> RunSpaceV1Config:
         if source_entry is not None:
             if not isinstance(source_entry, Mapping):
                 raise ValueError(f"run_space.blocks[{idx}].source must be a mapping")
-            source_type = str(source_entry.get("type", "")).lower()
-            if source_type not in ("csv", "json", "yaml", "ndjson"):
+            source_format = str(source_entry.get("format", "")).lower()
+            if source_format not in ("csv", "json", "yaml", "ndjson"):
                 raise ValueError(
-                    f"run_space.blocks[{idx}].source.type must be one of 'csv', 'json', 'yaml', 'ndjson'"
+                    f"run_space.blocks[{idx}].source.format must be one of 'csv', 'json', 'yaml', 'ndjson'"
                 )
             raw_path = source_entry.get("path")
             if not isinstance(raw_path, str):
@@ -153,7 +153,7 @@ def _parse_run_space_block(block: Any) -> RunSpaceV1Config:
             # mypy: cast the string literal to the RunBlockMode literal type
             mode_override = cast(RunBlockMode, mode_override_raw)
             run_source = RunSource(
-                type=source_type,  # type: ignore[arg-type]
+                format=source_format,  # type: ignore[arg-type]
                 path=raw_path,
                 select=list(select) if select is not None else None,
                 rename=rename_dict,

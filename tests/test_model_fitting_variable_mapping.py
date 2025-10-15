@@ -32,7 +32,7 @@ class TestModelFittingProcessorFactory:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="time_values",
             dependent_var_key="measurements",
-            context_keyword="fit_results",
+            context_key="fit_results",
         )
 
         # Check parameter names
@@ -53,7 +53,7 @@ class TestModelFittingProcessorFactory:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="t_values",
             dependent_var_key="gaussian_fit_parameters.std_dev_x",
-            context_keyword="std_dev_coefficients",
+            context_key="std_dev_coefficients",
         )
 
         # Check that parameter name is base (not full path)
@@ -68,7 +68,7 @@ class TestModelFittingProcessorFactory:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="y_data",
-            context_keyword="fit.parameters",
+            context_key="fit.parameters",
         )
 
         # Should use default output key
@@ -80,7 +80,7 @@ class TestModelFittingProcessorFactory:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="nested.y_data",
-            context_keyword="results",
+            context_key="results",
         )
 
         docstring = processor_cls.__doc__
@@ -97,7 +97,7 @@ class TestModelFittingWithNestedPaths:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="t_values",
             dependent_var_key="gaussian_fit_parameters.std_dev_x",
-            context_keyword="std_dev_coefficients",
+            context_key="std_dev_coefficients",
         )
 
         processor = processor_cls()
@@ -137,7 +137,7 @@ class TestModelFittingWithNestedPaths:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="t_values",
             dependent_var_key="gaussian_fit_parameters.std_dev_x",
-            context_keyword="std_dev_coefficients",
+            context_key="std_dev_coefficients",
         )
 
         processor = processor_cls()
@@ -179,7 +179,7 @@ class TestModelFittingWithNestedPaths:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="time",
             dependent_var_key="data.measurements.values",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -205,7 +205,7 @@ class TestModelFittingWithNestedPaths:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="y_data",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -233,7 +233,7 @@ class TestErrorHandling:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="y_data",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -248,7 +248,7 @@ class TestErrorHandling:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="y_data",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -263,7 +263,7 @@ class TestErrorHandling:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="y_data",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -278,7 +278,7 @@ class TestErrorHandling:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="nested.missing_key",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -297,7 +297,7 @@ class TestErrorHandling:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="data.missing_key",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -314,7 +314,7 @@ class TestErrorHandling:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="data.value",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -331,7 +331,7 @@ class TestErrorHandling:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="x_data",
             dependent_var_key="data.value",
-            context_keyword="output",
+            context_key="output",
         )
 
         processor = processor_cls()
@@ -360,7 +360,7 @@ class TestPipelineIntegration:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "t_values",
                 "dependent_var_key": "gaussian_fit_parameters.std_dev_x",
-                "context_keyword": "std_dev_coefficients",
+                "context_key": "std_dev_coefficients",
             },
         }
 
@@ -383,7 +383,7 @@ class TestPipelineIntegration:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "t_values",
                 "dependent_var_key": "gaussian_fit_parameters.std_dev_x",
-                "context_keyword": "std_dev_coefficients",
+                "context_key": "std_dev_coefficients",
             },
         }
 
@@ -394,7 +394,7 @@ class TestPipelineIntegration:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "t_values",
                 "dependent_var_key": "gaussian_fit_parameters.angle",
-                "context_keyword": "orientation_coefficients",
+                "context_key": "orientation_coefficients",
             },
         }
 
@@ -428,7 +428,7 @@ class TestPipelineIntegration:
             "processor": "ModelFittingContextProcessor",
             "parameters": {
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
-                "context_keyword": "fit_results",
+                "context_key": "fit_results",
             },
         }
 
@@ -447,21 +447,21 @@ class TestPipelineIntegration:
         assert "x_values" in params
         assert "y_values" in params
 
-    def test_context_keyword_only_configuration(self):
-        """Test configuration with only context_keyword (no variable mapping)."""
+    def test_context_key_only_configuration(self):
+        """Test configuration with only context_key (no variable mapping)."""
 
         node_definition = {
             "processor": "ModelFittingContextProcessor",
             "parameters": {
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
-                "context_keyword": "custom_output",
+                "context_key": "custom_output",
             },
         }
 
         node = _pipeline_node_factory(node_definition)
         processor_cls = type(node.processor)
 
-        # Should use the with_context_keyword factory method
+        # Should use the with_context_key factory method
         assert processor_cls.get_created_keys() == ["custom_output"]
         assert processor_cls.CONTEXT_OUTPUT_KEY == "custom_output"
 
@@ -477,7 +477,7 @@ class TestDocumentationExamples:
             "processor": "ModelFittingContextProcessor",
             "parameters": {
                 "fitting_model": "model:PolynomialFittingModel:degree=2",
-                "context_keyword": "polynomial_fit",
+                "context_key": "polynomial_fit",
             },
         }
 
@@ -498,7 +498,7 @@ class TestDocumentationExamples:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "time_values",
                 "dependent_var_key": "measurements",
-                "context_keyword": "time_series_fit",
+                "context_key": "time_series_fit",
             },
         }
 
@@ -520,7 +520,7 @@ class TestDocumentationExamples:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "t_values",
                 "dependent_var_key": "gaussian_fit_parameters.std_dev_x",
-                "context_keyword": "std_dev_coefficients",
+                "context_key": "std_dev_coefficients",
             },
         }
 
@@ -537,7 +537,7 @@ class TestDocumentationExamples:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="t_values",
             dependent_var_key="gaussian_fit_parameters.std_dev_x",
-            context_keyword="test_output",
+            context_key="test_output",
         )
 
         processor = processor_cls()
@@ -576,7 +576,7 @@ class TestDocumentationExamples:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="t_values",
             dependent_var_key="gaussian_fit_parameters.std_dev_x",
-            context_keyword="test_output",
+            context_key="test_output",
         )
 
         processor = processor_cls()
@@ -622,7 +622,7 @@ class TestDocumentationExamples:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "slice_indices",
                 "dependent_var_key": "aggregated_data.mean_values",
-                "context_keyword": "trend_analysis",
+                "context_key": "trend_analysis",
             },
         }
 
@@ -639,7 +639,7 @@ class TestDocumentationExamples:
         processor_cls = _model_fitting_processor_factory(
             independent_var_key="slice_indices",
             dependent_var_key="aggregated_data.mean_values",
-            context_keyword="trend_analysis",
+            context_key="trend_analysis",
         )
 
         processor = processor_cls()
@@ -681,7 +681,7 @@ class TestDocumentationExamples:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "t_values",
                 "dependent_var_key": "gaussian_fit_parameters.std_dev_x",
-                "context_keyword": "std_dev_trend",
+                "context_key": "std_dev_trend",
             },
         }
 
@@ -691,7 +691,7 @@ class TestDocumentationExamples:
                 "fitting_model": "model:PolynomialFittingModel:degree=1",
                 "independent_var_key": "t_values",
                 "dependent_var_key": "gaussian_fit_parameters.angle",
-                "context_keyword": "orientation_trend",
+                "context_key": "orientation_trend",
             },
         }
 
@@ -717,13 +717,13 @@ class TestDocumentationExamples:
         std_dev_processor_cls = _model_fitting_processor_factory(
             independent_var_key="t_values",
             dependent_var_key="gaussian_fit_parameters.std_dev_x",
-            context_keyword="std_dev_trend",
+            context_key="std_dev_trend",
         )
 
         orientation_processor_cls = _model_fitting_processor_factory(
             independent_var_key="t_values",
             dependent_var_key="gaussian_fit_parameters.angle",
-            context_keyword="orientation_trend",
+            context_key="orientation_trend",
         )
 
         std_dev_processor = std_dev_processor_cls()
@@ -799,11 +799,9 @@ class TestBackwardCompatibility:
         assert "y_values" in params
         assert "fitting_model" in params
 
-    def test_with_context_keyword_still_works(self):
-        """Test that the existing with_context_keyword method still works."""
-        processor_cls = ModelFittingContextProcessor.with_context_keyword(
-            "custom_output"
-        )
+    def test_with_context_key_still_works(self):
+        """Test that the existing with_context_key method still works."""
+        processor_cls = ModelFittingContextProcessor.with_context_key("custom_output")
 
         assert processor_cls.CONTEXT_OUTPUT_KEY == "custom_output"
         assert processor_cls.get_created_keys() == ["custom_output"]

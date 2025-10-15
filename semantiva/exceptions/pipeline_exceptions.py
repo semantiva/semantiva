@@ -33,14 +33,14 @@ class PipelineTopologyError(Exception):
         self.message = message
 
 
-class RunSpaceCapExceededError(Exception):
-    """Raised when run space expansion exceeds the configured safety cap."""
+class RunSpaceMaxRunsExceededError(Exception):
+    """Raised when run space expansion exceeds the configured max_runs limit."""
 
-    def __init__(self, actual_runs: int, cap: int, message: str = None):
+    def __init__(self, actual_runs: int, max_runs: int, message: str | None = None):
         self.actual_runs = actual_runs
-        self.cap = cap
+        self.max_runs = max_runs
         if message is None:
-            message = f"Run space expansion would create {actual_runs:,} runs, exceeding safety cap of {cap:,}"
+            message = f"Run space expansion would create {actual_runs:,} runs, exceeds `max_runs` limit of {max_runs:,}"
         super().__init__(message)
         self.message = message
 

@@ -30,9 +30,9 @@ def build_trace_driver(trace_cfg: TraceConfig):
         options["output_path"] = trace_cfg.output_path
 
     if name in {"jsonl", "ser_jsonl"}:
-        from semantiva.trace.drivers.jsonl import JSONLTrace
+        from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
-        return JSONLTrace(**options)
+        return JsonlTraceDriver(**options)
 
     if ":" in name:
         module_name, _, class_name = name.partition(":")

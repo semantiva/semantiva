@@ -22,8 +22,8 @@ Registry Components
    modules imported at runtime.
 
 ``NameResolverRegistry``
-   Stores prefix-based resolvers (``rename:``, ``delete:``, ``stringbuild:``,
-   ``slicer:``) that expand declarative YAML strings into processor classes.
+   Stores prefix-based resolvers (``rename:``, ``delete:``, ``template:``,
+   ``slice:``) that expand declarative YAML strings into processor classes.
 
 ``ParameterResolverRegistry``
    Maintains resolvers that transform configuration values recursively before 
@@ -197,7 +197,7 @@ Component registration follows a carefully orchestrated initialization sequence:
 1. **ProcessorRegistry.register_modules(DEFAULT_MODULES)**
 
    * Registers core data processors, context processors, and fitting models
-   * Ensures built-in resolvers (rename, delete, stringbuild, slicer, model) are available
+   * Ensures built-in resolvers (rename, delete, template, slice, model) are available
    * Calls ``ExecutionComponentRegistry.initialize_defaults()``
 
 2. **ExecutionComponentRegistry.initialize_defaults()**

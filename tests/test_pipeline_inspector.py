@@ -19,13 +19,13 @@ from semantiva.context_processors import ContextType
 
 
 def test_inspection_with_slicer_prefix():
-    """Ensure inspection resolves processors using the ``slicer:`` prefix."""
+    """Ensure inspection resolves processors using the ``slice:`` prefix."""
 
     yaml_config = """
 extensions: ["semantiva-examples"]
 pipeline:
   nodes:
-    - processor: "slicer:FloatMultiplyOperation:FloatDataCollection"
+    - processor: "slice:FloatMultiplyOperation:FloatDataCollection"
       parameters:
         factor: 2
 """

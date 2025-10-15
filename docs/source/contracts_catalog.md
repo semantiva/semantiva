@@ -1,3 +1,4 @@
+| Semantiva Validation Assertions (SVA) enumerate contract checks enforced by ``semantiva dev lint``. |
 | Code | Severity | Applies To | Summary | Trigger | Hint |
 |------|----------|------------|---------|---------|------|
 | SVA001 | error | Any class defining input_data_type | input_data_type must be @classmethod | Method exists; inspect.getattr_static not classmethod | Add @classmethod and use cls |

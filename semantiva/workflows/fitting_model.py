@@ -74,7 +74,7 @@ class ModelFittingContextProcessor(ContextProcessor):
     CONTEXT_OUTPUT_KEY: str = "fit.parameters"
 
     @classmethod
-    def with_context_keyword(cls, key: str) -> type["ModelFittingContextProcessor"]:
+    def with_context_key(cls, key: str) -> type["ModelFittingContextProcessor"]:
         """Return a subclass with :data:`CONTEXT_OUTPUT_KEY` bound to ``key``."""
         safe = key.replace(".", "_").replace("[", "_").replace("]", "_")
         name = f"{cls.__name__}_OUT_{safe}"
@@ -105,7 +105,7 @@ class ModelFittingContextProcessor(ContextProcessor):
 def _model_fitting_processor_factory(
     independent_var_key: str,
     dependent_var_key: str,
-    context_keyword: str,
+    context_key: str,
 ) -> type[ModelFittingContextProcessor]:
     """Create ModelFittingContextProcessor with custom parameter mapping.
 
@@ -115,7 +115,7 @@ def _model_fitting_processor_factory(
     Args:
         independent_var_key: Parameter name for x-axis data
         dependent_var_key: Parameter name/path for y-axis data (supports "nested.path")
-        context_keyword: Output key for fit results
+        context_key: Output key for fit results
 
     Returns:
         Dynamically created processor subclass with custom parameter mapping
@@ -123,7 +123,7 @@ def _model_fitting_processor_factory(
     import inspect  # pylint: disable=import-outside-toplevel
 
     # Determine output key
-    output_key = context_keyword or ModelFittingContextProcessor.CONTEXT_OUTPUT_KEY
+    output_key = context_key or ModelFittingContextProcessor.CONTEXT_OUTPUT_KEY
 
     # Parse dependent variable key to separate parameter name from nested path
     if "." in dependent_var_key:
