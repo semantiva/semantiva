@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://semantiva.ai/schemas/ser/1/ser_v1.schema.json",
+  "$id": "https://semantiva.tech/schemas/ser/1/ser_v1.schema.json",
   "title": "Semantiva Step Evidence Record v1",
   "type": "object",
   "required": [
