@@ -6,7 +6,7 @@ single SER is emitted for every node that runs and contains:
 
 * stable identifiers for the run, pipeline and node under ``identity``
 * the node's upstream dependencies via ``dependencies.upstream``
-* operation details (``operation.ref`` with parameters and their sources)
+* processor details (``processor.ref`` with parameters and their sources)
 * a minimal context delta describing reads and writes
 * structured assertions explaining why the node ran and why it was OK
 * timing information (wall and CPU)
@@ -27,8 +27,8 @@ Example SER
      "schema_version": 1,
      "identity": {"run_id": "run-…", "pipeline_id": "plid-…", "node_id": "n-3"},
      "dependencies": {"upstream": ["n-2"]},
-     "operation": {
-       "ref": "FloatBasicProbe",
+     "processor": {
+       "ref": "semantiva.examples.test_utils.FloatBasicProbe",
        "parameters": {"context_key": "probed_data"},
        "parameter_sources": {"context_key": "node"}
      },
@@ -80,7 +80,7 @@ Example SER
      },
      "timing": {"started_at": "…", "finished_at": "…", "duration_ms": 5, "cpu_ms": 4},
      "status": "succeeded",
-     "tags": {"node_ref": "FloatBasicProbe"},
+     "tags": {"node_ref": "semantiva.examples.test_utils.FloatBasicProbe"},
      "summaries": {
        "input_data": {"dtype": "FloatDataType", "sha256": "…"},
        "output_data": {"dtype": "FloatDataType", "sha256": "…"}

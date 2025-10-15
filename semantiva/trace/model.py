@@ -69,7 +69,7 @@ class SERRecord:
     schema_version: int
     identity: Dict[str, str]
     dependencies: Dict[str, List[str]]
-    operation: Dict[str, Any]
+    processor: Dict[str, Any]
     context_delta: ContextDelta
     assertions: Dict[str, Any]
     timing: Dict[str, Any]

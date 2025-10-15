@@ -84,13 +84,13 @@ def test_param_provenance(tmp_path: Path) -> None:
         for line in trace_path.read_text().splitlines()
         if line and json.loads(line).get("record_type") == "ser"
     )
-    operation = ser["operation"]
-    assert operation["parameters"] == {
+    processor = ser["processor"]
+    assert processor["parameters"] == {
         "factor": 2.0,
         "from_ctx": 5.0,
         "defaulted": 3.0,
     }
-    assert operation["parameter_sources"] == {
+    assert processor["parameter_sources"] == {
         "factor": "node",
         "from_ctx": "context",
         "defaulted": "default",

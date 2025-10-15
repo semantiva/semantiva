@@ -10,8 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Breaking
 - **SER v1** renames top-level fields (``record_type``, ``identity``, ``dependencies``,
-  ``operation``, ``context_delta``, ``assertions``, ``tags``) and normalises status
-  values (``succeeded|error|skipped|cancelled``). JSON schema updated to ``ser_v1``.
+  ``processor``, ``context_delta``, ``assertions``, ``tags``) and normalises status
+  values (``succeeded|error|skipped|cancelled``). ``processor.ref`` emits FQCN. JSON schema updated to ``ser_v1``.
 - **Run Space** configuration now uses ``max_runs``/``dry_run`` and source ``format``;
   CLI flags renamed to ``--run-space-max-runs`` and ``--run-space-dry-run``.
 - Canonical graph nodes expose ``processor_ref``; SER tags use

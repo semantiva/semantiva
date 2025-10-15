@@ -89,8 +89,8 @@ def test_error_tracing_writes_failure(tmp_path: Path) -> None:
     assert {"output_type_ok", "context_writes_realized"}.issubset(codes)
     env = ser["assertions"]["environment"]
     assert {"python", "platform", "semantiva"}.issubset(env)
-    assert ser["operation"]["parameters"]["msg"] == "fail"
-    assert ser["operation"]["parameter_sources"]["msg"] == "node"
+    assert ser["processor"]["parameters"]["msg"] == "fail"
+    assert ser["processor"]["parameter_sources"]["msg"] == "node"
     pipeline_end = records[-1]
     assert pipeline_end["record_type"] == "pipeline_end"
     assert pipeline_end["summary"]["status"] == "error"
