@@ -26,8 +26,16 @@ Schemas
 Common header (required for all records)
    :file:`semantiva/trace/schema/trace_header_v1.schema.json`
 
+Run-Space lifecycle records
+   :file:`semantiva/trace/schema/run_space_start_event_v1.schema.json`
+   :file:`semantiva/trace/schema/run_space_end_event_v1.schema.json`
+
 Pipeline start event record
    :file:`semantiva/trace/schema/pipeline_start_event_v1.schema.json`
+
+   The pipeline start references an enclosing run-space launch via:
+   ``run_space_spec_id`` (plan identity), optional ``run_space_inputs_id`` (inputs snapshot),
+   ``run_space_launch_id`` (launch/session), and ``run_space_attempt`` (retry counter).
 
 Semantic Execution Record (SER v1)
    :file:`semantiva/trace/schema/semantic_execution_record_v1.schema.json`

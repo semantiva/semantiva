@@ -1,0 +1,59 @@
+{
+  "$id": "https://semantiva.tech/schemas/trace/v1/run_space_start_event_v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantiva Run-Space Start Event v1",
+  "type": "object",
+  "allOf": [
+    { "$ref": "./trace_header_v1.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "record_type": { "const": "run_space_start" },
+        "run_space_spec_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "RSCF v1: sha256(b\"semantiva:rscf1:\" + <canonical_run_space_spec_bytes>)"
+        },
+        "run_space_inputs_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "RSM v1: sha256(b\"semantiva:rsm1:\" + run_space_spec_id + \":\" + <canonical_input_fingerprints_bytes>)"
+        },
+        "run_space_launch_id": {
+          "type": "string",
+          "description": "Unique launch/session id (e.g., UUIDv7 or sha256(materialization + idempotency_key))"
+        },
+        "run_space_attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-based retry counter within the same run_space_launch_id"
+        },
+        "run_space_planned_run_count": { "type": "integer", "minimum": 0 },
+        "run_space_input_fingerprints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": { "type": "string" },
+              "uri": { "type": "string", "format": "uri" },
+              "digest": {
+                "type": "object",
+                "properties": {
+                  "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+                },
+                "required": ["sha256"],
+                "additionalProperties": false
+              },
+              "size_bytes": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["role", "uri", "digest"],
+            "additionalProperties": true
+          },
+          "description": "External inputs used to expand the run-space at launch time"
+        }
+      },
+      "required": ["run_space_spec_id", "run_space_launch_id", "run_space_attempt"],
+      "additionalProperties": true
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "$id": "https://semantiva.tech/schemas/trace/v1/run_space_end_event_v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantiva Run-Space End Event v1",
+  "type": "object",
+  "allOf": [
+    { "$ref": "./trace_header_v1.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "record_type": { "const": "run_space_end" },
+        "run_space_launch_id": {
+          "type": "string",
+          "description": "Launch/session id to match with run_space_start"
+        },
+        "run_space_attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-based retry counter within the same launch id"
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "emitted_runs": { "type": "integer", "minimum": 0 },
+            "errors": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": true
+        }
+      },
+      "required": ["run_space_launch_id", "run_space_attempt"],
+      "additionalProperties": true
+    }
+  ]
+}

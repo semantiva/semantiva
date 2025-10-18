@@ -4,21 +4,20 @@
   "title": "Semantiva Pipeline Start Event v1",
   "type": "object",
   "allOf": [
-    {
-      "$ref": "./trace_header_v1.schema.json"
-    },
+    { "$ref": "./trace_header_v1.schema.json" },
     {
       "type": "object",
       "properties": {
         "record_type": { "const": "pipeline_start" },
         "pipeline_id": { "type": "string", "minLength": 1 },
         "pipeline_spec_canonical": { "type": "object" },
+        "run_space_spec_id": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "run_space_inputs_id": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "run_space_launch_id": { "type": "string" },
+        "run_space_attempt": { "type": "integer", "minimum": 1 },
         "meta": { "type": "object" }
       },
-      "required": [
-        "pipeline_id",
-        "pipeline_spec_canonical"
-      ],
+      "required": ["pipeline_id", "pipeline_spec_canonical"],
       "additionalProperties": true
     }
   ]
