@@ -48,7 +48,7 @@ def test_cli_pipeline_model_fitting_jsonl(tmp_path: Path):
     content = [c for c in files[0].read_text().splitlines() if c.strip()]
     records = [json.loads(chunk) for chunk in content]
     start = next(r for r in records if r["record_type"] == "pipeline_start")
-    json.dumps(start["canonical_spec"])
+    json.dumps(start["pipeline_spec_canonical"])
 
 
 def test_cli_pipeline_with_duplicate_nodes(tmp_path: Path):
@@ -84,5 +84,5 @@ pipeline:
     content = [c for c in files[0].read_text().splitlines() if c.strip()]
     records = [json.loads(chunk) for chunk in content]
     start = next(r for r in records if r["record_type"] == "pipeline_start")
-    node_uuids = [n["node_uuid"] for n in start["canonical_spec"]["nodes"]]
+    node_uuids = [n["node_uuid"] for n in start["pipeline_spec_canonical"]["nodes"]]
     assert len(node_uuids) == len(set(node_uuids))

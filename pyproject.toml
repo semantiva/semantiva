@@ -10,6 +10,7 @@ dependencies = [
     "pyyaml",
     "rdflib",
     "typing_extensions",
+    "jsonschema"
 ]
 distribution = true
 

@@ -1,11 +1,11 @@
-.. _schema_ser_v1:
+.. _schema_semantic_execution_record_v1:
 
 SER v1 JSON Schema
 ==================
 
-The :term:`Step Evidence Record (SER)` captures the execution of each :term:`Node`
+The :term:`Semantic Execution Record (SER)` captures the execution of each :term:`Node`
 from a compiled :term:`Graph (GraphV1)` run. This page summarizes the v1 JSON
-Schema shipped with Semantiva (``semantiva.trace.schema.ser_v1.schema.json``) and
+Schema shipped with Semantiva (``semantiva.trace.schema.semantic_execution_record_v1.schema.json``) and
 shows how each field relates to runtime behavior and glossary concepts.
 
 The schema is consumed by the :term:`Trace` pipeline and emitted by the
@@ -19,7 +19,7 @@ Loading the Schema
 
    from importlib import resources
 
-   schema = resources.files("semantiva.trace.schema") / "ser_v1.schema.json"
+   schema = resources.files("semantiva.trace.schema") / "semantic_execution_record_v1.schema.json"
 
 Top-Level Structure
 -------------------

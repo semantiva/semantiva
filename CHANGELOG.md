@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] - TBD
 
 ### Breaking
+- Trace naming RFC v1: SER schema renamed to
+  ``semantic_execution_record_v1.schema.json`` and lifecycle schemas renamed to
+  ``pipeline_start_event_v1.schema.json`` / ``pipeline_end_event_v1.schema.json``;
+  ``pipeline_start`` now requires ``pipeline_spec_canonical`` instead of
+  ``canonical_spec`` and all trace schema ``$id`` values live under
+  ``https://semantiva.tech/schemas/trace/v1/``.
 - **SER v1** renames top-level fields (``record_type``, ``identity``, ``dependencies``,
   ``processor``, ``context_delta``, ``assertions``, ``tags``) and normalises status
   values (``succeeded|error|skipped|cancelled``). ``processor.ref`` emits FQCN. JSON schema updated to ``ser_v1``.
@@ -100,6 +106,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Explicit note explaining that the `facotr` typo in pipeline documentation is intentional, used to demonstrate strict validation catching misspelled parameter names.
 
 ### Changed
+- Terminology aligned with the Semantic Execution Record (SER) ontology across
+  tracing docs and runtime components.
 - Replaced the monolithic ClassRegistry with `ProcessorRegistry`,
   `NameResolverRegistry`, and `ParameterResolverRegistry`, exposing a single
   `resolve_symbol()` entry point for pipeline configuration and CLI usage.

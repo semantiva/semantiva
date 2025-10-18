@@ -1,14 +1,14 @@
 {
-  "$id": "https://semantiva.tech/schemas/pipeline_start_v1.schema.json",
+  "$id": "https://semantiva.tech/schemas/trace/v1/pipeline_start_event_v1.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Semantiva Pipeline Start v1",
+  "title": "Semantiva Pipeline Start Event v1",
   "type": "object",
   "properties": {
-    "record_type": { "const": "pipeline_start" },
+    "record_type": { "type": "string", "const": "pipeline_start" },
     "schema_version": { "type": "integer", "const": 1 },
     "run_id": { "type": "string", "minLength": 1 },
     "pipeline_id": { "type": "string", "minLength": 1 },
-    "canonical_spec": { "type": "object" },
+    "pipeline_spec_canonical": { "type": "object" },
     "meta": { "type": "object" }
   },
   "required": [
@@ -16,7 +16,7 @@
     "schema_version",
     "run_id",
     "pipeline_id",
-    "canonical_spec"
+    "pipeline_spec_canonical"
   ],
   "additionalProperties": true
 }

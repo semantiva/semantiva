@@ -1,7 +1,7 @@
-Step Evidence Record (SER) v1
-=============================
+Semantic Execution Record (SER) v1
+==================================
 
-Semantiva records pipeline execution using the **Step Evidence Record (SER) v1**.  A
+Semantiva records pipeline execution using the **Semantic Execution Record (SER) v1**.  A
 single SER is emitted for every node that runs and contains:
 
 * stable identifiers for the run, pipeline and node under ``identity``
@@ -119,7 +119,7 @@ The canonical JSON Schema ships with the package and can be loaded via:
 .. code-block:: python
 
    from importlib import resources
-   schema = resources.files("semantiva.trace.schema") / "ser_v1.schema.json"
+   schema = resources.files("semantiva.trace.schema") / "semantic_execution_record_v1.schema.json"
 
 Context Delta
 -------------
