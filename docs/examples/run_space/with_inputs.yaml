@@ -1,0 +1,10 @@
+run_space:
+  name: overlay-batch
+  sources:
+    runs_csv:
+      uri: file:///data/runs.csv
+      mode: rows
+  blocks:
+    - mode: rows
+      source: runs_csv
+# External input → expect run_space_start with fingerprints + run_space_inputs_id

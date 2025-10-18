@@ -26,6 +26,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - JSONL trace driver class renamed to ``JsonlTraceDriver``.
 
 ### Added
+- Run-Space lifecycle trace schemas (`run_space_start`, `run_space_end`) with
+  documentation for RSCF v1 / RSM v1 canonicalization and YAML examples.
+- Run-Space lifecycle schemas (`run_space_start_event_v1`, `run_space_end_event_v1`)
+  and linkage fields (`run_space_spec_id`, optional `run_space_inputs_id`,
+  `run_space_launch_id`, `run_space_attempt`) added to pipeline start events.
 - Trace stream validation assets: common header schema, lifecycle schemas, and
   registry dispatch map with accompanying documentation and tests for the flat
   JSONL trace stream.
@@ -106,6 +111,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Explicit note explaining that the `facotr` typo in pipeline documentation is intentional, used to demonstrate strict validation catching misspelled parameter names.
 
 ### Changed
+- `pipeline_start_event_v1` now references run-space launches via
+  `run_space_spec_id`, optional `run_space_inputs_id`, `run_space_launch_id`,
+  and `run_space_attempt`.
 - Trace lifecycle schemas compose the shared ``trace_header_v1`` via ``allOf`` to
   remove duplicated header constraints.
 - Terminology aligned with the Semantic Execution Record (SER) ontology across

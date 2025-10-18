@@ -1,0 +1,8 @@
+run_space:
+  name: synthetic-grid
+  blocks:
+    - mode: rows
+      values:
+        - { a: 1, b: 2 }
+        - { a: 3, b: 4 }
+# No external inputs → expect run_space_start with only run_space_spec_id
