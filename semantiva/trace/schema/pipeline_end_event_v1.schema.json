@@ -3,12 +3,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Semantiva Pipeline End Event v1",
   "type": "object",
-  "properties": {
-    "record_type": { "type": "string", "const": "pipeline_end" },
-    "schema_version": { "type": "integer", "const": 1 },
-    "run_id": { "type": "string", "minLength": 1 },
-    "summary": { "type": "object" }
-  },
-  "required": ["record_type", "schema_version", "run_id"],
-  "additionalProperties": true
+  "allOf": [
+    {
+      "$ref": "./trace_header_v1.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "record_type": { "const": "pipeline_end" },
+        "summary": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  ]
 }

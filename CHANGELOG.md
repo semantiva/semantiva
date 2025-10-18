@@ -106,6 +106,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Explicit note explaining that the `facotr` typo in pipeline documentation is intentional, used to demonstrate strict validation catching misspelled parameter names.
 
 ### Changed
+- Trace lifecycle schemas compose the shared ``trace_header_v1`` via ``allOf`` to
+  remove duplicated header constraints.
 - Terminology aligned with the Semantic Execution Record (SER) ontology across
   tracing docs and runtime components.
 - Replaced the monolithic ClassRegistry with `ProcessorRegistry`,

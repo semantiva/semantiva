@@ -3,20 +3,23 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Semantiva Pipeline Start Event v1",
   "type": "object",
-  "properties": {
-    "record_type": { "type": "string", "const": "pipeline_start" },
-    "schema_version": { "type": "integer", "const": 1 },
-    "run_id": { "type": "string", "minLength": 1 },
-    "pipeline_id": { "type": "string", "minLength": 1 },
-    "pipeline_spec_canonical": { "type": "object" },
-    "meta": { "type": "object" }
-  },
-  "required": [
-    "record_type",
-    "schema_version",
-    "run_id",
-    "pipeline_id",
-    "pipeline_spec_canonical"
-  ],
-  "additionalProperties": true
+  "allOf": [
+    {
+      "$ref": "./trace_header_v1.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "record_type": { "const": "pipeline_start" },
+        "pipeline_id": { "type": "string", "minLength": 1 },
+        "pipeline_spec_canonical": { "type": "object" },
+        "meta": { "type": "object" }
+      },
+      "required": [
+        "pipeline_id",
+        "pipeline_spec_canonical"
+      ],
+      "additionalProperties": true
+    }
+  ]
 }

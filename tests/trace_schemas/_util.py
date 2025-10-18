@@ -16,8 +16,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Mapping
+
+import jsonschema
+from referencing import Registry
+from referencing.jsonschema import SchemaResource
 
 ROOT = Path(__file__).resolve().parents[2]
+SCHEMA_DIR = ROOT / "semantiva" / "trace" / "schema"
 
 
 def load_json(relpath: str) -> dict:
@@ -26,3 +32,27 @@ def load_json(relpath: str) -> dict:
 
 def schema(relpath: str) -> dict:
     return load_json(relpath)
+
+
+def _build_registry() -> Registry:
+    registry = Registry()
+    for path in SCHEMA_DIR.glob("*.schema.json"):
+        contents = json.loads(path.read_text(encoding="utf-8"))
+        uri = contents.get("$id")
+        if not isinstance(uri, str):
+            continue
+        resource = SchemaResource.from_contents(contents)
+        registry = registry.with_resource(uri, resource)
+    return registry
+
+
+_REGISTRY = _build_registry()
+
+
+def validator(relpath: str) -> jsonschema.validators.Draft202012Validator:
+    contents = load_json(relpath)
+    return jsonschema.validators.Draft202012Validator(contents, registry=_REGISTRY)
+
+
+def validate(instance: Mapping[str, object], relpath: str) -> None:
+    validator(relpath).validate(instance)

@@ -22,10 +22,10 @@ except Exception:  # pragma: no cover - optional dependency
     jsonschema = None
     pytest.skip("jsonschema not installed", allow_module_level=True)
 
-from ._util import schema
+from ._util import validator
 
-HEADER = schema("semantiva/trace/schema/trace_header_v1.schema.json")
-START = schema("semantiva/trace/schema/pipeline_start_event_v1.schema.json")
+HEADER = validator("semantiva/trace/schema/trace_header_v1.schema.json")
+START = validator("semantiva/trace/schema/pipeline_start_event_v1.schema.json")
 
 
 def test_pipeline_start_ok() -> None:
@@ -37,8 +37,8 @@ def test_pipeline_start_ok() -> None:
         "pipeline_spec_canonical": {"nodes": [], "edges": [], "version": 1},
         "meta": {"num_nodes": 0},
     }
-    jsonschema.validate(obj, HEADER)
-    jsonschema.validate(obj, START)
+    HEADER.validate(obj)
+    START.validate(obj)
 
 
 def test_pipeline_start_requires_pipeline_spec_canonical() -> None:
@@ -48,9 +48,9 @@ def test_pipeline_start_requires_pipeline_spec_canonical() -> None:
         "run_id": "run-abc",
         "pipeline_id": "plid-xyz",
     }
-    jsonschema.validate(bad, HEADER)
+    HEADER.validate(bad)
     with pytest.raises(jsonschema.ValidationError):
-        jsonschema.validate(bad, START)
+        START.validate(bad)
 
 
 def test_pipeline_start_wrong_record_type_fails() -> None:
@@ -62,6 +62,6 @@ def test_pipeline_start_wrong_record_type_fails() -> None:
         "pipeline_spec_canonical": {"nodes": [], "edges": [], "version": 1},
     }
     # header passes (string is fine)
-    jsonschema.validate(bad, HEADER)
+    HEADER.validate(bad)
     with pytest.raises(jsonschema.ValidationError):
-        jsonschema.validate(bad, START)
+        START.validate(bad)

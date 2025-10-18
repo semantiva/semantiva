@@ -22,10 +22,10 @@ except Exception:  # pragma: no cover - optional dependency
     jsonschema = None
     pytest.skip("jsonschema not installed", allow_module_level=True)
 
-from ._util import schema
+from ._util import validator
 
-HEADER = schema("semantiva/trace/schema/trace_header_v1.schema.json")
-END = schema("semantiva/trace/schema/pipeline_end_event_v1.schema.json")
+HEADER = validator("semantiva/trace/schema/trace_header_v1.schema.json")
+END = validator("semantiva/trace/schema/pipeline_end_event_v1.schema.json")
 
 
 def test_pipeline_end_ok() -> None:
@@ -35,18 +35,18 @@ def test_pipeline_end_ok() -> None:
         "run_id": "run-abc",
         "summary": {"status": "ok"},
     }
-    jsonschema.validate(obj, HEADER)
-    jsonschema.validate(obj, END)
+    HEADER.validate(obj)
+    END.validate(obj)
 
 
 def test_pipeline_end_requires_run_id() -> None:
     bad = {"record_type": "pipeline_end", "schema_version": 1}
     with pytest.raises(jsonschema.ValidationError):
-        jsonschema.validate(bad, HEADER)
+        HEADER.validate(bad)
 
 
 def test_pipeline_end_wrong_record_type_fails() -> None:
     bad = {"record_type": "end", "schema_version": 1, "run_id": "run-abc"}
-    jsonschema.validate(bad, HEADER)
+    HEADER.validate(bad)
     with pytest.raises(jsonschema.ValidationError):
-        jsonschema.validate(bad, END)
+        END.validate(bad)
