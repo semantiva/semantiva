@@ -7,7 +7,7 @@ Semantiva emits a JSON Lines (JSONL) stream with one JSON object per line.
 Each line is a **trace record** of a specific type, e.g.:
 
 - ``pipeline_start`` — lifecycle record emitted at the beginning of a run
-- ``ser`` — Step Evidence Record for a completed node
+- ``ser`` — Semantic Execution Record for a completed node
 - ``pipeline_end`` — lifecycle record emitted at the end of a run
 
 Validation model
@@ -26,14 +26,14 @@ Schemas
 Common header (required for all records)
    :file:`semantiva/trace/schema/trace_header_v1.schema.json`
 
-Pipeline start record
-   :file:`semantiva/trace/schema/pipeline_start_v1.schema.json`
+Pipeline start event record
+   :file:`semantiva/trace/schema/pipeline_start_event_v1.schema.json`
 
-Step Evidence Record (SER v1)
-   :file:`semantiva/trace/schema/ser_v1.schema.json`
+Semantic Execution Record (SER v1)
+   :file:`semantiva/trace/schema/semantic_execution_record_v1.schema.json`
 
-Pipeline end record
-   :file:`semantiva/trace/schema/pipeline_end_v1.schema.json`
+Pipeline end event record
+   :file:`semantiva/trace/schema/pipeline_end_event_v1.schema.json`
 
 Type registry
 -------------
@@ -66,5 +66,5 @@ Compatibility
 
 See also
 --------
-- :doc:`schema_ser_v1`
+- :doc:`schema_semantic_execution_record_v1`
 - :doc:`glossary`

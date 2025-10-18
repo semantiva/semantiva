@@ -25,7 +25,7 @@ except Exception:  # pragma: no cover - optional dependency
 from ._util import schema
 
 HEADER = schema("semantiva/trace/schema/trace_header_v1.schema.json")
-START = schema("semantiva/trace/schema/pipeline_start_v1.schema.json")
+START = schema("semantiva/trace/schema/pipeline_start_event_v1.schema.json")
 
 
 def test_pipeline_start_ok() -> None:
@@ -34,14 +34,14 @@ def test_pipeline_start_ok() -> None:
         "schema_version": 1,
         "run_id": "run-abc",
         "pipeline_id": "plid-xyz",
-        "canonical_spec": {"nodes": [], "edges": [], "version": 1},
+        "pipeline_spec_canonical": {"nodes": [], "edges": [], "version": 1},
         "meta": {"num_nodes": 0},
     }
     jsonschema.validate(obj, HEADER)
     jsonschema.validate(obj, START)
 
 
-def test_pipeline_start_requires_canonical_spec() -> None:
+def test_pipeline_start_requires_pipeline_spec_canonical() -> None:
     bad = {
         "record_type": "pipeline_start",
         "schema_version": 1,
@@ -59,7 +59,7 @@ def test_pipeline_start_wrong_record_type_fails() -> None:
         "schema_version": 1,
         "run_id": "run-abc",
         "pipeline_id": "plid-xyz",
-        "canonical_spec": {"nodes": [], "edges": [], "version": 1},
+        "pipeline_spec_canonical": {"nodes": [], "edges": [], "version": 1},
     }
     # header passes (string is fine)
     jsonschema.validate(bad, HEADER)

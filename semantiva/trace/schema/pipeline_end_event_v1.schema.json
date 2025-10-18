@@ -1,10 +1,10 @@
 {
-  "$id": "https://semantiva.tech/schemas/pipeline_end_v1.schema.json",
+  "$id": "https://semantiva.tech/schemas/trace/v1/pipeline_end_event_v1.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Semantiva Pipeline End v1",
+  "title": "Semantiva Pipeline End Event v1",
   "type": "object",
   "properties": {
-    "record_type": { "const": "pipeline_end" },
+    "record_type": { "type": "string", "const": "pipeline_end" },
     "schema_version": { "type": "integer", "const": 1 },
     "run_id": { "type": "string", "minLength": 1 },
     "summary": { "type": "object" }

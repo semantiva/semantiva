@@ -51,7 +51,7 @@ def test_dispatch_over_samples() -> None:
         "schema_version": 1,
         "run_id": "run-1",
         "pipeline_id": "plid-1",
-        "canonical_spec": {"nodes": [], "edges": [], "version": 1},
+        "pipeline_spec_canonical": {"nodes": [], "edges": [], "version": 1},
     }
     ser = {
         "record_type": "ser",

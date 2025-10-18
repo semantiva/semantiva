@@ -1,9 +1,9 @@
 {
-  "$id": "https://semantiva.tech/schemas/trace_registry_v1.json",
+  "$id": "https://semantiva.tech/schemas/trace/v1/trace_registry_v1.json",
   "version": 1,
   "records": {
-    "pipeline_start": "https://semantiva.tech/schemas/pipeline_start_v1.schema.json",
-    "ser": "https://semantiva.tech/schemas/ser/1/ser_v1.schema.json",
-    "pipeline_end": "https://semantiva.tech/schemas/pipeline_end_v1.schema.json"
+    "pipeline_start": "https://semantiva.tech/schemas/trace/v1/pipeline_start_event_v1.schema.json",
+    "ser": "https://semantiva.tech/schemas/trace/v1/semantic_execution_record_v1.schema.json",
+    "pipeline_end": "https://semantiva.tech/schemas/trace/v1/pipeline_end_event_v1.schema.json"
   }
 }

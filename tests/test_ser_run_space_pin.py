@@ -28,7 +28,7 @@ class _CaptureTrace(TraceDriver):
         self.events: list[SERRecord] = []
 
     def on_pipeline_start(
-        self, pipeline_id, run_id, canonical_spec, meta, pipeline_input=None
+        self, pipeline_id, run_id, pipeline_spec_canonical, meta, pipeline_input=None
     ):
         return None
 

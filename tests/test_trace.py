@@ -39,11 +39,11 @@ class _CaptureTrace(TraceDriver):
         self,
         pipeline_id: str,
         run_id: str,
-        canonical_spec: dict,
+        pipeline_spec_canonical: dict,
         meta: dict,
         pipeline_input: Payload | None = None,
     ) -> None:
-        self.start = (pipeline_id, run_id, canonical_spec, meta)
+        self.start = (pipeline_id, run_id, pipeline_spec_canonical, meta)
 
     def on_node_event(self, event: SERRecord) -> None:
         self.events.append(event)

@@ -93,5 +93,5 @@ def test_trace_driver_defensive_guard(tmp_path, caplog):
     assert files
     content = [c for c in files[0].read_text().splitlines() if c.strip()]
     record = json.loads(content[0])
-    assert "canonical_spec" not in record
-    assert any("canonical_spec" in r.message for r in caplog.records)
+    assert "pipeline_spec_canonical" not in record
+    assert any("pipeline_spec_canonical" in r.message for r in caplog.records)

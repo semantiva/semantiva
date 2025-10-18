@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Trace model for Step Evidence Record (SER v1).
+"""Trace model for the Semantic Execution Record (SER v1).
 
-This module defines the dataclasses used by the tracing subsystem. The Step
-Evidence Record (SER) is a single record emitted for each completed pipeline
+This module defines the dataclasses used by the tracing subsystem. The Semantic
+Execution Record (SER) is a single record emitted for each completed pipeline
 step. Drivers switch on the ``record_type`` field and ignore unknown fields for
 forward compatibility.
 The description of SER fields and semantics lives in
@@ -63,7 +63,7 @@ class ContextDelta:
 
 @dataclass
 class SERRecord:
-    """Step Evidence Record emitted for each executed pipeline node."""
+    """Semantic Execution Record emitted for each executed pipeline node."""
 
     record_type: Literal["ser"]
     schema_version: int
@@ -86,7 +86,7 @@ class TraceDriver(Protocol):
         self,
         pipeline_id: str,
         run_id: str,
-        canonical_spec: dict,
+        pipeline_spec_canonical: dict,
         meta: dict,
         pipeline_input: Optional[Payload] = None,
     ) -> None:

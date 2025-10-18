@@ -1,7 +1,7 @@
 Trace ↔ Graph Alignment
 =======================
 
-This page explains how **Step Evidence Records (SER)** align with the
+This page explains how **Semantic Execution Records (SER)** align with the
 **GraphV1** pipeline graph. The canonical mapping allows tools to reconstruct
 execution topology solely from SER files.
 
@@ -11,7 +11,7 @@ Node Identity
 * Every pipeline node is assigned a deterministic ``node_uuid`` by the
   GraphV1 builder.
 * The same ``node_uuid`` appears:
-  * In the canonical spec (``canonical_spec.nodes[*].node_uuid``).
+  * In the canonical spec (``pipeline_spec_canonical.nodes[*].node_uuid``).
   * In each SER record as ``identity.node_id``.
 
   **Rule:** Consumers must always join SER data to the graph using ``node_uuid``.
@@ -34,7 +34,7 @@ Trace → Graph Usage
 
 To recreate the execution graph from SER files:
 
-1. Read ``pipeline_start`` records (``record_type='pipeline_start'``) to obtain the canonical graph.
+1. Read ``pipeline_start`` records (``record_type='pipeline_start'``) to obtain the canonical graph from ``pipeline_spec_canonical``.
 2. For each SER record, use ``identity.node_id`` and ``dependencies.upstream`` to build edges.
 3. Combine with per-step information from ``processor``, ``context_delta`` and ``assertions``.
 

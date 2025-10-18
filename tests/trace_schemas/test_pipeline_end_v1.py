@@ -25,7 +25,7 @@ except Exception:  # pragma: no cover - optional dependency
 from ._util import schema
 
 HEADER = schema("semantiva/trace/schema/trace_header_v1.schema.json")
-END = schema("semantiva/trace/schema/pipeline_end_v1.schema.json")
+END = schema("semantiva/trace/schema/pipeline_end_event_v1.schema.json")
 
 
 def test_pipeline_end_ok() -> None:

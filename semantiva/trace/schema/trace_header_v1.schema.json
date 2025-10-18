@@ -1,5 +1,5 @@
 {
-  "$id": "https://semantiva.tech/schemas/trace_header_v1.schema.json",
+  "$id": "https://semantiva.tech/schemas/trace/v1/trace_header_v1.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Semantiva Trace Header v1",
   "type": "object",

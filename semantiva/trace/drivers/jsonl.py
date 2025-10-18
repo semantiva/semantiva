@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Simple JSONL trace driver writing Step Evidence Records (SER).
+"""Simple JSONL trace driver writing Semantic Execution Records (SER).
 
 Detailed SER fields, versioning, and trace detail flags are described in
 docs/source/ser.rst.
@@ -68,7 +68,7 @@ class JsonlTraceDriver(TraceDriver):
         self,
         pipeline_id: str,
         run_id: str,
-        canonical_spec: dict,
+        pipeline_spec_canonical: dict,
         meta: dict,
         pipeline_input: Optional[object] = None,
     ) -> None:
@@ -79,16 +79,16 @@ class JsonlTraceDriver(TraceDriver):
             "schema_version": 1,
             "pipeline_id": pipeline_id,
             "run_id": run_id,
-            "canonical_spec": canonical_spec,
+            "pipeline_spec_canonical": pipeline_spec_canonical,
             "meta": meta,
         }
         try:
             self._file.write(json.dumps(record, sort_keys=True) + "\n")
         except TypeError:
             logging.getLogger(__name__).warning(
-                "canonical_spec not JSON serializable; omitting from trace"
+                "pipeline_spec_canonical not JSON serializable; omitting from trace"
             )
-            record.pop("canonical_spec", None)
+            record.pop("pipeline_spec_canonical", None)
             self._file.write(json.dumps(record, sort_keys=True) + "\n")
 
     def on_node_event(self, event: SERRecord) -> None:

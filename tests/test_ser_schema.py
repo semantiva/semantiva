@@ -44,7 +44,10 @@ def test_ser_schema_validation(tmp_path: Path) -> None:
     tracer = JsonlTraceDriver(str(trace_path))
     Pipeline(nodes, trace=tracer).process()
     tracer.close()
-    schema_path = resources.files("semantiva.trace.schema") / "ser_v1.schema.json"
+    schema_path = (
+        resources.files("semantiva.trace.schema")
+        / "semantic_execution_record_v1.schema.json"
+    )
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = jsonschema.Draft202012Validator(schema)
     for line in trace_path.read_text().splitlines():
@@ -67,7 +70,10 @@ class _FailingOperation(DataOperation):
 
 
 def test_ser_schema_validation_error_path(tmp_path: Path) -> None:
-    schema_path = resources.files("semantiva.trace.schema") / "ser_v1.schema.json"
+    schema_path = (
+        resources.files("semantiva.trace.schema")
+        / "semantic_execution_record_v1.schema.json"
+    )
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = jsonschema.Draft202012Validator(schema)
 

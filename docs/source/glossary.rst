@@ -4,7 +4,7 @@ Glossary
 ========
 
 This glossary defines Semantiva’s public concepts as used in the graph model,
-runtime execution, and the SER (Step Evidence Record).
+runtime execution, and the SER (Semantic Execution Record).
 
 Core Runtime Objects
 --------------------
@@ -171,13 +171,13 @@ Execution Records (SER Vocabulary)
 
 .. glossary::
 
-   Step Evidence Record (SER)
+   Semantic Execution Record (SER)
       One JSON record emitted for every completed node execution. Captures
       identity, dependencies, processor details, context delta, assertions, timing,
       status, and optional tags/summaries.
 
       **Technical mapping:**
-         - Schema: :doc:`schema_ser_v1`
+         - Schema: :doc:`schema_semantic_execution_record_v1`
          - Driver: JSONL trace driver appends one line per SER
 
    SERRecord

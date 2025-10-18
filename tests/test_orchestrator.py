@@ -135,7 +135,7 @@ class _CaptureTraceDriver(TraceDriver):
         self,
         pipeline_id: str,
         run_id: str,
-        canonical_spec: dict,
+        pipeline_spec_canonical: dict,
         meta: dict,
         pipeline_input=None,
     ) -> None:

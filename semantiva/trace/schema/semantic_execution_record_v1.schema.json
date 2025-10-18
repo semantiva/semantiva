@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://semantiva.tech/schemas/ser/1/ser_v1.schema.json",
-  "title": "Semantiva Step Evidence Record v1",
+  "$id": "https://semantiva.tech/schemas/trace/v1/semantic_execution_record_v1.schema.json",
+  "title": "Semantiva Semantic Execution Record (SER) v1",
   "type": "object",
   "required": [
     "record_type",
@@ -15,8 +15,8 @@
     "status"
   ],
   "properties": {
-    "record_type": {"const": "ser"},
-    "schema_version": {"const": 1},
+    "record_type": {"type": "string", "const": "ser"},
+    "schema_version": {"type": "integer", "const": 1},
     "identity": {
       "type": "object",
       "required": ["run_id", "pipeline_id", "node_id"],
