@@ -247,7 +247,7 @@ class SemantivaOrchestrator(ABC):
                             timing={
                                 "started_at": start_iso,
                                 "finished_at": end_iso,
-                                "duration_ms": duration_ms,
+                                "wall_ms": duration_ms,
                                 "cpu_ms": cpu_ms,
                             },
                             params=params,
@@ -303,7 +303,7 @@ class SemantivaOrchestrator(ABC):
                             timing={
                                 "started_at": start_iso,
                                 "finished_at": end_iso,
-                                "duration_ms": duration_ms,
+                                "wall_ms": duration_ms,
                                 "cpu_ms": cpu_ms,
                             },
                             params=params,

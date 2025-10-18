@@ -88,7 +88,7 @@ def test_dispatch_over_samples() -> None:
         "timing": {
             "started_at": "2025-01-01T00:00:00Z",
             "finished_at": "2025-01-01T00:00:01Z",
-            "duration_ms": 1000,
+            "wall_ms": 1000,
             "cpu_ms": 500,
         },
         "status": "succeeded",
