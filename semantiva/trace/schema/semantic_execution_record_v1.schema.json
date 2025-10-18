@@ -88,12 +88,12 @@
     },
     "timing": {
       "type": "object",
-      "required": ["started_at", "finished_at", "duration_ms", "cpu_ms"],
+      "required": ["started_at", "finished_at", "wall_ms"],
       "properties": {
-        "started_at": {"type": "string"},
-        "finished_at": {"type": "string"},
-        "duration_ms": {"type": "integer"},
-        "cpu_ms": {"type": "integer"}
+        "started_at": {"type": "string", "description": "ISO 8601 timestamp when execution started."},
+        "finished_at": {"type": "string", "description": "ISO 8601 timestamp when execution finished."},
+        "wall_ms": {"type": "integer", "minimum": 0, "description": "Wall-clock duration in milliseconds."},
+        "cpu_ms": {"type": "integer", "minimum": 0, "description": "Optional CPU time on the reporting host in milliseconds."}
       }
     },
     "status": {"enum": ["succeeded", "error", "skipped", "cancelled"]},

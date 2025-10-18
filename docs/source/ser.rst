@@ -39,8 +39,8 @@ Example SER
        "key_summaries": {
          "probed_data": {"dtype": "FloatDataType", "len": 1}
        }
-     },
-     "assertions": {
+    },
+    "assertions": {
        "trigger": "dependency",
        "upstream_evidence": [{"node_id": "n-2", "state": "succeeded"}],
        "preconditions": [
@@ -77,8 +77,8 @@ Example SER
        },
        "redaction_policy": {},
        "args": {"run_space.index": 1, "run_space.combine": "product"}
-     },
-     "timing": {"started_at": "…", "finished_at": "…", "duration_ms": 5, "cpu_ms": 4},
+    },
+    "timing": {"started_at": "…", "finished_at": "…", "wall_ms": 5, "cpu_ms": 4},
      "status": "succeeded",
      "tags": {"node_ref": "semantiva.examples.test_utils.FloatBasicProbe"},
      "summaries": {
@@ -189,3 +189,17 @@ Environment pins
 implementation, platform string, Semantiva version, and optional third-party
 versions (``numpy``/``pandas`` when installed). Values are simple strings or
 ``null`` and contain no host-specific secrets.
+
+Timing
+------
+
+Each SER includes a ``timing`` object describing execution durations and
+timestamps. Fields:
+
+- ``wall_ms`` *(required)* — wall-clock duration in milliseconds (>= 0).
+- ``cpu_ms`` *(optional)* — CPU time measured on the reporting host in
+  milliseconds (>= 0). This field may be omitted when running on devices or
+  in distributed executors where CPU attribution is unreliable (for example,
+  GPU-backed processing or remote worker pools).
+
+When present, ``started_at`` and ``finished_at`` should be ISO 8601 timestamps.
