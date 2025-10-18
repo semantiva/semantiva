@@ -24,25 +24,25 @@ except Exception:  # pragma: no cover - optional dependency
     jsonschema = None
     pytest.skip("jsonschema not installed", allow_module_level=True)
 
-from ._util import schema
+from ._util import schema, validator
 
-HEADER = schema("semantiva/trace/schema/trace_header_v1.schema.json")
+HEADER = validator("semantiva/trace/schema/trace_header_v1.schema.json")
 REGISTRY = schema("semantiva/trace/schema/trace_registry_v1.json")
 
 
-def _lookup_schema(record_type: str) -> dict:
+def _lookup_schema(record_type: str) -> jsonschema.validators.Draft202012Validator:
     url = REGISTRY["records"].get(record_type)
     assert url, f"Unknown record_type: {record_type}"
     name = url.rsplit("/", 1)[-1]
-    return schema(f"semantiva/trace/schema/{name}")
+    return validator(f"semantiva/trace/schema/{name}")
 
 
 def _validate(obj: Mapping[str, object]) -> None:
-    jsonschema.validate(obj, HEADER)
+    HEADER.validate(obj)
     # mypy cannot infer the runtime type of obj["record_type"]; cast to str
     record_type = cast(str, obj["record_type"])
     record_schema = _lookup_schema(record_type)
-    jsonschema.validate(obj, record_schema)
+    record_schema.validate(obj)
 
 
 def test_dispatch_over_samples() -> None:
@@ -106,6 +106,6 @@ def test_dispatch_over_samples() -> None:
 
 def test_unknown_record_type_fails_lookup() -> None:
     bad = {"record_type": "mystery", "schema_version": 1, "run_id": "run-1"}
-    jsonschema.validate(bad, HEADER)
+    HEADER.validate(bad)
     with pytest.raises(AssertionError):
         _lookup_schema(cast(str, bad["record_type"]))

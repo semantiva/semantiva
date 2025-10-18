@@ -22,17 +22,17 @@ except Exception:  # pragma: no cover - optional dependency
     jsonschema = None
     pytest.skip("jsonschema not installed", allow_module_level=True)
 
-from ._util import schema
+from ._util import validator
 
-HEADER = schema("semantiva/trace/schema/trace_header_v1.schema.json")
+HEADER = validator("semantiva/trace/schema/trace_header_v1.schema.json")
 
 
 def test_header_minimal_ok() -> None:
     obj = {"record_type": "pipeline_start", "schema_version": 1, "run_id": "run-123"}
-    jsonschema.validate(obj, HEADER)
+    HEADER.validate(obj)
 
 
 def test_header_missing_run_id_fails() -> None:
     obj = {"record_type": "ser", "schema_version": 1}
     with pytest.raises(jsonschema.ValidationError):
-        jsonschema.validate(obj, HEADER)
+        HEADER.validate(obj)
