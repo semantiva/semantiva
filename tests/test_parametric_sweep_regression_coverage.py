@@ -311,7 +311,7 @@ class TestComplexScenarioRegression:
                 "tuple_param": "(float(base_values) + 10 * multiplier, 20)",
                 "single_param": "int(multiplier) * 2",
             },
-            mode="zip",
+            mode="by_position",
         )
 
         ctx = ContextType()

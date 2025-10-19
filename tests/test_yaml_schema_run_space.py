@@ -29,9 +29,9 @@ trace:
   options:
     detail: all
 run_space:
-  combine: product
+  combine: combinatorial
   blocks:
-    - mode: zip
+    - mode: by_position
       context:
         value: [1, 2]
         factor: [3, 4]
@@ -57,9 +57,9 @@ pipeline:
     assert pipeline_cfg.trace.output_path == "./ser/out.ser.jsonl"
     assert pipeline_cfg.trace.options["detail"] == "all"
 
-    assert pipeline_cfg.run_space.combine == "product"
+    assert pipeline_cfg.run_space.combine == "combinatorial"
     assert len(pipeline_cfg.run_space.blocks) == 1
     block = pipeline_cfg.run_space.blocks[0]
-    assert block.mode == "zip"
+    assert block.mode == "by_position"
     assert block.context == {"value": [1, 2], "factor": [3, 4]}
     assert len(pipeline_cfg.nodes) == 2

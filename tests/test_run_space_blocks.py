@@ -23,38 +23,45 @@ from semantiva.exceptions.pipeline_exceptions import (
 
 def test_run_space_single_zip_block():
     cfg = RunSpaceV1Config(
-        blocks=[RunBlock(mode="zip", context={"a": [1, 2, 3], "b": [10, 20, 30]})]
+        blocks=[
+            RunBlock(mode="by_position", context={"a": [1, 2, 3], "b": [10, 20, 30]})
+        ]
     )
 
     runs, meta = expand_run_space(cfg)
 
     assert len(runs) == 3
     assert runs[1] == {"a": 2, "b": 20}
-    assert meta["blocks"][0]["mode"] == "zip"
+    assert meta["blocks"][0]["mode"] == "by_position"
     assert meta["blocks"][0]["size"] == 3
 
 
 def test_run_space_product_block():
     cfg = RunSpaceV1Config(
-        blocks=[RunBlock(mode="product", context={"x": [1, 2], "y": [10, 20, 30]})]
+        blocks=[
+            RunBlock(mode="combinatorial", context={"x": [1, 2], "y": [10, 20, 30]})
+        ]
     )
 
     runs, meta = expand_run_space(cfg)
 
     assert len(runs) == 6
     assert {"x": 2, "y": 20} in runs
-    assert meta["blocks"][0]["mode"] == "product"
+    assert meta["blocks"][0]["mode"] == "combinatorial"
     assert meta["expanded_runs"] == 6
 
 
 def test_run_space_multi_block_product_combine():
     cfg = RunSpaceV1Config(
-        combine="product",
+        combine="combinatorial",
         blocks=[
             RunBlock(
-                mode="zip", context={"lr": [0.001, 0.01], "momentum": [0.9, 0.95]}
+                mode="by_position",
+                context={"lr": [0.001, 0.01], "momentum": [0.9, 0.95]},
             ),
-            RunBlock(mode="product", context={"batch_size": [16, 32], "seed": [1, 2]}),
+            RunBlock(
+                mode="combinatorial", context={"batch_size": [16, 32], "seed": [1, 2]}
+            ),
         ],
     )
 
@@ -68,10 +75,10 @@ def test_run_space_multi_block_product_combine():
 
 def test_run_space_zip_combine_requires_equal_sizes():
     cfg = RunSpaceV1Config(
-        combine="zip",
+        combine="by_position",
         blocks=[
-            RunBlock(mode="zip", context={"a": [1, 2, 3]}),
-            RunBlock(mode="zip", context={"b": [10, 20]}),
+            RunBlock(mode="by_position", context={"a": [1, 2, 3]}),
+            RunBlock(mode="by_position", context={"b": [10, 20]}),
         ],
     )
 
@@ -81,10 +88,10 @@ def test_run_space_zip_combine_requires_equal_sizes():
 
 def test_deterministic_order_of_runs():
     cfg = RunSpaceV1Config(
-        combine="product",
+        combine="combinatorial",
         blocks=[
-            RunBlock(mode="product", context={"b": [2, 1], "a": [1]}),
-            RunBlock(mode="product", context={"d": [0], "c": [3, 2]}),
+            RunBlock(mode="combinatorial", context={"b": [2, 1], "a": [1]}),
+            RunBlock(mode="combinatorial", context={"d": [0], "c": [3, 2]}),
         ],
     )
 

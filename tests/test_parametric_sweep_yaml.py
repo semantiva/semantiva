@@ -87,7 +87,7 @@ pipeline:
         vars:
           x: {lo: 0.0, hi: 1.0, steps: 4}
           y: {lo: 2.0, hi: 3.0, steps: 4}
-        mode: "zip"
+        mode: "by_position"
         parametric_expressions:
           value: "x+y"
 """

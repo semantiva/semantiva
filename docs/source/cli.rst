@@ -93,12 +93,12 @@ Plan-only example
 
    $ semantiva run --run-space-file rs.yaml --run-space-dry-run
    Run Space Plan
-     combine: product
+     combine: combinatorial
      max_runs: 1000
      expanded_runs: 8
      blocks:
-       - #0: mode=zip, size=2, keys=['lr', 'momentum']
-       - #1: mode=product, size=4, keys=['batch_size', 'seed']
+       - #0: mode=by_position, size=2, keys=['lr', 'momentum']
+       - #1: mode=combinatorial, size=4, keys=['batch_size', 'seed']
      preview:
        1: {"lr":0.001,"momentum":0.9,"batch_size":16,"seed":1}
        2: {"lr":0.001,"momentum":0.9,"batch_size":16,"seed":2}

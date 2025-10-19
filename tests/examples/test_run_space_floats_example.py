@@ -57,7 +57,7 @@ def test_run_space_floats_yaml_executes_locally(tmp_path, monkeypatch):
         run_args = {
             "run_space.index": idx,
             "run_space.total": total,
-            "run_space.combine": meta.get("combine", "product"),
+            "run_space.combine": meta.get("combine", "combinatorial"),
             "run_space.context": dict(values),
         }
         pipeline.set_run_metadata({"args": run_args, "run_space": meta})

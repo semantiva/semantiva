@@ -82,9 +82,9 @@ def _parse_run_space_block(block: Any) -> RunSpaceV1Config:
         raise ValueError("run_space block must be a mapping if provided")
 
     cfg = RunSpaceV1Config()
-    combine = str(block.get("combine", "product")).lower()
-    if combine not in ("zip", "product"):
-        raise ValueError("run_space.combine must be 'zip' or 'product'")
+    combine = str(block.get("combine", "combinatorial")).lower()
+    if combine not in ("by_position", "combinatorial"):
+        raise ValueError("run_space.combine must be 'by_position' or 'combinatorial'")
     cfg.combine = combine  # type: ignore[assignment]
 
     max_runs = block.get("max_runs", 1000)
@@ -105,7 +105,7 @@ def _parse_run_space_block(block: Any) -> RunSpaceV1Config:
         if not isinstance(entry, Mapping):
             raise ValueError(f"run_space.blocks[{idx}] must be a mapping")
         mode = str(entry.get("mode", "")).lower()
-        if mode not in ("zip", "product"):
+        if mode not in ("by_position", "combinatorial"):
             raise ValueError(f"run_space.blocks[{idx}] has invalid mode '{mode}'")
 
         context = entry.get("context") or {}
@@ -145,10 +145,10 @@ def _parse_run_space_block(block: Any) -> RunSpaceV1Config:
                     f"run_space.blocks[{idx}].source.rename must be a mapping"
                 )
             rename_dict = {str(k): str(v) for k, v in rename.items()}
-            mode_override_raw = str(source_entry.get("mode", "zip")).lower()
-            if mode_override_raw not in ("zip", "product"):
+            mode_override_raw = str(source_entry.get("mode", "by_position")).lower()
+            if mode_override_raw not in ("by_position", "combinatorial"):
                 raise ValueError(
-                    f"run_space.blocks[{idx}].source.mode must be 'zip' or 'product'"
+                    f"run_space.blocks[{idx}].source.mode must be 'by_position' or 'combinatorial'"
                 )
             # mypy: cast the string literal to the RunBlockMode literal type
             mode_override = cast(RunBlockMode, mode_override_raw)

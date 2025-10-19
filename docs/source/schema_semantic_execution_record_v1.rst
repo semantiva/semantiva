@@ -120,9 +120,26 @@ This mirrors the evidence captured by the orchestrator described in
 Timing, Status, and Errors
 --------------------------
 
-``timing`` includes ``started_at``, ``finished_at``, ``duration_ms``, and
-``cpu_ms``. These values measure the actual runtime of the :term:`Processor` as
-scheduled by the orchestrator.
+``timing`` captures start/finish instants plus duration metrics:
+
+.. table:: SER timing fields
+   :align: left
+   :widths: auto
+
+   +--------------+----------+---------+------------------------------------------------------+
+   | Field        | Required | Type    | Notes                                                |
+   +==============+==========+=========+======================================================+
+   | ``started_at`` | yes    | string  | RFC3339 timestamp (UTC ``Z``) for processor start    |
+   +--------------+----------+---------+------------------------------------------------------+
+   | ``finished_at`` | yes   | string  | RFC3339 timestamp (UTC ``Z``) for processor end      |
+   +--------------+----------+---------+------------------------------------------------------+
+   | ``wall_ms``  | yes      | integer | Wall-clock duration in milliseconds                  |
+   +--------------+----------+---------+------------------------------------------------------+
+   | ``cpu_ms``   | no       | integer | CPU time in milliseconds when available              |
+   +--------------+----------+---------+------------------------------------------------------+
+
+These values measure the actual runtime of the :term:`Processor` as scheduled
+by the orchestrator.
 
 ``status`` enumerates the final outcome (``succeeded``, ``error``, ``skipped``,
 ``cancelled``). When ``status`` is ``error``, the optional ``error`` object may

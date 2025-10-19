@@ -137,7 +137,7 @@ def test_mixed_sequence_and_range_zip_mode() -> None:
             "t": RangeSpec(0.0, 2.0, steps=3),
         },
         parametric_expressions={"value": "value"},
-        mode="zip",
+        mode="by_position",
     )
     pipeline = Pipeline([{"processor": Sweep}])
     payload = pipeline.process(Payload(NoDataType(), ContextType()))
@@ -151,7 +151,7 @@ def test_length_mismatch_raises_error() -> None:
         collection_output=FloatDataCollection,
         vars={"a": SequenceSpec([1, 2]), "b": SequenceSpec([3])},
         parametric_expressions={"value": "a"},
-        mode="zip",
+        mode="by_position",
     )
     pipeline = Pipeline([{"processor": Sweep}])
     with pytest.raises(ValueError, match="identical lengths"):
@@ -164,7 +164,7 @@ def test_zip_mode_broadcast() -> None:
         collection_output=FloatDataCollection,
         vars={"a": SequenceSpec([1.0, 2.0, 3.0]), "b": SequenceSpec([10.0])},
         parametric_expressions={"value": "a + b"},
-        mode="zip",
+        mode="by_position",
         broadcast=True,
     )
     pipeline = Pipeline([{"processor": Sweep}])
@@ -193,7 +193,7 @@ def test_product_mode_basic() -> None:
         collection_output=FloatDataCollection,
         vars={"a": SequenceSpec([1.0, 2.0]), "b": SequenceSpec([10.0, 20.0])},
         parametric_expressions={"value": "a + b"},
-        mode="product",
+        mode="combinatorial",
     )
     pipeline = Pipeline([{"processor": Sweep}])
     payload = pipeline.process(Payload(NoDataType(), ContextType()))
@@ -208,7 +208,7 @@ def test_product_mode_from_context() -> None:
         collection_output=FloatDataCollection,
         vars={"a": FromContext("vals"), "b": SequenceSpec([10.0, 20.0])},
         parametric_expressions={"value": "a + b"},
-        mode="product",
+        mode="combinatorial",
     )
     ctx = ContextType()
     ctx.set_value("vals", [1.0, 2.0])
