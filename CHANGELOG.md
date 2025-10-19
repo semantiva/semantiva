@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 - Core trace aggregator with run-space lifecycle support providing per-run and
-  per-launch completeness reporting for downstream tooling.
+  per-launch completeness reporting for downstream tooling. Includes documentation.
 - Run-Space lifecycle trace schemas (`run_space_start`, `run_space_end`) with
   documentation for RSCF v1 / RSM v1 canonicalization and YAML examples.
 - Run-Space lifecycle schemas (`run_space_start_event_v1`, `run_space_end_event_v1`)
