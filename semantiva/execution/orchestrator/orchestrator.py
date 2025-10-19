@@ -150,19 +150,14 @@ class SemantivaOrchestrator(ABC):
                     run_space_kwargs["run_space_launch_id"] = fk["run_space_launch_id"]
                 if fk["run_space_attempt"] is not None:
                     run_space_kwargs["run_space_attempt"] = fk["run_space_attempt"]
-            try:
-                trace.on_pipeline_start(
-                    pipeline_id,
-                    run_id,
-                    canonical,
-                    meta,
-                    pipeline_input=payload,
-                    **run_space_kwargs,
-                )
-            except TypeError:
-                trace.on_pipeline_start(
-                    pipeline_id, run_id, canonical, meta, **run_space_kwargs
-                )
+            trace.on_pipeline_start(
+                pipeline_id,
+                run_id,
+                canonical,
+                meta,
+                pipeline_input=payload,
+                **run_space_kwargs,
+            )
 
         nodes, node_defs = self._instantiate_nodes(resolved_spec, logger)
         self._last_nodes = list(nodes)

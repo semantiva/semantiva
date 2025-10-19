@@ -29,15 +29,8 @@ def build_trace_driver(trace_cfg: TraceConfig):
     if trace_cfg.output_path and "output_path" not in options:
         options["output_path"] = trace_cfg.output_path
 
-    if name in {"jsonl", "ser_jsonl"}:
+    if name == "jsonl":
         from semantiva.trace.drivers.jsonl import JsonlTraceDriver
 
         return JsonlTraceDriver(**options)
-
-    if ":" in name:
-        module_name, _, class_name = name.partition(":")
-        module = __import__(module_name, fromlist=[class_name])
-        driver_cls = getattr(module, class_name)
-        return driver_cls(**options)
-
-    raise ValueError(f"Unknown trace driver {name!r}")
+    raise ValueError(f"Unknown trace driver {name!r}; use 'jsonl' instead.")
