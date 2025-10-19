@@ -39,27 +39,27 @@ class TraceConfig:
     options: Dict[str, Any] = field(default_factory=dict)
 
 
-RunBlockMode = Literal["zip", "product"]
+RunBlockMode = Literal["by_position", "combinatorial"]
 
 
 @dataclass
 class RunSource:
     """External source feeding values into a run-space block.
 
-    Files default to *rows-as-runs* semantics (``mode='zip'``), treating each
-    row/object as one run unless ``mode`` is explicitly set to ``'product'``.
+    Files default to *rows-as-runs* semantics (``mode='by_position'``), treating each
+    row/object as one run unless ``mode`` is explicitly set to ``'combinatorial'``.
     """
 
     format: Literal["csv", "json", "yaml", "ndjson"]
     path: str
     select: Optional[List[str]] = None
     rename: Dict[str, str] = field(default_factory=dict)
-    mode: RunBlockMode = "zip"
+    mode: RunBlockMode = "by_position"
 
 
 @dataclass
 class RunBlock:
-    """Single block that expands context keys via zip or product semantics."""
+    """Single block that expands context keys via by_position or combinatorial semantics."""
 
     mode: RunBlockMode
     context: Dict[str, List[Any]] = field(default_factory=dict)
@@ -74,7 +74,7 @@ class RunSpaceV1Config:
     and, within each block, context keys are iterated in sorted order.
     """
 
-    combine: RunBlockMode = "product"
+    combine: RunBlockMode = "combinatorial"
     max_runs: int = 1000
     dry_run: bool = False
     blocks: List[RunBlock] = field(default_factory=list)

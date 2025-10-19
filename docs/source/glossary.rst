@@ -204,10 +204,10 @@ Execution Records (SER Vocabulary)
          - SER: ``assertions.*`` (including required ``environment``)
 
    Timing
-      Wall/CPU timing of the step; start/finish timestamps and duration in ms.
+      Wall/CPU timing of the step; start/finish timestamps and wall-clock duration (ms).
 
       **Technical mapping:**
-         - SER: ``timing.started_at|finished_at|duration_ms|cpu_ms``
+         - SER: ``timing.started_at`` | ``timing.finished_at`` | ``timing.wall_ms`` | ``timing.cpu_ms``
 
    Status
       Final state of the step execution: ``succeeded``, ``error``, ``skipped``,
@@ -258,24 +258,67 @@ Trace & Drivers
 .. glossary::
 
    Trace
-      The append-only sequence of SER entries (and lifecycle events) produced
-      during execution.
+      The append-only sequence of SER entries (and lifecycle events) produced during execution.
 
    JsonlTraceDriver
-      A driver that writes each SER as a JSON line to a file (or to a timestamped
-      file if given a directory).
+      A driver that writes each SER as a JSON line to a file (or to a timestamped file if given a directory).
+
+Run-Space Lifecycle
+--------------------
+
+.. glossary::
+
+   by_position
+      Index-aligned Run-Space expansion mode. Lists are zipped by index so element *i* travels together.
+      See :doc:`run_space` for planner examples.
+
+   combinatorial
+      Cartesian Run-Space expansion mode. All combinations across the provided values are materialized.
+      See :doc:`run_space` for planner examples.
+
+   Run-Space Spec ID
+      ``run_space_spec_id`` — canonical identity of a Run-Space plan (RSCF v1).
+      See :doc:`run_space_lifecycle`.
+
+   Run-Space Inputs ID
+      ``run_space_inputs_id`` — canonical identity of the external inputs snapshot (RSM v1).
+      Emitted when file-based inputs participate in the launch. See :doc:`run_space_lifecycle`.
+
+   Run-Space Launch ID
+      ``run_space_launch_id`` — unique launch/session identifier shared by lifecycle, pipeline start, and SER records.
+      See :doc:`run_space_lifecycle` and :doc:`trace_stream_v1`.
+
+   Run-Space Attempt
+      ``run_space_attempt`` — 1-based retry counter scoped to a launch. Increments on planner-level retries.
+      See :doc:`run_space_lifecycle`.
+
+   Planned Run Count
+      ``run_space_planned_run_count`` — total number of runs expected from a launch when known.
+      Emitted on ``run_space_start`` for inspection and aggregator completeness.
+
+   Planned Run Count (SER)
+      ``assertions.args.run_space.total`` — per-run view of the total planned runs exposed in SER metadata.
+      See :doc:`schema_semantic_execution_record_v1`.
+
+Aggregation
+-----------
+
+.. glossary::
+
+   Core Trace Aggregator
+      Service that consumes trace streams and produces Run/Launch aggregates with completeness verdicts.
+      See :ref:`trace_aggregator_v1`.
 
    Run Aggregate
-      The in-memory summary of a single pipeline run (keyed by ``run_id``), as
-      produced by the Core Trace Aggregator. Includes lifecycle presence
-      (start/end), node coverage, per-node counters and timing, and a
-      completeness verdict. See :ref:`trace_aggregator_v1`.
+      The in-memory summary of a single pipeline run (keyed by ``run_id``) produced by the Core Trace Aggregator.
+      Includes lifecycle presence, node coverage, timing, and a completeness verdict. See :ref:`trace_aggregator_v1`.
 
    Launch Aggregate
-      The in-memory summary of a run-space launch attempt (keyed by
-      ``(run_space_launch_id, run_space_attempt)``). Collects multiple pipeline
-      runs, links their statuses, and surfaces missing launch lifecycle edges.
+      The in-memory summary of a run-space launch attempt (keyed by ``(run_space_launch_id, run_space_attempt)``).
+      Aggregates pipeline runs, links their statuses, and surfaces missing launch lifecycle edges.
+      See :ref:`trace_aggregator_v1`.
 
    Completeness (Trace)
-      Deterministic verdict describing whether expected lifecycle edges and node
-      coverage are present for a run or launch. See :ref:`trace_aggregator_v1`.
+      Deterministic verdict describing whether expected lifecycle edges and node coverage are present for a run or launch.
+      See :ref:`trace_aggregator_v1`.
+

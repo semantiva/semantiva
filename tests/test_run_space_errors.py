@@ -28,8 +28,8 @@ from semantiva.exceptions.pipeline_exceptions import (
 def test_duplicate_keys_across_blocks_raises():
     cfg = RunSpaceV1Config(
         blocks=[
-            RunBlock(mode="product", context={"a": [1, 2]}),
-            RunBlock(mode="zip", context={"a": [3, 4]}),
+            RunBlock(mode="combinatorial", context={"a": [1, 2]}),
+            RunBlock(mode="by_position", context={"a": [3, 4]}),
         ]
     )
 
@@ -43,19 +43,19 @@ def test_duplicate_keys_across_blocks_raises():
 
 def test_zip_block_mismatched_lengths():
     cfg = RunSpaceV1Config(
-        blocks=[RunBlock(mode="zip", context={"x": [1], "y": [1, 2]})]
+        blocks=[RunBlock(mode="by_position", context={"x": [1], "y": [1, 2]})]
     )
 
     with pytest.raises(ConfigurationError) as exc:
         expand_run_space(cfg)
 
-    assert "zip block requires identical list lengths" in str(exc.value)
+    assert "by_position block requires identical list lengths" in str(exc.value)
 
 
 def test_cap_exceeded():
     cfg = RunSpaceV1Config(
         max_runs=2,
-        blocks=[RunBlock(mode="product", context={"x": [1, 2], "y": [10, 20]})],
+        blocks=[RunBlock(mode="combinatorial", context={"x": [1, 2], "y": [10, 20]})],
     )
 
     with pytest.raises(RunSpaceMaxRunsExceededError):
@@ -68,7 +68,7 @@ def test_duplicate_within_block_between_context_and_source(tmp_path):
     cfg = RunSpaceV1Config(
         blocks=[
             RunBlock(
-                mode="zip",
+                mode="by_position",
                 context={"a": [1, 2]},
                 source=RunSource(format="json", path=str(path)),
             )
@@ -85,17 +85,19 @@ def test_duplicate_within_block_between_context_and_source(tmp_path):
 
 def test_combine_zip_mismatch_sizes_message():
     cfg = RunSpaceV1Config(
-        combine="zip",
+        combine="by_position",
         blocks=[
-            RunBlock(mode="zip", context={"a": [1, 2]}),
-            RunBlock(mode="product", context={"b": [0, 1, 2]}),
+            RunBlock(mode="by_position", context={"a": [1, 2]}),
+            RunBlock(mode="combinatorial", context={"b": [0, 1, 2]}),
         ],
     )
 
     with pytest.raises(ConfigurationError) as exc:
         expand_run_space(cfg)
 
-    assert "combine=zip requires equal block sizes; got [2, 3]" in str(exc.value)
+    assert "combine=by_position requires equal block sizes; got [2, 3]" in str(
+        exc.value
+    )
 
 
 def test_rename_collision_with_context_fails(tmp_path):
@@ -105,12 +107,12 @@ def test_rename_collision_with_context_fails(tmp_path):
     cfg = RunSpaceV1Config(
         blocks=[
             RunBlock(
-                mode="zip",
+                mode="by_position",
                 context={"y": [10, 20]},
                 source=RunSource(
                     format="yaml",
                     path=str(source_path),
-                    mode="product",
+                    mode="combinatorial",
                     rename={"x": "y"},
                 ),
             )

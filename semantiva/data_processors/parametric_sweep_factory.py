@@ -176,12 +176,12 @@ def _materialize_sequences(
 def _iterate_sweep(
     sequences: Dict[str, Sequence[Any]],
     *,
-    mode: Literal["product", "zip"],
+    mode: Literal["combinatorial", "by_position"],
     broadcast: bool,
 ):
     if not sequences:
         return []
-    if mode == "zip":
+    if mode == "by_position":
         seq_lengths = [len(seq) for seq in sequences.values()]
         if broadcast:
             max_len = max(seq_lengths)
@@ -196,12 +196,12 @@ def _iterate_sweep(
         else:
             if len(set(seq_lengths)) != 1:
                 raise ValueError(
-                    "All variable sequences must have identical lengths in zip mode"
+                    "All variable sequences must have identical lengths in by_position mode"
                 )
             step_count = seq_lengths[0]
         for i in range(step_count):
             yield {var: sequences[var][i] for var in sequences}
-    else:  # product
+    else:  # combinatorial
         var_names = sorted(sequences.keys())
         var_seqs = [sequences[v] for v in var_names]
         for combo in itertools.product(*var_seqs):
@@ -272,7 +272,7 @@ class ParametricSweepFactory:
         parametric_expressions: Dict[str, str] | None = None,
         static_params: Dict[str, Any] | None = None,
         include_independent: bool = False,
-        mode: Literal["product", "zip"] = "product",
+        mode: Literal["combinatorial", "by_position"] = "combinatorial",
         broadcast: bool = False,
         name: str | None = None,
         expression_evaluator: ExpressionEvaluator | None = None,
@@ -289,8 +289,8 @@ class ParametricSweepFactory:
             raise TypeError("collection_output must be a DataCollectionType subclass")
         if not vars:
             raise ValueError("vars must be non-empty")
-        if mode not in {"product", "zip"}:
-            raise ValueError("mode must be 'product' or 'zip'")
+        if mode not in {"combinatorial", "by_position"}:
+            raise ValueError("mode must be 'combinatorial' or 'by_position'")
 
         evaluator = expression_evaluator or ExpressionEvaluator()
 

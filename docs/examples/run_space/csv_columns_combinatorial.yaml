@@ -1,0 +1,7 @@
+run_space:
+  blocks:
+    - mode: combinatorial
+      source:
+        format: csv
+        path: docs/examples/data/runs.csv
+        select: [lr, momentum]

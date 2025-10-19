@@ -26,9 +26,9 @@ def _spec_with_blocks(blocks: list[RunBlock]) -> dict:
 
 
 def test_rscf_v1_key_order_irrelevant():
-    block_a = RunBlock(mode="zip", context={"alpha": [1, 2], "beta": [3, 4]})
+    block_a = RunBlock(mode="by_position", context={"alpha": [1, 2], "beta": [3, 4]})
     spec1 = _spec_with_blocks([block_a])
-    block_b = RunBlock(mode="zip", context={"beta": [3, 4], "alpha": [1, 2]})
+    block_b = RunBlock(mode="by_position", context={"beta": [3, 4], "alpha": [1, 2]})
     spec2 = _spec_with_blocks([block_b])
 
     service = RunSpaceIdentityService()
@@ -43,7 +43,7 @@ def test_rsm_v1_changes_on_fingerprint_digest_change(tmp_path):
     data_file = tmp_path / "runs.csv"
     data_file.write_text("value\n1\n", encoding="utf-8")
 
-    block = RunBlock(mode="zip", context={"value": [1]}, source=None)
+    block = RunBlock(mode="by_position", context={"value": [1]}, source=None)
     # asdict omits None sources; build spec manually to include fingerprint metadata
     spec_dict = asdict(RunSpaceV1Config(blocks=[block]))
     spec_dict["blocks"][0]["source"] = {

@@ -39,7 +39,7 @@ def _write_csv(columns: dict[str, list[object]]) -> str:
 def test_csv_source_rows_are_runs_zip(tmp_path):
     path = _write_csv({"lr": [0.001, 0.01], "momentum": [0.9, 0.95]})
     cfg = RunSpaceV1Config(
-        blocks=[RunBlock(mode="zip", source=RunSource(format="csv", path=path))]
+        blocks=[RunBlock(mode="by_position", source=RunSource(format="csv", path=path))]
     )
 
     runs, meta = expand_run_space(cfg)
@@ -56,14 +56,18 @@ def test_json_list_rows_zip(tmp_path):
         json.dumps([{"seed": 1, "profile": "a"}, {"seed": 2, "profile": "b"}])
     )
     cfg = RunSpaceV1Config(
-        blocks=[RunBlock(mode="zip", source=RunSource(format="json", path=str(path)))]
+        blocks=[
+            RunBlock(
+                mode="by_position", source=RunSource(format="json", path=str(path))
+            )
+        ]
     )
 
     runs, meta = expand_run_space(cfg)
 
     assert len(runs) == 2
     assert runs[0]["seed"] == 1
-    assert meta["blocks"][0]["source"]["mode"] == "zip"
+    assert meta["blocks"][0]["source"]["mode"] == "by_position"
 
 
 def test_yaml_product_source(tmp_path):
@@ -73,8 +77,8 @@ def test_yaml_product_source(tmp_path):
     cfg = RunSpaceV1Config(
         blocks=[
             RunBlock(
-                mode="product",
-                source=RunSource(format="yaml", path=str(path), mode="product"),
+                mode="combinatorial",
+                source=RunSource(format="yaml", path=str(path), mode="combinatorial"),
             )
         ]
     )
@@ -82,7 +86,7 @@ def test_yaml_product_source(tmp_path):
     runs, meta = expand_run_space(cfg)
 
     assert len(runs) == 6
-    assert meta["blocks"][0]["source"]["mode"] == "product"
+    assert meta["blocks"][0]["source"]["mode"] == "combinatorial"
 
 
 def test_source_rename_collision(tmp_path):
@@ -93,7 +97,7 @@ def test_source_rename_collision(tmp_path):
     cfg = RunSpaceV1Config(
         blocks=[
             RunBlock(
-                mode="zip",
+                mode="by_position",
                 source=RunSource(
                     format="yaml",
                     path=str(path),
