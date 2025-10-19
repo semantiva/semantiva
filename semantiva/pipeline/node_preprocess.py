@@ -98,7 +98,7 @@ def preprocess_node_config(node_config: Dict[str, Any]) -> Dict[str, Any]:
 
     parametric_expressions = parameters.get("parametric_expressions") or None
     static_params = parameters.get("static_params") or None
-    mode = parameters.get("mode", "product")
+    mode = parameters.get("mode", "combinatorial")
     broadcast = parameters.get("broadcast", False)
     include_independent = parameters.get("include_independent", False)
 
