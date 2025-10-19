@@ -27,8 +27,8 @@ class NodeAggregate:
     """Per-node aggregation state captured while ingesting SER records."""
 
     node_id: str
-    first_ts: Optional[str] = None
-    last_ts: Optional[str] = None
+    first_timestamp: Optional[str] = None
+    last_timestamp: Optional[str] = None
     last_seq: Optional[int] = None
     last_status: Optional[str] = None
     counts: Dict[str, int] = field(default_factory=dict)
@@ -47,8 +47,8 @@ class RunAggregate:
     run_space_attempt: Optional[int] = None
     saw_start: bool = False
     saw_end: bool = False
-    start_ts: Optional[str] = None
-    end_ts: Optional[str] = None
+    start_timestamp: Optional[str] = None
+    end_timestamp: Optional[str] = None
     nodes: Dict[str, NodeAggregate] = field(default_factory=dict)
 
 
