@@ -20,6 +20,7 @@ import json
 import re
 import sys
 import time
+from dataclasses import asdict
 from difflib import get_close_matches
 from pathlib import Path
 from typing import Any, Dict, List, NoReturn
@@ -36,6 +37,12 @@ from semantiva.execution.orchestrator.factory import build_orchestrator
 from semantiva.logger import Logger
 from semantiva.registry import RegistryProfile, apply_profile
 from semantiva.trace.factory import build_trace_driver
+from semantiva.trace.runtime import (
+    RunSpaceIdentityService,
+    RunSpaceLaunchManager,
+    RunSpaceTraceEmitter,
+    TraceContext,
+)
 
 # Exit code constants
 EXIT_SUCCESS = 0
@@ -406,6 +413,22 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
         action="store_true",
         help="Plan run_space expansions, print summary with previews, and exit",
     )
+    run_p.add_argument(
+        "--run-space-launch-id",
+        dest="run_space_launch_id",
+        help="Explicit run_space_launch_id to reuse for this execution",
+    )
+    run_p.add_argument(
+        "--run-space-idempotency-key",
+        dest="run_space_idempotency_key",
+        help="Derive run_space_launch_id deterministically from spec/inputs",
+    )
+    run_p.add_argument(
+        "--run-space-attempt",
+        dest="run_space_attempt",
+        type=int,
+        help="Attempt counter for the run-space launch (default: 1)",
+    )
     run_p.add_argument("--version", action="version", version=_get_version())
 
     inspect_p = sub.add_parser(
@@ -703,6 +726,18 @@ def _run(args: argparse.Namespace) -> int:
         run_space_meta["override_source"] = "CLI"
     run_count = len(runs)
 
+    raw_cfg = pipeline_cfg.raw if isinstance(pipeline_cfg.raw, dict) else {}
+    run_space_declared = False
+    if isinstance(raw_cfg, dict):
+        if "run_space" in raw_cfg:
+            run_space_declared = True
+        elif (
+            isinstance(raw_cfg.get("pipeline"), dict)
+            and "run_space" in raw_cfg["pipeline"]
+        ):
+            run_space_declared = True
+    run_space_active = run_space_declared or run_space_override
+
     if pipeline_cfg.run_space.dry_run:
         _print_run_space_plan(run_space_meta, runs)
         print("dry_run enabled: no execution performed.")
@@ -718,6 +753,58 @@ def _run(args: argparse.Namespace) -> int:
         print("Dry run OK (no execution performed).")
         return EXIT_SUCCESS
 
+    run_space_emitter: RunSpaceTraceEmitter | None = None
+    trace_context: TraceContext | None = None
+    run_space_launch_id: str | None = None
+    run_space_attempt = 1
+
+    if run_space_active:
+        attempt_arg = (
+            args.run_space_attempt if args.run_space_attempt is not None else 1
+        )
+        if attempt_arg < 1:
+            print("run-space attempt must be >= 1", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+        try:
+            run_space_spec_dict = asdict(pipeline_cfg.run_space)
+            base_dir = pipeline_cfg.base_dir or pipeline_path.parent
+            identity_service = RunSpaceIdentityService()
+            run_space_ids = identity_service.compute(
+                run_space_spec_dict, base_dir=base_dir
+            )
+        except FileNotFoundError as exc:
+            print(f"run-space source file not found: {exc}", file=sys.stderr)
+            return EXIT_FILE_ERROR
+        launch = RunSpaceLaunchManager().create_launch(
+            run_space_spec_id=run_space_ids.spec_id,
+            run_space_inputs_id=run_space_ids.inputs_id,
+            provided_launch_id=args.run_space_launch_id,
+            idempotency_key=args.run_space_idempotency_key,
+            attempt=attempt_arg,
+        )
+        run_space_launch_id = launch.id
+        run_space_attempt = launch.attempt
+        trace_context = TraceContext()
+        trace_context.set_run_space_fk(
+            spec_id=run_space_ids.spec_id,
+            launch_id=launch.id,
+            attempt=launch.attempt,
+            inputs_id=run_space_ids.inputs_id,
+        )
+        if trace_driver is not None:
+            run_space_emitter = RunSpaceTraceEmitter(trace_driver)
+            run_space_emitter.emit_start(
+                run_space_spec_id=run_space_ids.spec_id,
+                run_space_launch_id=launch.id,
+                run_space_attempt=launch.attempt,
+                run_space_inputs_id=run_space_ids.inputs_id,
+                run_space_input_fingerprints=run_space_ids.fingerprints,
+                run_space_planned_run_count=run_count,
+            )
+
+    exit_code = EXIT_SUCCESS
+    runs_completed = 0
+
     try:
         for idx, run_values in enumerate(runs):
             run_context = dict(ctx_dict)
@@ -728,7 +815,10 @@ def _run(args: argparse.Namespace) -> int:
                 dict(run_context),
                 run_space_meta,
             )
-            pipeline.set_run_metadata({"args": run_args, "run_space": run_space_meta})
+            metadata = {"args": run_args, "run_space": run_space_meta}
+            if trace_context is not None:
+                metadata["trace_context"] = trace_context.as_run_space_fk()
+            pipeline.set_run_metadata(metadata)
             initial_payload = (
                 Payload(NoDataType(), ContextType(run_context)) if run_context else None
             )
@@ -737,6 +827,7 @@ def _run(args: argparse.Namespace) -> int:
             result_payload = pipeline.process(initial_payload)
             duration = time.time() - start
             logger.info("✅ Run %d/%d completed in %.2fs", idx + 1, run_count, duration)
+            runs_completed += 1
             try:
                 logger.info("Output data: %s", repr(result_payload.data))
             except Exception:  # pragma: no cover - defensive
@@ -754,10 +845,9 @@ def _run(args: argparse.Namespace) -> int:
                 logger.info("\n".join(lines))
             except Exception:  # pragma: no cover - defensive
                 logger.info("Output context: <unrepresentable context>")
-        return EXIT_SUCCESS
     except KeyboardInterrupt:
         print("Interrupted.", file=sys.stderr)
-        return EXIT_INTERRUPT
+        exit_code = EXIT_INTERRUPT
     except (
         Exception
     ) as exc:  # pragma: no cover - runtime failures are tested separately
@@ -767,7 +857,24 @@ def _run(args: argparse.Namespace) -> int:
             traceback.print_exc()
         else:
             print(f"Execution failed: {exc}", file=sys.stderr)
-        return EXIT_RUNTIME_ERROR
+        exit_code = EXIT_RUNTIME_ERROR
+    finally:
+        if run_space_emitter is not None and run_space_launch_id is not None:
+            summary: dict[str, int | str] = {
+                "planned_runs": run_count,
+                "completed_runs": runs_completed,
+            }
+            if exit_code == EXIT_INTERRUPT:
+                summary["status"] = "interrupted"
+            elif exit_code != EXIT_SUCCESS:
+                summary["status"] = "failed"
+            run_space_emitter.emit_end(
+                run_space_launch_id=run_space_launch_id,
+                run_space_attempt=run_space_attempt,
+                summary=summary,
+            )
+
+    return exit_code
 
 
 def _inspect(args: argparse.Namespace) -> int:

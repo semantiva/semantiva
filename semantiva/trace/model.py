@@ -89,6 +89,11 @@ class TraceDriver(Protocol):
         pipeline_spec_canonical: dict,
         meta: dict,
         pipeline_input: Optional[Payload] = None,
+        *,
+        run_space_spec_id: str | None = None,
+        run_space_inputs_id: str | None = None,
+        run_space_launch_id: str | None = None,
+        run_space_attempt: int | None = None,
     ) -> None:
         """Emit a ``pipeline_start`` record."""
 
@@ -97,6 +102,29 @@ class TraceDriver(Protocol):
 
     def on_pipeline_end(self, run_id: str, summary: dict) -> None:
         """Emit a ``pipeline_end`` record summarising the run."""
+
+    def on_run_space_start(
+        self,
+        run_id: str,
+        *,
+        run_space_spec_id: str,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        run_space_inputs_id: str | None = None,
+        run_space_input_fingerprints: list[dict] | None = None,
+        run_space_planned_run_count: int | None = None,
+    ) -> None:
+        """Emit a ``run_space_start`` lifecycle record."""
+
+    def on_run_space_end(
+        self,
+        run_id: str,
+        *,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        summary: dict | None = None,
+    ) -> None:
+        """Emit a ``run_space_end`` lifecycle record."""
 
     def flush(self) -> None:
         """Flush any internal buffers."""

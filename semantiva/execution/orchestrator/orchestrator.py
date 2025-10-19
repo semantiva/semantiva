@@ -54,6 +54,7 @@ from semantiva.trace._utils import (
 )
 from semantiva.trace.delta_collector import DeltaCollector
 from semantiva.trace.model import ContextDelta, SERRecord, TraceDriver
+from semantiva.trace.runtime.context import TraceContext
 
 T = TypeVar("T")
 
@@ -126,18 +127,42 @@ class SemantivaOrchestrator(ABC):
         upstream_map: dict[str, list[str]] = {}
         trace_opts = self._trace_options(trace)
 
+        trace_ctx: TraceContext | None = None
+        if self._current_run_metadata:
+            ctx_candidate = self._current_run_metadata.get("trace_context")
+            if isinstance(ctx_candidate, TraceContext):
+                trace_ctx = ctx_candidate
+
         if trace is not None:
             pipeline_id = compute_pipeline_id(canonical)
             node_uuids = [n["node_uuid"] for n in canonical.get("nodes", [])]
             upstream_map = compute_upstream_map(canonical)
             run_id = f"run-{uuid.uuid4().hex}"
             meta = {"num_nodes": len(node_uuids)}
+            run_space_kwargs: dict[str, Any] = {}
+            if trace_ctx is not None:
+                fk = trace_ctx.as_run_space_fk()
+                if fk["run_space_spec_id"]:
+                    run_space_kwargs["run_space_spec_id"] = fk["run_space_spec_id"]
+                if fk["run_space_inputs_id"]:
+                    run_space_kwargs["run_space_inputs_id"] = fk["run_space_inputs_id"]
+                if fk["run_space_launch_id"]:
+                    run_space_kwargs["run_space_launch_id"] = fk["run_space_launch_id"]
+                if fk["run_space_attempt"] is not None:
+                    run_space_kwargs["run_space_attempt"] = fk["run_space_attempt"]
             try:
                 trace.on_pipeline_start(
-                    pipeline_id, run_id, canonical, meta, pipeline_input=payload
+                    pipeline_id,
+                    run_id,
+                    canonical,
+                    meta,
+                    pipeline_input=payload,
+                    **run_space_kwargs,
                 )
             except TypeError:
-                trace.on_pipeline_start(pipeline_id, run_id, canonical, meta)
+                trace.on_pipeline_start(
+                    pipeline_id, run_id, canonical, meta, **run_space_kwargs
+                )
 
         nodes, node_defs = self._instantiate_nodes(resolved_spec, logger)
         self._last_nodes = list(nodes)
