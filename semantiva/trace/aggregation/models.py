@@ -24,6 +24,8 @@ TerminalStatus = Literal["succeeded", "error", "skipped", "cancelled"]
 
 @dataclass
 class NodeAggregate:
+    """Per-node aggregation state captured while ingesting SER records."""
+
     node_id: str
     first_ts: Optional[str] = None
     last_ts: Optional[str] = None
@@ -36,6 +38,8 @@ class NodeAggregate:
 
 @dataclass
 class RunAggregate:
+    """Mutable aggregation state for a single pipeline run."""
+
     run_id: str
     pipeline_id: Optional[str] = None
     pipeline_spec_canonical: Optional[Dict[str, Any]] = None
@@ -50,6 +54,8 @@ class RunAggregate:
 
 @dataclass
 class RunCompleteness:
+    """Deterministic completeness verdict for a run with supporting details."""
+
     run_id: str
     status: Literal["complete", "partial", "invalid"]
     problems: List[str]
@@ -61,6 +67,8 @@ class RunCompleteness:
 
 @dataclass
 class LaunchAggregate:
+    """Mutable aggregation state for a run-space launch attempt."""
+
     run_space_launch_id: str
     run_space_attempt: int
     run_space_spec_id: Optional[str] = None
@@ -74,6 +82,8 @@ class LaunchAggregate:
 
 @dataclass
 class LaunchCompleteness:
+    """Deterministic completeness verdict for a launch attempt."""
+
     run_space_launch_id: str
     run_space_attempt: int
     status: Literal["complete", "partial", "invalid"]

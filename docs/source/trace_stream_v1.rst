@@ -10,6 +10,8 @@ Each line is a **trace record** of a specific type, e.g.:
 - ``ser`` — Semantic Execution Record for a completed node
 - ``pipeline_end`` — lifecycle record emitted at the end of a run
 
+See also: :ref:`trace_aggregator_v1` for per-run and per-launch aggregation and completeness.
+
 Validation model
 ----------------
 Validation is **flat** and **compositional**:

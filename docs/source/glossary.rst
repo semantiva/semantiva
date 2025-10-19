@@ -264,3 +264,18 @@ Trace & Drivers
    JsonlTraceDriver
       A driver that writes each SER as a JSON line to a file (or to a timestamped
       file if given a directory).
+
+   Run Aggregate
+      The in-memory summary of a single pipeline run (keyed by ``run_id``), as
+      produced by the Core Trace Aggregator. Includes lifecycle presence
+      (start/end), node coverage, per-node counters and timing, and a
+      completeness verdict. See :ref:`trace_aggregator_v1`.
+
+   Launch Aggregate
+      The in-memory summary of a run-space launch attempt (keyed by
+      ``(run_space_launch_id, run_space_attempt)``). Collects multiple pipeline
+      runs, links their statuses, and surfaces missing launch lifecycle edges.
+
+   Completeness (Trace)
+      Deterministic verdict describing whether expected lifecycle edges and node
+      coverage are present for a run or launch. See :ref:`trace_aggregator_v1`.
