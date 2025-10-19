@@ -38,6 +38,7 @@ class JsonlTraceDriver(TraceDriver):
     ) -> None:
         self._path = Path(output_path) if output_path else Path(".")
         self._file: Optional[IO[str]] = None
+        self._seq = 0
         flags = (detail or "hash").split(",")
         opts = {"hash": False, "repr": False, "context": False}
         for flag in [f.strip().lower() for f in flags]:
@@ -49,6 +50,17 @@ class JsonlTraceDriver(TraceDriver):
         if not any(opts.values()):
             opts["hash"] = True
         self._opts = opts
+
+    def _now_timestamp(self) -> str:
+        """Generate RFC3339 timestamp with millisecond precision and UTC 'Z'."""
+        return (
+            datetime.now().replace(tzinfo=None).isoformat(timespec="milliseconds") + "Z"
+        )
+
+    def _next_seq(self) -> int:
+        """Return next monotonic sequence number."""
+        self._seq += 1
+        return self._seq
 
     # internal -----------------------------------------------------------------
     def _open_file(self, run_id: str) -> None:
@@ -82,6 +94,8 @@ class JsonlTraceDriver(TraceDriver):
         record = {
             "record_type": "pipeline_start",
             "schema_version": 1,
+            "timestamp": self._now_timestamp(),
+            "seq": self._next_seq(),
             "pipeline_id": pipeline_id,
             "run_id": run_id,
             "pipeline_spec_canonical": pipeline_spec_canonical,
@@ -128,6 +142,8 @@ class JsonlTraceDriver(TraceDriver):
         record = {
             "record_type": "pipeline_end",
             "schema_version": 1,
+            "timestamp": self._now_timestamp(),
+            "seq": self._next_seq(),
             "run_id": run_id,
             "summary": summary,
         }
@@ -149,6 +165,8 @@ class JsonlTraceDriver(TraceDriver):
         record: Dict[str, Any] = {
             "record_type": "run_space_start",
             "schema_version": 1,
+            "timestamp": self._now_timestamp(),
+            "seq": self._next_seq(),
             "run_id": run_id,
             "run_space_spec_id": run_space_spec_id,
             "run_space_launch_id": run_space_launch_id,
@@ -175,6 +193,8 @@ class JsonlTraceDriver(TraceDriver):
         record = {
             "record_type": "run_space_end",
             "schema_version": 1,
+            "timestamp": self._now_timestamp(),
+            "seq": self._next_seq(),
             "run_id": run_id,
             "run_space_launch_id": run_space_launch_id,
             "run_space_attempt": run_space_attempt,

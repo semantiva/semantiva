@@ -104,13 +104,49 @@ class TraceAggregator:
         expected_nodes = _expected_nodes(run.pipeline_spec_canonical)
         observed_nodes = set(run.nodes.keys())
 
+        # Fallback synthesis: derive start/end timestamps from node SER timings if lifecycle records absent
+        if run.start_timestamp is None or run.end_timestamp is None:
+            for node_id, node in run.nodes.items():
+                # Use the aggregated first_timestamp (earliest SER for this node)
+                if node.first_timestamp:
+                    if (
+                        run.start_timestamp is None
+                        or node.first_timestamp < run.start_timestamp
+                    ):
+                        run.start_timestamp = node.first_timestamp
+
+                # Use the aggregated last_timestamp (latest SER for this node)
+                if node.last_timestamp:
+                    if (
+                        run.end_timestamp is None
+                        or node.last_timestamp > run.end_timestamp
+                    ):
+                        run.end_timestamp = node.last_timestamp
+
+                # Also check the timing dict for started_at/finished_at if present
+                timing = node.timing or {}
+                started_at = timing.get("started_at")
+                finished_at = timing.get("finished_at")
+
+                if started_at:
+                    if run.start_timestamp is None or started_at < run.start_timestamp:
+                        run.start_timestamp = started_at
+
+                if finished_at:
+                    if run.end_timestamp is None or finished_at > run.end_timestamp:
+                        run.end_timestamp = finished_at
+
         problems: List[str] = []
         if not run.saw_start:
             problems.append("missing_pipeline_start")
         if not run.saw_end:
             problems.append("missing_pipeline_end")
-        if run.start_ts and run.end_ts and run.start_ts > run.end_ts:
-            problems.append("start_ts_gt_end_ts")
+        if (
+            run.start_timestamp
+            and run.end_timestamp
+            and run.start_timestamp > run.end_timestamp
+        ):
+            problems.append("start_time_gt_end_time")
 
         missing = sorted(expected_nodes - observed_nodes) if expected_nodes else []
         orphan = sorted(observed_nodes - expected_nodes) if expected_nodes else []
@@ -279,9 +315,13 @@ class TraceAggregator:
             run.pipeline_id = record.get("pipeline_id")
         if record.get("pipeline_spec_canonical") is not None:
             run.pipeline_spec_canonical = record.get("pipeline_spec_canonical")
-        ts = record.get("ts") or (record.get("timing") or {}).get("started_at")
-        if ts and (run.start_ts is None or ts < run.start_ts):
-            run.start_ts = ts
+        timestamp = record.get("timestamp") or (record.get("timing") or {}).get(
+            "started_at"
+        )
+        if timestamp and (
+            run.start_timestamp is None or timestamp < run.start_timestamp
+        ):
+            run.start_timestamp = timestamp
 
         launch_id = record.get("run_space_launch_id")
         attempt = _coerce_int(record.get("run_space_attempt"))
@@ -308,9 +348,11 @@ class TraceAggregator:
             run = RunAggregate(run_id=run_id)
             self._runs[run_id] = run
         run.saw_end = True
-        ts = record.get("ts") or (record.get("timing") or {}).get("finished_at")
-        if ts and (run.end_ts is None or ts > run.end_ts):
-            run.end_ts = ts
+        timestamp = record.get("timestamp") or (record.get("timing") or {}).get(
+            "finished_at"
+        )
+        if timestamp and (run.end_timestamp is None or timestamp > run.end_timestamp):
+            run.end_timestamp = timestamp
 
     def _ingest_ser(self, record: Dict[str, Any]) -> None:
         identity = record.get("identity") or {}
@@ -327,12 +369,14 @@ class TraceAggregator:
             node = NodeAggregate(node_id=node_id)
             run.nodes[node_id] = node
 
-        ts = record.get("ts") or (record.get("timing") or {}).get("started_at")
-        if ts:
-            if node.first_ts is None or ts < node.first_ts:
-                node.first_ts = ts
-            if node.last_ts is None or ts > node.last_ts:
-                node.last_ts = ts
+        timestamp = record.get("timestamp") or (record.get("timing") or {}).get(
+            "started_at"
+        )
+        if timestamp:
+            if node.first_timestamp is None or timestamp < node.first_timestamp:
+                node.first_timestamp = timestamp
+            if node.last_timestamp is None or timestamp > node.last_timestamp:
+                node.last_timestamp = timestamp
         seq = record.get("seq")
         if isinstance(seq, int):
             node.last_seq = seq

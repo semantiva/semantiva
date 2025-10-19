@@ -7,7 +7,11 @@
     "record_type": { "type": "string", "minLength": 1 },
     "schema_version": { "type": "integer", "const": 1 },
     "run_id": { "type": "string", "minLength": 1 },
-    "ts": { "type": "string", "format": "date-time" },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in RFC3339/ISO-8601 with millisecond precision and 'Z' (UTC)."
+    },
     "seq": { "type": "integer", "minimum": 0 }
   },
   "required": ["record_type", "schema_version", "run_id"],
