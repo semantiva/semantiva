@@ -76,3 +76,4 @@ See also
 --------
 - :doc:`schema_semantic_execution_record_v1`
 - :doc:`glossary`
+- :doc:`run_space_emission`

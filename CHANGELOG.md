@@ -44,6 +44,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   planner with ``max_runs``/``dry_run``, CLI overrides, documentation (concept +
   quickstart), and tests covering block expansion, external sources,
   SER pinning, and local end-to-end runs.
+- Runtime emission of run-space lifecycle records with deterministic identity
+  services, launch manager, JSONL trace integration, and orchestration/CLI
+  wiring backed by unit and integration tests.
+- CLI options ``--run-space-launch-id``, ``--run-space-idempotency-key``, and
+  ``--run-space-attempt`` for idempotent run-space launches, plus runtime
+  documentation describing the lifecycle.
 - **ExecutionComponentRegistry** for orchestrators/executors/transports with
   lazy default registration to avoid circular imports; factory integration
   for orchestrator construction.

@@ -40,6 +40,9 @@ Execute a pipeline.
                       [--run-space-file PATH]
                       [--run-space-max-runs INT]
                       [--run-space-dry-run]
+                      [--run-space-launch-id TEXT]
+                      [--run-space-idempotency-key TEXT]
+                      [--run-space-attempt INT]
                       [--version]
 
 **Arguments**
@@ -66,6 +69,9 @@ Execute a pipeline.
 - ``--run-space-file``         Path to a YAML file containing a ``run_space`` block (overrides pipeline YAML).
 - ``--run-space-max-runs``     Override the run-space safety limit on total runs.
 - ``--run-space-dry-run``      Plan the run space and print the expansion without executing nodes.
+- ``--run-space-launch-id``    Explicit ``run_space_launch_id`` to reuse for this execution.
+- ``--run-space-idempotency-key``  Deterministically derive ``run_space_launch_id`` using the spec/inputs hash.
+- ``--run-space-attempt``      Retry counter (integer ≥ 1) for the specified run-space launch.
 - ``--version``                Show CLI version.
 
 CLI flags mirror the YAML schema. Any value provided on the command line

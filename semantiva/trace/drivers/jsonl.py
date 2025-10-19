@@ -24,7 +24,7 @@ import json
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
-from typing import IO, Optional, Dict
+from typing import IO, Optional, Dict, Any
 import logging
 
 from ..model import SERRecord, TraceDriver
@@ -71,6 +71,11 @@ class JsonlTraceDriver(TraceDriver):
         pipeline_spec_canonical: dict,
         meta: dict,
         pipeline_input: Optional[object] = None,
+        *,
+        run_space_spec_id: str | None = None,
+        run_space_inputs_id: str | None = None,
+        run_space_launch_id: str | None = None,
+        run_space_attempt: int | None = None,
     ) -> None:
         self._open_file(run_id)
         assert self._file is not None
@@ -82,6 +87,14 @@ class JsonlTraceDriver(TraceDriver):
             "pipeline_spec_canonical": pipeline_spec_canonical,
             "meta": meta,
         }
+        if run_space_spec_id is not None:
+            record["run_space_spec_id"] = run_space_spec_id
+        if run_space_inputs_id is not None:
+            record["run_space_inputs_id"] = run_space_inputs_id
+        if run_space_launch_id is not None:
+            record["run_space_launch_id"] = run_space_launch_id
+        if run_space_attempt is not None:
+            record["run_space_attempt"] = run_space_attempt
         try:
             self._file.write(json.dumps(record, sort_keys=True) + "\n")
         except TypeError:
@@ -118,6 +131,56 @@ class JsonlTraceDriver(TraceDriver):
             "run_id": run_id,
             "summary": summary,
         }
+        self._file.write(json.dumps(record, sort_keys=True) + "\n")
+
+    def on_run_space_start(
+        self,
+        run_id: str,
+        *,
+        run_space_spec_id: str,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        run_space_inputs_id: str | None = None,
+        run_space_input_fingerprints: list[dict[str, Any]] | None = None,
+        run_space_planned_run_count: int | None = None,
+    ) -> None:
+        self._open_file(run_id)
+        assert self._file is not None
+        record: Dict[str, Any] = {
+            "record_type": "run_space_start",
+            "schema_version": 1,
+            "run_id": run_id,
+            "run_space_spec_id": run_space_spec_id,
+            "run_space_launch_id": run_space_launch_id,
+            "run_space_attempt": run_space_attempt,
+        }
+        if run_space_inputs_id is not None:
+            record["run_space_inputs_id"] = run_space_inputs_id
+        if run_space_input_fingerprints:
+            record["run_space_input_fingerprints"] = run_space_input_fingerprints
+        if run_space_planned_run_count is not None:
+            record["run_space_planned_run_count"] = run_space_planned_run_count
+        self._file.write(json.dumps(record, sort_keys=True) + "\n")
+
+    def on_run_space_end(
+        self,
+        run_id: str,
+        *,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        summary: dict | None = None,
+    ) -> None:
+        self._open_file(run_id)
+        assert self._file is not None
+        record = {
+            "record_type": "run_space_end",
+            "schema_version": 1,
+            "run_id": run_id,
+            "run_space_launch_id": run_space_launch_id,
+            "run_space_attempt": run_space_attempt,
+        }
+        if summary:
+            record["summary"] = summary
         self._file.write(json.dumps(record, sort_keys=True) + "\n")
 
     def flush(self) -> None:

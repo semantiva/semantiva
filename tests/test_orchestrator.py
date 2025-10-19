@@ -138,6 +138,7 @@ class _CaptureTraceDriver(TraceDriver):
         pipeline_spec_canonical: dict,
         meta: dict,
         pipeline_input=None,
+        **_: object,
     ) -> None:
         self.start = (pipeline_id, run_id)
 
@@ -146,6 +147,29 @@ class _CaptureTraceDriver(TraceDriver):
 
     def on_pipeline_end(self, run_id: str, summary: dict) -> None:
         self.end = (run_id, summary)
+
+    def on_run_space_start(
+        self,
+        run_id: str,
+        *,
+        run_space_spec_id: str,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        run_space_inputs_id: str | None = None,
+        run_space_input_fingerprints: list[dict] | None = None,
+        run_space_planned_run_count: int | None = None,
+    ) -> None:
+        pass
+
+    def on_run_space_end(
+        self,
+        run_id: str,
+        *,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        summary: dict | None = None,
+    ) -> None:
+        pass
 
     def flush(self) -> None: ...
 

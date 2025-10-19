@@ -28,7 +28,13 @@ class _CaptureTrace(TraceDriver):
         self.events: list[SERRecord] = []
 
     def on_pipeline_start(
-        self, pipeline_id, run_id, pipeline_spec_canonical, meta, pipeline_input=None
+        self,
+        pipeline_id,
+        run_id,
+        pipeline_spec_canonical,
+        meta,
+        pipeline_input=None,
+        **_: object,
     ):
         return None
 
@@ -36,6 +42,29 @@ class _CaptureTrace(TraceDriver):
         self.events.append(event)
 
     def on_pipeline_end(self, run_id: str, summary: dict) -> None:
+        return None
+
+    def on_run_space_start(
+        self,
+        run_id: str,
+        *,
+        run_space_spec_id: str,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        run_space_inputs_id: str | None = None,
+        run_space_input_fingerprints: list[dict] | None = None,
+        run_space_planned_run_count: int | None = None,
+    ) -> None:
+        return None
+
+    def on_run_space_end(
+        self,
+        run_id: str,
+        *,
+        run_space_launch_id: str,
+        run_space_attempt: int,
+        summary: dict | None = None,
+    ) -> None:
         return None
 
     def flush(self) -> None:
