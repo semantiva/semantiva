@@ -38,7 +38,7 @@ class TraceAggregator:
 
     # ---- lifecycle / ingestion -------------------------------------------------
     def ingest(self, record: Dict[str, Any]) -> None:
-        """Ingest a single Semantiva trace record."""
+        """Merge a single Semantiva trace record, tolerating out-of-order inputs."""
 
         record_type = record.get("record_type")
         if record_type == "run_space_start":
@@ -56,27 +56,39 @@ class TraceAggregator:
             return
 
     def ingest_many(self, records: Iterable[Dict[str, Any]]) -> None:
+        """Batch ingest multiple trace records."""
+
         for record in records:
             self.ingest(record)
 
     # ---- query helpers ---------------------------------------------------------
     def get_run(self, run_id: str) -> Optional[RunAggregate]:
+        """Return the aggregate for ``run_id`` if known."""
+
         return self._runs.get(run_id)
 
     def iter_runs(self) -> Iterable[RunAggregate]:
+        """Iterate over the known run aggregates."""
+
         return self._runs.values()
 
     def get_launch(self, launch_id: str, attempt: int) -> Optional[LaunchAggregate]:
+        """Return the aggregate for a launch attempt, coercing ``attempt`` to ``int``."""
+
         attempt_int = _coerce_int(attempt)
         if attempt_int is None:
             return None
         return self._launches.get((launch_id, attempt_int))
 
     def iter_launches(self) -> Iterable[LaunchAggregate]:
+        """Iterate over the known launch aggregates."""
+
         return self._launches.values()
 
     # ---- completeness ----------------------------------------------------------
     def finalize_run(self, run_id: str) -> RunCompleteness:
+        """Compute completeness for ``run_id`` and surface lifecycle/node gaps."""
+
         run = self._runs.get(run_id)
         if not run:
             return RunCompleteness(
@@ -147,6 +159,8 @@ class TraceAggregator:
         )
 
     def finalize_launch(self, launch_id: str, attempt: int) -> LaunchCompleteness:
+        """Compute completeness for a launch attempt, normalizing ``attempt`` to ``int``."""
+
         attempt_int = _coerce_int(attempt)
         if attempt_int is None:
             return LaunchCompleteness(
@@ -206,6 +220,8 @@ class TraceAggregator:
         )
 
     def finalize_all(self) -> Tuple[List[RunCompleteness], List[LaunchCompleteness]]:
+        """Compute completeness for every run and launch in deterministic order."""
+
         run_results = [self.finalize_run(run.run_id) for run in self._runs.values()]
         launch_results = [
             self.finalize_launch(launch_id, attempt)
