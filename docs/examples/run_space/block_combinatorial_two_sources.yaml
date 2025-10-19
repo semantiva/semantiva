@@ -1,0 +1,12 @@
+run_space:
+  combine: combinatorial
+  blocks:
+    - mode: by_position
+      source:
+        format: csv
+        path: docs/examples/data/runs.csv
+        select: [lr]
+    - mode: by_position
+      source:
+        format: json
+        path: docs/examples/data/tunes.json

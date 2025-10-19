@@ -24,6 +24,12 @@ Examples Index
      - ``tests/parametric_sweep_demo.yaml``
    * - Run space (floats)
      - ``docs/source/examples/run_space_floats.yaml``
+   * - Run space (CSV rows-as-runs)
+     - ``docs/examples/run_space/csv_rows.yaml``
+   * - Run space (CSV columns combinatorial)
+     - ``docs/examples/run_space/csv_columns_combinatorial.yaml``
+   * - Run space (two sources combinatorial)
+     - ``docs/examples/run_space/block_combinatorial_two_sources.yaml``
 
 How to run these examples
 -------------------------

@@ -1,14 +1,14 @@
 run_space:
-  combine: product
+  combine: combinatorial
   max_runs: 500
   dry_run: false
   blocks:
-    - mode: zip
+    - mode: by_position
       context:
         value: [3.0, 5.0]
         factor: [2.0, 4.0]
         addend: [1.0, 1.0]
-    - mode: product
+    - mode: combinatorial
       context:
         seed: [1, 2]
         batch_size: [16, 32]

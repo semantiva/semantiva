@@ -76,7 +76,7 @@ Example SER
          "pandas": null
        },
        "redaction_policy": {},
-       "args": {"run_space.index": 1, "run_space.combine": "product"}
+      "args": {"run_space.index": 1, "run_space.combine": "combinatorial"}
     },
     "timing": {"started_at": "…", "finished_at": "…", "wall_ms": 5, "cpu_ms": 4},
      "status": "succeeded",

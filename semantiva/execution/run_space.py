@@ -236,12 +236,12 @@ def _expand_entries(entries: Dict[str, List[Any]], mode: str) -> List[Dict[str, 
 
     ordered_keys = sorted(entries)
 
-    if mode == "zip":
+    if mode == "by_position":
         lengths = [len(entries[key]) for key in ordered_keys]
         if len(set(lengths)) > 1:
             lengths_by_key = {key: len(entries[key]) for key in ordered_keys}
             raise ConfigurationError(
-                f"zip block requires identical list lengths; got {lengths_by_key}"
+                f"by_position block requires identical list lengths; got {lengths_by_key}"
             )
 
         size = lengths[0] if lengths else 0
@@ -249,7 +249,7 @@ def _expand_entries(entries: Dict[str, List[Any]], mode: str) -> List[Dict[str, 
             {key: entries[key][index] for key in ordered_keys} for index in range(size)
         ]
 
-    elif mode == "product":
+    elif mode == "combinatorial":
         value_iters = [entries[key] for key in ordered_keys]
         return [
             dict(zip(ordered_keys, combo)) for combo in itertools.product(*value_iters)
@@ -374,11 +374,13 @@ def expand_run_space(
                 )
 
         # Combine context and source based on block mode
-        if block.mode == "zip":
+        if block.mode == "by_position":
             context_runs = (
-                _expand_entries(context_entries, "zip") if context_entries else None
+                _expand_entries(context_entries, "by_position")
+                if context_entries
+                else None
             )
-            source_mode = block.source.mode if block.source else "zip"
+            source_mode = block.source.mode if block.source else "by_position"
             source_runs = (
                 _expand_entries(source_entries, source_mode) if source_entries else None
             )
@@ -388,7 +390,7 @@ def expand_run_space(
             ]
             if sizes and len(set(sizes)) != 1:
                 raise ConfigurationError(
-                    f"zip block requires equal run counts between context and source; got {sizes}"
+                    f"by_position block requires equal run counts between context and source; got {sizes}"
                 )
 
             run_count = sizes[0] if sizes else 0
@@ -401,11 +403,13 @@ def expand_run_space(
                     combined.update(source_runs[i])
                 block_runs.append(combined)
 
-        elif block.mode == "product":
+        elif block.mode == "combinatorial":
             context_runs = (
-                _expand_entries(context_entries, "product") if context_entries else [{}]
+                _expand_entries(context_entries, "combinatorial")
+                if context_entries
+                else [{}]
             )
-            source_mode = block.source.mode if block.source else "product"
+            source_mode = block.source.mode if block.source else "combinatorial"
             source_runs = (
                 _expand_entries(source_entries, source_mode) if source_entries else [{}]
             )
@@ -444,7 +448,7 @@ def expand_run_space(
     # Combine all blocks
     if not all_block_runs:
         combined_runs: List[Dict[str, Any]] = [{}]
-    elif spec.combine == "product":
+    elif spec.combine == "combinatorial":
         if any(len(runs) == 0 for runs in all_block_runs):
             combined_runs = []
         else:
@@ -465,11 +469,11 @@ def expand_run_space(
                     merged.update(part)
                 combined_runs.append(merged)
 
-    elif spec.combine == "zip":
+    elif spec.combine == "by_position":
         sizes = [len(runs) for runs in all_block_runs]
         if len(set(sizes)) != 1:
             raise ConfigurationError(
-                f"combine=zip requires equal block sizes; got {sizes}"
+                f"combine=by_position requires equal block sizes; got {sizes}"
             )
 
         total = sizes[0] if sizes else 0

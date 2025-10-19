@@ -60,9 +60,9 @@ extend the base ``pipeline.nodes`` definition:
    Define a set of runs by expanding context keys. A run space contains:
 
    ``combine``
-      How blocks combine globally. ``product`` (default) computes a Cartesian
-      product across blocks; ``zip`` requires blocks to have identical run
-      counts and zips them element-wise.
+      How blocks combine globally. ``combinatorial`` (default) computes a Cartesian
+      product across blocks; ``by_position`` requires blocks to have identical run
+      counts and aligns them by index.
 
    ``max_runs``
       Safety limit on the total number of runs. The planner raises a
@@ -73,23 +73,25 @@ extend the base ``pipeline.nodes`` definition:
       sample runs) and exits before executing nodes.
 
    ``blocks``
-      A list of block objects. Each block defines ``mode`` (``zip`` or
-      ``product``) and either ``context`` (mapping of key -> list) or ``source``
-      (CSV/JSON/YAML/NDJSON file with optional ``select``/``rename`` and
-      ``mode``). ``zip`` blocks require all lists to have equal length; ``product``
-      blocks compute full Cartesian products within the block. Duplicate context
-      keys across blocks (or within a block between ``context`` and ``source``)
-      raise an error.
+      A list of block objects. Each block defines ``mode`` (``by_position`` or
+      ``combinatorial``) and either ``context`` (mapping of key -> list) or
+      ``source`` (CSV/JSON/YAML/NDJSON file with optional ``select``/``rename``).
+      Sources follow rows-as-runs semantics: each row/object becomes one run,
+      and the block's ``mode`` controls whether lists are aligned by index or
+      combined combinatorially. ``by_position`` blocks require all lists to have
+      equal length; ``combinatorial`` blocks compute full Cartesian products within
+      the block. Duplicate context keys across blocks (or within a block between
+      ``context`` and ``source``) raise an error.
 
    .. code-block:: yaml
 
       run_space:
         blocks:
-          - mode: zip
+          - mode: by_position
             context:
               value: [3.0, 5.0, 9.5]
               factor: [2.0, 3.0, 5.0]
-          - mode: product
+          - mode: combinatorial
             context:
               seed: [1, 2]
               batch_size: [16, 32]

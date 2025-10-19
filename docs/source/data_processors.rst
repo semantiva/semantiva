@@ -7,7 +7,7 @@ Overview
 - :py:class:`semantiva.data_processors.data_processors.DataOperation`: transforms data
 - :py:class:`semantiva.data_processors.data_processors.DataProbe`: inspects/records
 - :py:class:`semantiva.data_processors.data_processors.OperationTopologyFactory` and slicing utilities
-- :py:class:`semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory`: generate collections by sweeping parameters using :py:class:`~semantiva.data_processors.parametric_sweep_factory.RangeSpec`, :py:class:`~semantiva.data_processors.parametric_sweep_factory.SequenceSpec`, and :py:class:`~semantiva.data_processors.parametric_sweep_factory.FromContext`. Supports both product mode (Cartesian combinations, default) and zip mode (element-wise pairing).
+- :py:class:`semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory`: generate collections by sweeping parameters using :py:class:`~semantiva.data_processors.parametric_sweep_factory.RangeSpec`, :py:class:`~semantiva.data_processors.parametric_sweep_factory.SequenceSpec`, and :py:class:`~semantiva.data_processors.parametric_sweep_factory.FromContext`. Supports both combinatorial mode (Cartesian combinations, default) and by_position mode (element-wise pairing).
 
 **Important**: All processor parameters must be explicitly declared in the ``_process_logic`` signature.
 `**kwargs` is not allowed for reliable provenance tracking. Each parameter must be individually named
@@ -110,7 +110,7 @@ Pull sequences from pipeline context for dynamic parameter discovery:
 
 The factory supports two combination modes:
 
-**Product Mode (Default)**
+**Combinatorial Mode (Default)**
 
 Variables are combined in Cartesian product fashion for comprehensive exploration:
 
@@ -125,10 +125,10 @@ Variables are combined in Cartesian product fashion for comprehensive exploratio
            "optimizer": SequenceSpec(["adam", "sgd"])
        },
        parametric_expressions={"experiment_id": "f'{optimizer}_lr{learning_rate}_bs{batch_size}'"},
-       mode="product"  # default, produces 3 × 3 × 2 = 18 combinations
+       mode="combinatorial"  # default, produces 3 × 3 × 2 = 18 combinations
    )
 
-**Zip Mode**
+**By-Position Mode**
 
 Variables are paired element-wise for coordinated parameter sweeps:
 
@@ -143,10 +143,10 @@ Variables are paired element-wise for coordinated parameter sweeps:
            "method": SequenceSpec(["fast", "accurate", "balanced"])
        },
        parametric_expressions={"output_file": "input_file.replace('.txt', '_processed.txt')"},
-       mode="zip"  # produces 3 coordinated combinations
+       mode="by_position"  # produces 3 coordinated combinations
    )
 
-**Zip Mode with Broadcast**
+**By-Position Mode with Broadcast**
 
 Handle sequences of different lengths using broadcast behavior:
 
@@ -161,7 +161,7 @@ Handle sequences of different lengths using broadcast behavior:
            "quality": RangeSpec(0.1, 0.9, steps=3)
        },
        parametric_expressions={"output_path": "f'{data_files}_{method}_{quality:.1f}.out'"},
-       mode="zip",
+       mode="by_position",
        broadcast=True  # shorter sequences repeated to match longest
    )
    # Produces 3 combinations with method="fast" repeated for each file
@@ -183,15 +183,15 @@ Both modes support runtime parameter discovery:
            "processing_params": FromContext("param_grid")
        },
        parametric_expressions={"output_name": "f'processed_{input_file}_{processing_params}'"},
-       mode="product"  # test all parameter combinations on all discovered files
+       mode="combinatorial"  # test all parameter combinations on all discovered files
    )
 
 **Performance Considerations**
 
-- **Product Mode**: Exponential scaling - produces N1 × N2 × ... × Nk elements
-- **Zip Mode**: Linear scaling - produces max(N1, N2, ..., Nk) elements (with broadcast) or N elements (without broadcast when all sequences have identical length)
+- **Combinatorial Mode**: Exponential scaling - produces N1 × N2 × ... × Nk elements
+- **By-Position Mode**: Linear scaling - produces max(N1, N2, ..., Nk) elements (with broadcast) or N elements (without broadcast when all sequences have identical length)
 
-Use product mode carefully with large parameter spaces. For hyperparameter optimization, consider using specialized optimization frameworks for large search spaces rather than exhaustive grid search.
+Use combinatorial mode carefully with large parameter spaces. For hyperparameter optimization, consider using specialized optimization frameworks for large search spaces rather than exhaustive grid search.
 
 **YAML Configuration**
 
@@ -209,7 +209,7 @@ Parametric sweeps can be configured through YAML using the `sweep:` prefix with 
              optimizer: {values: ["adam", "sgd"]}  # Explicit SequenceSpec
            parametric_expressions:
              experiment_id: "f'{optimizer}_lr{learning_rate}_bs{batch_size}'"
-           mode: "product"  # default
+           mode: "combinatorial"  # default
 
 YAML shorthand for pulling sequences from pipeline context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
