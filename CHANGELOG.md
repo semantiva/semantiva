@@ -65,7 +65,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Zero-cost when disabled: tracing is opt-in;
   - Trace record v1 envelopes are minimal and stable: `pipeline_start`, `node` (phase=`before|after|error`) and `pipeline_end`. 
   - `JsonlTraceDriver` driver: append-only, asynchronous background writer.
-  - CLI wiring added: `--trace-driver`, `--trace-output`, and `--trace-detail` control trace backend, output location, and which semantic summaries are emitted.
+  - CLI wiring added: `--trace.driver`, `--trace.output`, and `--trace.option` control trace backend, output location, and which semantic summaries are emitted.
   - Orchestrator uses the executor for all node runs, SER records include ``operation.parameters`` and ``operation.parameter_sources``; JSON schema is packaged.
   - SER runtime safeguards: built-in preconditions/postconditions (`required_keys_present`, `input_type_ok`, `config_valid`, `output_type_ok`, `context_writes_realized`) populate ``assertions.preconditions``/``assertions.postconditions`` for every node. ``assertions.environment`` carries reproducibility pins (Python, platform, Semantiva version, optional NumPy/Pandas).
 - Unknown/unused configuration parameter detection: inspection now reports

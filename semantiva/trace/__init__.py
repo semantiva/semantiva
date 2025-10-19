@@ -16,7 +16,7 @@
 
 This package provides the core tracing infrastructure for Semantiva pipelines
 based on the Semantic Execution Record (SER). Each completed node emits a single
-``SERRecord`` capturing the operation, dependencies, context_delta, assertions,
+``SERRecord`` capturing the processor/node, dependencies, context_delta, assertions,
 timing (wall and CPU) information, optional tags/summaries, and status.
 Drivers implement the :class:`~semantiva.trace.model.TraceDriver` protocol to
 persist these records.

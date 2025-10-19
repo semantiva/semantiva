@@ -381,12 +381,12 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
     run_p.add_argument(
         "--trace.driver",
         dest="trace_driver",
-        help="Trace driver name ('jsonl', 'none', 'pythonpath', or registry class)",
+        help="Trace driver name ('jsonl', default JSONL trace driver)",
     )
     run_p.add_argument(
         "--trace.output",
         dest="trace_output",
-        help="Trace output path or driver spec",
+        help="Trace output path for the JSONL driver",
     )
     run_p.add_argument(
         "--trace.option",

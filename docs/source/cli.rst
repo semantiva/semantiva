@@ -63,8 +63,8 @@ Execute a pipeline.
 - ``--execution.executor``     Resolve executor via the Execution Component Registry (ECR).
 - ``--execution.transport``    Resolve transport via the Execution Component Registry (ECR).
 - ``--execution.option``       Key/value pairs forwarded to the orchestrator ``options``.
-- ``--trace.driver``           Trace driver name (``none``, ``jsonl``, ``pythonpath``, or registry class).
-- ``--trace.output``           Trace output path or ``module:Class`` when ``driver=pythonpath``.
+- ``--trace.driver``           Trace driver name (``jsonl``).
+- ``--trace.output``           Trace output path for the JSONL driver (directory or file).
 - ``--trace.option``           Additional driver keyword arguments (repeatable).
 - ``--run-space-file``         Path to a YAML file containing a ``run_space`` block (overrides pipeline YAML).
 - ``--run-space-max-runs``     Override the run-space safety limit on total runs.
