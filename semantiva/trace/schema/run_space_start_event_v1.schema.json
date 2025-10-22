@@ -12,12 +12,12 @@
         "run_space_spec_id": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$",
-          "description": "RSCF v1: sha256(b\"semantiva:rscf1:\" + <canonical_run_space_spec_bytes>)"
+          "description": "Run-Space Configuration Format (RSCF v1): sha256(b\"semantiva:rscf1:\" + <canonical_run_space_spec_bytes>)"
         },
         "run_space_inputs_id": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$",
-          "description": "RSM v1: sha256(b\"semantiva:rsm1:\" + run_space_spec_id + \":\" + <canonical_input_fingerprints_bytes>)"
+          "description": "Run-Space Materialization (RSM v1): sha256(b\"semantiva:rsm1:\" + run_space_spec_id + \":\" + <canonical_input_fingerprints_bytes>)"
         },
         "run_space_launch_id": {
           "type": "string",

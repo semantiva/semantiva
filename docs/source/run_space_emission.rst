@@ -9,14 +9,11 @@ Lifecycle
 ---------
 
 1. **Compute identities**
-   - ``run_space_spec_id`` — canonical hash of the run-space configuration
-   - ``run_space_inputs_id`` *(optional)* — hash of referenced inputs when
-     fingerprints are present
-   - ``run_space_input_fingerprints`` — file fingerprint entries emitted only on
-     ``run_space_start``
+   - ``run_space_spec_id`` — canonical hash of the run-space configuration, per Run-Space Configuration Format (**RSCF v1**)
+   - ``run_space_inputs_id`` *(optional)* — hash of referenced inputs when fingerprints are present, per Run-Space Materialization (**RSM v1**)
+   - ``run_space_input_fingerprints`` — file fingerprint entries emitted only on ``run_space_start``
 2. **Create launch/session**
-   - ``run_space_launch_id`` — provided via CLI, derived from an idempotency key,
-     or generated as a UUIDv7 fallback
+   - ``run_space_launch_id`` — provided via CLI, derived from an idempotency key, or generated as a UUIDv7 fallback
    - ``run_space_attempt`` — integer retry counter (1-based)
 3. **Emit ``run_space_start``** with the identifiers above and the planned run count
 4. **Execute pipelines** — each ``pipeline_start`` record is linked back to the

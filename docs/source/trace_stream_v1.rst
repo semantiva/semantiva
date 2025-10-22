@@ -34,8 +34,11 @@ Pipeline start event record
    :file:`semantiva/trace/schema/pipeline_start_event_v1.schema.json`
 
    The pipeline start references an enclosing run-space launch via:
-   ``run_space_spec_id`` (plan identity), optional ``run_space_inputs_id`` (inputs snapshot),
-   ``run_space_launch_id`` (launch/session), and ``run_space_attempt`` (retry counter).
+   
+   - ``run_space_spec_id`` — Plan identity (Run-Space Configuration Format, **RSCF v1**)
+   - ``run_space_inputs_id`` *(optional)* — Inputs snapshot (Run-Space Materialization, **RSM v1**)
+   - ``run_space_launch_id`` — Launch/session identifier
+   - ``run_space_attempt`` — Retry counter (1-based)
 
 Semantic Execution Record (SER v1)
    :file:`semantiva/trace/schema/semantic_execution_record_v1.schema.json`
