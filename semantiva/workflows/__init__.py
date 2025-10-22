@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Workflow patterns module.
+
+Provides reusable patterns like model fitting and optimization loops.
+"""
+
 from .fitting_model import (
     FittingModel,
     ModelFittingContextProcessor,

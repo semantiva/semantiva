@@ -53,6 +53,7 @@ class Diagnostic:
     component name that produced the diagnostic, an optional source
     location tuple (file, line), and an extensible details mapping.
     """
+
     code: str
     severity: str
     message: str
@@ -90,6 +91,7 @@ class RuleSpec:
     scope, message key, hint text, trigger description, and a callable that
     performs the validation check and returns a list of Diagnostic objects.
     """
+
     code: str
     severity: str
     title: str
@@ -577,6 +579,7 @@ def _r_probe_node_matches_processor(cls: type, md: Optional[dict]) -> List[Diagn
 
 
 def validate_component(cls: type) -> List[Diagnostic]:
+    """Execute all registered rules on a component class and return diagnostics."""
     md = None
     try:
         val = getattr(cls, "get_metadata")()
@@ -594,6 +597,7 @@ def validate_component(cls: type) -> List[Diagnostic]:
 def validate_components(
     classes: Iterable[type], debug_mode: bool = False
 ) -> List[Diagnostic]:
+    """Execute all registered rules on multiple component classes and return aggregated diagnostics."""
     import logging
 
     logger = logging.getLogger("Semantiva")
@@ -687,6 +691,7 @@ def validate_components(
 
 
 def discover_from_registry() -> List[type]:
+    """Collect all registered Semantiva component classes from the global registry."""
     from semantiva.core.semantiva_component import get_component_registry
     from semantiva.data_processors.data_processors import DataOperation, DataProbe
     from semantiva.data_io.data_io import DataSource, PayloadSource
@@ -703,6 +708,7 @@ def discover_from_registry() -> List[type]:
 
 
 def discover_from_modules(mods: Iterable[str]) -> List[type]:
+    """Import specified modules and collect component classes from them."""
     import logging
 
     logger = logging.getLogger("Semantiva")
@@ -761,6 +767,7 @@ def discover_from_modules(mods: Iterable[str]) -> List[type]:
 
 
 def discover_from_paths(paths: Iterable[str]) -> List[type]:
+    """Load Python files or packages from filesystem paths and collect components."""
     from semantiva.registry import ProcessorRegistry
     import logging
 
@@ -791,6 +798,7 @@ def discover_from_paths(paths: Iterable[str]) -> List[type]:
 
 
 def discover_from_extensions(specs: Iterable[str]) -> List[type]:
+    """Load extension specifications and collect component classes from them."""
     from semantiva.registry.plugin_registry import load_extensions
 
     load_extensions(list(specs))
@@ -798,6 +806,7 @@ def discover_from_extensions(specs: Iterable[str]) -> List[type]:
 
 
 def discover_from_pipeline_yaml(yaml_paths: Iterable[str]) -> List[type]:
+    """Parse YAML pipeline files and collect processor classes referenced in them."""
     from semantiva.configurations.load_pipeline_from_yaml import (
         load_pipeline_from_yaml,
     )
@@ -822,6 +831,7 @@ def discover_from_pipeline_yaml(yaml_paths: Iterable[str]) -> List[type]:
 
 
 def discover_from_classes(classes: Iterable[type]) -> List[type]:
+    """Wrap an iterable of classes into a list for uniform discovery interface."""
     return list(classes)
 
 
@@ -829,6 +839,7 @@ def discover_from_classes(classes: Iterable[type]) -> List[type]:
 
 
 def export_contract_catalog_markdown(path: Optional[str] = None) -> str:
+    """Generate a Markdown table of all contract rules and optionally write to file."""
     lines = []
     lines.append("| Code | Severity | Applies To | Summary | Trigger | Hint |")
     lines.append("|------|----------|------------|---------|---------|------|")

@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Data boundary abstractions for pipeline I/O.
+
+Source and sink processor types for interfacing external data systems
+with payload-based pipeline nodes.
+"""
+
 from .data_io import DataSource, DataSink, PayloadSource, PayloadSink
 
 __all__ = [

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""RDF predicate mappings for semantic metadata annotation."""
+
 from rdflib import Namespace
 
 # Define Semantiva's semantic namespace

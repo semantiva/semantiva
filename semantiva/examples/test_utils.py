@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Utility functions for testing example pipelines.
+
+Provides helpers for validating expected behavior in pipeline tests.
+"""
+
 # This file contains utility classes for testing the semantiva package.
 from semantiva.data_types import BaseDataType, DataCollectionType
 from semantiva.data_processors import DataOperation, DataProbe

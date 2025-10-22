@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Dual-channel payload container for typed data and context metadata.
+
+Encapsulates data and context flowing together through pipeline nodes.
+"""
+
 from semantiva.data_types import BaseDataType
 from semantiva.context_processors.context_types import ContextType
 

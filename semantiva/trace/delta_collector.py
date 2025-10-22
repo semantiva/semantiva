@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Context change tracking and summarization for execution traces.
+
+Computes minimal delta records capturing created, updated, and read context keys for SER evidence.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -54,6 +59,7 @@ class ContextKeySummary:
     values, an optional SHA256 digest (when hashing is enabled), and an
     optional short string representation (when repr is enabled).
     """
+
     dtype: str | None = None
     length: int | None = None
     rows: int | None = None
@@ -80,6 +86,7 @@ class DeltaCollector:
         post_ctx: Dict[str, Any],
         required_keys: Iterable[str] | None = None,
     ) -> dict:
+        """Compare two context dictionaries and return a minimal delta summary."""
         required = sorted(set(required_keys or []))
 
         pre_keys = set(pre_ctx.keys())

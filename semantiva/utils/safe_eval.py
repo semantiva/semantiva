@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Safe expression evaluation with restricted AST nodes.
+
+Provides controlled mathematical expression evaluation for parameter resolution.
+"""
+
 from __future__ import annotations
 
 import ast
@@ -61,10 +66,12 @@ class _SafeVisitor(ast.NodeVisitor):
         self.allowed_names = allowed_names
 
     def visit_Name(self, node: ast.Name) -> Any:  # pragma: no cover - trivial
+        """Check if name is in allowed set during AST traversal."""
         if node.id not in self.allowed_names:
             raise ExpressionError(f"Unknown variable '{node.id}' in expression.")
 
     def visit_Call(self, node: ast.Call) -> Any:  # pragma: no cover - trivial
+        """Validate function call uses only permitted built-in functions."""
         if (
             not isinstance(node.func, ast.Name)
             or node.func.id not in self._ALLOWED_FUNCS
