@@ -277,7 +277,7 @@ Programmatic Usage
 
 .. code-block:: python
 
-   >>> from semantiva.configurations import load_pipeline_from_yaml
+   >>> from semantiva import load_pipeline_from_yaml
    >>> from semantiva.pipeline import Pipeline
    >>> 
    >>> # Traditional usage

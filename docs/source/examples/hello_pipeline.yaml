@@ -1,0 +1,23 @@
+extensions: ["semantiva-examples"]
+
+trace:
+  driver: jsonl
+  output_path: ./trace
+  options: 
+    detail: all
+
+pipeline:
+  nodes:
+    - processor: FloatValueDataSource
+      parameters:
+        value: 2.0
+    - processor: FloatAddOperation
+      parameters:
+        addend: 1.0
+    - processor: FloatMultiplyOperation
+      parameters:
+        factor: 10.0
+    - processor: FloatCollectValueProbe
+      context_key: "result"
+    - processor: template:"result_{result}.txt":path
+    - processor: FloatTxtFileSaver

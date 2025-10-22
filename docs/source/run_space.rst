@@ -23,12 +23,11 @@ Schema
      blocks:
        - mode: by_position
          context:
-           lr: [0.001, 0.01, 0.1]
-           momentum: [0.8, 0.9, 0.95]
+           value: [1.0, 2.0, 3.5]
+           factor: [10.0, 20.0, 30.0]
        - mode: combinatorial
          context:
-           batch_size: [8, 16]
-           seed: [1, 2]
+           addend: [0.0, 1.0]
 
 Cheat-sheet
 -----------
@@ -79,9 +78,9 @@ block explicitly requests ``mode: combinatorial`` for Cartesian expansion.
    - mode: by_position
      source:
        format: csv | json | yaml | ndjson
-       path: params/optim.csv
-       select: [lr, momentum]
-       rename: { momentum: mom }
+       path: runs.csv
+       select: [value, factor]
+       rename: { factor: multiplier }
        # rows are runs when mode is omitted or ``by_position``
 
 Linkage to Pipelines

@@ -25,7 +25,7 @@ execution:
     retries: 2
 trace:
   driver: jsonl
-  output_path: ./ser/out.ser.jsonl
+  output_path: ./trace/out.trace.jsonl
   options:
     detail: all
 run_space:
@@ -54,7 +54,7 @@ pipeline:
     assert pipeline_cfg.execution.options["retries"] == 2
 
     assert pipeline_cfg.trace.driver == "jsonl"
-    assert pipeline_cfg.trace.output_path == "./ser/out.ser.jsonl"
+    assert pipeline_cfg.trace.output_path == "./trace/out.trace.jsonl"
     assert pipeline_cfg.trace.options["detail"] == "all"
 
     assert pipeline_cfg.run_space.combine == "combinatorial"
