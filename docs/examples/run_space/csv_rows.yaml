@@ -4,4 +4,4 @@ run_space:
       source:
         format: csv
         path: docs/examples/data/runs.csv
-        select: [lr, momentum]
+        select: [value, factor, addend]

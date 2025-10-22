@@ -162,9 +162,17 @@ def _load_source_file(path: Path, file_format: str) -> Dict[str, List[Any]]:
             if reader.fieldnames is None:
                 raise ConfigurationError("CSV source requires a header row")
 
-            columns = {field: [] for field in reader.fieldnames}
+            # Strip whitespace from field names to handle "value, factor, addend" style headers
+            stripped_fieldnames = [field.strip() for field in reader.fieldnames]
+            columns = {field: [] for field in stripped_fieldnames}
+            fieldname_map = {
+                original: stripped
+                for original, stripped in zip(reader.fieldnames, stripped_fieldnames)
+            }
+
             for row in reader:
-                for field, value in row.items():
+                for original_field, value in row.items():
+                    field = fieldname_map[original_field]
                     columns[field].append(
                         _coerce_scalar(value) if value is not None else None
                     )
@@ -290,8 +298,10 @@ def _load_and_process_source(
             else:
                 missing.append(key)
         if missing:
+            available = sorted(columns.keys())
             raise ConfigurationError(
-                f"run_space source select missing columns: {', '.join(missing)}"
+                f"run_space source select missing columns: {', '.join(missing)}\n"
+                f"Available columns in source: {', '.join(available)}"
             )
         columns = selected
 
