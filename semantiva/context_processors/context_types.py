@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Context type definitions and structured metadata containers.
+
+Provides context types for dual-channel pipeline metadata flow.
+"""
+
 from typing import Any, List, Optional, Iterator, Union, Dict, Tuple
 from collections import ChainMap
 from semantiva.logger import Logger

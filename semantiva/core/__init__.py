@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Semantiva core module.
+
+Defines fundamental abstractions and component registration infrastructure.
+"""
+
 from .semantiva_component import get_component_registry
 
 __all__ = [

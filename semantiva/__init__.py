@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Semantiva framework public API."""
+
 from .pipeline import Pipeline, Payload
 from .configurations import load_pipeline_from_yaml
 from .context_processors import (

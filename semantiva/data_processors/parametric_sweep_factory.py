@@ -277,6 +277,7 @@ class ParametricSweepFactory:
         name: str | None = None,
         expression_evaluator: ExpressionEvaluator | None = None,
     ) -> Type[DataSource]:
+        """Generate a DataSource subclass that sweeps over parameter combinations."""
         if element_kind != "DataSource":
             raise NotImplementedError(
                 "Sweep factory currently supports element_kind='DataSource' only. "
@@ -329,6 +330,7 @@ class ParametricSweepFactory:
 
             @classmethod
             def get_context_requirements(cls) -> list[str]:
+                """Return list of context keys required by FromContext variable specifications."""
                 required = []
                 for spec in cls._vars.values():
                     if isinstance(spec, FromContext):
@@ -337,10 +339,12 @@ class ParametricSweepFactory:
 
             @classmethod
             def get_processing_parameter_names(cls) -> list[str]:
+                """Return list of parameter names needed for processing."""
                 return cls.get_context_requirements()
 
             @classmethod
             def get_created_keys(cls) -> list[str]:
+                """Return list of context keys created by the sweep for each variable."""
                 return [f"{var}_values" for var in cls._vars]
 
             @classmethod

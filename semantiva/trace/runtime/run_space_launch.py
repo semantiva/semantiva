@@ -42,6 +42,7 @@ class RunSpaceLaunchManager:
         idempotency_key: Optional[str] = None,
         attempt: int = 1,
     ) -> RunSpaceLaunch:
+        """Generate a run space launch identifier using provided ID, idempotency key, or fresh UUID."""
         if provided_launch_id:
             return RunSpaceLaunch(id=provided_launch_id, attempt=attempt)
 

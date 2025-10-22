@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Factory for creating data slice operations.
+
+Provides utilities for extracting subsets from data collections.
+"""
+
 from typing import Type, List, Any
 from semantiva.data_types.data_types import DataCollectionType
 from semantiva.data_processors.data_processors import (

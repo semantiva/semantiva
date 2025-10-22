@@ -83,6 +83,8 @@ Create ``runs.csv`` alongside ``run_space_csv.yaml``:
    trace:
      driver: jsonl
      output_path: ./trace_csv
+     options:
+      detail: all
 
    pipeline:
      nodes:
