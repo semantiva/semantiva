@@ -95,16 +95,16 @@ Plan-only example
    Run Space Plan
      combine: combinatorial
      max_runs: 1000
-     expanded_runs: 8
+     expanded_runs: 12
      blocks:
-       - #0: mode=by_position, size=2, keys=['lr', 'momentum']
-       - #1: mode=combinatorial, size=4, keys=['batch_size', 'seed']
+       - #0: mode=by_position, size=3, keys=['value', 'factor', 'addend']
+       - #1: mode=combinatorial, size=4, keys=['seed']
      preview:
-       1: {"lr":0.001,"momentum":0.9,"batch_size":16,"seed":1}
-       2: {"lr":0.001,"momentum":0.9,"batch_size":16,"seed":2}
+       1: {"value":1.0,"factor":10.0,"addend":1.0,"seed":1}
+       2: {"value":1.0,"factor":10.0,"addend":1.0,"seed":2}
        …
-       7: {"lr":0.01,"momentum":0.95,"batch_size":16,"seed":1}
-       8: {"lr":0.01,"momentum":0.95,"batch_size":16,"seed":2}
+       11: {"value":3.5,"factor":30.0,"addend":1.0,"seed":1}
+       12: {"value":3.5,"factor":30.0,"addend":1.0,"seed":2}
 
 **Component Resolution**
 The CLI loads extensions before constructing execution components so that the

@@ -38,6 +38,9 @@ class JsonlTraceDriver(TraceDriver):
     ) -> None:
         self._path = Path(output_path) if output_path else Path(".")
         self._file: Optional[IO[str]] = None
+        self._run_space_file: Optional[IO[str]] = (
+            None  # Dedicated file for run_space lifecycle
+        )
         self._seq = 0
         flags = (detail or "hash").split(",")
         opts = {"hash": False, "repr": False, "context": False}
@@ -74,6 +77,31 @@ class JsonlTraceDriver(TraceDriver):
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
         self._file = path.open("a", encoding="utf-8")
+
+    def _open_run_space_file(self, run_space_launch_id: str) -> None:
+        """Open file for run_space lifecycle events.
+
+        Behavior depends on output_path:
+        - Specific file (has extension): reuse main file handle (backward compatible)
+        - Directory: create separate file with 'runspace-' prefix for clear organization
+        """
+        if self._run_space_file:
+            return
+
+        path = self._path
+
+        # Single file mode: reuse the main file handle
+        if path.suffix:
+            if not self._file:
+                self._open_file(run_space_launch_id)
+            self._run_space_file = self._file
+            return
+
+        # Directory mode: create separate runspace file
+        path.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        path = path / f"{timestamp}_runspace-{run_space_launch_id}.trace.jsonl"
+        self._run_space_file = path.open("a", encoding="utf-8")
 
     # TraceDriver --------------------------------------------------------------
     def on_pipeline_start(
@@ -160,8 +188,8 @@ class JsonlTraceDriver(TraceDriver):
         run_space_input_fingerprints: list[dict[str, Any]] | None = None,
         run_space_planned_run_count: int | None = None,
     ) -> None:
-        self._open_file(run_id)
-        assert self._file is not None
+        self._open_run_space_file(run_space_launch_id)
+        assert self._run_space_file is not None
         record: Dict[str, Any] = {
             "record_type": "run_space_start",
             "schema_version": 1,
@@ -178,7 +206,7 @@ class JsonlTraceDriver(TraceDriver):
             record["run_space_input_fingerprints"] = run_space_input_fingerprints
         if run_space_planned_run_count is not None:
             record["run_space_planned_run_count"] = run_space_planned_run_count
-        self._file.write(json.dumps(record, sort_keys=True) + "\n")
+        self._run_space_file.write(json.dumps(record, sort_keys=True) + "\n")
 
     def on_run_space_end(
         self,
@@ -188,8 +216,8 @@ class JsonlTraceDriver(TraceDriver):
         run_space_attempt: int,
         summary: dict | None = None,
     ) -> None:
-        self._open_file(run_id)
-        assert self._file is not None
+        self._open_run_space_file(run_space_launch_id)
+        assert self._run_space_file is not None
         record = {
             "record_type": "run_space_end",
             "schema_version": 1,
@@ -201,16 +229,23 @@ class JsonlTraceDriver(TraceDriver):
         }
         if summary:
             record["summary"] = summary
-        self._file.write(json.dumps(record, sort_keys=True) + "\n")
+        self._run_space_file.write(json.dumps(record, sort_keys=True) + "\n")
 
     def flush(self) -> None:
         if self._file:
             self._file.flush()
+        # Only flush run_space_file if it's a different handle
+        if self._run_space_file and self._run_space_file is not self._file:
+            self._run_space_file.flush()
 
     def close(self) -> None:
         if self._file:
             self._file.close()
             self._file = None
+        # Only close run_space_file if it's a different handle
+        if self._run_space_file and self._run_space_file is not self._file:
+            self._run_space_file.close()
+        self._run_space_file = None
 
     # options ---------------------------------------------------------------
     def get_options(self) -> Dict[str, bool]:

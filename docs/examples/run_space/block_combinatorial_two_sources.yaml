@@ -5,7 +5,7 @@ run_space:
       source:
         format: csv
         path: docs/examples/data/runs.csv
-        select: [lr]
+        select: [value]
     - mode: by_position
       source:
         format: json

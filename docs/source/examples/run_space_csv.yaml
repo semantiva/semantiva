@@ -1,0 +1,23 @@
+extensions: ["semantiva-examples"]
+
+run_space:
+  blocks:
+    - mode: by_position
+      source:
+        format: csv
+        path: ./runs.csv
+        select: [value, factor, addend]
+
+trace:
+  driver: jsonl
+  output_path: ./trace_csv
+
+pipeline:
+  nodes:
+    - processor: FloatValueDataSource
+    - processor: FloatAddOperation
+    - processor: FloatMultiplyOperation
+    - processor: FloatCollectValueProbe
+      context_key: "result"
+    - processor: template:"{value}_plus_{addend}_times_{factor}_equals_{result}.txt":path
+    - processor: FloatTxtFileSaver
