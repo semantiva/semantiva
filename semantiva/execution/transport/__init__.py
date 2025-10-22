@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Transport abstractions for message passing and event propagation.
+
+Provides interfaces for distributed execution and transport.
+"""
+
 from .base import SemantivaTransport, Subscription, Message
 from .in_memory import InMemorySemantivaTransport
 

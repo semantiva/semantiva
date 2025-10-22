@@ -112,6 +112,7 @@ class ProcessorRegistry:
 
     @classmethod
     def get_processor(cls, name: str) -> type[Any]:
+        """Retrieve a registered processor class by name."""
         try:
             return cls._processors[name]
         except KeyError as exc:  # pragma: no cover - handled by resolve_symbol
@@ -119,18 +120,22 @@ class ProcessorRegistry:
 
     @classmethod
     def all_processors(cls) -> Dict[str, type[Any]]:
+        """Return dictionary of all registered processors."""
         return dict(cls._processors)
 
     @classmethod
     def registered_modules(cls) -> Set[str]:
+        """Return set of module names that have been registered."""
         return set(cls._registered_modules)
 
     @classmethod
     def module_history(cls) -> Sequence[str]:
+        """Return ordered list of all registered module names."""
         return list(cls._module_history)
 
     @classmethod
     def ensure_default_modules(cls, modules: Iterable[str]) -> None:
+        """Register default modules if not already loaded."""
         if not cls._defaults_loaded or not cls._processors:
             cls.register_modules(modules)
             cls._defaults_loaded = True

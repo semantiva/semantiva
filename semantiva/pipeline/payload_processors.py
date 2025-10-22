@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Payload wrapper and context observer abstractions for node execution.
+
+Base classes for wrapping and instrumenting node execution with context tracking
+and timing information.
+"""
+
 import time
 from typing import Optional
 from abc import abstractmethod

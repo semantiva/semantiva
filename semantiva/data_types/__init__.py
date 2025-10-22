@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Data types module.
+
+Defines base types and collections for structured data in Semantiva.
+"""
+
 from .data_types import BaseDataType, DataCollectionType, NoDataType
 
 __all__ = ["BaseDataType", "DataCollectionType", "NoDataType"]

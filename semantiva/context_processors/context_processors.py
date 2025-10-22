@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base processor classes for context transformation.
+
+Provides base classes for context manipulation and enrichment in pipelines.
+"""
+
 from abc import abstractmethod
 import inspect
 from collections import OrderedDict

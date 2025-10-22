@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Exception classes for pipeline construction, validation, and runtime errors.
+
+Defines custom exception hierarchy for Semantiva pipeline operations.
+"""
+
 # Description: Custom exceptions for the semantiva package.
 
 from typing import Dict, List

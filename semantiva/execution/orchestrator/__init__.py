@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Orchestrator module.
+
+Manages pipeline graph traversal and node execution coordination.
+"""
+
 from .orchestrator import SemantivaOrchestrator, LocalSemantivaOrchestrator
 
 __all__ = [
