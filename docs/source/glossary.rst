@@ -225,6 +225,33 @@ Execution Records (SER Vocabulary)
       **Technical mapping:**
          - SER: ``context_delta.*``
 
+Run-Space Identity
+------------------
+
+.. glossary::
+
+   RSCF v1
+      **Run-Space Configuration Format v1** — Canonical representation of a 
+      run-space specification that produces the deterministic ``run_space_spec_id`` 
+      identifier.
+
+      **Ontological role:** Plan identity for reproducible run-space launches.
+
+      **Technical mapping:**
+         - Identity: ``run_space_spec_id``
+         - Docs: :doc:`run_space_lifecycle`, :doc:`run_space_emission`
+
+   RSM v1
+      **Run-Space Materialization v1** — Snapshot of external inputs referenced 
+      by a run-space plan that produces the deterministic ``run_space_inputs_id`` 
+      identifier. Omitted when the run-space is self-contained.
+
+      **Ontological role:** Inputs identity for reproducible run-space launches.
+
+      **Technical mapping:**
+         - Identity: ``run_space_inputs_id``
+         - Docs: :doc:`run_space_lifecycle`, :doc:`run_space_emission`
+
 Trace & Drivers
 ---------------
 

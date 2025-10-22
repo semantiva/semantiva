@@ -12,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Compute deterministic run-space identifiers and fingerprints."""
+"""Compute deterministic run-space identifiers and fingerprints.
+
+- Run-Space Configuration Format (RSCF v1) → run_space_spec_id
+- Run-Space Materialization (RSM v1)       → run_space_inputs_id
+"""
 
 from __future__ import annotations
 
@@ -44,7 +48,9 @@ class RunSpaceIds:
 
 
 class RunSpaceIdentityService:
-    """Computes RSCF v1 spec ids, fingerprints, and optional RSM v1 inputs ids."""
+    """Computes Run-Space Configuration Format (RSCF v1) spec IDs, fingerprints,
+    and optional Run-Space Materialization (RSM v1) inputs IDs.
+    """
 
     def compute(
         self,
