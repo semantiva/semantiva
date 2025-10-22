@@ -37,6 +37,14 @@ class SemantivaExecutor(ABC):
 
     @dataclass
     class SERHooks:
+        """Execution record hook bundle used by executors.
+
+        A container of metadata providers and evidence that an executor may
+        attach to a task invocation for tracing and validation. Fields include
+        upstream dependency ids, the trigger label, upstream evidence blobs,
+        and callables providing context deltas, pre/post checks, environment
+        pins, and redaction policies.
+        """
         upstream: list[str]
         trigger: str
         upstream_evidence: list[dict]
@@ -69,9 +77,10 @@ class SequentialSemantivaExecutor(SemantivaExecutor):
     """
 
     class _ImmediateFuture(Future):
-        """
-        A Future subclass that is already completed with a given result.
-        Used internally to wrap synchronous call results.
+        """A Future already completed with a provided result.
+
+        Used by the synchronous executor to present a uniform Future-based
+        API while executing callables immediately in the caller thread.
         """
 
         def __init__(self, result: Any):

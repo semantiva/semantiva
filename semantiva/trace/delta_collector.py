@@ -47,6 +47,13 @@ def _stable_equal(a: Any, b: Any) -> bool:
 
 @dataclass
 class ContextKeySummary:
+    """Lightweight summary metadata for a single context key value.
+
+    Stores a compact description used in trace deltas: the runtime type name,
+    an optional length for collections, optional row count for array-like
+    values, an optional SHA256 digest (when hashing is enabled), and an
+    optional short string representation (when repr is enabled).
+    """
     dtype: str | None = None
     length: int | None = None
     rows: int | None = None
@@ -55,7 +62,13 @@ class ContextKeySummary:
 
 
 class DeltaCollector:
-    """Compute a minimal context delta by diffing pre/post context."""
+    """Compute a minimal context delta by diffing a pre- and post-context.
+
+    The collector compares two context dictionaries and returns a compact
+    summary that lists declared read keys, newly created keys, updated keys,
+    and per-key ContextKeySummary-style metadata. Hashing and string
+    representation are optional and controlled by the constructor flags.
+    """
 
     def __init__(self, *, enable_hash: bool, enable_repr: bool):
         self.enable_hash = enable_hash

@@ -45,6 +45,14 @@ from .messages import MESSAGES
 
 @dataclass(frozen=True)
 class Diagnostic:
+    """A single contract validation diagnostic.
+
+    Represents one finding from Semantiva's contract validator. Fields include
+    the machine-readable rule code (e.g. SVA001), a severity level
+    (error/warn/info), a human-friendly message, the fully-qualified
+    component name that produced the diagnostic, an optional source
+    location tuple (file, line), and an extensible details mapping.
+    """
     code: str
     severity: str
     message: str
@@ -76,6 +84,12 @@ def _diag(code: str, severity: str, cls: type, details: Dict[str, Any]) -> Diagn
 
 @dataclass(frozen=True)
 class RuleSpec:
+    """Specification for a single contract validation rule.
+
+    Encapsulates the rule identifier, severity, short title, applicability
+    scope, message key, hint text, trigger description, and a callable that
+    performs the validation check and returns a list of Diagnostic objects.
+    """
     code: str
     severity: str
     title: str
