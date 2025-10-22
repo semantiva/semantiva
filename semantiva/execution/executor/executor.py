@@ -45,6 +45,7 @@ class SemantivaExecutor(ABC):
         and callables providing context deltas, pre/post checks, environment
         pins, and redaction policies.
         """
+
         upstream: list[str]
         trigger: str
         upstream_evidence: list[dict]

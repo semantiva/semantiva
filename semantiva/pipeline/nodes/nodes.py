@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Node wrapper classes for graph-based pipeline execution.
+
+Provides node adapters that wrap processors for pipeline graph execution.
+"""
+
 from typing import List, Any, Dict, Optional, Type
 from typing_extensions import override
 from abc import abstractmethod

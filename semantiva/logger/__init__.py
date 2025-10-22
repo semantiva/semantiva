@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Logging configuration and utilities.
+
+Provides logging setup for Semantiva.
+"""
+
 from .logger import Logger
 
 __all__ = [

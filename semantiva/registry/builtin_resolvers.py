@@ -132,6 +132,7 @@ def _model_param_resolver(spec: Any) -> Optional[ModelDescriptor]:
 
 
 def register_builtin_resolvers() -> None:
+    """Register all built-in name and parameter resolvers."""
     NameResolverRegistry.register_resolver("rename:", _resolve_rename)
     NameResolverRegistry.register_resolver("delete:", _resolve_delete)
     NameResolverRegistry.register_resolver("template:", _resolve_template)

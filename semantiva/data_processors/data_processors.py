@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Core data operation and probe processor base classes.
+
+Provides base classes for pipeline transformations and data observation.
+"""
+
 import inspect
 from typing import (
     Dict,

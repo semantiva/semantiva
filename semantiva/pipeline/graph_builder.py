@@ -155,6 +155,7 @@ def build_canonical_spec(
 
 
 def build_graph(pipeline_or_spec: Any) -> dict[str, Any]:
+    """Build canonical graph specification from a pipeline or spec dictionary."""
     canonical, _ = build_canonical_spec(pipeline_or_spec)
     return canonical
 

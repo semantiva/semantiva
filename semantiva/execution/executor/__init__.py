@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Executor module.
+
+Defines task execution abstractions for local and distributed processing.
+"""
+
 from .executor import SemantivaExecutor, SequentialSemantivaExecutor
 
 __all__ = [

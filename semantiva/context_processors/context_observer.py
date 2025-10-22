@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Observer pattern implementation for tracking context changes.
+
+Provides utilities for monitoring context modifications during pipeline execution.
+"""
+
 from collections import ChainMap
 from typing import Any, Dict, Optional, Union
 from semantiva.core.semantiva_component import _SemantivaComponent

@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base component metaclass and registry for type-safe processors.
+
+Provides fundamental abstractions for semantically annotated components.
+"""
+
 from __future__ import annotations
 from typing import (
     Dict,

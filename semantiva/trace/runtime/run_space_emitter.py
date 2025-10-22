@@ -41,6 +41,7 @@ class RunSpaceTraceEmitter:
         run_space_planned_run_count: Optional[int] = None,
         run_id: Optional[str] = None,
     ) -> None:
+        """Emit a run space start trace event with input metadata."""
         if self._driver is None:
             return
         key = (run_space_launch_id, run_space_attempt)
@@ -82,6 +83,7 @@ class RunSpaceTraceEmitter:
         summary: Optional[dict] = None,
         run_id: Optional[str] = None,
     ) -> None:
+        """Emit a run space end trace event with summary data."""
         if self._driver is None:
             return
         self._driver.on_run_space_end(

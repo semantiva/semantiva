@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Pipeline processor wrapper for orchestrated node graph execution.
+
+High-level abstraction that chains node execution through an orchestrator,
+wrapping orchestration capabilities as a reusable payload processor component.
+"""
+
 from typing import Any, Dict, List, Optional
 from .payload import Payload
 from semantiva.logger import Logger
