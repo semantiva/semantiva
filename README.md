@@ -8,22 +8,48 @@ By enforcing **type-safe** relationships between data and algorithms, Semantiva 
 
 Additionally, Semantiva is designed to be **AI-compatible**, allowing for collaboration with intelligent systems that can reason about, optimize, and even co-develop complex workflows using its well-defined semantic structures.
 
-## Quickstart (60 seconds)
+## Install
 
 ```bash
-# Install Semantiva in an isolated environment
-pipx install semantiva
-
-# Run the in-repo example pipeline and emit SER traces locally
-semantiva run semantiva/examples/simple_pipeline.yaml \
-  --trace.driver=jsonl --trace.output ./trace
-
-# Inspect the installed version
-semantiva --version
+pip install semantiva
 ```
 
-The command above creates JSONL trace artifacts in ``./trace`` that comply with
-``semantiva/trace/schema/semantic_execution_record_v1.schema.json``.
+## Quickstart (create a local pipeline)
+
+1. Create ``hello_pipeline.yaml`` with the following contents:
+
+   ```yaml
+   extensions: ["semantiva-examples"]
+
+   trace:
+     driver: jsonl
+     output_path: ./trace
+
+   pipeline:
+     nodes:
+       - processor: FloatValueDataSource
+         parameters:
+           value: 2.0
+       - processor: FloatAddOperation
+         parameters:
+           addend: 1.0
+       - processor: FloatMultiplyOperation
+         parameters:
+           factor: 10.0
+       - processor: FloatCollectValueProbe
+         context_key: "result"
+       - processor: template:"result_{result}.txt":path
+       - processor: FloatTxtFileSaver
+   ```
+
+2. Run the pipeline:
+
+   ```bash
+   semantiva run hello_pipeline.yaml -v
+   ```
+
+   This creates JSONL trace artifacts in ``./trace`` and writes the
+   computation result to ``result_<value>.txt`` using the configured processors.
 
 ## Why Semantiva?
 

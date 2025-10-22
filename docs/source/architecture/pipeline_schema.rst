@@ -43,7 +43,7 @@ extend the base ``pipeline.nodes`` definition:
 
       trace:
         driver: jsonl
-        output_path: ./ser/
+        output_path: ./trace/
         options:
           detail: all
 
@@ -53,7 +53,7 @@ extend the base ``pipeline.nodes`` definition:
 
          semantiva run my_pipeline.yaml \
             --trace.driver jsonl \
-            --trace.output ./ser/ \
+            --trace.output ./trace/ \
             --trace.option detail=all
 
 ``run_space``

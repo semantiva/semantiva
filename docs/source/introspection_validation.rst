@@ -98,7 +98,7 @@ see :doc:`trace_graph_alignment`.
 
 .. code-block:: python
 
-   from semantiva.pipeline import Pipeline, load_pipeline_from_yaml
+   from semantiva import Pipeline, load_pipeline_from_yaml
    from semantiva.inspection.reporter import json_report
    p = Pipeline(load_pipeline_from_yaml("tests/hello_pipeline.yaml"))
    report = json_report(p)

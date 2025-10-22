@@ -16,7 +16,7 @@ trace:
   driver: jsonl
   options:
     detail: all
-  output_path: ./ser/
+  output_path: ./trace/
 
 pipeline:
   nodes:
