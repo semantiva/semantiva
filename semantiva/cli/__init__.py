@@ -30,7 +30,10 @@ import yaml
 
 from semantiva.configurations import parse_pipeline_config
 from semantiva.configurations.schema import ExecutionConfig, TraceConfig
-from semantiva.exceptions.pipeline_exceptions import RunSpaceMaxRunsExceededError
+from semantiva.exceptions.pipeline_exceptions import (
+    PipelineConfigurationError,
+    RunSpaceMaxRunsExceededError,
+)
 from semantiva.execution.component_registry import ExecutionComponentRegistry
 from semantiva.execution.run_space import expand_run_space
 from semantiva.execution.orchestrator.factory import build_orchestrator
@@ -708,6 +711,9 @@ def _run(args: argparse.Namespace) -> int:
             pipeline_cfg.run_space,
             cwd=pipeline_cfg.base_dir or pipeline_path.parent,
         )
+    except PipelineConfigurationError as exc:
+        print(f"Error: Run space configuration error\n\n{exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
     except RunSpaceMaxRunsExceededError as exc:
         print(
             f"Error: {exc.message}\n\n"

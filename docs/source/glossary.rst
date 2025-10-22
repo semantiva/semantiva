@@ -269,7 +269,7 @@ Run-Space Lifecycle
 .. glossary::
 
    by_position
-      Index-aligned Run-Space expansion mode. Lists are zipped by index so element *i* travels together.
+      Index-aligned Run-Space expansion mode. Lists align by index so element *i* travels together.
       See :doc:`run_space` for planner examples.
 
    combinatorial

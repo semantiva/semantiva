@@ -93,11 +93,19 @@ def test_full_flow_self_contained(tmp_path):
     )
     driver.close()
 
-    files = list(tmp_path.glob("*.ser.jsonl"))
-    assert files, "expected JSONL trace to be written"
-    records = _load_records(files[0])
-    assert any(rec["record_type"] == "run_space_start" for rec in records)
-    assert any(rec["record_type"] == "run_space_end" for rec in records)
+    # In directory mode, run_space lifecycle events are in separate .trace.jsonl file
+    trace_files = list(tmp_path.glob("*.trace.jsonl"))
+    ser_files = list(tmp_path.glob("*.ser.jsonl"))
+    assert ser_files, "expected JSONL trace to be written"
+
+    # Load run_space lifecycle events from dedicated file
+    assert trace_files, "expected run_space trace file to be written"
+    runspace_records = _load_records(trace_files[0])
+    assert any(rec["record_type"] == "run_space_start" for rec in runspace_records)
+    assert any(rec["record_type"] == "run_space_end" for rec in runspace_records)
+
+    # Load pipeline events from main trace file
+    records = _load_records(ser_files[0])
     pipeline_start = next(
         rec for rec in records if rec["record_type"] == "pipeline_start"
     )
@@ -171,14 +179,22 @@ def test_full_flow_with_file_inputs(tmp_path):
     )
     driver.close()
 
-    files = list(tmp_path.glob("*.ser.jsonl"))
-    assert files, "expected JSONL trace to be written"
-    records = _load_records(files[-1])
+    # In directory mode, run_space lifecycle events are in separate .trace.jsonl file
+    trace_files = list(tmp_path.glob("*.trace.jsonl"))
+    ser_files = list(tmp_path.glob("*.ser.jsonl"))
+    assert ser_files, "expected JSONL trace to be written"
+
+    # Load run_space lifecycle events from dedicated file
+    assert trace_files, "expected run_space trace file to be written"
+    runspace_records = _load_records(trace_files[0])
     run_space_start = next(
-        rec for rec in records if rec["record_type"] == "run_space_start"
+        rec for rec in runspace_records if rec["record_type"] == "run_space_start"
     )
     assert run_space_start["run_space_inputs_id"] == identity.inputs_id
     assert run_space_start["run_space_input_fingerprints"]
+
+    # Load pipeline events from main trace file
+    records = _load_records(ser_files[-1])
     pipeline_start = next(
         rec for rec in records if rec["record_type"] == "pipeline_start"
     )

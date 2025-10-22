@@ -112,7 +112,7 @@ You can load a pipeline from YAML and execute it programmatically.
 
 .. code-block:: python
 
-   from semantiva.pipeline import Pipeline, load_pipeline_from_yaml
+   from semantiva import Pipeline, load_pipeline_from_yaml
 
    nodes = load_pipeline_from_yaml("hello_pipeline.yaml")
    p = Pipeline(nodes)

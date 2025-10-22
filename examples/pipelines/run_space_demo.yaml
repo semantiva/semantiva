@@ -15,7 +15,7 @@ run_space:
 
 trace:
   driver: jsonl
-  output_path: ./ser/run_space_demo.ser.jsonl
+  output_path: ./trace/run_space_demo.trace.jsonl
   options:
     detail: compact
 
