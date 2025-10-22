@@ -1072,6 +1072,7 @@ def _lint(args: argparse.Namespace) -> int:
 
 
 def main(argv: List[str] | None = None) -> None:
+    """Entry point for the semantiva command-line interface."""
     # Initialize default processor modules and extensions for CLI usage.
     apply_profile(RegistryProfile())
 

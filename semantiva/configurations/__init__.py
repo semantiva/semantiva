@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Configuration loading and pipeline specification parsing.
+
+Provides utilities for reading and validating YAML pipeline configurations.
+"""
+
 from .load_pipeline_from_yaml import load_pipeline_from_yaml, parse_pipeline_config
 from .schema import (
     ExecutionConfig,

@@ -29,11 +29,13 @@ class ParameterResolverRegistry:
 
     @classmethod
     def clear(cls) -> None:
+        """Clear all registered parameter resolvers."""
         cls._resolvers.clear()
         cls._builtin_names.clear()
 
     @classmethod
     def register_resolver(cls, resolver_fn: Resolver, *, builtin: bool = False) -> None:
+        """Register a parameter resolver function with optional builtin flag."""
         if resolver_fn not in cls._resolvers:
             cls._resolvers.append(resolver_fn)
         if builtin:
@@ -41,10 +43,12 @@ class ParameterResolverRegistry:
 
     @classmethod
     def resolvers(cls) -> Iterable[Resolver]:
+        """Return a copy of all registered resolver functions."""
         return list(cls._resolvers)
 
     @classmethod
     def builtin_names(cls) -> set[str]:
+        """Return set of builtin resolver function names."""
         return set(cls._builtin_names)
 
 

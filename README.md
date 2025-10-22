@@ -24,6 +24,8 @@ pip install semantiva
    trace:
      driver: jsonl
      output_path: ./trace
+     options:
+       detail: all
 
    pipeline:
      nodes:

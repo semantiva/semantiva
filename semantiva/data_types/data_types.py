@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base data type definitions and collection types.
+
+Provides base classes for type-safe data flow in Semantiva pipelines.
+"""
+
 from abc import abstractmethod
 from typing import Dict, Any, Type, TypeVar, Generic, Iterator, get_args, Optional
 from semantiva.core.semantiva_component import _SemantivaComponent

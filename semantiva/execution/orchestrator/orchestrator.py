@@ -84,8 +84,7 @@ class SemantivaOrchestrator(ABC):
         return self._last_nodes
 
     def configure_run_metadata(self, metadata: dict[str, Any] | None) -> None:
-        """Stage metadata to be used for the next :meth:`execute` call."""
-
+        """Stage metadata dictionary to be used for the next execute call."""
         self._next_run_metadata = dict(metadata or {})
 
     # ------------------------------------------------------------------

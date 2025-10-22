@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Data sources and sinks for reading from and writing to external systems.
+
+Provides base classes for data boundaries.
+"""
+
 from abc import abstractmethod
 from typing import Dict, Any, TypeVar, Generic, List, Optional
 from semantiva.data_types import BaseDataType

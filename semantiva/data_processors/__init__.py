@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Data processors module.
+
+Provides operations, probes, and factory utilities for data transformations.
+"""
+
 from .data_processors import (
     DataOperation,
     DataProbe,

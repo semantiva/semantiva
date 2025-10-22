@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Exceptions module.
+
+Defines custom exception hierarchy for Semantiva framework errors.
+"""
+
 from .pipeline_exceptions import (
     PipelineTopologyError,
     PipelineConfigurationError,
