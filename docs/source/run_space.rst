@@ -86,12 +86,17 @@ block explicitly requests ``mode: combinatorial`` for Cartesian expansion.
 Linkage to Pipelines
 --------------------
 
-Each ``pipeline_start`` includes foreign keys when spawned from a Run-Space launch:
+Each ``pipeline_start`` includes a **composite foreign key** when spawned from a Run-Space launch:
 
-- ``run_space_spec_id`` (plan identity)
-- optional ``run_space_inputs_id`` (inputs snapshot)
-- ``run_space_launch_id`` (launch/session)
-- ``run_space_attempt`` (retry counter)
+- ``run_space_launch_id`` + ``run_space_attempt`` — composite FK to ``run_space_start`` (both parts needed for retry disambiguation)
+
+Plus run-specific metadata:
+
+- ``run_space_index`` — 0-based position within the launch
+- ``run_space_context`` — parameter values for this specific run
+
+Launch-level constants (``run_space_spec_id``, ``run_space_inputs_id``, ``run_space_combine_mode``, 
+``run_space_total_runs``) are stored once in the ``run_space_start`` event to eliminate redundancy.
 
 See :doc:`run_space_lifecycle` for the Run-Space lifecycle and foreign-key
 relationships.
@@ -115,10 +120,18 @@ CLI integration
 * ``--run-space-max-runs`` - override the safety limit on the number of runs.
 * ``--run-space-dry-run`` - compute the expansion, print block sizes plus previews, and exit without executing.
 
-SER
----
+Trace Emission
+--------------
+
+The Run-Space system emits structured trace events:
+
+- **run_space_start** — contains launch-level constants (``run_space_spec_id``, ``run_space_combine_mode``, 
+  ``run_space_total_runs``, etc.) emitted once per launch
+- **pipeline_start** — contains composite FK (``run_space_launch_id`` + ``run_space_attempt``) plus 
+  run-specific metadata (``run_space_index``, ``run_space_context``)
+- **ser** — Semantic Execution Records contain no run-space fields (clean separation)
 
 The planner returns metadata with block sizes, modes, context keys, and source
 provenance (path, format, SHA-256, selectors, and renames).
-Per-run metadata includes ``run_space.index``, ``run_space.total``,
-``run_space.combine``, and ``run_space.context``.
+
+See :doc:`trace_stream_v1` and :doc:`run_space_emission` for complete details.

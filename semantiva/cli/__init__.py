@@ -171,20 +171,6 @@ def _parse_options_list(items: List[str]) -> Dict[str, Any]:
     return options
 
 
-def _build_run_space_args(
-    index: int, total: int, context: Dict[str, Any], meta: Dict[str, Any]
-) -> Dict[str, Any]:
-    args_map: Dict[str, Any] = {
-        "run_space.index": index,
-        "run_space.total": total,
-        "run_space.combine": meta.get("combine", "product"),
-        "run_space.context": context,
-    }
-    if meta.get("override_source"):
-        args_map["run_space.override_source"] = meta["override_source"]
-    return args_map
-
-
 def _print_run_space_plan(meta: Dict[str, Any], runs: List[Dict[str, Any]]) -> None:
     combine = meta.get("combine", "product")
     max_runs = meta.get("max_runs")
@@ -803,6 +789,9 @@ def _run(args: argparse.Namespace) -> int:
                 run_space_spec_id=run_space_ids.spec_id,
                 run_space_launch_id=launch.id,
                 run_space_attempt=launch.attempt,
+                run_space_combine_mode=run_space_meta.get("combine", "product"),
+                run_space_total_runs=run_count,
+                run_space_max_runs_limit=run_space_meta.get("max_runs"),
                 run_space_inputs_id=run_space_ids.inputs_id,
                 run_space_input_fingerprints=run_space_ids.fingerprints,
                 run_space_planned_run_count=run_count,
@@ -815,16 +804,17 @@ def _run(args: argparse.Namespace) -> int:
         for idx, run_values in enumerate(runs):
             run_context = dict(ctx_dict)
             run_context.update(run_values)
-            run_args = _build_run_space_args(
-                idx,
-                run_count,
-                dict(run_context),
-                run_space_meta,
-            )
-            metadata = {"args": run_args, "run_space": run_space_meta}
-            if trace_context is not None:
-                metadata["trace_context"] = trace_context.as_run_space_fk()
-            pipeline.set_run_metadata(metadata)
+
+            # Only build run_space metadata when run_space is active
+            metadata: Dict[str, Any] = {}
+            if run_space_active:
+                metadata = {
+                    "trace_context": trace_context,
+                    "run_space_index": idx,
+                    "run_space_context": dict(run_context),
+                }
+
+            pipeline.set_run_metadata(metadata if metadata else None)
             initial_payload = (
                 Payload(NoDataType(), ContextType(run_context)) if run_context else None
             )
