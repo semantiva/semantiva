@@ -36,12 +36,17 @@ Pipeline lifecycle records
    :file:`semantiva/trace/schema/pipeline_start_event_v1.schema.json`
    :file:`semantiva/trace/schema/pipeline_end_event_v1.schema.json`
 
-   The pipeline start references an enclosing run-space launch via:
+   The pipeline start record links to an enclosing run-space launch (when present) via a **composite foreign key**:
    
-   - ``run_space_spec_id`` — Plan identity (Run-Space Configuration Format, **RSCF v1**)
-   - ``run_space_inputs_id`` *(optional)* — Inputs snapshot (Run-Space Materialization, **RSM v1**)
-   - ``run_space_launch_id`` — Launch/session identifier
-   - ``run_space_attempt`` — Retry counter (1-based)
+   - ``run_space_launch_id`` + ``run_space_attempt`` — uniquely identifies the launch (retries need both parts)
+   
+   Run-specific metadata:
+   
+   - ``run_space_index`` — 0-based position within the launch
+   - ``run_space_context`` — parameter values for this specific run
+   
+   Launch-level constants (``run_space_spec_id``, ``run_space_inputs_id``, ``run_space_combine_mode``, ``run_space_total_runs``) 
+   are stored once in the ``run_space_start`` record to eliminate redundancy.
 
 Semantic Execution Record (SER v1)
    :file:`semantiva/trace/schema/semantic_execution_record_v1.schema.json`
@@ -107,22 +112,22 @@ Schema tables
      - yes
      - object
      - Canonicalized pipeline specification
-   * - ``run_space_spec_id``
-     - no
-     - hex string
-     - Run-Space plan identity
-   * - ``run_space_inputs_id``
-     - no
-     - hex string
-     - Optional snapshot of external inputs
    * - ``run_space_launch_id``
      - no
      - string
-     - Launch/session identifier
+     - Foreign key to run_space_start (part 1 of composite FK)
    * - ``run_space_attempt``
      - no
      - integer ≥1
-     - 1-based retry counter within the launch
+     - Foreign key to run_space_start (part 2 of composite FK, for retry disambiguation)
+   * - ``run_space_index``
+     - no
+     - integer ≥0
+     - 0-based position of this run within the launch
+   * - ``run_space_context``
+     - no
+     - object
+     - Parameter values for this specific run
    * - ``meta``
      - no
      - object
@@ -167,6 +172,18 @@ See :doc:`run_space_lifecycle` for lifecycle definitions of the Run-Space identi
      - yes
      - integer ≥1
      - 1-based retry counter for the launch
+   * - ``run_space_combine_mode``
+     - yes
+     - string
+     - Expansion mode: ``combinatorial`` or ``by_position``
+   * - ``run_space_total_runs``
+     - yes
+     - integer ≥0
+     - Total number of runs in this launch
+   * - ``run_space_max_runs_limit``
+     - no
+     - integer ≥0
+     - Safety limit from configuration (``max_runs``)
    * - ``run_space_planned_run_count``
      - no
      - integer ≥0

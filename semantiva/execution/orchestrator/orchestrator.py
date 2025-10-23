@@ -81,6 +81,7 @@ class SemantivaOrchestrator(ABC):
 
     @property
     def last_nodes(self) -> List[_PipelineNode]:
+        """The list of nodes instantiated during the last execute() call."""
         return self._last_nodes
 
     def configure_run_metadata(self, metadata: dict[str, Any] | None) -> None:
@@ -127,10 +128,17 @@ class SemantivaOrchestrator(ABC):
         trace_opts = self._trace_options(trace)
 
         trace_ctx: TraceContext | None = None
+        run_space_index: int | None = None
+        run_space_context: dict | None = None
         if self._current_run_metadata:
             ctx_candidate = self._current_run_metadata.get("trace_context")
             if isinstance(ctx_candidate, TraceContext):
                 trace_ctx = ctx_candidate
+            # Extract run-specific data for pipeline_start
+            if "run_space_index" in self._current_run_metadata:
+                run_space_index = self._current_run_metadata["run_space_index"]
+            if "run_space_context" in self._current_run_metadata:
+                run_space_context = self._current_run_metadata["run_space_context"]
 
         if trace is not None:
             pipeline_id = compute_pipeline_id(canonical)
@@ -141,14 +149,16 @@ class SemantivaOrchestrator(ABC):
             run_space_kwargs: dict[str, Any] = {}
             if trace_ctx is not None:
                 fk = trace_ctx.as_run_space_fk()
-                if fk["run_space_spec_id"]:
-                    run_space_kwargs["run_space_spec_id"] = fk["run_space_spec_id"]
-                if fk["run_space_inputs_id"]:
-                    run_space_kwargs["run_space_inputs_id"] = fk["run_space_inputs_id"]
+                # Pass composite FK (launch_id + attempt), not spec_id/inputs_id
                 if fk["run_space_launch_id"]:
                     run_space_kwargs["run_space_launch_id"] = fk["run_space_launch_id"]
                 if fk["run_space_attempt"] is not None:
                     run_space_kwargs["run_space_attempt"] = fk["run_space_attempt"]
+            # Pass run-specific data to pipeline_start
+            if run_space_index is not None:
+                run_space_kwargs["run_space_index"] = run_space_index
+            if run_space_context is not None:
+                run_space_kwargs["run_space_context"] = run_space_context
             trace.on_pipeline_start(
                 pipeline_id,
                 run_id,
@@ -765,9 +775,8 @@ class SemantivaOrchestrator(ABC):
     ) -> SERRecord:
         if pipeline_id is None or run_id is None:
             raise RuntimeError("SER construction requires pipeline and run identifiers")
+        # No more run_space args in SER
         args_payload: dict[str, Any] = {}
-        if self._current_run_metadata:
-            args_payload.update(self._current_run_metadata.get("args", {}))
         preconditions = list(pre_checks)
         postconditions = list(post_checks)
         invariants: list[Any] = []

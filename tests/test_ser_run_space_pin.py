@@ -51,6 +51,9 @@ class _CaptureTrace(TraceDriver):
         run_space_spec_id: str,
         run_space_launch_id: str,
         run_space_attempt: int,
+        run_space_combine_mode: str,
+        run_space_total_runs: int,
+        run_space_max_runs_limit: int | None = None,
         run_space_inputs_id: str | None = None,
         run_space_input_fingerprints: list[dict] | None = None,
         run_space_planned_run_count: int | None = None,
@@ -75,6 +78,7 @@ class _CaptureTrace(TraceDriver):
 
 
 def test_ser_records_include_run_space_arguments(tmp_path):
+    """Test that run_space data is NO LONGER in SER args (moved to pipeline_start)."""
     trace = _CaptureTrace()
     pipeline = Pipeline(
         [
@@ -89,51 +93,31 @@ def test_ser_records_include_run_space_arguments(tmp_path):
     )
 
     RUNS = [
-        (
-            {"value": 3.0, "factor": 2.0},
-            {
-                "run_space.index": 0,
-                "run_space.total": 2,
-                "run_space.combine": "product",
-            },
-        ),
-        (
-            {"value": 5.0, "factor": 4.0},
-            {
-                "run_space.index": 1,
-                "run_space.total": 2,
-                "run_space.combine": "product",
-            },
-        ),
+        {"value": 3.0, "factor": 2.0},
+        {"value": 5.0, "factor": 4.0},
     ]
 
-    run_space_meta = {
-        "combine": "product",
-        "max_runs": 10,
-        "expanded_runs": 2,
-        "blocks": [
+    for idx, values in enumerate(RUNS):
+        # New: pass index/context in metadata, not args
+        pipeline.set_run_metadata(
             {
-                "mode": "zip",
-                "size": 2,
-                "context_keys": ["value", "factor"],
+                "run_space_index": idx,
+                "run_space_context": values,
             }
-        ],
-    }
-
-    for values, base_args in RUNS:
-        run_args = dict(base_args)
-        run_args["run_space.context"] = values
-        pipeline.set_run_metadata({"args": run_args, "run_space": run_space_meta})
+        )
         payload = Payload(NoDataType(), ContextType(values))
         pipeline.process(payload)
 
     assert trace.events, "expected SER events to be captured"
     run_ids = {event.identity["run_id"] for event in trace.events}
     assert len(run_ids) == len(RUNS)
+
+    # Verify SER args are now EMPTY (no run_space pollution)
     for event in trace.events:
         args = event.assertions.get("args", {})
-        assert "run_space.index" in args
-        assert "run_space.combine" in args
-        assert "run_space.context" in args
-        index = args["run_space.index"]
-        assert args["run_space.context"] == RUNS[index][0]
+        assert "run_space.index" not in args
+        assert "run_space.combine" not in args
+        assert "run_space.context" not in args
+        assert "run_space.total" not in args
+        # Args should be empty
+        assert args == {}
