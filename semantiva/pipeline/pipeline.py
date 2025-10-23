@@ -100,7 +100,8 @@ class Pipeline(_PayloadProcessor):
             - Info: Logs the start and completion of the pipeline processing.
             - Debug: Logs a detailed timing report of the pipeline execution.
         """
-        self.logger.info("Starting pipeline with %s nodes", len(self.nodes))
+        node_count = len(self.canonical_spec.get("nodes", []))
+        self.logger.info("Starting pipeline with %s nodes", node_count)
         self.stop_watch.start()  # existing pipeline timer start
 
         run_meta = self._run_metadata
