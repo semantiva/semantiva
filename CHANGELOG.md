@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] - TBD
 
 ### Breaking
+- **Trace normalization**: Removed redundant run_space fields from trace records to eliminate massive data duplication:
+  - `pipeline_start` now uses composite FK (`run_space_launch_id` + `run_space_attempt`) instead of storing redundant `run_space_spec_id` and `run_space_inputs_id` fields. These can be obtained via JOIN to `run_space_start`.
+  - `pipeline_start` now includes `run_space_index` and `run_space_context` fields (moved from SER args).
+  - `run_space_start` now includes required fields `run_space_combine_mode` and `run_space_total_runs`, plus optional `run_space_max_runs_limit`.
+  - SER records no longer include run_space data in `assertions.args` - this data now lives in `pipeline_start` (for run-specific data like index/context) and `run_space_start` (for launch-level constants like combine mode and total runs).
+  - **Storage impact**: ~99% reduction in redundant data (1.4 MB → 20 KB for typical 1,000-run launch).
+  - **Migration**: Consumers must use JOIN-based access via `pipeline_start` and `run_space_start` records instead of reading run_space data directly from SER args.
 - Trace naming RFC v1: SER schema renamed to
   ``semantic_execution_record_v1.schema.json`` and lifecycle schemas renamed to
   ``pipeline_start_event_v1.schema.json`` / ``pipeline_end_event_v1.schema.json``;
