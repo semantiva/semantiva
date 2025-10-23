@@ -50,6 +50,8 @@ def test_run_space_start_self_contained():
         "run_space_spec_id": "a" * 64,
         "run_space_launch_id": "launch-uuid",
         "run_space_attempt": 1,
+        "run_space_combine_mode": "combinatorial",
+        "run_space_total_runs": 100,
     }
 
     _validate(RUN_SPACE_START, record)
@@ -64,6 +66,8 @@ def test_run_space_start_with_inputs():
         "run_space_inputs_id": "b" * 64,
         "run_space_launch_id": "launch-uuid",
         "run_space_attempt": 1,
+        "run_space_combine_mode": "by_position",
+        "run_space_total_runs": 50,
         "run_space_input_fingerprints": [
             {
                 "role": "runs_csv",
@@ -96,10 +100,10 @@ def test_pipeline_start_linked_to_run_space():
         "run_id": "p-1",
         "pipeline_id": "pid",
         "pipeline_spec_canonical": {},
-        "run_space_spec_id": "a" * 64,
-        "run_space_inputs_id": "b" * 64,
         "run_space_launch_id": "launch-uuid",
         "run_space_attempt": 1,
+        "run_space_index": 42,
+        "run_space_context": {"learning_rate": 0.001},
     }
 
     _validate(PIPELINE_START, record)

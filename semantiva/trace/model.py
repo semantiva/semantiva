@@ -90,10 +90,10 @@ class TraceDriver(Protocol):
         meta: dict,
         pipeline_input: Optional[Payload] = None,
         *,
-        run_space_spec_id: str | None = None,
-        run_space_inputs_id: str | None = None,
         run_space_launch_id: str | None = None,
         run_space_attempt: int | None = None,
+        run_space_index: int | None = None,
+        run_space_context: dict | None = None,
     ) -> None:
         """Emit a ``pipeline_start`` record."""
 
@@ -110,6 +110,9 @@ class TraceDriver(Protocol):
         run_space_spec_id: str,
         run_space_launch_id: str,
         run_space_attempt: int,
+        run_space_combine_mode: str,
+        run_space_total_runs: int,
+        run_space_max_runs_limit: int | None = None,
         run_space_inputs_id: str | None = None,
         run_space_input_fingerprints: list[dict] | None = None,
         run_space_planned_run_count: int | None = None,

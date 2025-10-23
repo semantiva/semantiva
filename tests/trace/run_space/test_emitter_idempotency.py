@@ -55,6 +55,8 @@ def test_emit_start_idempotent_within_process():
         run_space_spec_id="spec",
         run_space_launch_id="launch",
         run_space_attempt=1,
+        run_space_combine_mode="combinatorial",
+        run_space_total_runs=10,
         run_space_inputs_id=None,
         run_space_input_fingerprints=[fp],
     )
@@ -62,6 +64,8 @@ def test_emit_start_idempotent_within_process():
         run_space_spec_id="spec",
         run_space_launch_id="launch",
         run_space_attempt=1,
+        run_space_combine_mode="combinatorial",
+        run_space_total_runs=10,
         run_space_inputs_id=None,
         run_space_input_fingerprints=[fp],
     )
@@ -69,6 +73,8 @@ def test_emit_start_idempotent_within_process():
         run_space_spec_id="spec",
         run_space_launch_id="launch",
         run_space_attempt=2,
+        run_space_combine_mode="combinatorial",
+        run_space_total_runs=10,
         run_space_inputs_id=None,
         run_space_input_fingerprints=[fp],
     )

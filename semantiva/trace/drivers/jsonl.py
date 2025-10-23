@@ -112,10 +112,10 @@ class JsonlTraceDriver(TraceDriver):
         meta: dict,
         pipeline_input: Optional[object] = None,
         *,
-        run_space_spec_id: str | None = None,
-        run_space_inputs_id: str | None = None,
         run_space_launch_id: str | None = None,
         run_space_attempt: int | None = None,
+        run_space_index: int | None = None,
+        run_space_context: dict | None = None,
     ) -> None:
         self._open_file(run_id)
         assert self._file is not None
@@ -129,14 +129,14 @@ class JsonlTraceDriver(TraceDriver):
             "pipeline_spec_canonical": pipeline_spec_canonical,
             "meta": meta,
         }
-        if run_space_spec_id is not None:
-            record["run_space_spec_id"] = run_space_spec_id
-        if run_space_inputs_id is not None:
-            record["run_space_inputs_id"] = run_space_inputs_id
         if run_space_launch_id is not None:
             record["run_space_launch_id"] = run_space_launch_id
         if run_space_attempt is not None:
             record["run_space_attempt"] = run_space_attempt
+        if run_space_index is not None:
+            record["run_space_index"] = run_space_index
+        if run_space_context is not None:
+            record["run_space_context"] = run_space_context
         try:
             self._file.write(json.dumps(record, sort_keys=True) + "\n")
         except TypeError:
@@ -184,6 +184,9 @@ class JsonlTraceDriver(TraceDriver):
         run_space_spec_id: str,
         run_space_launch_id: str,
         run_space_attempt: int,
+        run_space_combine_mode: str,
+        run_space_total_runs: int,
+        run_space_max_runs_limit: int | None = None,
         run_space_inputs_id: str | None = None,
         run_space_input_fingerprints: list[dict[str, Any]] | None = None,
         run_space_planned_run_count: int | None = None,
@@ -199,7 +202,11 @@ class JsonlTraceDriver(TraceDriver):
             "run_space_spec_id": run_space_spec_id,
             "run_space_launch_id": run_space_launch_id,
             "run_space_attempt": run_space_attempt,
+            "run_space_combine_mode": run_space_combine_mode,
+            "run_space_total_runs": run_space_total_runs,
         }
+        if run_space_max_runs_limit is not None:
+            record["run_space_max_runs_limit"] = run_space_max_runs_limit
         if run_space_inputs_id is not None:
             record["run_space_inputs_id"] = run_space_inputs_id
         if run_space_input_fingerprints:

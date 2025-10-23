@@ -62,6 +62,7 @@ class _CaptureRunSpaceTrace(TraceDriver):
 
 
 def test_pipeline_start_carries_run_space_fks(tmp_path):
+    """Test that pipeline_start carries composite FK (launch_id + attempt), not spec_id/inputs_id."""
     driver = _CaptureRunSpaceTrace()
     pipeline = Pipeline(
         [
@@ -84,9 +85,9 @@ def test_pipeline_start_carries_run_space_fks(tmp_path):
     )
     pipeline.set_run_metadata(
         {
-            "args": {},
-            "run_space": {"combine": "product", "expanded_runs": 1},
             "trace_context": trace_ctx,
+            "run_space_index": 0,
+            "run_space_context": {"value": 1.0},
         }
     )
 
@@ -94,7 +95,11 @@ def test_pipeline_start_carries_run_space_fks(tmp_path):
 
     assert driver.pipeline_starts, "expected pipeline_start to be emitted"
     record = driver.pipeline_starts[0]
-    assert record["run_space_spec_id"] == "a" * 64
+    # Verify composite FK (launch_id + attempt), not spec_id/inputs_id
     assert record["run_space_launch_id"] == "launch-id"
     assert record["run_space_attempt"] == 3
-    assert record["run_space_inputs_id"] == "b" * 64
+    assert record["run_space_index"] == 0
+    assert record["run_space_context"] == {"value": 1.0}
+    # Verify spec_id and inputs_id are NOT in pipeline_start
+    assert "run_space_spec_id" not in record
+    assert "run_space_inputs_id" not in record
