@@ -77,12 +77,18 @@ def test_full_flow_self_contained(tmp_path):
         run_space_spec_id="a" * 64,
         run_space_launch_id=launch.id,
         run_space_attempt=launch.attempt,
+        run_space_combine_mode="combinatorial",
+        run_space_total_runs=1,
         run_space_planned_run_count=1,
     )
 
     pipeline = _build_pipeline(tmp_path, driver)
     pipeline.set_run_metadata(
-        {"args": {}, "run_space": {"expanded_runs": 1}, "trace_context": trace_ctx}
+        {
+            "trace_context": trace_ctx,
+            "run_space_index": 0,
+            "run_space_context": {},
+        }
     )
     pipeline.process(Payload(NoDataType(), ContextType({})))
 
@@ -109,9 +115,12 @@ def test_full_flow_self_contained(tmp_path):
     pipeline_start = next(
         rec for rec in records if rec["record_type"] == "pipeline_start"
     )
-    assert pipeline_start["run_space_spec_id"] == "a" * 64
+    # Verify composite FK (launch_id + attempt), not spec_id/inputs_id
     assert pipeline_start["run_space_launch_id"] == launch.id
     assert pipeline_start["run_space_attempt"] == launch.attempt
+    assert pipeline_start["run_space_index"] == 0
+    assert pipeline_start["run_space_context"] == {}
+    assert "run_space_spec_id" not in pipeline_start
     assert "run_space_inputs_id" not in pipeline_start
 
 
@@ -157,6 +166,8 @@ def test_full_flow_with_file_inputs(tmp_path):
         run_space_spec_id=identity.spec_id,
         run_space_launch_id=launch.id,
         run_space_attempt=launch.attempt,
+        run_space_combine_mode="product",
+        run_space_total_runs=1,
         run_space_inputs_id=identity.inputs_id,
         run_space_input_fingerprints=identity.fingerprints,
         run_space_planned_run_count=1,
@@ -165,9 +176,9 @@ def test_full_flow_with_file_inputs(tmp_path):
     pipeline = _build_pipeline(tmp_path, driver)
     pipeline.set_run_metadata(
         {
-            "args": {},
-            "run_space": {"expanded_runs": 1},
             "trace_context": trace_ctx,
+            "run_space_index": 0,
+            "run_space_context": {"value": 1},
         }
     )
     pipeline.process(Payload(NoDataType(), ContextType({})))
@@ -192,11 +203,18 @@ def test_full_flow_with_file_inputs(tmp_path):
     )
     assert run_space_start["run_space_inputs_id"] == identity.inputs_id
     assert run_space_start["run_space_input_fingerprints"]
+    assert run_space_start["run_space_combine_mode"] == "product"
+    assert run_space_start["run_space_total_runs"] == 1
 
     # Load pipeline events from main trace file
     records = _load_records(ser_files[-1])
     pipeline_start = next(
         rec for rec in records if rec["record_type"] == "pipeline_start"
     )
-    assert pipeline_start["run_space_inputs_id"] == identity.inputs_id
-    assert pipeline_start["run_space_spec_id"] == identity.spec_id
+    # Verify composite FK (launch_id + attempt), not spec_id/inputs_id
+    assert pipeline_start["run_space_launch_id"] == launch.id
+    assert pipeline_start["run_space_attempt"] == launch.attempt
+    assert pipeline_start["run_space_index"] == 0
+    assert pipeline_start["run_space_context"] == {"value": 1}
+    assert "run_space_inputs_id" not in pipeline_start
+    assert "run_space_spec_id" not in pipeline_start

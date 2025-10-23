@@ -28,6 +28,21 @@
           "minimum": 1,
           "description": "1-based retry counter within the same run_space_launch_id"
         },
+        "run_space_combine_mode": {
+          "type": "string",
+          "enum": ["combinatorial", "by_position"],
+          "description": "Expansion mode: combinatorial (cross product) or by_position (zip)"
+        },
+        "run_space_total_runs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of runs in this launch"
+        },
+        "run_space_max_runs_limit": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Safety limit from configuration (max_runs)"
+        },
         "run_space_planned_run_count": { "type": "integer", "minimum": 0 },
         "run_space_input_fingerprints": {
           "type": "array",
@@ -52,7 +67,7 @@
           "description": "External inputs used to expand the run-space at launch time"
         }
       },
-      "required": ["run_space_spec_id", "run_space_launch_id", "run_space_attempt"],
+      "required": ["run_space_spec_id", "run_space_launch_id", "run_space_attempt", "run_space_combine_mode", "run_space_total_runs"],
       "additionalProperties": true
     }
   ]
