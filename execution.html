@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -289,7 +295,7 @@ for detailed architectural information.</p>
 <p>The core lifecycle now lives in
 <a class="reference internal" href="#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator" title="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a>.
 It canonicalises the pipeline, snapshots context before/after each node, collects
-<code class="docutils literal notranslate"><span class="pre">io_delta</span></code> details, emits built-in pre/post checks, and attaches environment
+<code class="docutils literal notranslate"><span class="pre">context_delta</span></code> details, emits built-in pre/post assertions, and attaches environment
 pins for every SER. Concrete orchestrators implement only two hooks:</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">_submit_and_wait(node_callable,</span> <span class="pre">*,</span> <span class="pre">ser_hooks)</span></code></dt><dd><p>Runs a node and returns its <a class="reference internal" href="pipeline.html#semantiva.pipeline.payload.Payload" title="semantiva.pipeline.payload.Payload"><code class="xref py py-class docutils literal notranslate"><span class="pre">Payload</span></code></a>.</p>
@@ -399,15 +405,15 @@ executor/transport while benefiting from the shared SER logic.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.execution.executor.executor.</span></span><span class="sig-name descname"><span class="pre">SemantivaExecutor</span></span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SemantivaExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor" title="Link to this definition">¶</a></dt>
 <dd><dl class="py class">
 <dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SERHooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trigger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream_evidence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_delta_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_checks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_checks_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_pins_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redaction_policy_provider</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SemantivaExecutor.SERHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SERHooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upstream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trigger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream_evidence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_delta_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_checks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_checks_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_pins_provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redaction_policy_provider</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/execution/executor/executor.html#SemantivaExecutor.SERHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks" title="Link to this definition">¶</a></dt>
 <dd><dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider">
-<span class="sig-name descname"><span class="pre">env_pins_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.context_delta_provider">
+<span class="sig-name descname"><span class="pre">context_delta_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.context_delta_provider" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.io_delta_provider">
-<span class="sig-name descname"><span class="pre">io_delta_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.io_delta_provider" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider">
+<span class="sig-name descname"><span class="pre">env_pins_provider</span></span><a class="headerlink" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -682,8 +688,8 @@ executor/transport while benefiting from the shared SER logic.</p>
 <li><a class="reference internal" href="#semantiva.execution.orchestrator.factory.build_orchestrator"><code class="docutils literal notranslate"><span class="pre">build_orchestrator()</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor</span></code></a><ul>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks</span></code></a><ul>
+<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.context_delta_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.context_delta_provider</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.env_pins_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.env_pins_provider</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.io_delta_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.io_delta_provider</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.post_checks_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.post_checks_provider</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.pre_checks"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.pre_checks</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.redaction_policy_provider"><code class="docutils literal notranslate"><span class="pre">SemantivaExecutor.SERHooks.redaction_policy_provider</span></code></a></li>

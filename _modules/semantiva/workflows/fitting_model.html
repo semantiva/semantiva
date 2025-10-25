@@ -203,11 +203,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/registry.html">Registry System</a></li>
@@ -215,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
@@ -345,10 +351,10 @@
 
     <span class="n">CONTEXT_OUTPUT_KEY</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;fit.parameters&quot;</span>
 
-<div class="viewcode-block" id="ModelFittingContextProcessor.with_context_keyword">
-<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor.with_context_keyword">[docs]</a>
+<div class="viewcode-block" id="ModelFittingContextProcessor.with_context_key">
+<a class="viewcode-back" href="../../../workflows_fitting_models.html#semantiva.workflows.fitting_model.ModelFittingContextProcessor.with_context_key">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">with_context_keyword</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="s2">&quot;ModelFittingContextProcessor&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">with_context_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="s2">&quot;ModelFittingContextProcessor&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a subclass with :data:`CONTEXT_OUTPUT_KEY` bound to ``key``.&quot;&quot;&quot;</span>
         <span class="n">safe</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_OUT_</span><span class="si">{</span><span class="n">safe</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -386,7 +392,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_model_fitting_processor_factory</span><span class="p">(</span>
     <span class="n">independent_var_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">dependent_var_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">context_keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">context_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ModelFittingContextProcessor</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create ModelFittingContextProcessor with custom parameter mapping.</span>
 
@@ -396,7 +402,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        independent_var_key: Parameter name for x-axis data</span>
 <span class="sd">        dependent_var_key: Parameter name/path for y-axis data (supports &quot;nested.path&quot;)</span>
-<span class="sd">        context_keyword: Output key for fit results</span>
+<span class="sd">        context_key: Output key for fit results</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Dynamically created processor subclass with custom parameter mapping</span>
@@ -404,7 +410,7 @@
     <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
 
     <span class="c1"># Determine output key</span>
-    <span class="n">output_key</span> <span class="o">=</span> <span class="n">context_keyword</span> <span class="ow">or</span> <span class="n">ModelFittingContextProcessor</span><span class="o">.</span><span class="n">CONTEXT_OUTPUT_KEY</span>
+    <span class="n">output_key</span> <span class="o">=</span> <span class="n">context_key</span> <span class="ow">or</span> <span class="n">ModelFittingContextProcessor</span><span class="o">.</span><span class="n">CONTEXT_OUTPUT_KEY</span>
 
     <span class="c1"># Parse dependent variable key to separate parameter name from nested path</span>
     <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">dependent_var_key</span><span class="p">:</span>

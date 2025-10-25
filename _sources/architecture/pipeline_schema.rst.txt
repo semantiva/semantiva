@@ -43,7 +43,7 @@ extend the base ``pipeline.nodes`` definition:
 
       trace:
         driver: jsonl
-        output_path: ./ser/
+        output_path: ./trace/
         options:
           detail: all
 
@@ -53,30 +53,48 @@ extend the base ``pipeline.nodes`` definition:
 
          semantiva run my_pipeline.yaml \
             --trace.driver jsonl \
-            --trace.output ./ser/ \
+            --trace.output ./trace/ \
             --trace.option detail=all
 
-``fanout``
-   Declaratively expand a pipeline into multiple runs by injecting values into
-   the execution context. Two modes are supported:
+``run_space``
+   Define a set of runs by expanding context keys. A run space contains:
 
-   ``param`` / ``values``
-      Single-parameter fan-out. Each value is injected into the context under
-      ``param`` for an independent run.
+   ``combine``
+      How blocks combine globally. ``combinatorial`` (default) computes a Cartesian
+      product across blocks; ``by_position`` requires blocks to have identical run
+      counts and aligns them by index.
 
-   ``multi``
-      Multiple parameters zipped together. All lists must have equal length.
+   ``max_runs``
+      Safety limit on the total number of runs. The planner raises a
+      configuration error when the expansion exceeds this cap.
 
-   Values can be embedded inline or loaded from ``values_file`` (JSON or YAML).
-   The ``mode`` field is reserved for future expansion and currently defaults to
-   ``zip``.
+   ``dry_run``
+      When ``true``, the planner reports the expansion (sizes, block metadata,
+      sample runs) and exits before executing nodes.
+
+   ``blocks``
+      A list of block objects. Each block defines ``mode`` (``by_position`` or
+      ``combinatorial``) and either ``context`` (mapping of key -> list) or
+      ``source`` (CSV/JSON/YAML/NDJSON file with optional ``select``/``rename``).
+      Sources follow rows-as-runs semantics: each row/object becomes one run,
+      and the block's ``mode`` controls whether lists are aligned by index or
+      combined combinatorially. ``by_position`` blocks require all lists to have
+      equal length; ``combinatorial`` blocks compute full Cartesian products within
+      the block. Duplicate context keys across blocks (or within a block between
+      ``context`` and ``source``) raise an error.
 
    .. code-block:: yaml
 
-      fanout:
-        multi:
-          value: [3.0, 5.0, 9.5]
-          factor: [2.0, 3.0, 5.0]
+      run_space:
+        blocks:
+          - mode: by_position
+            context:
+              value: [3.0, 5.0, 9.5]
+              factor: [2.0, 3.0, 5.0]
+          - mode: combinatorial
+            context:
+              seed: [1, 2]
+              batch_size: [16, 32]
 
 Validation
 ----------
@@ -90,8 +108,8 @@ The loader enforces strict shapes for these blocks:
 Refer to :doc:`../cli` for the corresponding command-line flags and to
 :doc:`../examples_index` for runnable YAML examples.
 
-Each fan-out run produces SER evidence with ``why_ok.args`` populated with the
-fan-out index, mode, injected values, and source metadata (including SHA-256
-hashes when values originate from external files). This guarantees reproducible
-audit trails for batch executions. See :doc:`../cli` for CLI flags mirroring the
-schema and :doc:`../examples_index` for runnable examples.
+Each run-space expansion produces SER evidence with ``assertions.args`` populated
+with ``run_space.index``, ``run_space.total``, ``run_space.combine``, and the
+per-run context. Block metadata includes source provenance (path, type,
+SHA-256) when external files are involved. See :doc:`../cli` for CLI flags
+mirroring the schema and :doc:`../examples_index` for runnable examples.

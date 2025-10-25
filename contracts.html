@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -266,9 +272,10 @@
 <h1>Semantiva Contracts<a class="headerlink" href="#semantiva-contracts" title="Link to this heading">¶</a></h1>
 <p>Semantiva components follow a set of metadata and type-contract rules.  The
 <strong class="command">semantiva dev lint</strong> command audits components against these rules and
-prints diagnostics with stable <code class="docutils literal notranslate"><span class="pre">SVA</span></code> codes.</p>
+prints diagnostics with stable Semantiva Validation Assertions (<code class="docutils literal notranslate"><span class="pre">SVA</span></code>) codes.</p>
 <section id="rule-catalog">
 <h2>Rule catalog<a class="headerlink" href="#rule-catalog" title="Link to this heading">¶</a></h2>
+<p>| Semantiva Validation Assertions (SVA) enumerate contract checks enforced by <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code>. |</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>

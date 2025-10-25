@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Introspection &amp; Validation" href="introspection_validation.html"><link rel="prev" title="Semantiva Studio Viewer" href="studio_viewer.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="SER v1 JSON Schema" href="schema_semantic_execution_record_v1.html"><link rel="prev" title="Semantiva Studio Viewer" href="studio_viewer.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Step Evidence Record (SER) v0 — draft - Semantiva 0.5.0 documentation</title>
+        <title>Semantic Execution Record (SER) v1 - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -262,88 +268,84 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="step-evidence-record-ser-v0-draft">
-<h1>Step Evidence Record (SER) v0 — draft<a class="headerlink" href="#step-evidence-record-ser-v0-draft" title="Link to this heading">¶</a></h1>
-<p>Semantiva records pipeline execution using the <strong>Step Evidence Record (SER) v0 (draft)</strong>.  A
+          <section id="semantic-execution-record-ser-v1">
+<h1>Semantic Execution Record (SER) v1<a class="headerlink" href="#semantic-execution-record-ser-v1" title="Link to this heading">¶</a></h1>
+<p>Semantiva records pipeline execution using the <strong>Semantic Execution Record (SER) v1</strong>.  A
 single SER is emitted for every node that runs and contains:</p>
 <ul class="simple">
-<li><p>stable identifiers for the run, pipeline and node</p></li>
-<li><p>the node’s upstream dependencies</p></li>
-<li><p>action information (operation reference and parameters)</p></li>
-<li><p>a minimal input/output delta</p></li>
-<li><p>check results explaining why the node ran and why it was considered OK</p></li>
+<li><p>stable identifiers for the run, pipeline and node under <code class="docutils literal notranslate"><span class="pre">identity</span></code></p></li>
+<li><p>the node’s upstream dependencies via <code class="docutils literal notranslate"><span class="pre">dependencies.upstream</span></code></p></li>
+<li><p>processor details (<code class="docutils literal notranslate"><span class="pre">processor.ref</span></code> with parameters and their sources)</p></li>
+<li><p>a minimal context delta describing reads and writes</p></li>
+<li><p>structured assertions explaining why the node ran and why it was OK</p></li>
 <li><p>timing information (wall and CPU)</p></li>
 <li><p>explicit status and optional error details</p></li>
 <li><p>optional summaries for input/output data and context snapshots</p></li>
+<li><p>optional <code class="docutils literal notranslate"><span class="pre">tags</span></code> for downstream correlation</p></li>
 </ul>
 <p>SERs are written to <code class="docutils literal notranslate"><span class="pre">*.ser.jsonl</span></code> files where each line is a JSON object.  Tools
 and the Studio viewer consume these records directly.</p>
 <section id="example-ser">
 <h2>Example SER<a class="headerlink" href="#example-ser" title="Link to this heading">¶</a></h2>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ser&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;schema_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;run_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;run-…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;pipeline_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plid-…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;node_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;n-3&quot;</span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;topology&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;upstream&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;n-2&quot;</span><span class="p">]},</span>
-<span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;op_ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatBasicProbe&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;context_keyword&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;probed_data&quot;</span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;param_source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;context_keyword&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;node&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="nt">&quot;record_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ser&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;schema_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;identity&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;run_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;run-…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;pipeline_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plid-…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;node_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;n-3&quot;</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;upstream&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;n-2&quot;</span><span class="p">]},</span>
+<span class="w">  </span><span class="nt">&quot;processor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;semantiva.examples.test_utils.FloatBasicProbe&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;context_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;probed_data&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;parameter_sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;context_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;node&quot;</span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;io_delta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;created&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;updated&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
-<span class="w">    </span><span class="nt">&quot;summaries&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;context_delta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;read_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;created_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;updated_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;key_summaries&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;probed_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;len&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;checks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;why_run&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;trigger&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dependency&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;upstream_evidence&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;node_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;n-2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;completed&quot;</span><span class="p">}],</span>
-<span class="w">      </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;required_keys_present&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;expected&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;missing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]}</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input_type_ok&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;expected&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;actual&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">      </span><span class="p">],</span>
-<span class="w">      </span><span class="nt">&quot;policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;why_ok&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;post&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;output_type_ok&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;expected&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;actual&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">}</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;context_writes_realized&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;created&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;updated&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;missing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">      </span><span class="p">],</span>
-<span class="w">      </span><span class="nt">&quot;invariants&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
-<span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;python&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.11.2&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;implementation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cpython&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Linux-…&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;semantiva&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.1.0.dev0+dummy&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;numpy&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;pandas&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w"> </span><span class="p">},</span>
+<span class="w"> </span><span class="nt">&quot;assertions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;trigger&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dependency&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;upstream_evidence&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;node_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;n-2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;succeeded&quot;</span><span class="p">}],</span>
+<span class="w">    </span><span class="nt">&quot;preconditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;required_keys_present&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;expected&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;missing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]}</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;redaction&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;timing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;end&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;duration_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;cpu_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;completed&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;labels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;node_fqn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatBasicProbe&quot;</span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input_type_ok&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;expected&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;actual&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;postconditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;output_type_ok&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;expected&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;actual&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;context_writes_realized&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;details&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;created_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;probed_data&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;updated_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;missing_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;invariants&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;environment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;python&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.12.0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Linux-…&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;semantiva&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.2.0.dev0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;numpy&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;pandas&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;redaction_policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">   </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;run_space.index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;run_space.combine&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;combinatorial&quot;</span><span class="p">}</span>
+<span class="w"> </span><span class="p">},</span>
+<span class="w"> </span><span class="nt">&quot;timing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;started_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;finished_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;wall_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;cpu_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;succeeded&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;node_ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;semantiva.examples.test_utils.FloatBasicProbe&quot;</span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;summaries&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;input_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;sha256&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;output_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatDataType&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;sha256&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">}</span>
@@ -351,19 +353,17 @@ and the Studio viewer consume these records directly.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">checks</span></code> block now always contains:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">why_run.pre</span></code> – built-in validation executed before the node runs.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">why_ok.post</span></code> – output validations that ran after the node returned.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">why_ok.env</span></code> – minimal, non-sensitive environment pins for reproducibility.</p></li>
-</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">assertions</span></code> block always contains structured evidence describing why the
+node ran and why it was considered successful. Additional metadata (like
+<code class="docutils literal notranslate"><span class="pre">trigger</span></code> and <code class="docutils literal notranslate"><span class="pre">upstream_evidence</span></code>) is included alongside the formal
+preconditions/postconditions for convenient consumption.</p>
 <p>Detail flags control which summary fields are emitted when using the JSONL
 driver:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code> (default) – include <code class="docutils literal notranslate"><span class="pre">sha256</span></code> hashes only.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">repr</span></code> – additionally include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for input/output data.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> – with <code class="docutils literal notranslate"><span class="pre">repr</span></code> also include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for pre/post context.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">all</span></code> – enable all of the above.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code> (default) - include <code class="docutils literal notranslate"><span class="pre">sha256</span></code> hashes only.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repr</span></code> - additionally include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for input/output data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> - with <code class="docutils literal notranslate"><span class="pre">repr</span></code> also include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for pre/post context.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">all</span></code> - enable all of the above.</p></li>
 </ul>
 </section>
 <section id="versioning-policy">
@@ -383,36 +383,36 @@ driver:</p>
 <h2>Schema<a class="headerlink" href="#schema" title="Link to this heading">¶</a></h2>
 <p>The canonical JSON Schema ships with the package and can be loaded via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span>
-<span class="n">schema</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;semantiva.trace.schema&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;ser_v0.schema.json&quot;</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;semantiva.trace.schema&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;semantic_execution_record_v1.schema.json&quot;</span>
 </pre></div>
 </div>
 </section>
-<section id="io-delta">
-<h2>IO Delta<a class="headerlink" href="#io-delta" title="Link to this heading">¶</a></h2>
-<p>Each SER now includes an <code class="docutils literal notranslate"><span class="pre">io_delta</span></code> describing how the node interacted with context:</p>
+<section id="context-delta">
+<h2>Context Delta<a class="headerlink" href="#context-delta" title="Link to this heading">¶</a></h2>
+<p>Each SER includes a <code class="docutils literal notranslate"><span class="pre">context_delta</span></code> describing how the node interacted with context:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">read</span></code>: declared required keys (if provided by the processor)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">created</span></code>: new keys written by the node</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">updated</span></code>: existing keys whose values changed</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">summaries</span></code> (changed keys only): <code class="docutils literal notranslate"><span class="pre">dtype</span></code>, <code class="docutils literal notranslate"><span class="pre">len</span></code>, <code class="docutils literal notranslate"><span class="pre">rows</span></code>, and optional
+<li><p><code class="docutils literal notranslate"><span class="pre">read_keys</span></code>: declared required keys (if provided by the processor)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">created_keys</span></code>: new keys written by the node</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">updated_keys</span></code>: existing keys whose values changed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">key_summaries</span></code> (changed keys only): <code class="docutils literal notranslate"><span class="pre">dtype</span></code>, <code class="docutils literal notranslate"><span class="pre">len</span></code>, <code class="docutils literal notranslate"><span class="pre">rows</span></code>, and optional
 <code class="docutils literal notranslate"><span class="pre">sha256</span></code> (<code class="docutils literal notranslate"><span class="pre">hash</span></code> flag) and <code class="docutils literal notranslate"><span class="pre">repr</span></code> (<code class="docutils literal notranslate"><span class="pre">repr</span></code> flag)</p></li>
 </ul>
 </section>
-<section id="checks-via-serhooks">
-<h2>Checks via SERHooks<a class="headerlink" href="#checks-via-serhooks" title="Link to this heading">¶</a></h2>
+<section id="assertions-via-serhooks">
+<h2>Assertions via SERHooks<a class="headerlink" href="#assertions-via-serhooks" title="Link to this heading">¶</a></h2>
 <p>The template-method orchestrator collects SER evidence centrally. The base
 <a class="reference internal" href="execution.html#semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator" title="semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SemantivaOrchestrator</span></code></a>
-builds the pre/post check lists, captures <code class="docutils literal notranslate"><span class="pre">io_delta</span></code> snapshots, and pins the
+builds the pre/post assertion lists, captures <code class="docutils literal notranslate"><span class="pre">context_delta</span></code> snapshots, and pins the
 runtime environment exactly once per node. Downstream policy engines can extend
 these hooks (for example via <code class="docutils literal notranslate"><span class="pre">_extra_pre_checks</span></code>) but every SER produced
-by the runtime includes the following checks out of the box—even on error.
+by the runtime includes the following assertions out of the box—even on error.
 When a node fails, the exception entry is followed by the standard
 <code class="docutils literal notranslate"><span class="pre">output_type_ok</span></code> and <code class="docutils literal notranslate"><span class="pre">context_writes_realized</span></code> checks so failure records
 retain the same structure as successful ones.</p>
 </section>
-<section id="built-in-checks">
-<h2>Built-in checks<a class="headerlink" href="#built-in-checks" title="Link to this heading">¶</a></h2>
-<p>The runtime emits the following check entries for every node:</p>
+<section id="built-in-assertions">
+<h2>Built-in assertions<a class="headerlink" href="#built-in-assertions" title="Link to this heading">¶</a></h2>
+<p>The runtime emits the following assertion entries for every node:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <thead>
@@ -425,33 +425,33 @@ retain the same structure as successful ones.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">required_keys_present</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">why_run.pre</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">assertions.preconditions</span></code></p></td>
 <td><p>Declared context keys are available before execution.</p></td>
 <td><p>All required keys present.</p></td>
 <td><p>Missing keys listed in <code class="docutils literal notranslate"><span class="pre">details.missing</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_type_ok</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">why_run.pre</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">assertions.preconditions</span></code></p></td>
 <td><p>Input payload matches the processor’s <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code>.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">details.actual</span></code> matches <code class="docutils literal notranslate"><span class="pre">details.expected</span></code>.</p></td>
 <td><p>Type mismatch triggers <code class="docutils literal notranslate"><span class="pre">FAIL</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">config_valid</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">why_run.pre</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">assertions.preconditions</span></code></p></td>
 <td><p>Node configuration contains no unrecognised parameters.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">WARN</span></code> lists <code class="docutils literal notranslate"><span class="pre">details.invalid</span></code>; omitted when the node cannot report invalid parameters.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">WARN</span></code> when inspection detected invalid parameters.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">output_type_ok</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">why_ok.post</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">assertions.postconditions</span></code></p></td>
 <td><p>Output payload matches the processor’s <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code>.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">details.actual</span></code> matches <code class="docutils literal notranslate"><span class="pre">details.expected</span></code>.</p></td>
 <td><p>Type mismatch triggers <code class="docutils literal notranslate"><span class="pre">FAIL</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">context_writes_realized</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">why_ok.post</span></code></p></td>
-<td><p>Context keys declared in <code class="docutils literal notranslate"><span class="pre">io_delta.created</span></code>/<code class="docutils literal notranslate"><span class="pre">updated</span></code> exist after execution.</p></td>
-<td><p>All declared keys materialised, <code class="docutils literal notranslate"><span class="pre">details.missing</span></code> empty.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">assertions.postconditions</span></code></p></td>
+<td><p>Context keys declared in <code class="docutils literal notranslate"><span class="pre">context_delta.created_keys</span></code>/<code class="docutils literal notranslate"><span class="pre">updated_keys</span></code> exist after execution.</p></td>
+<td><p>All declared keys materialised, <code class="docutils literal notranslate"><span class="pre">details.missing_keys</span></code> empty.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">FAIL</span></code> when writes were declared but no value was persisted.</p></td>
 </tr>
 </tbody>
@@ -460,10 +460,23 @@ retain the same structure as successful ones.</p>
 </section>
 <section id="environment-pins">
 <h2>Environment pins<a class="headerlink" href="#environment-pins" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">checks.why_ok.env</span></code> captures a reproducibility snapshot: Python runtime,
+<p><code class="docutils literal notranslate"><span class="pre">assertions.environment</span></code> captures a reproducibility snapshot: Python runtime,
 implementation, platform string, Semantiva version, and optional third-party
 versions (<code class="docutils literal notranslate"><span class="pre">numpy</span></code>/<code class="docutils literal notranslate"><span class="pre">pandas</span></code> when installed). Values are simple strings or
 <code class="docutils literal notranslate"><span class="pre">null</span></code> and contain no host-specific secrets.</p>
+</section>
+<section id="timing">
+<h2>Timing<a class="headerlink" href="#timing" title="Link to this heading">¶</a></h2>
+<p>Each SER includes a <code class="docutils literal notranslate"><span class="pre">timing</span></code> object describing execution durations and
+timestamps. Fields:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">wall_ms</span></code> <em>(required)</em> — wall-clock duration in milliseconds (&gt;= 0).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpu_ms</span></code> <em>(optional)</em> — CPU time measured on the reporting host in
+milliseconds (&gt;= 0). This field may be omitted when running on devices or
+in distributed executors where CPU attribution is unreliable (for example,
+GPU-backed processing or remote worker pools).</p></li>
+</ul>
+<p>When present, <code class="docutils literal notranslate"><span class="pre">started_at</span></code> and <code class="docutils literal notranslate"><span class="pre">finished_at</span></code> should be ISO 8601 timestamps.</p>
 </section>
 </section>
 
@@ -472,12 +485,12 @@ versions (<code class="docutils literal notranslate"><span class="pre">numpy</sp
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="introspection_validation.html">
+          <a class="next-page" href="schema_semantic_execution_record_v1.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Introspection &amp; Validation</div>
+                <div class="title">SER v1 JSON Schema</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -522,14 +535,15 @@ versions (<code class="docutils literal notranslate"><span class="pre">numpy</sp
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Step Evidence Record (SER) v0 — draft</a><ul>
+<li><a class="reference internal" href="#">Semantic Execution Record (SER) v1</a><ul>
 <li><a class="reference internal" href="#example-ser">Example SER</a></li>
 <li><a class="reference internal" href="#versioning-policy">Versioning Policy</a></li>
 <li><a class="reference internal" href="#schema">Schema</a></li>
-<li><a class="reference internal" href="#io-delta">IO Delta</a></li>
-<li><a class="reference internal" href="#checks-via-serhooks">Checks via SERHooks</a></li>
-<li><a class="reference internal" href="#built-in-checks">Built-in checks</a></li>
+<li><a class="reference internal" href="#context-delta">Context Delta</a></li>
+<li><a class="reference internal" href="#assertions-via-serhooks">Assertions via SERHooks</a></li>
+<li><a class="reference internal" href="#built-in-assertions">Built-in assertions</a></li>
 <li><a class="reference internal" href="#environment-pins">Environment pins</a></li>
+<li><a class="reference internal" href="#timing">Timing</a></li>
 </ul>
 </li>
 </ul>

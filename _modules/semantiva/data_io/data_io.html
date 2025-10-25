@@ -203,11 +203,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/registry.html">Registry System</a></li>
@@ -215,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
@@ -269,6 +275,11 @@
 <span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
+
+<span class="sd">&quot;&quot;&quot;Data sources and sinks for reading from and writing to external systems.</span>
+
+<span class="sd">Provides base classes for data boundaries.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>

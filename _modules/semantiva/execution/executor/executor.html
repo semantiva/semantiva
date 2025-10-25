@@ -203,11 +203,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../architecture/registry.html">Registry System</a></li>
@@ -215,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference.html">API Reference</a></li>
@@ -299,10 +305,19 @@
 <a class="viewcode-back" href="../../../../execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks">[docs]</a>
     <span class="nd">@dataclass</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">SERHooks</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execution record hook bundle used by executors.</span>
+
+<span class="sd">        A container of metadata providers and evidence that an executor may</span>
+<span class="sd">        attach to a task invocation for tracing and validation. Fields include</span>
+<span class="sd">        upstream dependency ids, the trigger label, upstream evidence blobs,</span>
+<span class="sd">        and callables providing context deltas, pre/post checks, environment</span>
+<span class="sd">        pins, and redaction policies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">upstream</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
         <span class="n">trigger</span><span class="p">:</span> <span class="nb">str</span>
         <span class="n">upstream_evidence</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>
-        <span class="n">io_delta_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+        <span class="n">context_delta_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
         <span class="n">pre_checks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
         <span class="n">post_checks_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span>
         <span class="n">env_pins_provider</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
@@ -338,9 +353,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">_ImmediateFuture</span><span class="p">(</span><span class="n">Future</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A Future subclass that is already completed with a given result.</span>
-<span class="sd">        Used internally to wrap synchronous call results.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A Future already completed with a provided result.</span>
+
+<span class="sd">        Used by the synchronous executor to present a uniform Future-based</span>
+<span class="sd">        API while executing callables immediately in the caller thread.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>

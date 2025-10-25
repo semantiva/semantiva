@@ -203,11 +203,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/registry.html">Registry System</a></li>
@@ -215,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
@@ -443,12 +449,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_iterate_sweep</span><span class="p">(</span>
     <span class="n">sequences</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;product&quot;</span><span class="p">,</span> <span class="s2">&quot;zip&quot;</span><span class="p">],</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span> <span class="s2">&quot;by_position&quot;</span><span class="p">],</span>
     <span class="n">broadcast</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">sequences</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;zip&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;by_position&quot;</span><span class="p">:</span>
         <span class="n">seq_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">sequences</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
         <span class="k">if</span> <span class="n">broadcast</span><span class="p">:</span>
             <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">seq_lengths</span><span class="p">)</span>
@@ -463,12 +469,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">seq_lengths</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;All variable sequences must have identical lengths in zip mode&quot;</span>
+                    <span class="s2">&quot;All variable sequences must have identical lengths in by_position mode&quot;</span>
                 <span class="p">)</span>
             <span class="n">step_count</span> <span class="o">=</span> <span class="n">seq_lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">step_count</span><span class="p">):</span>
             <span class="k">yield</span> <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="n">sequences</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">}</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># product</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># combinatorial</span>
         <span class="n">var_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sequences</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">var_seqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sequences</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">var_names</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">combo</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">var_seqs</span><span class="p">):</span>
@@ -543,11 +549,12 @@
         <span class="n">parametric_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">static_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">include_independent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;product&quot;</span><span class="p">,</span> <span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;product&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span> <span class="s2">&quot;by_position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span>
         <span class="n">broadcast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">expression_evaluator</span><span class="p">:</span> <span class="n">ExpressionEvaluator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataSource</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a DataSource subclass that sweeps over parameter combinations.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">element_kind</span> <span class="o">!=</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="s2">&quot;Sweep factory currently supports element_kind=&#39;DataSource&#39; only. &quot;</span>
@@ -560,8 +567,8 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;collection_output must be a DataCollectionType subclass&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">vars</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;vars must be non-empty&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;product&quot;</span><span class="p">,</span> <span class="s2">&quot;zip&quot;</span><span class="p">}:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode must be &#39;product&#39; or &#39;zip&#39;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span> <span class="s2">&quot;by_position&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode must be &#39;combinatorial&#39; or &#39;by_position&#39;&quot;</span><span class="p">)</span>
 
         <span class="n">evaluator</span> <span class="o">=</span> <span class="n">expression_evaluator</span> <span class="ow">or</span> <span class="n">ExpressionEvaluator</span><span class="p">()</span>
 
@@ -600,6 +607,7 @@
 
             <span class="nd">@classmethod</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">get_context_requirements</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Return list of context keys required by FromContext variable specifications.&quot;&quot;&quot;</span>
                 <span class="n">required</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">FromContext</span><span class="p">):</span>
@@ -608,10 +616,12 @@
 
             <span class="nd">@classmethod</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">get_processing_parameter_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Return list of parameter names needed for processing.&quot;&quot;&quot;</span>
                 <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_context_requirements</span><span class="p">()</span>
 
             <span class="nd">@classmethod</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Return list of context keys created by the sweep for each variable.&quot;&quot;&quot;</span>
                 <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_values&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="p">]</span>
 
             <span class="nd">@classmethod</span>

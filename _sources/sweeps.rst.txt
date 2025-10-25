@@ -40,10 +40,10 @@ Key concepts and parameters
 - ``include_independent`` (optional boolean): When true, the independent
   variables from ``vars`` will be forwarded to the element DataSource as
   parameters (in addition to any parametric expression outputs).
-- ``mode``: ``product`` (default) computes the Cartesian product of variable
-  sequences; ``zip`` pairs values element-wise (sequences must match lengths
+- ``mode``: ``combinatorial`` (default) computes the Cartesian product of variable
+  sequences; ``by_position`` pairs values element-wise (sequences must match lengths
   unless ``broadcast`` is true).
-- ``broadcast`` (boolean, only for ``zip`` mode): If true, shorter
+- ``broadcast`` (boolean, only for ``by_position`` mode): If true, shorter
   sequences are repeated to match the longest sequence length.
 
 Variable specification types
@@ -75,9 +75,9 @@ Variable specification types
 Modes
 -----
 
-- ``product``: Cartesian product of sequences. If you have ``t=[a,b]`` and
+- ``combinatorial``: Cartesian product of sequences. If you have ``t=[a,b]`` and
   ``p=[1,2]`` you'll get four combinations: ``(a,1),(a,2),(b,1),(b,2)``.
-- ``zip``: Element-wise pairing. With ``zip`` and ``broadcast=false`` the
+- ``by_position``: Element-wise pairing. With ``by_position`` and ``broadcast=false`` the
   sequences must have equal length, and each step uses the corresponding
   elements. With ``broadcast=true`` shorter sequences are repeated.
 
@@ -104,8 +104,8 @@ each ``t`` producing ``[0.0, 0.5, 1.0, 1.5, 2.0]`` which are passed as the
 ``value`` parameter to the element DataSource. If ``include_independent`` is
 true, the element will also receive ``t`` as a parameter along with ``value``.
 
-From context & zip mode
------------------------
+From context & by_position mode
+-------------------------------
 
 .. code-block:: yaml
 
@@ -118,13 +118,13 @@ From context & zip mode
             p:    {from_context: parameter_sets}
           parametric_expressions:
             name: "f'{file}_{p}'"
-          mode: "zip"
+          mode: "by_position"
           broadcast: true
 
 Explanation
 -----------
 Suppose the pipeline context contains ``discovered_files: ["a.tif", "b.tif"]``
-and ``parameter_sets: ["A", "B", "C"]``. With ``mode: zip`` and
+and ``parameter_sets: ["A", "B", "C"]``. With ``mode: by_position`` and
 ``broadcast: true`` the shorter sequence (``discovered_files``) is repeated
 to match the longer sequence, producing steps:
 
@@ -158,7 +158,7 @@ When using the programmatic API, call::
         collection_output=MyCollectionType,
         vars={ 't': RangeSpec(0,1,steps=5), 'file': SequenceSpec([...]) },
         parametric_expressions={ 'x': '50 + 20 * t', 'name': "'img_' + str(t)" },
-        mode='product'|'zip',
+        mode='combinatorial'|'by_position',
         include_independent=True|False,
     )
 
@@ -180,7 +180,7 @@ Good practices
 - Prefer explicit ``SequenceSpec`` or ``RangeSpec`` in YAML for readability.
 - Use ``FromContext`` when sweep values are produced earlier in the same
   pipeline. The inspection output will list these required context keys.
-- Use ``mode: zip`` when you want element-wise pairing. If sequences have
+- Use ``mode: by_position`` when you want element-wise pairing. If sequences have
   differing lengths and you still want element-wise operation, set
   ``broadcast: true`` to repeat shorter sequences.
 

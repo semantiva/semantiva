@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -320,6 +326,10 @@ reported during inspection and raise an error before execution.</p>
 <span class="w">        </span><span class="nt">unknown</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test&quot;</span><span class="w">  </span><span class="c1"># ❌ Invalid (not accepted by processor)</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The typo <code class="docutils literal notranslate"><span class="pre">facotr</span></code> is intentional, to demonstrate how strict validation catches misspelled parameter names.</p>
+</div>
 </section>
 <section id="cli-inspection-with-strict">
 <h3>CLI Inspection with –strict<a class="headerlink" href="#cli-inspection-with-strict" title="Link to this heading">¶</a></h3>
@@ -355,7 +365,7 @@ semantiva<span class="w"> </span>inspect<span class="w"> </span>bad_pipeline.yam
 <section id="running-a-pipeline-from-python">
 <h2>Running a Pipeline from Python<a class="headerlink" href="#running-a-pipeline-from-python" title="Link to this heading">¶</a></h2>
 <p>You can load a pipeline from YAML and execute it programmatically.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">load_pipeline_from_yaml</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">load_pipeline_from_yaml</span>
 
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;hello_pipeline.yaml&quot;</span><span class="p">)</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
@@ -397,7 +407,7 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 <p><a class="reference internal" href="glossary.html#term-Resolver"><span class="xref std std-term">Resolver</span></a>s enable declarative references to objects and values:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">model:PolynomialFittingModel:degree=2</span></code> — instantiate a descriptor-backed model</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">slicer:/context/roi/window</span></code> — pull a value from the context map</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slice:/context/roi/window</span></code> — pull a value from the context map</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">rename:</span></code>, <code class="docutils literal notranslate"><span class="pre">delete:</span></code> — transform parameter maps</p></li>
 </ul>
 <p>Example:</p>
@@ -406,7 +416,7 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelFittingContextProcessor</span>
 <span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">fitting_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;model:PolynomialFittingModel:degree=2&quot;</span>
-<span class="w">        </span><span class="nt">context_keyword</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fit_coefficients&quot;</span>
+<span class="w">        </span><span class="nt">context_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fit_coefficients&quot;</span>
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="extensions.html"><span class="doc">Extending Semantiva (Registries &amp; Extensions)</span></a> for resolver overview and best practices.</p>

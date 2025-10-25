@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -278,35 +284,84 @@
 </section>
 <section id="quickstart-hello-pipeline">
 <h2>Quickstart - Hello Pipeline<a class="headerlink" href="#quickstart-hello-pipeline" title="Link to this heading">¶</a></h2>
-<p>Save the following minimal pipeline definition to a file (e.g. <code class="docutils literal notranslate"><span class="pre">hello_pipeline.yaml</span></code>):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<p>Create <code class="docutils literal notranslate"><span class="pre">hello_pipeline.yaml</span></code> with the following contents:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;semantiva-examples&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">trace</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jsonl</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./trace</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
 <span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatAddOperation</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">addend</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatMultiplyOperation</span>
 <span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
+<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatCollectValueProbe</span>
+<span class="w">      </span><span class="nt">context_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;result&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template:&quot;result_{result}.txt&quot;:path</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatTxtFileSaver</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output_float.txt&quot;</span>
+</pre></div>
+</div>
+<p>Run the pipeline:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>This command executes the pipeline, emits JSONL SER traces in <code class="docutils literal notranslate"><span class="pre">./trace</span></code>, and
+writes the computed result to <code class="docutils literal notranslate"><span class="pre">result_&lt;value&gt;.txt</span></code>.</p>
+</section>
+<section id="run-space-with-csv-input">
+<h2>Run-Space with CSV input<a class="headerlink" href="#run-space-with-csv-input" title="Link to this heading">¶</a></h2>
+<p>Create <code class="docutils literal notranslate"><span class="pre">runs.csv</span></code> alongside <code class="docutils literal notranslate"><span class="pre">run_space_csv.yaml</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>value,factor,addend
+1.0,10.0,1.0
+2.0,20.0,1.0
+3.5,30.0,1.0
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;semantiva-examples&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">run_space</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
+<span class="w">      </span><span class="nt">source</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./runs.csv</span>
+<span class="w">        </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">value</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">factor</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">addend</span><span class="p p-Indicator">]</span>
+
+<span class="nt">trace</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jsonl</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./trace_csv</span>
+<span class="w">  </span><span class="nt">options</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">detail</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatAddOperation</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatMultiplyOperation</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatCollectValueProbe</span>
+<span class="w">      </span><span class="nt">context_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;result&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template:&quot;{value}_plus_{addend}_times_{factor}_equals_{result}.txt&quot;:path</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatTxtFileSaver</span>
 </pre></div>
 </div>
 <p>Run it with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>run_space_csv.yaml<span class="w"> </span>-v
 </pre></div>
 </div>
-<p>This command executes the pipeline and prints out pipeline execution logs.</p>
-<p>You can also run the pipeline with tracing enabled.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello_pipeline.yaml<span class="w"> </span>--trace.driver<span class="w"> </span>jsonl<span class="w"> </span>--trace.option<span class="w"> </span><span class="nv">detail</span><span class="o">=</span>all<span class="w"> </span>--trace.output<span class="w"> </span>traces/
-</pre></div>
-</div>
-<p>This command will produce detailed execution traces.</p>
+<p>Each row in <code class="docutils literal notranslate"><span class="pre">runs.csv</span></code> launches a run-space execution that emits SER traces in
+<code class="docutils literal notranslate"><span class="pre">./trace_csv</span></code> and writes the formatted result file for that run.</p>
 </section>
 <section id="running-a-pipeline-from-python">
 <h2>Running a Pipeline from Python<a class="headerlink" href="#running-a-pipeline-from-python" title="Link to this heading">¶</a></h2>
 <p>You can load a pipeline from YAML and execute it programmatically.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">load_pipeline_from_yaml</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">load_pipeline_from_yaml</span>
 
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;hello_pipeline.yaml&quot;</span><span class="p">)</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
@@ -324,7 +379,7 @@
 <li><p><a class="reference internal" href="concepts.html"><span class="doc">Concepts</span></a></p></li>
 <li><p><a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a></p></li>
 <li><p><a class="reference internal" href="studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a></p></li>
-<li><p><a class="reference internal" href="ser.html"><span class="doc">Step Evidence Record (SER) v0 — draft</span></a></p></li>
+<li><p><a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a></p></li>
 </ul>
 </section>
 <section id="see-also">
@@ -392,6 +447,7 @@
 <li><a class="reference internal" href="#install-run-your-first-pipeline">Install &amp; run your first pipeline</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#quickstart-hello-pipeline">Quickstart - Hello Pipeline</a></li>
+<li><a class="reference internal" href="#run-space-with-csv-input">Run-Space with CSV input</a></li>
 <li><a class="reference internal" href="#running-a-pipeline-from-python">Running a Pipeline from Python</a></li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 <li><a class="reference internal" href="#see-also">See also</a></li>

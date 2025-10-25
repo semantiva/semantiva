@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
@@ -280,8 +286,8 @@ general component resolution and execution-specific component management.</p>
 data collections, and fitting models. Handles dynamic class discovery from
 modules imported at runtime.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">NameResolverRegistry</span></code></dt><dd><p>Stores prefix-based resolvers (<code class="docutils literal notranslate"><span class="pre">rename:</span></code>, <code class="docutils literal notranslate"><span class="pre">delete:</span></code>, <code class="docutils literal notranslate"><span class="pre">stringbuild:</span></code>,
-<code class="docutils literal notranslate"><span class="pre">slicer:</span></code>) that expand declarative YAML strings into processor classes.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">NameResolverRegistry</span></code></dt><dd><p>Stores prefix-based resolvers (<code class="docutils literal notranslate"><span class="pre">rename:</span></code>, <code class="docutils literal notranslate"><span class="pre">delete:</span></code>, <code class="docutils literal notranslate"><span class="pre">template:</span></code>,
+<code class="docutils literal notranslate"><span class="pre">slice:</span></code>) that expand declarative YAML strings into processor classes.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">ParameterResolverRegistry</span></code></dt><dd><p>Maintains resolvers that transform configuration values recursively before
 processor instantiation. Resolvers are applied to dict values, list/tuple items,
@@ -428,7 +434,7 @@ instance. The snapshot always enables <code class="docutils literal notranslate"
 module history that has been applied.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">fingerprint()</span></code></dt><dd><p>Produces a SHA-256 hash of a normalised representation of the profile. The
-fingerprint is pinned into every SER under <code class="docutils literal notranslate"><span class="pre">why_ok.env.registry.fingerprint</span></code>.</p>
+fingerprint is pinned into every SER under <code class="docutils literal notranslate"><span class="pre">assertions.environment.registry.fingerprint</span></code>.</p>
 </dd>
 </dl>
 </section>
@@ -439,7 +445,7 @@ fingerprint is pinned into every SER under <code class="docutils literal notrans
 <li><p><strong>ProcessorRegistry.register_modules(DEFAULT_MODULES)</strong></p>
 <ul class="simple">
 <li><p>Registers core data processors, context processors, and fitting models</p></li>
-<li><p>Ensures built-in resolvers (rename, delete, stringbuild, slicer, model) are available</p></li>
+<li><p>Ensures built-in resolvers (rename, delete, template, slice, model) are available</p></li>
 <li><p>Calls <code class="docutils literal notranslate"><span class="pre">ExecutionComponentRegistry.initialize_defaults()</span></code></p></li>
 </ul>
 </li>

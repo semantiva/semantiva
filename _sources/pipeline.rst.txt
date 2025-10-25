@@ -68,6 +68,9 @@ Parameters in YAML configuration are validated against processor signatures:
            facotr: 3.0      # ❌ Invalid (typo)
            unknown: "test"  # ❌ Invalid (not accepted by processor)
 
+.. note::
+   The typo ``facotr`` is intentional, to demonstrate how strict validation catches misspelled parameter names.
+
 CLI Inspection with --strict
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -109,7 +112,7 @@ You can load a pipeline from YAML and execute it programmatically.
 
 .. code-block:: python
 
-   from semantiva.pipeline import Pipeline, load_pipeline_from_yaml
+   from semantiva import Pipeline, load_pipeline_from_yaml
 
    nodes = load_pipeline_from_yaml("hello_pipeline.yaml")
    p = Pipeline(nodes)
@@ -151,7 +154,7 @@ Objects in Pipeline Configurations
 :term:`Resolver`\s enable declarative references to objects and values:
 
 - ``model:PolynomialFittingModel:degree=2`` — instantiate a descriptor-backed model
-- ``slicer:/context/roi/window`` — pull a value from the context map
+- ``slice:/context/roi/window`` — pull a value from the context map
 - ``rename:``, ``delete:`` — transform parameter maps
 
 Example:
@@ -163,7 +166,7 @@ Example:
        - processor: ModelFittingContextProcessor
          parameters:
            fitting_model: "model:PolynomialFittingModel:degree=2"
-           context_keyword: "fit_coefficients"
+           context_key: "fit_coefficients"
 
 See :doc:`extensions` for resolver overview and best practices.
 

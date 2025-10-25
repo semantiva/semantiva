@@ -37,11 +37,12 @@ Execute a pipeline.
                       [--trace.driver NAME]
                       [--trace.output PATH-or-DriverSpec]
                       [--trace.option key=value]...
-                      [--fanout.param NAME]
-                      [--fanout.values SEQ]
-                      [--fanout.values-file PATH]
-                      [--fanout.multi NAME=SEQ]...
-                      [--fanout.multi-file PATH]
+                      [--run-space-file PATH]
+                      [--run-space-max-runs INT]
+                      [--run-space-dry-run]
+                      [--run-space-launch-id TEXT]
+                      [--run-space-idempotency-key TEXT]
+                      [--run-space-attempt INT]
                       [--version]
 
 **Arguments**
@@ -62,14 +63,15 @@ Execute a pipeline.
 - ``--execution.executor``     Resolve executor via the Execution Component Registry (ECR).
 - ``--execution.transport``    Resolve transport via the Execution Component Registry (ECR).
 - ``--execution.option``       Key/value pairs forwarded to the orchestrator ``options``.
-- ``--trace.driver``           Trace driver name (``none``, ``jsonl``, ``pythonpath``, or registry class).
-- ``--trace.output``           Trace output path or ``module:Class`` when ``driver=pythonpath``.
+- ``--trace.driver``           Trace driver name (``jsonl``).
+- ``--trace.output``           Trace output path for the JSONL driver (directory or file).
 - ``--trace.option``           Additional driver keyword arguments (repeatable).
-- ``--fanout.param``           Single-parameter fan-out target name.
-- ``--fanout.values``          Values for single-parameter fan-out (JSON list or comma-separated).
-- ``--fanout.values-file``     External JSON/YAML file supplying fan-out values.
-- ``--fanout.multi``           Multi-parameter ZIP values (repeatable ``name=[...]`` arguments).
-- ``--fanout.multi-file``      External JSON/YAML mapping supplying multi fan-out values.
+- ``--run-space-file``         Path to a YAML file containing a ``run_space`` block (overrides pipeline YAML).
+- ``--run-space-max-runs``     Override the run-space safety limit on total runs.
+- ``--run-space-dry-run``      Plan the run space and print the expansion without executing nodes.
+- ``--run-space-launch-id``    Explicit ``run_space_launch_id`` to reuse for this execution.
+- ``--run-space-idempotency-key``  Deterministically derive ``run_space_launch_id`` using the spec/inputs hash.
+- ``--run-space-attempt``      Retry counter (integer ≥ 1) for the specified run-space launch.
 - ``--version``                Show CLI version.
 
 CLI flags mirror the YAML schema. Any value provided on the command line
@@ -83,6 +85,26 @@ ensuring consistent SER output across orchestrator implementations.
   In YAML, use the plural key ``options`` under ``trace`` and ``execution``. The
   CLI uses repeatable singular flags ``--trace.option`` and ``--execution.option``
   to populate those mappings.
+
+Plan-only example
+-----------------
+
+.. code-block:: console
+
+   $ semantiva run --run-space-file rs.yaml --run-space-dry-run
+   Run Space Plan
+     combine: combinatorial
+     max_runs: 1000
+     expanded_runs: 12
+     blocks:
+       - #0: mode=by_position, size=3, keys=['value', 'factor', 'addend']
+       - #1: mode=combinatorial, size=4, keys=['seed']
+     preview:
+       1: {"value":1.0,"factor":10.0,"addend":1.0,"seed":1}
+       2: {"value":1.0,"factor":10.0,"addend":1.0,"seed":2}
+       …
+       11: {"value":3.5,"factor":30.0,"addend":1.0,"seed":1}
+       12: {"value":3.5,"factor":30.0,"addend":1.0,"seed":2}
 
 **Component Resolution**
 The CLI loads extensions before constructing execution components so that the

@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -265,14 +271,14 @@
           <section id="concepts">
 <h1>Concepts<a class="headerlink" href="#concepts" title="Link to this heading">¶</a></h1>
 <p>Semantiva narrows the gap between bold ideas and concrete code. The framework
-promotes <strong>clarity</strong>, <strong>type‑safety</strong>, and <strong>semantic transparency</strong> so that a
+promotes <strong>clarity</strong>, <strong>type-safety</strong>, and <strong>semantic transparency</strong> so that a
 pipeline can be read, reasoned about, and audited. The sections below tell the
 story behind the core pieces and link to deeper references when you want more
 detail.</p>
 <section id="domain-driven-type-oriented-design">
 <h2>Domain-Driven &amp; Type-Oriented Design<a class="headerlink" href="#domain-driven-type-oriented-design" title="Link to this heading">¶</a></h2>
 <p>Semantiva pipelines are designed around your <em>domain concepts</em>. Data types are
-not afterthoughts – they are <strong>contracts</strong> between pipeline steps. When you
+not afterthoughts - they are <strong>contracts</strong> between pipeline steps. When you
 declare a <code class="docutils literal notranslate"><span class="pre">StringLiteralDataType</span></code> or a domain type like <code class="docutils literal notranslate"><span class="pre">DNASequence</span></code>, you
 state the expectations for both data and meaning. These contracts prevent
 miswired steps and make intent explicit. For more on defining custom types see
@@ -318,9 +324,9 @@ deeper in <a class="reference internal" href="context_processors.html"><span cla
 <section id="resolvers-parameters">
 <h2>Resolvers &amp; Parameters<a class="headerlink" href="#resolvers-parameters" title="Link to this heading">¶</a></h2>
 <p>Declarative specifications in YAML become executable graphs through <strong>resolvers</strong>.
-Class resolvers (<code class="docutils literal notranslate"><span class="pre">slicer:</span></code>, <code class="docutils literal notranslate"><span class="pre">rename:</span></code>, <code class="docutils literal notranslate"><span class="pre">delete:</span></code>) map concise strings to
+Class resolvers (<code class="docutils literal notranslate"><span class="pre">slice:</span></code>, <code class="docutils literal notranslate"><span class="pre">rename:</span></code>, <code class="docutils literal notranslate"><span class="pre">delete:</span></code>) map concise strings to
 Python classes, while parameter resolvers (<code class="docutils literal notranslate"><span class="pre">model:</span></code>) inject runtime objects
-without hard‑coding them. This mechanism keeps pipelines declarative yet
+without hard-coding them. This mechanism keeps pipelines declarative yet
 flexible. For the full resolver registry and extension mechanism consult
 <a class="reference internal" href="extensions.html"><span class="doc">Extending Semantiva (Registries &amp; Extensions)</span></a>.</p>
 </section>
@@ -335,7 +341,7 @@ results and rationale.</p>
 <section id="minimal-epistemic-unit-meu">
 <span id="id1"></span><h2>Minimal Epistemic Unit (MEU)<a class="headerlink" href="#minimal-epistemic-unit-meu" title="Link to this heading">¶</a></h2>
 <p>Every computation produces an epistemic tuple: <strong>Claim</strong>, <strong>Justification</strong>, <strong>Context</strong>, <strong>Trace</strong>.
-See <a class="reference internal" href="glossary.html"><span class="doc">Glossary</span></a> and <a class="reference internal" href="ser.html"><span class="doc">Step Evidence Record (SER) v0 — draft</span></a> for how context/trace surface in practice.</p>
+See <a class="reference internal" href="glossary.html"><span class="doc">Glossary</span></a> and <a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> for how context/trace surface in practice.</p>
 </section>
 </section>
 

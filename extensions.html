@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -307,6 +313,7 @@
 <h3>Parameter Resolvers<a class="headerlink" href="#parameter-resolvers" title="Link to this heading">¶</a></h3>
 <p>Register custom parameter transformation functions:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry.parameter_resolver_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterResolverRegistry</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">my_param_resolver</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;myenv:&quot;</span><span class="p">):</span>
@@ -321,11 +328,12 @@
 <h3>Name Resolvers<a class="headerlink" href="#name-resolvers" title="Link to this heading">¶</a></h3>
 <p>Register custom name-based processor resolvers:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry.name_resolver_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">NameResolverRegistry</span>
+<span class="c1"># Example mapping: &quot;myprefix:multiply&quot; -&gt; a known processor class</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">my_name_resolver</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;myprefix:&quot;</span><span class="p">):</span>
-        <span class="c1"># Return a processor class or None</span>
-        <span class="k">return</span> <span class="n">resolve_my_custom_processor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;myprefix:multiply&quot;</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatMultiplyOperation</span>
+        <span class="k">return</span> <span class="n">FloatMultiplyOperation</span>
     <span class="k">return</span> <span class="kc">None</span>
 
 <span class="n">NameResolverRegistry</span><span class="o">.</span><span class="n">register_resolver</span><span class="p">(</span><span class="s2">&quot;myprefix:&quot;</span><span class="p">,</span> <span class="n">my_name_resolver</span><span class="p">)</span>

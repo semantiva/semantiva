@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Semantiva Studio Viewer" href="studio_viewer.html"><link rel="prev" title="Semantiva Contracts" href="contracts.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Run Space (v1): blocks that expand context" href="run_space.html"><link rel="prev" title="Semantiva Contracts" href="contracts.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Sweeps in YAML - Semantiva 0.5.0 documentation</title>
@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -304,10 +310,10 @@ passed unchanged to every element invocation.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">include_independent</span></code> (optional boolean): When true, the independent
 variables from <code class="docutils literal notranslate"><span class="pre">vars</span></code> will be forwarded to the element DataSource as
 parameters (in addition to any parametric expression outputs).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: <code class="docutils literal notranslate"><span class="pre">product</span></code> (default) computes the Cartesian product of variable
-sequences; <code class="docutils literal notranslate"><span class="pre">zip</span></code> pairs values element-wise (sequences must match lengths
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> (default) computes the Cartesian product of variable
+sequences; <code class="docutils literal notranslate"><span class="pre">by_position</span></code> pairs values element-wise (sequences must match lengths
 unless <code class="docutils literal notranslate"><span class="pre">broadcast</span></code> is true).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code> (boolean, only for <code class="docutils literal notranslate"><span class="pre">zip</span></code> mode): If true, shorter
+<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code> (boolean, only for <code class="docutils literal notranslate"><span class="pre">by_position</span></code> mode): If true, shorter
 sequences are repeated to match the longest sequence length.</p></li>
 </ul>
 </section>
@@ -336,9 +342,9 @@ system.</p>
 <section id="modes">
 <h2>Modes<a class="headerlink" href="#modes" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">product</span></code>: Cartesian product of sequences. If you have <code class="docutils literal notranslate"><span class="pre">t=[a,b]</span></code> and
+<li><p><code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>: Cartesian product of sequences. If you have <code class="docutils literal notranslate"><span class="pre">t=[a,b]</span></code> and
 <code class="docutils literal notranslate"><span class="pre">p=[1,2]</span></code> you’ll get four combinations: <code class="docutils literal notranslate"><span class="pre">(a,1),(a,2),(b,1),(b,2)</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">zip</span></code>: Element-wise pairing. With <code class="docutils literal notranslate"><span class="pre">zip</span></code> and <code class="docutils literal notranslate"><span class="pre">broadcast=false</span></code> the
+<li><p><code class="docutils literal notranslate"><span class="pre">by_position</span></code>: Element-wise pairing. With <code class="docutils literal notranslate"><span class="pre">by_position</span></code> and <code class="docutils literal notranslate"><span class="pre">broadcast=false</span></code> the
 sequences must have equal length, and each step uses the corresponding
 elements. With <code class="docutils literal notranslate"><span class="pre">broadcast=true</span></code> shorter sequences are repeated.</p></li>
 </ul>
@@ -365,8 +371,8 @@ each <code class="docutils literal notranslate"><span class="pre">t</span></code
 <code class="docutils literal notranslate"><span class="pre">value</span></code> parameter to the element DataSource. If <code class="docutils literal notranslate"><span class="pre">include_independent</span></code> is
 true, the element will also receive <code class="docutils literal notranslate"><span class="pre">t</span></code> as a parameter along with <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p>
 </section>
-<section id="from-context-zip-mode">
-<h2>From context &amp; zip mode<a class="headerlink" href="#from-context-zip-mode" title="Link to this heading">¶</a></h2>
+<section id="from-context-by-position-mode">
+<h2>From context &amp; by_position mode<a class="headerlink" href="#from-context-by-position-mode" title="Link to this heading">¶</a></h2>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sweep:AnalysisDataSource:AnalysisCollection&quot;</span>
@@ -376,7 +382,7 @@ true, the element will also receive <code class="docutils literal notranslate"><
 <span class="w">          </span><span class="nt">p</span><span class="p">:</span><span class="w">    </span><span class="p p-Indicator">{</span><span class="nt">from_context</span><span class="p">:</span><span class="w"> </span><span class="nv">parameter_sets</span><span class="p p-Indicator">}</span>
 <span class="w">        </span><span class="nt">parametric_expressions</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f&#39;{file}_{p}&#39;&quot;</span>
-<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;zip&quot;</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;by_position&quot;</span>
 <span class="w">        </span><span class="nt">broadcast</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>
@@ -384,7 +390,7 @@ true, the element will also receive <code class="docutils literal notranslate"><
 <section id="id1">
 <h2>Explanation<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <p>Suppose the pipeline context contains <code class="docutils literal notranslate"><span class="pre">discovered_files:</span> <span class="pre">[&quot;a.tif&quot;,</span> <span class="pre">&quot;b.tif&quot;]</span></code>
-and <code class="docutils literal notranslate"><span class="pre">parameter_sets:</span> <span class="pre">[&quot;A&quot;,</span> <span class="pre">&quot;B&quot;,</span> <span class="pre">&quot;C&quot;]</span></code>. With <code class="docutils literal notranslate"><span class="pre">mode:</span> <span class="pre">zip</span></code> and
+and <code class="docutils literal notranslate"><span class="pre">parameter_sets:</span> <span class="pre">[&quot;A&quot;,</span> <span class="pre">&quot;B&quot;,</span> <span class="pre">&quot;C&quot;]</span></code>. With <code class="docutils literal notranslate"><span class="pre">mode:</span> <span class="pre">by_position</span></code> and
 <code class="docutils literal notranslate"><span class="pre">broadcast:</span> <span class="pre">true</span></code> the shorter sequence (<code class="docutils literal notranslate"><span class="pre">discovered_files</span></code>) is repeated
 to match the longer sequence, producing steps:</p>
 <ul class="simple">
@@ -418,7 +424,7 @@ range.</p></li>
     <span class="n">collection_output</span><span class="o">=</span><span class="n">MyCollectionType</span><span class="p">,</span>
     <span class="nb">vars</span><span class="o">=</span><span class="p">{</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="n">RangeSpec</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">steps</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">SequenceSpec</span><span class="p">([</span><span class="o">...</span><span class="p">])</span> <span class="p">},</span>
     <span class="n">parametric_expressions</span><span class="o">=</span><span class="p">{</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="s1">&#39;50 + 20 * t&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s2">&quot;&#39;img_&#39; + str(t)&quot;</span> <span class="p">},</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;product&#39;</span><span class="o">|</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;combinatorial&#39;</span><span class="o">|</span><span class="s1">&#39;by_position&#39;</span><span class="p">,</span>
     <span class="n">include_independent</span><span class="o">=</span><span class="kc">True</span><span class="o">|</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
@@ -448,7 +454,7 @@ parameter.</p></li>
 <li><p>Prefer explicit <code class="docutils literal notranslate"><span class="pre">SequenceSpec</span></code> or <code class="docutils literal notranslate"><span class="pre">RangeSpec</span></code> in YAML for readability.</p></li>
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">FromContext</span></code> when sweep values are produced earlier in the same
 pipeline. The inspection output will list these required context keys.</p></li>
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">mode:</span> <span class="pre">zip</span></code> when you want element-wise pairing. If sequences have
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">mode:</span> <span class="pre">by_position</span></code> when you want element-wise pairing. If sequences have
 differing lengths and you still want element-wise operation, set
 <code class="docutils literal notranslate"><span class="pre">broadcast:</span> <span class="pre">true</span></code> to repeat shorter sequences.</p></li>
 </ul>
@@ -517,12 +523,12 @@ then passed to the element DataSource as the <code class="docutils literal notra
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="studio_viewer.html">
+          <a class="next-page" href="run_space.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Semantiva Studio Viewer</div>
+                <div class="title">Run Space (v1): blocks that expand context</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -575,7 +581,7 @@ then passed to the element DataSource as the <code class="docutils literal notra
 <li><a class="reference internal" href="#modes">Modes</a></li>
 <li><a class="reference internal" href="#basic-example">Basic example</a></li>
 <li><a class="reference internal" href="#explanation">Explanation</a></li>
-<li><a class="reference internal" href="#from-context-zip-mode">From context &amp; zip mode</a></li>
+<li><a class="reference internal" href="#from-context-by-position-mode">From context &amp; by_position mode</a></li>
 <li><a class="reference internal" href="#id1">Explanation</a></li>
 <li><a class="reference internal" href="#inspection">Inspection</a></li>
 <li><a class="reference internal" href="#api-reference-short">API reference (short)</a></li>

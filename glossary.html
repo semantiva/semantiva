@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -263,79 +269,309 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="glossary">
-<h1>Glossary<a class="headerlink" href="#glossary" title="Link to this heading">¶</a></h1>
-<dl class="simple glossary">
-<dt id="term-Class-Resolver">Class Resolver<a class="headerlink" href="#term-Class-Resolver" title="Link to this term">¶</a></dt><dd><p>Resolves a <code class="docutils literal notranslate"><span class="pre">processor</span></code> reference (typically via Fully Qualified Class Name) to an
-importable Python class in the current environment.</p>
-</dd>
-<dt id="term-Context">Context<a class="headerlink" href="#term-Context" title="Link to this term">¶</a></dt><dd><p>Execution key/value store with safe mutation (required/created/suppressed keys).</p>
-</dd>
-<dt id="term-DataOperation">DataOperation<a class="headerlink" href="#term-DataOperation" title="Link to this term">¶</a></dt><dd><p>A processor that transforms one typed <code class="docutils literal notranslate"><span class="pre">data</span></code> value into another within a Payload.</p>
-</dd>
-<dt id="term-DataType">DataType<a class="headerlink" href="#term-DataType" title="Link to this term">¶</a></dt><dd><p>A typed wrapper for domain data; used to enforce contracts between operations.</p>
-</dd>
-<dt id="term-GraphV1">GraphV1<a class="headerlink" href="#term-GraphV1" title="Link to this term">¶</a></dt><dd><p>The canonical, normalized graph representation constructed from a pipeline spec
-(e.g., YAML). GraphV1 guarantees deterministic identity for nodes and pipelines.
-See <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>.</p>
-</dd>
-<dt id="term-Node">Node<a class="headerlink" href="#term-Node" title="Link to this term">¶</a></dt><dd><p>A factory-generated wrapper (users do not subclass nodes).</p>
-</dd>
-<dt id="term-Parameter-Resolver">Parameter Resolver<a class="headerlink" href="#term-Parameter-Resolver" title="Link to this term">¶</a></dt><dd><p>Transforms parameter maps, e.g.,</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">slicer:</span></code> — reference/slice a value from context/parameters</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">rename:</span></code> — rename keys according to a mapping</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delete:</span></code> — remove keys or subtrees</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">model:</span></code> — wrap a live object behind a serializable descriptor</p></li>
+<span id="id1"></span><h1>Glossary<a class="headerlink" href="#glossary" title="Link to this heading">¶</a></h1>
+<p>This glossary defines Semantiva’s public concepts as used in the graph model,
+runtime execution, and the SER (Semantic Execution Record).</p>
+<section id="core-runtime-objects">
+<h2>Core Runtime Objects<a class="headerlink" href="#core-runtime-objects" title="Link to this heading">¶</a></h2>
+<dl class="glossary">
+<dt id="term-Graph-GraphV1">Graph (GraphV1)<a class="headerlink" href="#term-Graph-GraphV1" title="Link to this term">¶</a></dt><dd><p>The canonical, deterministic representation of a pipeline, including nodes,
+edges, processor references, parameters, and stable identifiers.</p>
+<p><strong>Ontological role:</strong> Declarative plan that a runtime executes.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Docs: <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>, <a class="reference internal" href="trace_graph_alignment.html"><span class="doc">Trace ↔ Graph Alignment</span></a></p></li>
 </ul>
-</dd>
-<dt id="term-Payload">Payload<a class="headerlink" href="#term-Payload" title="Link to this term">¶</a></dt><dd><p>The envelope passed between nodes during execution, carrying both <strong>data</strong>
-(a typed value, subclass of <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code>) and <strong>context</strong> (metadata dict
-with required/created/suppressed keys). Pipelines return a Payload on <code class="docutils literal notranslate"><span class="pre">process</span></code>.</p>
-</dd>
-<dt id="term-Pipeline">Pipeline<a class="headerlink" href="#term-Pipeline" title="Link to this term">¶</a></dt><dd><p>The ordered execution of factory-generated nodes wrapping processors.</p>
-</dd>
-<dt id="term-PipelineId">PipelineId<a class="headerlink" href="#term-PipelineId" title="Link to this term">¶</a></dt><dd><p>Deterministic identifier for a pipeline derived from its canonical spec
-(formatting changes do not affect it). Appears in inspection output and trace records.</p>
-</dd>
-<dt id="term-Processor">Processor<a class="headerlink" href="#term-Processor" title="Link to this term">¶</a></dt><dd><p>A single-responsibility unit of computation (DataOperation, DataProbe, IO, ContextProcessor).</p>
-</dd>
-<dt id="term-Resolver">Resolver<a class="headerlink" href="#term-Resolver" title="Link to this term">¶</a></dt><dd><p>A mechanism that rewrites or resolves parts of a configuration during spec parsing
-or realization. Examples include parameter slicing, renaming, and object modeling.</p>
-</dd>
-<dt id="term-Trace-Driver">Trace Driver<a class="headerlink" href="#term-Trace-Driver" title="Link to this term">¶</a></dt><dd><p>A pluggable sink that writes trace events. In 0.5.0, the built-in driver is
-<code class="docutils literal notranslate"><span class="pre">jsonl</span></code> (one record per line). See <a class="reference internal" href="ser.html"><span class="doc">Step Evidence Record (SER) v0 — draft</span></a>.</p>
-</dd>
-<dt id="term-node_uuid">node_uuid<a class="headerlink" href="#term-node_uuid" title="Link to this term">¶</a></dt><dd><p>Positional, stable identifier for a node within GraphV1. Used to align inspection,
-tracing, and Viewer node details. See <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>.</p>
-</dd>
-<dt id="term-Context-Observer">Context Observer<a class="headerlink" href="#term-Context-Observer" title="Link to this term">¶</a></dt><dd><p>Mediates context writes/deletes from processors to the active context.</p>
-</dd>
-<dt id="term-Validating-Observer">Validating Observer<a class="headerlink" href="#term-Validating-Observer" title="Link to this term">¶</a></dt><dd><p>Observer that enforces declared created/suppressed keys.</p>
-</dd>
-<dt id="term-Required-keys">Required keys<a class="headerlink" href="#term-Required-keys" title="Link to this term">¶</a></dt><dd><p>Keys that must exist before the processor runs.</p>
-</dd>
-<dt id="term-Created-keys">Created keys<a class="headerlink" href="#term-Created-keys" title="Link to this term">¶</a></dt><dd><p>Keys a processor may create/update.</p>
-</dd>
-<dt id="term-Suppressed-keys">Suppressed keys<a class="headerlink" href="#term-Suppressed-keys" title="Link to this term">¶</a></dt><dd><p>Keys a processor may delete.</p>
-</dd>
-<dt id="term-Studio-Viewer">Studio Viewer<a class="headerlink" href="#term-Studio-Viewer" title="Link to this term">¶</a></dt><dd><p>Read-only UI for YAML pipeline visualization.</p>
 </dd>
 </dl>
-<section id="conventions">
-<h2>Conventions<a class="headerlink" href="#conventions" title="Link to this heading">¶</a></h2>
-<p>Use these terms and casing consistently:</p>
-<ul class="simple">
-<li><p><strong>Payload</strong>, <strong>GraphV1</strong>, <strong>PipelineId</strong>, <strong>Trace Driver</strong> (caps as shown)</p></li>
-<li><p><strong>node_uuid</strong> (monospace when referencing the exact field name)</p></li>
-<li><p>Use <a class="reference internal" href="#term-Payload"><span class="xref std std-term">Payload</span></a> on first mention in a section; likewise for other terms.</p></li>
-<li><p>Use monospace for field names: <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code>, <code class="docutils literal notranslate"><span class="pre">pipeline_id</span></code>, <code class="docutils literal notranslate"><span class="pre">t_wall</span></code>.</p></li>
-<li><p>Use singular for concept names (e.g., “a <a class="reference internal" href="#term-Payload"><span class="xref std std-term">Payload</span></a>”, not “payloads” in headings).</p></li>
+<p><strong>Usage guidance:</strong> Use <em>Graph</em> for the canonical compiled form (not ad-hoc
+YAML or runtime objects).</p>
+</dd>
+<dt id="term-Node">Node<a class="headerlink" href="#term-Node" title="Link to this term">¶</a></dt><dd><p>A graph element that binds a <a class="reference internal" href="#term-Processor"><span class="xref std std-term">Processor</span></a> with parameters and
+participates in edges.</p>
+<p><strong>Ontological role:</strong> Structural placement of a processor in the graph.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Graph: each node has a stable identifier (UUID) used in SER
+<code class="docutils literal notranslate"><span class="pre">identity.node_id</span></code></p></li>
 </ul>
+</dd>
+</dl>
+<p><strong>Usage guidance:</strong> Do not confuse Node (graph element) with Processor
+(class/logic).</p>
+</dd>
+<dt id="term-Processor">Processor<a class="headerlink" href="#term-Processor" title="Link to this term">¶</a></dt><dd><p>A Python class implementing a deterministic operation or an observation.</p>
+<p><strong>Ontological role:</strong> Executes logic over channels and/or context.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Graph: <code class="docutils literal notranslate"><span class="pre">processor_ref</span></code> (fully-qualified class name)</p></li>
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">processor.ref</span></code>, <code class="docutils literal notranslate"><span class="pre">processor.parameters</span></code>,
+<code class="docutils literal notranslate"><span class="pre">processor.parameter_sources</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Usage guidance:</strong> <em>Processor</em> refers to the class/implementation, not the
+Node.</p>
+</dd>
+<dt id="term-Processor-Reference">Processor Reference<a class="headerlink" href="#term-Processor-Reference" title="Link to this term">¶</a></dt><dd><p>A fully-qualified class name (FQCN) or descriptor that uniquely identifies a
+Processor class.</p>
+<p><strong>Ontological role:</strong> Allows reproducible instantiation of processors.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Graph: <code class="docutils literal notranslate"><span class="pre">processor_ref</span></code> (string)</p></li>
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">processor.ref</span></code> (string)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-GraphV1">GraphV1<a class="headerlink" href="#term-GraphV1" title="Link to this term">¶</a></dt><dd><p>Alias for <a class="reference internal" href="#term-Graph-GraphV1"><span class="xref std std-term">Graph (GraphV1)</span></a> used when referring to the canonical graph
+schema.</p>
+</dd>
+<dt id="term-PipelineId">PipelineId<a class="headerlink" href="#term-PipelineId" title="Link to this term">¶</a></dt><dd><p>Deterministic identifier for a pipeline derived from its canonical spec.</p>
+<p><strong>Technical mapping:</strong> Appears under SER <code class="docutils literal notranslate"><span class="pre">identity.pipeline_id</span></code> and graph
+inspection outputs.</p>
+</dd>
+<dt id="term-node_uuid">node_uuid<a class="headerlink" href="#term-node_uuid" title="Link to this term">¶</a></dt><dd><p>Stable identifier for a <a class="reference internal" href="#term-Node"><span class="xref std std-term">Node</span></a> within the canonical graph.</p>
+<p><strong>Technical mapping:</strong> Appears as <code class="docutils literal notranslate"><span class="pre">identity.node_id</span></code> in SER and in graph
+inspection tables.</p>
+</dd>
+<dt id="term-Payload">Payload<a class="headerlink" href="#term-Payload" title="Link to this term">¶</a></dt><dd><p>Runtime envelope carrying a typed <a class="reference internal" href="#term-Data-Channel"><span class="xref std std-term">Data Channel</span></a> value plus the active
+<a class="reference internal" href="#term-Context-Channel"><span class="xref std std-term">Context Channel</span></a> mapping.</p>
+<p><strong>Ontological role:</strong> Execution payload passed between nodes.</p>
+</dd>
+<dt id="term-Resolver">Resolver<a class="headerlink" href="#term-Resolver" title="Link to this term">¶</a></dt><dd><p>Mechanism that rewrites configuration fragments (e.g., parameter slicing,
+renaming, template expansion) while building the <a class="reference internal" href="#term-Graph-GraphV1"><span class="xref std std-term">Graph (GraphV1)</span></a>.</p>
+</dd>
+</dl>
 </section>
-<section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
-<p>For examples of resolver usage, see <a class="reference internal" href="pipeline.html#objects-in-pipeline-configurations"><span class="std std-ref">Objects in Pipeline Configurations</span></a>
-and the <em>Resolvers Overview</em> in <a class="reference internal" href="extensions.html"><span class="doc">Extending Semantiva (Registries &amp; Extensions)</span></a>.</p>
+<section id="channels-data">
+<h2>Channels &amp; Data<a class="headerlink" href="#channels-data" title="Link to this heading">¶</a></h2>
+<dl class="glossary">
+<dt id="term-Data-Channel">Data Channel<a class="headerlink" href="#term-Data-Channel" title="Link to this term">¶</a></dt><dd><p>The typed data flowing between processors. <strong>Data</strong> is subject to:
+(1) transformation by <a class="reference internal" href="#term-Data-Operation"><span class="xref std std-term">Data Operation</span></a>, and
+(2) observation by <a class="reference internal" href="#term-Data-Probe"><span class="xref std std-term">Data Probe</span></a>.</p>
+<p>Observations made by Data Probes are typically <strong>injected into the Context
+Channel</strong> under keys declared in the pipeline configuration.</p>
+<p><strong>Ontological role:</strong> Carries domain data through the pipeline.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Summaries may appear under SER <code class="docutils literal notranslate"><span class="pre">summaries</span></code> if trace policy enables it.</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Usage guidance:</strong> Keep Data Channel (data flow) distinct from Context
+Channel (key/value store).</p>
+</dd>
+<dt id="term-Context-Channel">Context Channel<a class="headerlink" href="#term-Context-Channel" title="Link to this term">¶</a></dt><dd><p>A mutable key/value store holding parameters, metadata, and runtime state.</p>
+<p>Context can be modified by <a class="reference internal" href="#term-Context-Processor"><span class="xref std std-term">Context Processor</span></a> or by
+<a class="reference internal" href="#term-Data-Processor"><span class="xref std std-term">Data Processor</span></a> that injects key/value entries. Context is observed
+in two independent phases:</p>
+<ol class="arabic simple">
+<li><p><strong>Parameter resolution</strong> — when a processor requires a parameter not
+declared on the node, Semantiva searches the Context Channel to satisfy it.</p></li>
+<li><p><strong>SER emission</strong> — optionally, the state of Context <strong>before</strong> and
+<strong>after</strong> node execution and the <strong>mutation delta</strong> are observed and
+recorded.</p></li>
+</ol>
+<p><strong>Ontological role:</strong> Shared execution state and metadata plane.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">context_delta.read_keys|created_keys|updated_keys|key_summaries</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Usage guidance:</strong> Any context-only observation outside SER emission is implemented by a <a class="reference internal" href="#term-Context-Processor"><span class="xref std std-term">Context Processor</span></a>.</p>
+</dd>
+</dl>
+</section>
+<section id="processor-families">
+<h2>Processor Families<a class="headerlink" href="#processor-families" title="Link to this heading">¶</a></h2>
+<dl class="glossary">
+<dt id="term-Data-Processor">Data Processor<a class="headerlink" href="#term-Data-Processor" title="Link to this term">¶</a></dt><dd><p>Any <a class="reference internal" href="#term-Processor"><span class="xref std std-term">Processor</span></a> that touches the <a class="reference internal" href="#term-Data-Channel"><span class="xref std std-term">Data Channel</span></a>. Includes
+<a class="reference internal" href="#term-Data-Operation"><span class="xref std std-term">Data Operation</span></a> and <a class="reference internal" href="#term-Data-Probe"><span class="xref std std-term">Data Probe</span></a>.</p>
+<p><strong>Ontological role:</strong> Umbrella term for processors that read from or write
+to the Data Channel.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Graph: nodes referencing Data Operations or Data Probes</p></li>
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">processor.ref</span></code> reflects the concrete class</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-Data-Operation">Data Operation<a class="headerlink" href="#term-Data-Operation" title="Link to this term">¶</a></dt><dd><p>Transforms values on the <a class="reference internal" href="#term-Data-Channel"><span class="xref std std-term">Data Channel</span></a> (e.g., filter, normalize, join).</p>
+<p><strong>Ontological role:</strong> Data transformation.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Effects may be summarized under SER <code class="docutils literal notranslate"><span class="pre">summaries</span></code> depending on trace policy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-Data-Probe">Data Probe<a class="headerlink" href="#term-Data-Probe" title="Link to this term">¶</a></dt><dd><p>Observes the <a class="reference internal" href="#term-Data-Channel"><span class="xref std std-term">Data Channel</span></a> without altering its data output. Probe
+observations are written into the <a class="reference internal" href="#term-Context-Channel"><span class="xref std std-term">Context Channel</span></a> under declared keys.</p>
+<p><strong>Ontological role:</strong> Data observation with side-effects in Context.</p>
+</dd>
+<dt id="term-Context-Processor">Context Processor<a class="headerlink" href="#term-Context-Processor" title="Link to this term">¶</a></dt><dd><p>Reads and/or mutates the <a class="reference internal" href="#term-Context-Channel"><span class="xref std std-term">Context Channel</span></a>. Any observation of context
+outside SER emission must be implemented as a Context Processor.</p>
+<p><strong>Ontological role:</strong> Context transformation and inspection.</p>
+</dd>
+<dt id="term-IO-Processor">IO Processor<a class="headerlink" href="#term-IO-Processor" title="Link to this term">¶</a></dt><dd><p>Interacts with external systems (read/write). Should capture sufficient
+metadata in Context for provenance (e.g., source path, checksums).</p>
+</dd>
+</dl>
+</section>
+<section id="execution-records-ser-vocabulary">
+<h2>Execution Records (SER Vocabulary)<a class="headerlink" href="#execution-records-ser-vocabulary" title="Link to this heading">¶</a></h2>
+<dl class="glossary">
+<dt id="term-Semantic-Execution-Record-SER">Semantic Execution Record (SER)<a class="headerlink" href="#term-Semantic-Execution-Record-SER" title="Link to this term">¶</a></dt><dd><p>One JSON record emitted for every completed node execution. Captures
+identity, dependencies, processor details, context delta, assertions, timing,
+status, and optional tags/summaries.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Schema: <a class="reference internal" href="schema_semantic_execution_record_v1.html"><span class="doc">SER v1 JSON Schema</span></a></p></li>
+<li><p>Driver: JSONL trace driver appends one line per SER</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-SERRecord">SERRecord<a class="headerlink" href="#term-SERRecord" title="Link to this term">¶</a></dt><dd><p>In-memory structure passed to drivers that serializes to SER JSON.</p>
+</dd>
+<dt id="term-Identity">Identity<a class="headerlink" href="#term-Identity" title="Link to this term">¶</a></dt><dd><p>Stable identifiers of run, pipeline, and node for the step currently
+recorded.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">identity.run_id</span></code>, <code class="docutils literal notranslate"><span class="pre">identity.pipeline_id</span></code>, <code class="docutils literal notranslate"><span class="pre">identity.node_id</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-Dependencies">Dependencies<a class="headerlink" href="#term-Dependencies" title="Link to this term">¶</a></dt><dd><p>Upstream node identifiers that provided inputs to this step.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">dependencies.upstream</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-Assertions">Assertions<a class="headerlink" href="#term-Assertions" title="Link to this term">¶</a></dt><dd><p>Structured check results grouped by phase (preconditions, postconditions,
+invariants), plus environment metadata and redaction policy.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">assertions.*</span></code> (including required <code class="docutils literal notranslate"><span class="pre">environment</span></code>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-Timing">Timing<a class="headerlink" href="#term-Timing" title="Link to this term">¶</a></dt><dd><p>Wall/CPU timing of the step; start/finish timestamps and wall-clock duration (ms).</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">timing.started_at</span></code> | <code class="docutils literal notranslate"><span class="pre">timing.finished_at</span></code> | <code class="docutils literal notranslate"><span class="pre">timing.wall_ms</span></code> | <code class="docutils literal notranslate"><span class="pre">timing.cpu_ms</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-Status">Status<a class="headerlink" href="#term-Status" title="Link to this term">¶</a></dt><dd><p>Final state of the step execution: <code class="docutils literal notranslate"><span class="pre">succeeded</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">skipped</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cancelled</span></code>.</p>
+</dd>
+<dt id="term-Tags">Tags<a class="headerlink" href="#term-Tags" title="Link to this term">¶</a></dt><dd><p>Optional labels for correlation and search.</p>
+</dd>
+<dt id="term-Summaries">Summaries<a class="headerlink" href="#term-Summaries" title="Link to this term">¶</a></dt><dd><p>Optional digests of inputs/outputs/context per trace policy.</p>
+</dd>
+<dt id="term-Context-Delta">Context Delta<a class="headerlink" href="#term-Context-Delta" title="Link to this term">¶</a></dt><dd><p>The context read/write sets and per-key summaries observed at SER emission.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>SER: <code class="docutils literal notranslate"><span class="pre">context_delta.*</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="run-space-identity">
+<h2>Run-Space Identity<a class="headerlink" href="#run-space-identity" title="Link to this heading">¶</a></h2>
+<dl class="glossary">
+<dt id="term-RSCF-v1">RSCF v1<a class="headerlink" href="#term-RSCF-v1" title="Link to this term">¶</a></dt><dd><p><strong>Run-Space Configuration Format v1</strong> — Canonical representation of a
+run-space specification that produces the deterministic <code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>
+identifier.</p>
+<p><strong>Ontological role:</strong> Plan identity for reproducible run-space launches.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Identity: <code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code></p></li>
+<li><p>Docs: <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a>, <a class="reference internal" href="run_space_emission.html"><span class="doc">Run-Space Emission (Runtime)</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt id="term-RSM-v1">RSM v1<a class="headerlink" href="#term-RSM-v1" title="Link to this term">¶</a></dt><dd><p><strong>Run-Space Materialization v1</strong> — Snapshot of external inputs referenced
+by a run-space plan that produces the deterministic <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code>
+identifier. Omitted when the run-space is self-contained.</p>
+<p><strong>Ontological role:</strong> Inputs identity for reproducible run-space launches.</p>
+<dl class="simple">
+<dt><strong>Technical mapping:</strong></dt><dd><ul class="simple">
+<li><p>Identity: <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code></p></li>
+<li><p>Docs: <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a>, <a class="reference internal" href="run_space_emission.html"><span class="doc">Run-Space Emission (Runtime)</span></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="trace-drivers">
+<h2>Trace &amp; Drivers<a class="headerlink" href="#trace-drivers" title="Link to this heading">¶</a></h2>
+<dl class="simple glossary">
+<dt id="term-Trace">Trace<a class="headerlink" href="#term-Trace" title="Link to this term">¶</a></dt><dd><p>The append-only sequence of SER entries (and lifecycle events) produced during execution.</p>
+</dd>
+<dt id="term-JsonlTraceDriver">JsonlTraceDriver<a class="headerlink" href="#term-JsonlTraceDriver" title="Link to this term">¶</a></dt><dd><p>A driver that writes each SER as a JSON line to a file (or to a timestamped file if given a directory).</p>
+</dd>
+</dl>
+</section>
+<section id="run-space-lifecycle">
+<h2>Run-Space Lifecycle<a class="headerlink" href="#run-space-lifecycle" title="Link to this heading">¶</a></h2>
+<dl class="simple glossary">
+<dt id="term-by_position">by_position<a class="headerlink" href="#term-by_position" title="Link to this term">¶</a></dt><dd><p>Index-aligned Run-Space expansion mode. Lists align by index so element <em>i</em> travels together.
+See <a class="reference internal" href="run_space.html"><span class="doc">Run Space (v1): blocks that expand context</span></a> for planner examples.</p>
+</dd>
+<dt id="term-combinatorial">combinatorial<a class="headerlink" href="#term-combinatorial" title="Link to this term">¶</a></dt><dd><p>Cartesian Run-Space expansion mode. All combinations across the provided values are materialized.
+See <a class="reference internal" href="run_space.html"><span class="doc">Run Space (v1): blocks that expand context</span></a> for planner examples.</p>
+</dd>
+<dt id="term-Run-Space-Spec-ID">Run-Space Spec ID<a class="headerlink" href="#term-Run-Space-Spec-ID" title="Link to this term">¶</a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code> — canonical identity of a Run-Space plan (RSCF v1).
+See <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a>.</p>
+</dd>
+<dt id="term-Run-Space-Inputs-ID">Run-Space Inputs ID<a class="headerlink" href="#term-Run-Space-Inputs-ID" title="Link to this term">¶</a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code> — canonical identity of the external inputs snapshot (RSM v1).
+Emitted when file-based inputs participate in the launch. See <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a>.</p>
+</dd>
+<dt id="term-Run-Space-Launch-ID">Run-Space Launch ID<a class="headerlink" href="#term-Run-Space-Launch-ID" title="Link to this term">¶</a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> — unique launch/session identifier shared by lifecycle, pipeline start, and SER records.
+See <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a> and <a class="reference internal" href="trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a>.</p>
+</dd>
+<dt id="term-Run-Space-Attempt">Run-Space Attempt<a class="headerlink" href="#term-Run-Space-Attempt" title="Link to this term">¶</a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — 1-based retry counter scoped to a launch. Increments on planner-level retries.
+See <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a>.</p>
+</dd>
+<dt id="term-Planned-Run-Count">Planned Run Count<a class="headerlink" href="#term-Planned-Run-Count" title="Link to this term">¶</a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">run_space_planned_run_count</span></code> — total number of runs expected from a launch when known.
+Emitted on <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> for inspection and aggregator completeness.</p>
+</dd>
+<dt id="term-Planned-Run-Count-SER">Planned Run Count (SER)<a class="headerlink" href="#term-Planned-Run-Count-SER" title="Link to this term">¶</a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">assertions.args.run_space.total</span></code> — per-run view of the total planned runs exposed in SER metadata.
+See <a class="reference internal" href="schema_semantic_execution_record_v1.html"><span class="doc">SER v1 JSON Schema</span></a>.</p>
+</dd>
+</dl>
+</section>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Link to this heading">¶</a></h2>
+<dl class="simple glossary">
+<dt id="term-Core-Trace-Aggregator">Core Trace Aggregator<a class="headerlink" href="#term-Core-Trace-Aggregator" title="Link to this term">¶</a></dt><dd><p>Service that consumes trace streams and produces Run/Launch aggregates with completeness verdicts.
+See <a class="reference internal" href="trace_aggregator_v1.html#trace-aggregator-v1"><span class="std std-ref">Trace Aggregator v1</span></a>.</p>
+</dd>
+<dt id="term-Run-Aggregate">Run Aggregate<a class="headerlink" href="#term-Run-Aggregate" title="Link to this term">¶</a></dt><dd><p>The in-memory summary of a single pipeline run (keyed by <code class="docutils literal notranslate"><span class="pre">run_id</span></code>) produced by the Core Trace Aggregator.
+Includes lifecycle presence, node coverage, timing, and a completeness verdict. See <a class="reference internal" href="trace_aggregator_v1.html#trace-aggregator-v1"><span class="std std-ref">Trace Aggregator v1</span></a>.</p>
+</dd>
+<dt id="term-Launch-Aggregate">Launch Aggregate<a class="headerlink" href="#term-Launch-Aggregate" title="Link to this term">¶</a></dt><dd><p>The in-memory summary of a run-space launch attempt (keyed by <code class="docutils literal notranslate"><span class="pre">(run_space_launch_id,</span> <span class="pre">run_space_attempt)</span></code>).
+Aggregates pipeline runs, links their statuses, and surfaces missing launch lifecycle edges.
+See <a class="reference internal" href="trace_aggregator_v1.html#trace-aggregator-v1"><span class="std std-ref">Trace Aggregator v1</span></a>.</p>
+</dd>
+<dt id="term-Completeness-Trace">Completeness (Trace)<a class="headerlink" href="#term-Completeness-Trace" title="Link to this term">¶</a></dt><dd><p>Deterministic verdict describing whether expected lifecycle edges and node coverage are present for a run or launch.
+See <a class="reference internal" href="trace_aggregator_v1.html#trace-aggregator-v1"><span class="std std-ref">Trace Aggregator v1</span></a>.</p>
+</dd>
+</dl>
 </section>
 </section>
 
@@ -395,8 +631,14 @@ and the <em>Resolvers Overview</em> in <a class="reference internal" href="exten
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Glossary</a><ul>
-<li><a class="reference internal" href="#conventions">Conventions</a></li>
-<li><a class="reference internal" href="#see-also">See also</a></li>
+<li><a class="reference internal" href="#core-runtime-objects">Core Runtime Objects</a></li>
+<li><a class="reference internal" href="#channels-data">Channels &amp; Data</a></li>
+<li><a class="reference internal" href="#processor-families">Processor Families</a></li>
+<li><a class="reference internal" href="#execution-records-ser-vocabulary">Execution Records (SER Vocabulary)</a></li>
+<li><a class="reference internal" href="#run-space-identity">Run-Space Identity</a></li>
+<li><a class="reference internal" href="#trace-drivers">Trace &amp; Drivers</a></li>
+<li><a class="reference internal" href="#run-space-lifecycle">Run-Space Lifecycle</a></li>
+<li><a class="reference internal" href="#aggregation">Aggregation</a></li>
 </ul>
 </li>
 </ul>

@@ -2,7 +2,7 @@ Concepts
 ========
 
 Semantiva narrows the gap between bold ideas and concrete code. The framework
-promotes **clarity**, **type‑safety**, and **semantic transparency** so that a
+promotes **clarity**, **type-safety**, and **semantic transparency** so that a
 pipeline can be read, reasoned about, and audited. The sections below tell the
 story behind the core pieces and link to deeper references when you want more
 detail.
@@ -11,7 +11,7 @@ Domain-Driven & Type-Oriented Design
 ------------------------------------
 
 Semantiva pipelines are designed around your *domain concepts*. Data types are
-not afterthoughts – they are **contracts** between pipeline steps. When you
+not afterthoughts - they are **contracts** between pipeline steps. When you
 declare a ``StringLiteralDataType`` or a domain type like ``DNASequence``, you
 state the expectations for both data and meaning. These contracts prevent
 miswired steps and make intent explicit. For more on defining custom types see
@@ -62,9 +62,9 @@ Resolvers & Parameters
 ----------------------
 
 Declarative specifications in YAML become executable graphs through **resolvers**.
-Class resolvers (``slicer:``, ``rename:``, ``delete:``) map concise strings to
+Class resolvers (``slice:``, ``rename:``, ``delete:``) map concise strings to
 Python classes, while parameter resolvers (``model:``) inject runtime objects
-without hard‑coding them. This mechanism keeps pipelines declarative yet
+without hard-coding them. This mechanism keeps pipelines declarative yet
 flexible. For the full resolver registry and extension mechanism consult
 :doc:`extensions`.
 

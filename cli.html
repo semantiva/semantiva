@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -299,11 +305,12 @@
                   [--trace.driver NAME]
                   [--trace.output PATH-or-DriverSpec]
                   [--trace.option key=value]...
-                  [--fanout.param NAME]
-                  [--fanout.values SEQ]
-                  [--fanout.values-file PATH]
-                  [--fanout.multi NAME=SEQ]...
-                  [--fanout.multi-file PATH]
+                  [--run-space-file PATH]
+                  [--run-space-max-runs INT]
+                  [--run-space-dry-run]
+                  [--run-space-launch-id TEXT]
+                  [--run-space-idempotency-key TEXT]
+                  [--run-space-attempt INT]
                   [--version]
 </pre></div>
 </div>
@@ -329,14 +336,15 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">--execution.executor</span></code>     Resolve executor via the Execution Component Registry (ECR).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--execution.transport</span></code>    Resolve transport via the Execution Component Registry (ECR).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--execution.option</span></code>       Key/value pairs forwarded to the orchestrator <code class="docutils literal notranslate"><span class="pre">options</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace.driver</span></code>           Trace driver name (<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>, or registry class).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--trace.output</span></code>           Trace output path or <code class="docutils literal notranslate"><span class="pre">module:Class</span></code> when <code class="docutils literal notranslate"><span class="pre">driver=pythonpath</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.driver</span></code>           Trace driver name (<code class="docutils literal notranslate"><span class="pre">jsonl</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--trace.output</span></code>           Trace output path for the JSONL driver (directory or file).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--trace.option</span></code>           Additional driver keyword arguments (repeatable).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.param</span></code>           Single-parameter fan-out target name.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.values</span></code>          Values for single-parameter fan-out (JSON list or comma-separated).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.values-file</span></code>     External JSON/YAML file supplying fan-out values.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.multi</span></code>           Multi-parameter ZIP values (repeatable <code class="docutils literal notranslate"><span class="pre">name=[...]</span></code> arguments).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--fanout.multi-file</span></code>      External JSON/YAML mapping supplying multi fan-out values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-file</span></code>         Path to a YAML file containing a <code class="docutils literal notranslate"><span class="pre">run_space</span></code> block (overrides pipeline YAML).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-max-runs</span></code>     Override the run-space safety limit on total runs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-dry-run</span></code>      Plan the run space and print the expansion without executing nodes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-launch-id</span></code>    Explicit <code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> to reuse for this execution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-idempotency-key</span></code>  Deterministically derive <code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> using the spec/inputs hash.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-attempt</span></code>      Retry counter (integer ≥ 1) for the specified run-space launch.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--version</span></code>                Show CLI version.</p></li>
 </ul>
 <p>CLI flags mirror the YAML schema. Any value provided on the command line
@@ -350,6 +358,25 @@ ensuring consistent SER output across orchestrator implementations.</p>
 <p>In YAML, use the plural key <code class="docutils literal notranslate"><span class="pre">options</span></code> under <code class="docutils literal notranslate"><span class="pre">trace</span></code> and <code class="docutils literal notranslate"><span class="pre">execution</span></code>. The
 CLI uses repeatable singular flags <code class="docutils literal notranslate"><span class="pre">--trace.option</span></code> and <code class="docutils literal notranslate"><span class="pre">--execution.option</span></code>
 to populate those mappings.</p>
+</div>
+</section>
+<section id="plan-only-example">
+<h2>Plan-only example<a class="headerlink" href="#plan-only-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>semantiva<span class="w"> </span>run<span class="w"> </span>--run-space-file<span class="w"> </span>rs.yaml<span class="w"> </span>--run-space-dry-run
+<span class="go">Run Space Plan</span>
+<span class="go">  combine: combinatorial</span>
+<span class="go">  max_runs: 1000</span>
+<span class="go">  expanded_runs: 12</span>
+<span class="go">  blocks:</span>
+<span class="go">    - #0: mode=by_position, size=3, keys=[&#39;value&#39;, &#39;factor&#39;, &#39;addend&#39;]</span>
+<span class="go">    - #1: mode=combinatorial, size=4, keys=[&#39;seed&#39;]</span>
+<span class="go">  preview:</span>
+<span class="go">    1: {&quot;value&quot;:1.0,&quot;factor&quot;:10.0,&quot;addend&quot;:1.0,&quot;seed&quot;:1}</span>
+<span class="go">    2: {&quot;value&quot;:1.0,&quot;factor&quot;:10.0,&quot;addend&quot;:1.0,&quot;seed&quot;:2}</span>
+<span class="go">    …</span>
+<span class="go">    11: {&quot;value&quot;:3.5,&quot;factor&quot;:30.0,&quot;addend&quot;:1.0,&quot;seed&quot;:1}</span>
+<span class="go">    12: {&quot;value&quot;:3.5,&quot;factor&quot;:30.0,&quot;addend&quot;:1.0,&quot;seed&quot;:2}</span>
+</pre></div>
 </div>
 <p><strong>Component Resolution</strong>
 The CLI loads extensions before constructing execution components so that the
@@ -474,6 +501,7 @@ either an entry point under <code class="docutils literal notranslate"><span cla
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#exit-codes">Exit Codes</a></li>
 <li><a class="reference internal" href="#run">Run</a></li>
+<li><a class="reference internal" href="#plan-only-example">Plan-only example</a></li>
 <li><a class="reference internal" href="#inspect">Inspect</a></li>
 <li><a class="reference internal" href="#dev-lint">Dev / Lint</a></li>
 </ul>

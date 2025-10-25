@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
@@ -300,7 +306,7 @@ the plural key <code class="docutils literal notranslate"><span class="pre">opti
 </div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">trace</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jsonl</span>
-<span class="w">    </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ser/</span>
+<span class="w">    </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./trace/</span>
 <span class="w">    </span><span class="nt">options</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">detail</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
 
@@ -310,27 +316,44 @@ the plural key <code class="docutils literal notranslate"><span class="pre">opti
 
 <span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">semantiva run my_pipeline.yaml \</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--trace.driver jsonl \</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--trace.output ./ser/ \</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--trace.output ./trace/ \</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--trace.option detail=all</span>
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">fanout</span></code></dt><dd><p>Declaratively expand a pipeline into multiple runs by injecting values into
-the execution context. Two modes are supported:</p>
+<dt><code class="docutils literal notranslate"><span class="pre">run_space</span></code></dt><dd><p>Define a set of runs by expanding context keys. A run space contains:</p>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">param</span></code> / <code class="docutils literal notranslate"><span class="pre">values</span></code></dt><dd><p>Single-parameter fan-out. Each value is injected into the context under
-<code class="docutils literal notranslate"><span class="pre">param</span></code> for an independent run.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">combine</span></code></dt><dd><p>How blocks combine globally. <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> (default) computes a Cartesian
+product across blocks; <code class="docutils literal notranslate"><span class="pre">by_position</span></code> requires blocks to have identical run
+counts and aligns them by index.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">multi</span></code></dt><dd><p>Multiple parameters zipped together. All lists must have equal length.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">max_runs</span></code></dt><dd><p>Safety limit on the total number of runs. The planner raises a
+configuration error when the expansion exceeds this cap.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">dry_run</span></code></dt><dd><p>When <code class="docutils literal notranslate"><span class="pre">true</span></code>, the planner reports the expansion (sizes, block metadata,
+sample runs) and exits before executing nodes.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">blocks</span></code></dt><dd><p>A list of block objects. Each block defines <code class="docutils literal notranslate"><span class="pre">mode</span></code> (<code class="docutils literal notranslate"><span class="pre">by_position</span></code> or
+<code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>) and either <code class="docutils literal notranslate"><span class="pre">context</span></code> (mapping of key -&gt; list) or
+<code class="docutils literal notranslate"><span class="pre">source</span></code> (CSV/JSON/YAML/NDJSON file with optional <code class="docutils literal notranslate"><span class="pre">select</span></code>/<code class="docutils literal notranslate"><span class="pre">rename</span></code>).
+Sources follow rows-as-runs semantics: each row/object becomes one run,
+and the block’s <code class="docutils literal notranslate"><span class="pre">mode</span></code> controls whether lists are aligned by index or
+combined combinatorially. <code class="docutils literal notranslate"><span class="pre">by_position</span></code> blocks require all lists to have
+equal length; <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> blocks compute full Cartesian products within
+the block. Duplicate context keys across blocks (or within a block between
+<code class="docutils literal notranslate"><span class="pre">context</span></code> and <code class="docutils literal notranslate"><span class="pre">source</span></code>) raise an error.</p>
 </dd>
 </dl>
-<p>Values can be embedded inline or loaded from <code class="docutils literal notranslate"><span class="pre">values_file</span></code> (JSON or YAML).
-The <code class="docutils literal notranslate"><span class="pre">mode</span></code> field is reserved for future expansion and currently defaults to
-<code class="docutils literal notranslate"><span class="pre">zip</span></code>.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">fanout</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">multi</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.5</span><span class="p p-Indicator">]</span>
-<span class="w">    </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5.0</span><span class="p p-Indicator">]</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">run_space</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.5</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5.0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">16</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">32</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
 </dd>
@@ -345,11 +368,11 @@ The <code class="docutils literal notranslate"><span class="pre">mode</span></co
 </ul>
 <p>Refer to <a class="reference internal" href="../cli.html"><span class="doc">Semantiva CLI</span></a> for the corresponding command-line flags and to
 <a class="reference internal" href="../examples_index.html"><span class="doc">Examples Index</span></a> for runnable YAML examples.</p>
-<p>Each fan-out run produces SER evidence with <code class="docutils literal notranslate"><span class="pre">why_ok.args</span></code> populated with the
-fan-out index, mode, injected values, and source metadata (including SHA-256
-hashes when values originate from external files). This guarantees reproducible
-audit trails for batch executions. See <a class="reference internal" href="../cli.html"><span class="doc">Semantiva CLI</span></a> for CLI flags mirroring the
-schema and <a class="reference internal" href="../examples_index.html"><span class="doc">Examples Index</span></a> for runnable examples.</p>
+<p>Each run-space expansion produces SER evidence with <code class="docutils literal notranslate"><span class="pre">assertions.args</span></code> populated
+with <code class="docutils literal notranslate"><span class="pre">run_space.index</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space.total</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space.combine</span></code>, and the
+per-run context. Block metadata includes source provenance (path, type,
+SHA-256) when external files are involved. See <a class="reference internal" href="../cli.html"><span class="doc">Semantiva CLI</span></a> for CLI flags
+mirroring the schema and <a class="reference internal" href="../examples_index.html"><span class="doc">Examples Index</span></a> for runnable examples.</p>
 </section>
 </section>
 

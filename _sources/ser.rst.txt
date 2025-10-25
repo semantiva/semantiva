@@ -1,17 +1,18 @@
-Step Evidence Record (SER) v0 — draft
-======================================
+Semantic Execution Record (SER) v1
+==================================
 
-Semantiva records pipeline execution using the **Step Evidence Record (SER) v0 (draft)**.  A
+Semantiva records pipeline execution using the **Semantic Execution Record (SER) v1**.  A
 single SER is emitted for every node that runs and contains:
 
-* stable identifiers for the run, pipeline and node
-* the node's upstream dependencies
-* action information (operation reference and parameters)
-* a minimal input/output delta
-* check results explaining why the node ran and why it was considered OK
+* stable identifiers for the run, pipeline and node under ``identity``
+* the node's upstream dependencies via ``dependencies.upstream``
+* processor details (``processor.ref`` with parameters and their sources)
+* a minimal context delta describing reads and writes
+* structured assertions explaining why the node ran and why it was OK
 * timing information (wall and CPU)
 * explicit status and optional error details
 * optional summaries for input/output data and context snapshots
+* optional ``tags`` for downstream correlation
 
 SERs are written to ``*.ser.jsonl`` files where each line is a JSON object.  Tools
 and the Studio viewer consume these records directly.
@@ -22,95 +23,89 @@ Example SER
 .. code-block:: json
 
    {
-     "type": "ser",
-     "schema_version": 0,
-     "ids": {"run_id": "run-…", "pipeline_id": "plid-…", "node_id": "n-3"},
-     "topology": {"upstream": ["n-2"]},
-     "action": {
-       "op_ref": "FloatBasicProbe",
-       "params": {"context_keyword": "probed_data"},
-       "param_source": {"context_keyword": "node"}
+     "record_type": "ser",
+     "schema_version": 1,
+     "identity": {"run_id": "run-…", "pipeline_id": "plid-…", "node_id": "n-3"},
+     "dependencies": {"upstream": ["n-2"]},
+     "processor": {
+       "ref": "semantiva.examples.test_utils.FloatBasicProbe",
+       "parameters": {"context_key": "probed_data"},
+       "parameter_sources": {"context_key": "node"}
      },
-     "io_delta": {
-       "read": ["probed_data"],
-       "created": ["probed_data"],
-       "updated": [],
-       "summaries": {
+     "context_delta": {
+       "read_keys": ["probed_data"],
+       "created_keys": ["probed_data"],
+       "updated_keys": [],
+       "key_summaries": {
          "probed_data": {"dtype": "FloatDataType", "len": 1}
        }
-     },
-     "checks": {
-       "why_run": {
-         "trigger": "dependency",
-         "upstream_evidence": [{"node_id": "n-2", "state": "completed"}],
-         "pre": [
-           {
-             "code": "required_keys_present",
-             "result": "PASS",
-             "details": {"expected": ["probed_data"], "missing": []}
-           },
-           {
-             "code": "input_type_ok",
-             "result": "PASS",
-             "details": {"expected": "FloatDataType", "actual": "FloatDataType"}
-           }
-         ],
-         "policy": []
-       },
-       "why_ok": {
-         "post": [
-           {
-             "code": "output_type_ok",
-             "result": "PASS",
-             "details": {"expected": "FloatDataType", "actual": "FloatDataType"}
-           },
-           {
-             "code": "context_writes_realized",
-             "result": "PASS",
-             "details": {"created": ["probed_data"], "updated": [], "missing": []}
-           }
-         ],
-         "invariants": [],
-         "env": {
-           "python": "3.11.2",
-           "implementation": "cpython",
-           "platform": "Linux-…",
-           "semantiva": "0.1.0.dev0+dummy",
-           "numpy": null,
-           "pandas": null
+    },
+    "assertions": {
+       "trigger": "dependency",
+       "upstream_evidence": [{"node_id": "n-2", "state": "succeeded"}],
+       "preconditions": [
+         {
+           "code": "required_keys_present",
+           "result": "PASS",
+           "details": {"expected": ["probed_data"], "missing": []}
          },
-         "redaction": {}
-       }
-     },
-     "timing": {"start": "…", "end": "…", "duration_ms": 5, "cpu_ms": 4},
-     "status": "completed",
-     "labels": {"node_fqn": "FloatBasicProbe"},
+         {
+           "code": "input_type_ok",
+           "result": "PASS",
+           "details": {"expected": "FloatDataType", "actual": "FloatDataType"}
+         }
+       ],
+       "postconditions": [
+         {
+           "code": "output_type_ok",
+           "result": "PASS",
+           "details": {"expected": "FloatDataType", "actual": "FloatDataType"}
+         },
+         {
+           "code": "context_writes_realized",
+           "result": "PASS",
+           "details": {"created_keys": ["probed_data"], "updated_keys": [], "missing_keys": []}
+         }
+       ],
+       "invariants": [],
+       "environment": {
+         "python": "3.12.0",
+         "platform": "Linux-…",
+         "semantiva": "0.2.0.dev0",
+         "numpy": null,
+         "pandas": null
+       },
+       "redaction_policy": {},
+      "args": {"run_space.index": 1, "run_space.combine": "combinatorial"}
+    },
+    "timing": {"started_at": "…", "finished_at": "…", "wall_ms": 5, "cpu_ms": 4},
+     "status": "succeeded",
+     "tags": {"node_ref": "semantiva.examples.test_utils.FloatBasicProbe"},
      "summaries": {
        "input_data": {"dtype": "FloatDataType", "sha256": "…"},
        "output_data": {"dtype": "FloatDataType", "sha256": "…"}
      }
    }
 
-The ``checks`` block now always contains:
-
-* ``why_run.pre`` – built-in validation executed before the node runs.
-* ``why_ok.post`` – output validations that ran after the node returned.
-* ``why_ok.env`` – minimal, non-sensitive environment pins for reproducibility.
+The ``assertions`` block always contains structured evidence describing why the
+node ran and why it was considered successful. Additional metadata (like
+``trigger`` and ``upstream_evidence``) is included alongside the formal
+preconditions/postconditions for convenient consumption.
 
 Detail flags control which summary fields are emitted when using the JSONL
 driver:
 
-* ``hash`` (default) – include ``sha256`` hashes only.
-* ``repr`` – additionally include ``repr`` for input/output data.
-* ``context`` – with ``repr`` also include ``repr`` for pre/post context.
-* ``all`` – enable all of the above.
+* ``hash`` (default) - include ``sha256`` hashes only.
+* ``repr`` - additionally include ``repr`` for input/output data.
+* ``context`` - with ``repr`` also include ``repr`` for pre/post context.
+* ``all`` - enable all of the above.
 
 Versioning Policy
 -----------------
 
 .. note::
    **SER Versioning Policy:**
-   
+
    * ``schema_version`` is a **major** integer for breaking changes only
    * v0 during pre-release development; v1 at first public release
    * Future breaking changes increment to v2, v3, etc.
@@ -124,34 +119,34 @@ The canonical JSON Schema ships with the package and can be loaded via:
 .. code-block:: python
 
    from importlib import resources
-   schema = resources.files("semantiva.trace.schema") / "ser_v0.schema.json"
+   schema = resources.files("semantiva.trace.schema") / "semantic_execution_record_v1.schema.json"
 
-IO Delta
---------
-Each SER now includes an ``io_delta`` describing how the node interacted with context:
+Context Delta
+-------------
+Each SER includes a ``context_delta`` describing how the node interacted with context:
 
-- ``read``: declared required keys (if provided by the processor)
-- ``created``: new keys written by the node
-- ``updated``: existing keys whose values changed
-- ``summaries`` (changed keys only): ``dtype``, ``len``, ``rows``, and optional
+- ``read_keys``: declared required keys (if provided by the processor)
+- ``created_keys``: new keys written by the node
+- ``updated_keys``: existing keys whose values changed
+- ``key_summaries`` (changed keys only): ``dtype``, ``len``, ``rows``, and optional
   ``sha256`` (``hash`` flag) and ``repr`` (``repr`` flag)
 
-Checks via SERHooks
--------------------
+Assertions via SERHooks
+-----------------------
 The template-method orchestrator collects SER evidence centrally. The base
 :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`
-builds the pre/post check lists, captures ``io_delta`` snapshots, and pins the
+builds the pre/post assertion lists, captures ``context_delta`` snapshots, and pins the
 runtime environment exactly once per node. Downstream policy engines can extend
 these hooks (for example via ``_extra_pre_checks``) but every SER produced
-by the runtime includes the following checks out of the box—even on error.
+by the runtime includes the following assertions out of the box—even on error.
 When a node fails, the exception entry is followed by the standard
 ``output_type_ok`` and ``context_writes_realized`` checks so failure records
 retain the same structure as successful ones.
 
-Built-in checks
----------------
+Built-in assertions
+-------------------
 
-The runtime emits the following check entries for every node:
+The runtime emits the following assertion entries for every node:
 
 .. list-table::
    :header-rows: 1
@@ -162,36 +157,49 @@ The runtime emits the following check entries for every node:
      - PASS
      - WARN / FAIL
    * - ``required_keys_present``
-     - ``why_run.pre``
+     - ``assertions.preconditions``
      - Declared context keys are available before execution.
      - All required keys present.
      - Missing keys listed in ``details.missing``.
    * - ``input_type_ok``
-     - ``why_run.pre``
+     - ``assertions.preconditions``
      - Input payload matches the processor's ``input_data_type``.
      - ``details.actual`` matches ``details.expected``.
      - Type mismatch triggers ``FAIL``.
    * - ``config_valid``
-     - ``why_run.pre``
+     - ``assertions.preconditions``
      - Node configuration contains no unrecognised parameters.
      - ``WARN`` lists ``details.invalid``; omitted when the node cannot report invalid parameters.
      - ``WARN`` when inspection detected invalid parameters.
    * - ``output_type_ok``
-     - ``why_ok.post``
+     - ``assertions.postconditions``
      - Output payload matches the processor's ``output_data_type``.
      - ``details.actual`` matches ``details.expected``.
      - Type mismatch triggers ``FAIL``.
    * - ``context_writes_realized``
-     - ``why_ok.post``
-     - Context keys declared in ``io_delta.created``/``updated`` exist after execution.
-     - All declared keys materialised, ``details.missing`` empty.
+     - ``assertions.postconditions``
+     - Context keys declared in ``context_delta.created_keys``/``updated_keys`` exist after execution.
+     - All declared keys materialised, ``details.missing_keys`` empty.
      - ``FAIL`` when writes were declared but no value was persisted.
 
 Environment pins
 ----------------
 
-``checks.why_ok.env`` captures a reproducibility snapshot: Python runtime,
+``assertions.environment`` captures a reproducibility snapshot: Python runtime,
 implementation, platform string, Semantiva version, and optional third-party
 versions (``numpy``/``pandas`` when installed). Values are simple strings or
 ``null`` and contain no host-specific secrets.
 
+Timing
+------
+
+Each SER includes a ``timing`` object describing execution durations and
+timestamps. Fields:
+
+- ``wall_ms`` *(required)* — wall-clock duration in milliseconds (>= 0).
+- ``cpu_ms`` *(optional)* — CPU time measured on the reporting host in
+  milliseconds (>= 0). This field may be omitted when running on devices or
+  in distributed executors where CPU attribution is unreliable (for example,
+  GPU-backed processing or remote worker pools).
+
+When present, ``started_at`` and ``finished_at`` should be ISO 8601 timestamps.

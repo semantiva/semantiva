@@ -55,7 +55,8 @@ Register custom parameter transformation functions:
 .. code-block:: python
 
     from semantiva.registry.parameter_resolver_registry import ParameterResolverRegistry
-    
+    import os
+
     def my_param_resolver(value):
         if isinstance(value, str) and value.startswith("myenv:"):
             return os.environ.get(value.split(":",1)[1], ""), True
@@ -71,13 +72,14 @@ Register custom name-based processor resolvers:
 .. code-block:: python
 
     from semantiva.registry.name_resolver_registry import NameResolverRegistry
-    
+    # Example mapping: "myprefix:multiply" -> a known processor class
+
     def my_name_resolver(value):
-        if value.startswith("myprefix:"):
-            # Return a processor class or None
-            return resolve_my_custom_processor(value)
+        if isinstance(value, str) and value == "myprefix:multiply":
+            from semantiva.examples.test_utils import FloatMultiplyOperation
+            return FloatMultiplyOperation
         return None
-    
+
     NameResolverRegistry.register_resolver("myprefix:", my_name_resolver)
 
 Implement an Extension

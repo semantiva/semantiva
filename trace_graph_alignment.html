@@ -204,11 +204,17 @@
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ser.html">Step Evidence Record (SER) v0 — draft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
@@ -216,7 +222,7 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/fanout_quickstart.html">Fan-Out Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -264,7 +270,7 @@
         <article role="main" id="furo-main-content">
           <section id="trace-graph-alignment">
 <h1>Trace ↔ Graph Alignment<a class="headerlink" href="#trace-graph-alignment" title="Link to this heading">¶</a></h1>
-<p>This page explains how <strong>Step Evidence Records (SER)</strong> align with the
+<p>This page explains how <strong>Semantic Execution Records (SER)</strong> align with the
 <strong>GraphV1</strong> pipeline graph. The canonical mapping allows tools to reconstruct
 execution topology solely from SER files.</p>
 <section id="node-identity">
@@ -273,8 +279,8 @@ execution topology solely from SER files.</p>
 <li><p>Every pipeline node is assigned a deterministic <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code> by the
 GraphV1 builder.</p></li>
 <li><p>The same <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code> appears:
-* In the canonical spec (<code class="docutils literal notranslate"><span class="pre">canonical_spec.nodes[*].node_uuid</span></code>).
-* In each SER record as <code class="docutils literal notranslate"><span class="pre">ids.node_id</span></code>.</p>
+* In the canonical spec (<code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical.nodes[*].node_uuid</span></code>).
+* In each SER record as <code class="docutils literal notranslate"><span class="pre">identity.node_id</span></code>.</p>
 <p><strong>Rule:</strong> Consumers must always join SER data to the graph using <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code>.</p>
 </li>
 </ul>
@@ -289,17 +295,18 @@ runtime and consumers should ignore unknown fields gracefully.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">pipeline_id</span></code>: deterministic hash of the canonical spec.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">run_id</span></code>: unique per execution.</p></li>
-<li><p>Both appear in <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> records and in the <code class="docutils literal notranslate"><span class="pre">ids</span></code> of each SER.</p></li>
+<li><p>Both appear in <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> records and in the <code class="docutils literal notranslate"><span class="pre">identity</span></code> of each SER.</p></li>
 </ul>
 </section>
 <section id="trace-graph-usage">
 <h2>Trace → Graph Usage<a class="headerlink" href="#trace-graph-usage" title="Link to this heading">¶</a></h2>
 <p>To recreate the execution graph from SER files:</p>
 <ol class="arabic simple">
-<li><p>Read <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> to obtain the canonical graph.</p></li>
-<li><p>For each SER record, use <code class="docutils literal notranslate"><span class="pre">ids.node_id</span></code> and <code class="docutils literal notranslate"><span class="pre">topology.upstream</span></code> to build edges.</p></li>
-<li><p>Combine with per-step information from <code class="docutils literal notranslate"><span class="pre">action</span></code>, <code class="docutils literal notranslate"><span class="pre">io_delta</span></code> and <code class="docutils literal notranslate"><span class="pre">checks</span></code>.</p></li>
+<li><p>Read <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> records (<code class="docutils literal notranslate"><span class="pre">record_type='pipeline_start'</span></code>) to obtain the canonical graph from <code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical</span></code>.</p></li>
+<li><p>For each SER record, use <code class="docutils literal notranslate"><span class="pre">identity.node_id</span></code> and <code class="docutils literal notranslate"><span class="pre">dependencies.upstream</span></code> to build edges.</p></li>
+<li><p>Combine with per-step information from <code class="docutils literal notranslate"><span class="pre">processor</span></code>, <code class="docutils literal notranslate"><span class="pre">context_delta</span></code> and <code class="docutils literal notranslate"><span class="pre">assertions</span></code>.</p></li>
 </ol>
+<p>The canonical graph exposes <code class="docutils literal notranslate"><span class="pre">processor_ref</span></code> (FQCN); SER mirrors this as <code class="docutils literal notranslate"><span class="pre">processor.ref</span></code>.</p>
 </section>
 </section>
 

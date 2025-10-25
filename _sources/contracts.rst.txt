@@ -3,7 +3,7 @@ Semantiva Contracts
 
 Semantiva components follow a set of metadata and type-contract rules.  The
 :command:`semantiva dev lint` command audits components against these rules and
-prints diagnostics with stable ``SVA`` codes.
+prints diagnostics with stable Semantiva Validation Assertions (``SVA``) codes.
 
 Rule catalog
 ------------
