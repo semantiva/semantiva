@@ -852,8 +852,10 @@ class _ProbeContextInjectorNode(_ProbeNode):
 
 class _ProbeResultCollectorNode(_ProbeNode):
     """
-    A node that wraps a DataProbe and collects probe results.
+    Deprecated node that wraps a DataProbe and collects probe results.
     """
+
+    _probed_data: List[Any]
 
     def __init__(
         self,
@@ -869,8 +871,11 @@ class _ProbeResultCollectorNode(_ProbeNode):
             processor_parameters (Optional[Dict]): Configuration parameters for the processor. Defaults to None.
             logger (Optional[Logger]): A logger instance for diagnostic output. Defaults to None.
         """
-        super().__init__(processor, processor_parameters, logger)
-        self._probed_data: List[Any] = []
+        self._probed_data = []
+        raise RuntimeError(
+            "_ProbeResultCollectorNode is deprecated. Configure the probe node with a "
+            "`context_key` so results are written to pipeline context."
+        )
 
     @classmethod
     def _define_metadata(cls) -> Dict[str, Any]:
