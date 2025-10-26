@@ -66,16 +66,18 @@ class DataSource(_SemantivaComponent):
 
         excluded_parameters = ["cls", "data"]
 
-        annotated_parameter_list = [
-            f"{param_name}: {param_type}"
-            for param_name, param_type in cls._retrieve_parameter_signatures(
-                cls._get_data, excluded_parameters
-            )
-        ]
+        # Import ParameterInfo to ensure proper metadata structure
+        from semantiva.data_processors.data_processors import (
+            _BaseDataProcessor,
+        )
+
+        details = _BaseDataProcessor._retrieve_parameter_details(
+            cls._get_data, excluded_parameters
+        )
 
         component_metadata = {
             "component_type": "DataSource",
-            "parameters": annotated_parameter_list or "None",
+            "parameters": details,
         }
 
         try:
@@ -113,16 +115,18 @@ class PayloadSource(_SemantivaComponent):
 
         excluded_parameters = ["cls", "data"]
 
-        annotated_parameter_list = [
-            f"{param_name}: {param_type}"
-            for param_name, param_type in cls._retrieve_parameter_signatures(
-                cls._get_payload, excluded_parameters
-            )
-        ]
+        # Import ParameterInfo to ensure proper metadata structure
+        from semantiva.data_processors.data_processors import (
+            _BaseDataProcessor,
+        )
+
+        details = _BaseDataProcessor._retrieve_parameter_details(
+            cls._get_payload, excluded_parameters
+        )
 
         component_metadata = {
             "component_type": "PayloadSource",
-            "parameters": annotated_parameter_list,
+            "parameters": details,
             "injected_context_keys": cls.injected_context_keys(),
         }
 
@@ -229,16 +233,18 @@ class DataSink(_SemantivaComponent, Generic[T]):
 
         excluded_parameters = ["cls", "data"]
 
-        annotated_parameter_list = [
-            f"{param_name}: {param_type}"
-            for param_name, param_type in cls._retrieve_parameter_signatures(
-                cls._send_data, excluded_parameters
-            )
-        ]
+        # Import ParameterInfo to ensure proper metadata structure
+        from semantiva.data_processors.data_processors import (
+            _BaseDataProcessor,
+        )
+
+        details = _BaseDataProcessor._retrieve_parameter_details(
+            cls._send_data, excluded_parameters
+        )
 
         component_metadata = {
             "component_type": "DataSink",
-            "parameters": annotated_parameter_list or "None",
+            "parameters": details,
         }
 
         try:
@@ -323,16 +329,18 @@ class PayloadSink(_SemantivaComponent, Generic[T]):
     def _define_metadata(cls) -> Dict[str, Any]:
         excluded_parameters = ["cls", "payload"]
 
-        annotated_parameter_list = [
-            f"{param_name}: {param_type}"
-            for param_name, param_type in cls._retrieve_parameter_signatures(
-                cls._send_payload, excluded_parameters
-            )
-        ]
+        # Import ParameterInfo to ensure proper metadata structure
+        from semantiva.data_processors.data_processors import (
+            _BaseDataProcessor,
+        )
+
+        details = _BaseDataProcessor._retrieve_parameter_details(
+            cls._send_payload, excluded_parameters
+        )
 
         component_metadata = {
             "component_type": "PayloadSink",
-            "parameters": annotated_parameter_list or "None",
+            "parameters": details,
         }
 
         try:
