@@ -234,6 +234,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 - **Parameter metadata in IO classes**: `DataSource`, `PayloadSource`, `DataSink`, and `PayloadSink` now emit `ParameterInfo` objects with default values.
+- **Inspection builder now uses canonical metadata API**: Changed from calling internal `_retrieve_parameter_details()` helper to using `get_metadata()["parameters"]`, ensuring IO-wrapped components are inspected correctly with full parameter defaults.
+- **IO wrapper `get_context_requirements()` removed**: Eliminated incorrect context requirement reporting that marked all parameters as "required from context" even when they had defaults or config values.
 
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories
