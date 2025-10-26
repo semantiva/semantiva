@@ -232,6 +232,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   ``__init__``
 - Introduced `RunSpaceMaxRunsExceededError` (error when expansion exceeds `max_runs`).
 
+### Fixed
+- **Parameter metadata in IO classes**: `DataSource`, `PayloadSource`, `DataSink`, and `PayloadSink` now emit `ParameterInfo` objects with default values.
+
 ### Removed
 - Deleted legacy `payload_operations/` and `execution_tools/` directories
 - Deleted package `specializations/`
