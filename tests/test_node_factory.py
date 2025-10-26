@@ -14,6 +14,9 @@
 
 import inspect
 
+import pytest
+
+from semantiva.exceptions import PipelineConfigurationError
 from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_factory
 from semantiva.examples.test_utils import (
     FloatDataSource,
@@ -33,7 +36,6 @@ def test_node_factory_creates_all_supported_nodes_and_semantic_ids():
         {"processor": FloatPayloadSink},
         {"processor": FloatMultiplyOperation},
         {"processor": FloatCollectValueProbe, "context_key": "probe_key"},
-        {"processor": FloatCollectValueProbe},
         {"processor": "rename:foo:bar"},
     ]
 
@@ -47,3 +49,8 @@ def test_datasource_node_propagates_docstring():
     ds_doc = inspect.getdoc(FloatDataSource)
     generated_doc = inspect.getdoc(node.processor.__class__)
     assert ds_doc == generated_doc
+
+
+def test_probe_without_context_key_raises_configuration_error():
+    with pytest.raises(PipelineConfigurationError):
+        _pipeline_node_factory({"processor": FloatCollectValueProbe})

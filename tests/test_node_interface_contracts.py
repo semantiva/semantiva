@@ -25,7 +25,6 @@ Coverage (documented in `tests/test_node_interface_contracts.py` top-level docst
    - DataOperationNode: returns transformed).
    - ProbeNode returns pass-through data.
    - `_ProbeContextInjectorNode` injects one element in Context with the specified context key.
-   - `_ProbeResultCollectorNode` does not change Context and collects the result internally.
    - Source nodes produce data from `NoDataType` payload.
    - Sink nodes accept data without raising and pass through unchanged.
    - General guide to test nodes: use the user-friendly node definition in a dictionary to define the nodes and run a single-node pipeline for each test.
@@ -103,10 +102,6 @@ def _make_probe_context_injector_node():
     )
 
 
-def _make_probe_result_collector_node():
-    return _pipeline_node_factory({"processor": FloatBasicProbe}, _make_logger())
-
-
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
@@ -121,7 +116,6 @@ def _make_probe_result_collector_node():
         (_make_payload_sink_node, _PayloadSinkNode),
         (_make_data_operation_node, _DataOperationNode),
         (_make_probe_context_injector_node, _ProbeContextInjectorNode),
-        (_make_probe_result_collector_node, _ProbeResultCollectorNode),
     ],
 )
 def test_instantiation_variants(factory, expected_type):
@@ -154,11 +148,6 @@ def test_instantiation_variants(factory, expected_type):
             FloatBasicProbe.input_data_type(),
             FloatBasicProbe.input_data_type(),
         ),
-        (
-            _make_probe_result_collector_node,
-            FloatBasicProbe.input_data_type(),
-            FloatBasicProbe.input_data_type(),
-        ),
     ],
 )
 def test_data_type_delegation(factory, expected_in, expected_out):
@@ -177,13 +166,17 @@ def test_processing_smoke_data_operation():
 
 def test_processing_smoke_probe_nodes():
     injector = _make_probe_context_injector_node()
-    collector = _make_probe_result_collector_node()
     payload = Payload(FloatBasicProbe.input_data_type()(1.0), ContextType())
     result_inj = injector.process(payload)
     assert "probe_key" in result_inj.context.keys()
-    result_col = collector.process(payload)
-    assert result_col.context is payload.context
-    assert collector.get_collected_data()
+
+
+@pytest.mark.skip(
+    reason="Probe result collector nodes are deprecated and no longer supported."
+)
+def test_probe_result_collector_node_is_deprecated():
+    with pytest.raises(RuntimeError):
+        _ProbeResultCollectorNode(FloatBasicProbe, logger=_make_logger())
 
 
 def test_processing_smoke_data_source_node():
