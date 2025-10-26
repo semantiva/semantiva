@@ -287,12 +287,11 @@ def build_pipeline_inspection(
 
         # Analyze parameter resolution with defaults
         param_details: Dict[str, ParameterInfo] = {}
-        # Prefer signature-based details when available (explicit params)
-        if hasattr(processor.__class__, "_retrieve_parameter_details"):
-            param_details = processor.__class__._retrieve_parameter_details(
-                processor.__class__._process_logic, ["self", "data"]
-            )
-        # If signature has only **kwargs (dynamic factories), fall back to get_processing_parameter_names
+        # Use canonical metadata API (works for all component types)
+        metadata = processor.__class__.get_metadata()
+        param_details = metadata.get("parameters", {})
+
+        # If metadata doesn't contain parameters, fall back to get_processing_parameter_names
         if not param_details:
             gppn = getattr(processor.__class__, "get_processing_parameter_names", None)
             if callable(gppn):
