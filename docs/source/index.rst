@@ -14,6 +14,7 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    pipeline
    data_types
    data_processors
+   utility_processors
    data_io
    context_processors
    contracts
