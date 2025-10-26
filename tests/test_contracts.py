@@ -203,7 +203,7 @@ def test_validate_components_with_core_components():
         assert hasattr(diag, "component")
         assert hasattr(diag, "severity")
         assert hasattr(diag, "message")
-        assert diag.severity in ["error", "warning"]
+        assert diag.severity in ["error", "warn"]
 
 
 def test_validate_components_empty_list():
