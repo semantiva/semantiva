@@ -37,6 +37,43 @@ from semantiva.exceptions import PipelineConfigurationError
 from .builder import PipelineInspection
 
 
+def _is_compatible(prev_out_type: type, next_in_type: type) -> bool:
+    """Check if output type is compatible with input type.
+
+    Compatibility follows the same rule as runtime execution:
+    - Types are equal, OR
+    - Output type is a subclass of input type
+
+    This matches the runtime gate in _DataNode._process which uses issubclass,
+    allowing subclass outputs to be accepted by base-class inputs.
+
+    Args:
+        prev_out_type: Output data type from previous node
+        next_in_type: Expected input data type of next node
+
+    Returns:
+        True if types are compatible (equal or subclass relationship)
+
+    Examples:
+        >>> _is_compatible(SklearnModel, SklearnModel)  # Equal
+        True
+        >>> _is_compatible(SklearnModel, BaseDataType)  # Subclass
+        True
+        >>> _is_compatible(SklearnModel, NoDataType)    # Incompatible
+        False
+
+    Note:
+        Includes TypeError guard to handle non-type objects gracefully.
+    """
+    try:
+        return (prev_out_type == next_in_type) or issubclass(
+            prev_out_type, next_in_type
+        )
+    except TypeError:
+        # One or both arguments are not class objects; treat as incompatible
+        return False
+
+
 def _validate_data_flow_compatibility(inspection: PipelineInspection) -> None:
     """Validate data type compatibility between consecutive nodes in the pipeline.
 
@@ -60,8 +97,9 @@ def _validate_data_flow_compatibility(inspection: PipelineInspection) -> None:
         if current_node.output_type is None or next_node.input_type is None:
             continue
 
-        # Check if output type of current node matches input type of next node
-        if current_node.output_type != next_node.input_type:
+        # Check if output type of current node is compatible with input type of next node
+        # Compatible means: equal types OR output is a subclass of input (same as runtime)
+        if not _is_compatible(current_node.output_type, next_node.input_type):
             error_msg = (
                 f"Data type incompatibility: receives {next_node.input_type.__name__} "
                 f"but previous node (Node {current_node.index}) outputs {current_node.output_type.__name__}"
