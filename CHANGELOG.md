@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] - TBD
 
 ### Breaking
+- Probe nodes must now declare ``context_key``. Pipelines that omit it fail
+  inspection/validation, and result-collector probe nodes have been removed from
+  pipeline configuration support.
 - **Trace normalization**: Removed redundant run_space fields from trace records to eliminate massive data duplication:
   - `pipeline_start` now uses composite FK (`run_space_launch_id` + `run_space_attempt`) instead of storing redundant `run_space_spec_id` and `run_space_inputs_id` fields. These can be obtained via JOIN to `run_space_start`.
   - `pipeline_start` now includes `run_space_index` and `run_space_context` fields (moved from SER args).

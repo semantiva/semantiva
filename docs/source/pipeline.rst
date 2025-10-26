@@ -31,6 +31,27 @@ Each ``processor`` entry references a component (by fully qualified class name o
 short name if registered). The ``parameters`` map configures that processor. Nodes
 may also define ``ports`` if they connect to non-default inputs/outputs.
 
+Probe nodes
+-----------
+
+.. note::
+
+   **Probes require a context key.** Probes observe the data channel but must
+   always persist their result to the pipeline context. Configure this at the
+   node level with ``context_key``:
+
+   .. code-block:: yaml
+
+      pipeline:
+        nodes:
+          - processor: my.probes.DatasetEvalProbe
+            context_key: metrics.eval
+            parameters:
+              model: my.models.Classifier
+
+   Omitting ``context_key`` for a probe node is invalid. ``semantiva inspect``
+   fails validation with a configuration error until the key is provided.
+
 .. _pipeline-yaml-parameters-precedence:
 
 Parameter resolution (precedence)

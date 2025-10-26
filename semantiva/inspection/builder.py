@@ -37,7 +37,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 import inspect
 from semantiva.data_processors.data_processors import ParameterInfo
-from semantiva.exceptions import InvalidNodeParameterError
+from semantiva.exceptions import InvalidNodeParameterError, PipelineConfigurationError
 
 from semantiva.pipeline.nodes.nodes import (
     _PipelineNode,
@@ -49,6 +49,18 @@ from semantiva.pipeline._param_resolution import (
     inspect_origin,
     classify_unknown_config_params,
 )
+
+
+def _format_processor_reference(processor: Any) -> str:
+    """Return a fully-qualified name for a processor configuration reference."""
+
+    if isinstance(processor, str):
+        return processor
+    if isinstance(processor, type):
+        return f"{processor.__module__}.{processor.__name__}"
+    if processor is None:
+        return "Unknown"
+    return f"{processor.__class__.__module__}.{processor.__class__.__name__}"
 
 
 @dataclass
@@ -178,11 +190,41 @@ def build_pipeline_inspection(
     for index, node_cfg in enumerate(node_configs, start=1):
         node: Optional[_PipelineNode] = None
         node_errors: List[str] = []
+        processor_ref = node_cfg.get("processor")
+        processor_fqcn = _format_processor_reference(processor_ref)
 
         # Attempt to construct node from configuration
         try:
             node = _pipeline_node_factory(node_cfg)
             nodes.append(node)
+        except PipelineConfigurationError as exc:
+            msg = str(exc)
+            if msg.startswith("Probe nodes must declare context_key"):
+                msg = (
+                    "Probe nodes must declare context_key: missing for node "
+                    f"{index} ({processor_fqcn})"
+                )
+            errors.append(f"Node {index}: {msg}")
+            inspection_nodes.append(
+                NodeInspection(
+                    index=index,
+                    node_class="Invalid",
+                    processor_class=processor_fqcn.split(".")[-1],
+                    component_type="Unknown",
+                    input_type=None,
+                    output_type=None,
+                    config_params=node_cfg.get("parameters", {}),
+                    default_params={},
+                    context_params={},
+                    created_keys=set(),
+                    suppressed_keys=set(),
+                    docstring="",
+                    invalid_parameters=[],
+                    is_configuration_valid=False,
+                    errors=[msg],
+                )
+            )
+            continue
         except InvalidNodeParameterError as exc:
             msg = str(exc)
             errors.append(f"Node {index}: {msg}")
@@ -302,6 +344,11 @@ def build_pipeline_inspection(
 
         # Special handling for probe nodes that inject results into context
         if isinstance(node, _ProbeContextInjectorNode):
+            if not isinstance(node.context_key, str) or not node.context_key.strip():
+                node_errors.append(
+                    "Probe nodes must declare context_key: missing for node "
+                    f"{index} ({processor.__class__.__module__}.{processor.__class__.__name__})"
+                )
             created_keys.add(node.context_key)
             key_origin[node.context_key] = index
 
