@@ -51,7 +51,10 @@ def _make_nodes(logger=None):
         _pipeline_node_factory(
             {"processor": FloatBasicProbe, "context_key": "probe_ctx"}, logger
         ),
-        _pipeline_node_factory({"processor": FloatBasicProbe}, logger),
+        _pipeline_node_factory(
+            {"processor": FloatBasicProbe, "context_key": "probe_ctx_secondary"},
+            logger,
+        ),
     ]
 
 

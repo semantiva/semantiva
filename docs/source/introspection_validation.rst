@@ -125,6 +125,8 @@ Here are representative issues the validator can flag:
 * **Unknown processor** - the specified processor class cannot be resolved/imported.
 * **Topology/ports mismatch** - the declared ports do not match available outputs/inputs.
 * **Type incompatibility** - an upstream node’s output type is incompatible with the next node’s expected input type.
+* **Probe missing ``context_key``** - a probe node omits ``context_key`` so the
+  result would never reach context; inspection rejects the configuration.
 
 Example output (truncated):
 
@@ -133,10 +135,15 @@ Example output (truncated):
    ERROR: PipelineConfigurationError
    details:
      node_index: 2
-     node_uuid: "eb3e87c0-97b7-5097-8214-b53b4ba0fd6e"
-     processor: "TransformData"
+    node_uuid: "eb3e87c0-97b7-5097-8214-b53b4ba0fd6e"
+    processor: "TransformData"
     reason: "Incompatible types: expected ImageType, received TextType from previous node"
     hint: "Check the output of node 1 or insert a converter operation."
+
+Missing ``context_key`` example::
+
+   PipelineConfigurationError: Node 2: Probe nodes must declare context_key:
+   missing for node 2 (my.probes.DriftProbe)
 
 Unknown / Unused Parameters
 ---------------------------

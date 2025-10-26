@@ -57,6 +57,7 @@ from semantiva.data_processors.data_processors import (
     DataProbe,
     _BaseDataProcessor,
 )
+from semantiva.exceptions import PipelineConfigurationError
 from semantiva.pipeline.node_preprocess import preprocess_node_config
 from semantiva.registry import resolve_parameters, resolve_symbol
 from semantiva.logger import Logger
@@ -392,22 +393,11 @@ class _PipelineNodeFactory:
         parameters: Optional[Dict] = None,
         logger: Optional[Logger] = None,
     ) -> _ProbeResultCollectorNode:
-        """Factory function to create an extended _ProbeResultCollectorNode.
-        This function dynamically creates a subclass of _ProbeResultCollectorNode
-        with a specific processor class.
-        Returns:
-            _ProbeResultCollectorNode: An instance of a dynamically created subclass of _ProbeNode.
-        """
+        """Deprecated: result-collector probe nodes are no longer supported."""
 
-        node_class = _PipelineNodeFactory._create_class(
-            name=f"{processor_class.__name__}_ProbeResultCollectorNode",
-            base_cls=_ProbeResultCollectorNode,
-            processor=processor_class,
-        )
-        return node_class(
-            processor=processor_class,
-            processor_parameters=parameters,
-            logger=logger,
+        raise RuntimeError(
+            "Result-collector probe nodes are unsupported. Configure a `context_key` "
+            "on the probe node so results persist in pipeline context."
         )
 
     @staticmethod
@@ -574,14 +564,14 @@ def _pipeline_node_factory(
             processor, parameters, logger
         )
     if issubclass(processor, DataProbe):
-        if context_key is not None:
-            return _PipelineNodeFactory.create_probe_context_injector(
-                processor, context_key, parameters, logger
+        if not (isinstance(context_key, str) and context_key.strip()):
+            processor_fqcn = f"{processor.__module__}.{processor.__name__}"
+            raise PipelineConfigurationError(
+                f"Probe nodes must declare context_key: missing for {processor_fqcn}"
             )
-        else:
-            return _PipelineNodeFactory.create_probe_result_collector(
-                processor, parameters, logger
-            )
+        return _PipelineNodeFactory.create_probe_context_injector(
+            processor, context_key, parameters, logger
+        )
     if issubclass(processor, (DataSource, PayloadSource, DataSink, PayloadSink)):
         return _PipelineNodeFactory.create_io_node(node_definition, logger)
     else:
