@@ -198,6 +198,7 @@ pipeline:
   nodes:
     - processor: "FloatValueDataSourceWithDefault"
     - processor: "FloatBasicProbe"
+      context_key: "ser_checks.probe"
 """
     )
     nodes = load_pipeline_from_yaml(str(cfg))
@@ -320,6 +321,7 @@ pipeline:
   nodes:
     - processor: "FloatValueDataSourceWithDefault"
     - processor: "FloatBasicProbe"
+      context_key: "ser_checks.probe"
 """
     )
     nodes = load_pipeline_from_yaml(str(cfg))
@@ -373,6 +375,7 @@ pipeline:
   nodes:
     - processor: "FloatValueDataSourceWithDefault"
     - processor: "FloatBasicProbe"
+      context_key: "ser_checks.probe"
     - processor: "FloatAddOperation"
 """
     )

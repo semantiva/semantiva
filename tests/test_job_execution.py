@@ -94,6 +94,7 @@ def test_job_execution():
         },
         {
             "processor": FloatCollectValueProbe,
+            "context_key": "initial_probe",
         },
         {
             "processor": FloatCollectValueProbe,

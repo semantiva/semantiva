@@ -26,3 +26,20 @@ def test_cli_inspect_invalid_yaml(tmp_path: Path):
     invalid = make_pipeline(tmp_path, "pipeline: [bad")
     res = run_cli(["inspect", str(invalid)])
     assert res.returncode == 3
+
+
+def test_cli_inspect_probe_requires_context_key(tmp_path: Path):
+    pipeline_yaml = make_pipeline(
+        tmp_path,
+        """
+        extensions: ["semantiva-examples"]
+        pipeline:
+          nodes:
+            - processor: FloatCollectValueProbe
+        """,
+    )
+
+    res = run_cli(["inspect", str(pipeline_yaml)])
+    assert res.returncode == 0
+    combined = res.stdout + res.stderr
+    assert "Probe nodes must declare context_key" in combined
