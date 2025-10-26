@@ -118,3 +118,18 @@ def test_builder_records_errors_and_validator_raises():
     # Validator should raise exception based on captured errors
     with pytest.raises(PipelineConfigurationError):
         validate_pipeline(inspection)
+
+
+def test_probe_node_requires_context_key():
+    """Probe nodes missing context_key should be rejected during validation."""
+
+    config = [
+        {"processor": FloatCollectValueProbe},
+    ]
+
+    inspection = build_pipeline_inspection(config)
+    assert inspection.nodes[0].errors
+    with pytest.raises(PipelineConfigurationError) as exc:
+        validate_pipeline(inspection)
+
+    assert "Probe nodes must declare context_key" in str(exc.value)

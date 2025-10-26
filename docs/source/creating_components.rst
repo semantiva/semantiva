@@ -73,6 +73,12 @@ DataProbe (read-only; no context creation)
             # Analysis only; DO NOT update context
             return data
 
+.. note::
+
+   Probe components never write to context themselves. When the pipeline node
+   specifies ``context_key``, the node stores the probe result in context after
+   ``process`` returns, keeping the component stateless.
+
 DataSource (produces data; declares only output type)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
