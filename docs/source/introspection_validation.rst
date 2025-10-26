@@ -4,6 +4,11 @@ Introspection & Validation
 - Build inspections, summarize, export JSON, validate.
 
 You can perform pre-execution checks from the terminal; see :doc:`cli` (subcommand **inspect**).
+* **Missing parameter** - a required parameter is absent in the YAML.
+* **Unknown processor** - the specified processor class cannot be resolved/imported.
+* **Topology/ports mismatch** - the declared ports do not match available outputs/inputs.
+* **Type incompatibility** - an upstream node's output type is incompatible with the next node's expected input type (checked using equal-or-subclass rule).
+* **Probe missing ``context_key``** - a probe node omits ``context_key`` so the result would never reach context; inspection rejects the configuration.
 
 Examples
 --------
@@ -115,6 +120,48 @@ inspection output match the values in:
 * runtime trace records (see :doc:`trace_graph_alignment`).
 
 This identity contract lets you compare results across machines, builds, and formats.
+
+Type Compatibility Rule
+-----------------------
+
+Semantiva uses an **equal-or-subclass** compatibility rule for data flow validation,
+matching runtime execution behavior.
+
+**Compatible Types**:
+
+- Output type **equals** input type (exact match)
+- Output type is a **subclass** of input type (inheritance)
+
+**Implementation**: The validator's ``_is_compatible()`` helper uses::
+
+    compatible = (prev_out_type == next_in_type) or issubclass(prev_out_type, next_in_type)
+
+This matches the runtime gate in ``_DataNode._process`` which uses ``issubclass()``,
+ensuring inspection and runtime have identical type acceptance rules.
+
+**Examples**:
+
+.. code-block:: python
+
+    # Equal types - Compatible ✓
+    SklearnModel -> SklearnModel
+
+    # Subclass relationship - Compatible ✓
+    SklearnModel -> BaseDataType  # SklearnModel is subclass of BaseDataType
+    TabularXY -> BaseDataType     # TabularXY is subclass of BaseDataType
+
+    # No relationship - Incompatible ✗
+    SklearnModel -> NoDataType    # SklearnModel not subclass of NoDataType
+    NoDataType -> SklearnModel    # NoDataType not subclass of SklearnModel
+
+**Common Use Case**: Utility components like ``DataDump`` and ``CopyDataProbe`` 
+accept ``BaseDataType`` as input, making them compatible with any specific data 
+type in the pipeline (since all data types inherit from ``BaseDataType``). 
+See :doc:`utility_processors` for details on these components.
+
+**Rationale**: This rule eliminates false negatives during inspection while 
+maintaining type safety. If runtime can accept a data type, inspection should 
+accept it too.
 
 Common Validation Errors
 ------------------------
