@@ -202,35 +202,11 @@ class _IOOperationFactory:
                             }
                         ]
 
-                # Provide a `get_context_requirements` shim. Many data-IO
-                # classes expose the parameters they need; if not, fall
-                # back to the same logic used above.
-                if hasattr(data_io_class, "get_context_requirements"):
-
-                    def get_context_requirements(cls) -> List[str]:
-                        return list(cast(Any, data_io_class).get_context_requirements())
-
-                else:
-
-                    def get_context_requirements(cls) -> List[str]:
-                        try:
-                            return list(
-                                cast(
-                                    Any, data_io_class
-                                ).get_processing_parameter_names()
-                            )
-                        except AttributeError:
-                            signature = inspect.signature(data_io_class._get_data)
-                            return [
-                                param.name
-                                for param in signature.parameters.values()
-                                if param.name not in {"self", "data"}
-                                and param.kind
-                                not in {
-                                    inspect.Parameter.VAR_POSITIONAL,
-                                    inspect.Parameter.VAR_KEYWORD,
-                                }
-                            ]
+                # NOTE: We do NOT define get_context_requirements() here.
+                # The inspection builder will correctly determine context
+                # requirements from metadata parameters and defaults.
+                # Returning all parameter names would incorrectly mark
+                # parameters with defaults as "required from context".
 
                 # If the underlying data-IO advertises created context keys
                 # expose them from the wrapper as well so node metadata can
@@ -246,9 +222,6 @@ class _IOOperationFactory:
                     def get_created_keys_method(cls) -> list:
                         return []
 
-                methods["get_context_requirements"] = classmethod(
-                    get_context_requirements
-                )
                 methods["get_created_keys"] = classmethod(get_created_keys_method)
 
             elif issubclass(data_io_class, PayloadSource):
@@ -517,6 +490,11 @@ class _IOOperationFactory:
                 # Use super() to invoke the parent class implementation bound to `cls`
                 base = super(DataOperation, cls)._define_metadata()
                 base["parameters"] = details
+                # Preserve the component_type from the wrapped IO class
+                io_meta = data_io_class.get_metadata()
+                base["component_type"] = io_meta.get(
+                    "component_type", base["component_type"]
+                )
                 return base
 
             methods["_define_metadata"] = classmethod(_define_metadata_override)
