@@ -22,12 +22,16 @@ from .data_processors import (
     DataProbe,
     OperationTopologyFactory,
 )
+from .data_dump import DataDump
+from .copy_data_probe import CopyDataProbe
 from .data_slicer_factory import slice
 
 
 __all__ = [
     "DataOperation",
+    "DataDump",
     "DataProbe",
+    "CopyDataProbe",
     "OperationTopologyFactory",
     "slice",
 ]

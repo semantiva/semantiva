@@ -25,7 +25,7 @@ Fixing common SVA errors
 Probe node contract (mandatory)
 -------------------------------
 
-- Any pipeline node wrapping a :class:`~semantiva.data_processors.DataProbe`
+- Any pipeline node wrapping a :class:`~semantiva.data_processors.data_processors.DataProbe`
   **must** declare a non-empty ``context_key``.
 - The probe result is written to that key by the node—components stay
   context-agnostic.
