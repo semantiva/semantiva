@@ -27,6 +27,8 @@ from .processor_registry import ProcessorRegistry
 
 DEFAULT_MODULES = [
     "semantiva.context_processors.context_processors",
+    "semantiva.data_processors.data_dump",
+    "semantiva.data_processors.copy_data_probe",
     "semantiva.workflows.fitting_model",
 ]
 
