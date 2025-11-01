@@ -5,11 +5,11 @@ extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     # Parametric sweep with configuration
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
-      parameters:
+    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
+      declarative:
         vars:
           t: {lo: -1, hi: 2, steps: 3}
-        parametric_expressions:
+        expr:
           # Complex expressions using the independent variable 't'
           value: "2.0 * t"
           
