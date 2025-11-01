@@ -12,7 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helpers for preprocessing pipeline node configurations."""
+"""Preprocess node configurations.
+
+Currently recognized tool under the reserved node key ``derive``:
+
+- ``parameter_sweep``: generates a specialized processor class that computes
+  **parameters** from **variables** (using expressions) and produces collection
+  outputs or lists of probe results from swept parameter values.
+
+Rules:
+- DataSource/DataOperation require ``collection`` (typed collection class name).
+- DataProbe forbids ``collection`` and returns a list of probe results; the probe
+  node persists via ``context_key`` (node-level) and passes input through.
+- Unknown parameter names in ``parameters`` (inside parameter_sweep) raise a ValueError.
+- Node ``parameters`` are not modified; they are merged at runtime:
+  computed > provided > defaults.
+"""
 
 from __future__ import annotations
 

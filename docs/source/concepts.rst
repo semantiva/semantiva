@@ -49,6 +49,15 @@ yourself. They handle the plumbing: feeding data **and** context into processors
 and chaining outputs to inputs. The :doc:`pipeline` section shows how nodes fit
 into graph execution.
 
+Preprocessors (derive)
+----------------------
+
+**Preprocessors** live under the reserved node key ``derive``. They **compute
+or expand configuration** before a processor and node instantiation. 
+The most common preprocessor is :doc:`sweeps`
+(``parameter_sweep``), which computes **parameters** from **variables** and can
+expand a single node into multiple runs with a typed collection.
+
 Context Channel
 ---------------
 
@@ -76,11 +85,3 @@ and the **context channel**. Data holds your domain objects; context carries the
 metadata explaining *how* and *why* each step executes. This dual-channel design
 embodies the Epistemic Computing Paradigm (ECP) where computation produces both
 results and rationale.
-
-.. _minimal-epistemic-unit-meu:
-
-Minimal Epistemic Unit (MEU)
-----------------------------
-
-Every computation produces an epistemic tuple: **Claim**, **Justification**, **Context**, **Trace**.
-See :doc:`glossary` and :doc:`ser` for how context/trace surface in practice.

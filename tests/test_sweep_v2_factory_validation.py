@@ -119,7 +119,7 @@ def test_inspection_reports_required_external_parameters() -> None:
     try:
         node_configs = [
             {
-                "processor": "FloatValueDataSourceWithDefault",
+                "processor": "FloatValueDataSource",
                 "parameters": {"value": 2.0},
             },
             {
