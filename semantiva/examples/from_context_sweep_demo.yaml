@@ -2,9 +2,11 @@ extensions: ["semantiva-examples"]
 
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
-      parameters:
-        vars:
-          input_value: { from_context: discovered_values }
-        parametric_expressions:
-          value: "float(input_value)"
+    - processor: FloatValueDataSourceWithDefault
+      derive:
+        parameter_sweep:
+          parameters:
+            value: float(input_value)
+          variables:
+            input_value: { from_context: discovered_values }
+          collection: FloatDataCollection

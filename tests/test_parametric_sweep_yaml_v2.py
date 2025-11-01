@@ -55,9 +55,13 @@ def test_yaml_errors(empty_context, tmp_path):
     bad = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
-      declarative:
-        vars: {}
+    - processor: FloatValueDataSource
+      derive:
+        parameter_sweep:
+          parameters:
+            value: "1.0 * t"
+          variables: {}
+          collection: FloatDataCollection
 """
     p = tmp_path / "bad.yaml"
     p.write_text(bad)
@@ -67,10 +71,13 @@ pipeline:
     bad2 = """
 pipeline:
   nodes:
-    - processor: "sweep:FloatCollectValueProbe:FloatDataCollection"
-      declarative:
-        vars:
-          n: { lo: 1, hi: 2, steps: 2 }
+    - processor: FloatCollectValueProbe
+      derive:
+        parameter_sweep:
+          parameters: {}
+          variables:
+            n: { lo: 1, hi: 2, steps: 2 }
+          collection: FloatDataCollection
 """
     p2 = tmp_path / "bad2.yaml"
     p2.write_text(bad2)

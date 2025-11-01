@@ -16,18 +16,17 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Literal
+from typing import Any, Dict, Literal, cast
 
+from semantiva.data_io.data_io import DataSource
+from semantiva.data_processors.data_processors import DataOperation, DataProbe
 from semantiva.data_processors.parametric_sweep_factory import (
+    FromContext,
     ParametricSweepFactory,
     RangeSpec,
     SequenceSpec,
-    FromContext,
 )
-from semantiva.data_io.data_io import DataSource
-from semantiva.data_processors.data_processors import DataOperation, DataProbe
 from semantiva.data_types.data_types import DataCollectionType
-
 from semantiva.registry.processor_registry import ProcessorRegistry
 
 
@@ -71,40 +70,53 @@ def _convert_var_specs(
 def preprocess_node_config(node_config: Dict[str, Any]) -> Dict[str, Any]:
     """Handle structured sweep definitions prior to symbol resolution."""
 
-    processor_spec = node_config.get("processor")
-
-    if not (isinstance(processor_spec, str) and processor_spec.startswith("sweep:")):
+    derive = node_config.get("derive")
+    if not (
+        isinstance(derive, dict) and isinstance(derive.get("parameter_sweep"), dict)
+    ):
         return node_config
 
-    declarative = node_config.get("declarative")
-    if not isinstance(declarative, dict):
-        raise ValueError("Sweep declarative block must be provided as a mapping")
+    sweep_cfg = derive["parameter_sweep"]
 
-    vars_spec = declarative.get("vars")
+    params_spec = sweep_cfg.get("parameters", {})
+    if not isinstance(params_spec, dict):
+        raise ValueError("derive.parameter_sweep.parameters must be a mapping")
+
+    vars_spec = sweep_cfg.get("variables")
     if not isinstance(vars_spec, dict) or not vars_spec:
-        raise ValueError("declarative.vars must be a non-empty mapping")
+        raise ValueError("derive.parameter_sweep.variables must be a non-empty mapping")
+
+    mode = sweep_cfg.get("mode", "combinatorial")
+    if not isinstance(mode, str):
+        raise ValueError("derive.parameter_sweep.mode must be a string")
+    if mode not in {"combinatorial", "by_position"}:
+        raise ValueError(
+            "derive.parameter_sweep.mode must be 'combinatorial' or 'by_position'"
+        )
+
+    broadcast = sweep_cfg.get("broadcast", False)
+    if not isinstance(broadcast, bool):
+        raise ValueError("derive.parameter_sweep.broadcast must be a boolean value")
 
     processed_vars = _convert_var_specs(vars_spec)
 
-    expr_spec = declarative.get("expr", {}) or {}
-    if not isinstance(expr_spec, dict):
-        raise ValueError("declarative.expr must be a mapping of parameter expressions")
+    processor_spec = node_config.get("processor")
+    if processor_spec is None:
+        raise ValueError("derive.parameter_sweep requires a processor specification")
 
-    mode = declarative.get("mode", "combinatorial")
-    broadcast = declarative.get("broadcast", False)
-    if not isinstance(broadcast, bool):
-        raise ValueError("declarative.broadcast must be a boolean value")
-
-    parts = processor_spec.split(":")
-    if len(parts) not in (2, 3):
-        raise ValueError(
-            "Invalid sweep processor; expected 'sweep:<Element>' or 'sweep:<Element>:<Collection>'"
+    element_cls: type[Any]
+    element_name: str
+    if isinstance(processor_spec, str):
+        element_name = processor_spec
+        element_cls = ProcessorRegistry.get_processor(processor_spec)
+    elif isinstance(processor_spec, type):
+        element_cls = processor_spec
+        element_name = element_cls.__name__
+    else:
+        raise TypeError(
+            "processor must be a string or class when using derive.parameter_sweep"
         )
 
-    _, element_name, *rest = parts
-    collection_name = rest[0] if rest else None
-
-    element_cls = ProcessorRegistry.get_processor(element_name)
     if not isinstance(element_cls, type):
         raise TypeError(f"Processor '{element_name}' did not resolve to a class")
 
@@ -121,15 +133,14 @@ def preprocess_node_config(node_config: Dict[str, Any]) -> Dict[str, Any]:
         )
 
     collection_cls = None
+    collection_name = sweep_cfg.get("collection")
     if element_kind == "DataProbe":
         if collection_name is not None:
-            raise ValueError(
-                "DataProbe sweeps must not declare a collection output in the processor string"
-            )
+            raise ValueError("DataProbe sweeps must not declare a collection")
     else:
-        if collection_name is None:
+        if not isinstance(collection_name, str) or not collection_name:
             raise ValueError(
-                "DataSource/DataOperation sweeps require an output collection in the processor string"
+                "DataSource/DataOperation sweeps require derive.parameter_sweep.collection"
             )
         candidate = ProcessorRegistry.get_processor(collection_name)
         if not (
@@ -145,12 +156,19 @@ def preprocess_node_config(node_config: Dict[str, Any]) -> Dict[str, Any]:
         element_kind=element_kind,
         collection_output=collection_cls,
         vars=processed_vars,
-        parametric_expressions=expr_spec,
-        mode=mode,
+        parametric_expressions=params_spec,
+        mode=cast(Literal["combinatorial", "by_position"], mode),
         broadcast=broadcast,
     )
 
     new_config = dict(node_config)
     new_config["processor"] = sweep_class
-    new_config.pop("declarative", None)
+
+    remaining_derive = dict(derive)
+    remaining_derive.pop("parameter_sweep", None)
+    if remaining_derive:
+        new_config["derive"] = remaining_derive
+    else:
+        new_config.pop("derive", None)
+
     return new_config

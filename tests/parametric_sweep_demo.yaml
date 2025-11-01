@@ -5,13 +5,15 @@ extensions: ["semantiva-examples"]
 pipeline:
   nodes:
     # Parametric sweep with configuration
-    - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
-      declarative:
-        vars:
-          t: {lo: -1, hi: 2, steps: 3}
-        expr:
-          # Complex expressions using the independent variable 't'
-          value: "2.0 * t"
+    - processor: FloatValueDataSource
+      derive:
+        parameter_sweep:
+          parameters:
+            # Complex expressions using the independent variable 't'
+            value: "2.0 * t"
+          variables:
+            t: { lo: -1, hi: 2, steps: 3 }
+          collection: FloatDataCollection
           
     # Process the generated collection
     - processor: "slice:FloatCollectValueProbe:FloatDataCollection"

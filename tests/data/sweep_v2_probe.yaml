@@ -4,9 +4,10 @@ pipeline:
   nodes:
     - processor: "FloatValueDataSource"
       parameters: { value: 10.0 }
-    - processor: "sweep:FloatCollectValueProbe"
+    - processor: FloatCollectValueProbe
+      derive:
+        parameter_sweep:
+          parameters: {}
+          variables:
+            n: { lo: 1, hi: 3, steps: 3 }
       context_key: "probe_values"
-      declarative:
-        vars:
-          n: { lo: 1, hi: 3, steps: 3 }
-        expr: {}

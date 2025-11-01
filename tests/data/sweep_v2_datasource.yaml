@@ -2,11 +2,13 @@
 extensions: ["semantiva-examples"]
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
-      declarative:
-        vars:
-          t: { lo: -1.0, hi: 2.0, steps: 3 }
-        expr:
-          value: "2.0 * t"
-        mode: combinatorial
-        broadcast: false
+    - processor: FloatValueDataSource
+      derive:
+        parameter_sweep:
+          parameters:
+            value: "2.0 * t"
+          variables:
+            t: { lo: -1.0, hi: 2.0, steps: 3 }
+          mode: combinatorial
+          broadcast: false
+          collection: FloatDataCollection
