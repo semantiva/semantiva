@@ -25,6 +25,11 @@ GraphV1 guarantees:
 * **Linear chain edges** for demo pipelines (ODO will extend topology later without breaking node identities)
 * **Stable PipelineId**: "plid-" + sha256(canonical_spec JSON)
 
+.. note::
+   To avoid identity churn, :term:`derive` blocks (e.g., ``derive.parameter_sweep``)
+   are **not** hashed into the node UUID. Only the resolved processor class and the
+   **effective** parameter map (after preprocessing/merging) participate.
+
 Example::
 
     from semantiva.pipeline import build_graph, compute_pipeline_id

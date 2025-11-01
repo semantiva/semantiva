@@ -6,7 +6,7 @@ pipeline:
       derive:
         parameter_sweep:
           parameters:
-            value: float(input_value)
+            value: 2.0 * t
           variables:
-            input_value: { from_context: discovered_values }
+            t: { lo: -1.0, hi: 2.0, steps: 3 }
           collection: FloatDataCollection

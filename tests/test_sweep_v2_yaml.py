@@ -41,7 +41,7 @@ class TestRegistrySetup:
         yaml_config = """
         pipeline:
           nodes:
-            - processor: FloatValueDataSourceWithDefault
+            - processor: FloatValueDataSource
               derive:
                 parameter_sweep:
                   parameters:
@@ -66,7 +66,7 @@ class TestRegistrySetup:
         yaml_config = """
         pipeline:
           nodes:
-            - processor: "FloatValueDataSourceWithDefault"
+            - processor: "FloatValueDataSource"
               parameters:
                 value: 2.0
             - processor: FloatMultiplyOperation
@@ -93,7 +93,7 @@ class TestRegistrySetup:
         yaml_config = """
         pipeline:
           nodes:
-            - processor: "FloatValueDataSourceWithDefault"
+            - processor: "FloatValueDataSource"
               parameters:
                 value: 2.0
             - processor: FloatMultiplyOperation
@@ -119,7 +119,7 @@ class TestRegistrySetup:
         yaml_config = """
         pipeline:
           nodes:
-            - processor: "FloatValueDataSourceWithDefault"
+            - processor: "FloatValueDataSource"
               parameters:
                 value: 10.0
             - processor: FloatCollectValueProbe

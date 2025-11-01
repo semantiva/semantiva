@@ -133,6 +133,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Explicit note explaining that the `facotr` typo in pipeline documentation is intentional, used to demonstrate strict validation catching misspelled parameter names.
 
 ### Changed
+- Documentation overhauled for ``derive.parameter_sweep``: rewritten sweeps
+  guide, pipeline schema, glossary, and examples now reflect the derive
+  preprocessor boundary and parameters-first semantics.
 - `pipeline_start_event_v1` now references run-space launches via
   `run_space_spec_id`, optional `run_space_inputs_id`, `run_space_launch_id`,
   and `run_space_attempt`.

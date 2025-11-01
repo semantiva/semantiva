@@ -70,6 +70,35 @@ Missing required parameters raise:
 Unknown configuration parameters that are not accepted by the processor are
 reported during inspection and raise an error before execution.
 
+Derive: pre-execution computation
+---------------------------------
+
+The reserved node key ``derive`` establishes the **preprocessor boundary**. 
+Preprocessors under ``derive`` compute parameter values before the processor 
+executes, enabling dynamic configuration based on variables, context, or other 
+runtime information.
+
+**Execution model**::
+
+   [YAML node with derive block]
+        |
+        v
+   derive.parameter_sweep     (resolves variables → parameter values)
+        |
+        v
+   processor execution        (receives computed + explicit + default parameters)
+
+**Key properties:**
+
+* **Pre-execution**: All ``derive`` tools run before the processor is invoked
+* **Parameter computation**: Transforms variables and expressions into concrete values
+* **Transparent integration**: Computed parameters merge seamlessly with explicitly 
+  provided values and processor defaults
+* **Provenance tracking**: Parameter sources are recorded in trace outputs (see 
+  :ref:`parameter-provenance` in :doc:`sweeps`)
+
+Currently available: :doc:`sweeps` for parametric sweeps over variables.
+
 Parameter Validation in YAML Configuration
 -------------------------------------------
 

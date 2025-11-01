@@ -481,37 +481,6 @@ def _pipeline_node_factory(
         ValueError: If the node definition is invalid or if the processor type is unsupported.
     """
 
-    # DESIGN NOTE: Structured Parametric Sweep Preprocessing
-    # ======================================================
-    #
-    # The preprocess_node_config step is required due to a fundamental mismatch
-    # between the resolver pattern and the structured YAML format for parametric sweeps.
-    #
-    # WHY RESOLVERS DON'T WORK FOR STRUCTURED FORMAT:
-    # 1. Resolvers operate on processor strings (e.g., "sweep:Source:Collection")
-    # 2. Structured format requires access to BOTH processor string AND parameters
-    # 3. Resolvers only receive the processor string, not the full node configuration
-    # 4. The ParametricSweepFactory.create() needs data from the parameters section
-    #
-    # EXAMPLE OF THE PROBLEM:
-    # YAML Input:
-    #   processor: "sweep:FloatValueDataSource:FloatDataCollection"  # <- Resolver sees this
-    #   parameters:                                                 # <- Resolver cannot see this
-    #     vars: { t: { lo: 0, hi: 10, steps: 5 } }
-    #
-    # PREPROCESSING SOLUTION:
-    # - Operates at node configuration level (has access to full context)
-    # - Transforms structured sweep configs into resolved processor classes
-    # - Maintains backward compatibility with existing resolver architecture
-    # - Preserves separation of concerns between different resolver types
-    #
-    # ALTERNATIVE APPROACHES CONSIDERED:
-    # 1. Enhanced Resolver API: Would require breaking changes to all existing resolvers
-    # 2. Parameter-aware Resolvers: Complex, violates single responsibility principle
-    # 3. Two-phase Resolution: Overly complex for this specific use case
-    #
-    # The preprocessing approach is the least invasive solution that maintains
-    # architectural integrity while enabling the structured YAML format.
     node_definition = preprocess_node_config(node_definition)
 
     processor = node_definition.get("processor")

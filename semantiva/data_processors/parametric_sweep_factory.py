@@ -12,25 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Parametric sweep factory.
+"""Factory for creating parametric sweep processors.
 
-This module provides a factory for creating "sweep" DataSource classes that
-produce a typed collection by iterating over one or more independent variables
-and invoking an underlying element DataSource for each combination (product)
-or element-wise (zip) combination.
+This module implements the ``derive.parameter_sweep`` preprocessor, which generates
+specialized processor classes that evaluate parameters across variable ranges.
 
-The factory implements:
-- numeric ranges (RangeSpec), explicit sequences (SequenceSpec), and
-    context-driven sequences (FromContext)
-- safe expression evaluation for parametric expressions via
-    :class:`semantiva.utils.safe_eval.ExpressionEvaluator` (tuples and simple
-    type conversion functions are supported)
-- automatic creation of context keys named ``{var}_values`` for downstream
-    processors
+**Parameter Resolution:**
 
-This file is intentionally implementation-only: use the public
-`ParametricSweepFactory.create` call documented below to construct sweep
-sources.
+- Expressions evaluate **parameters** using **variables** as inputs
+- Expression parameter names must match the target processor's argument names
+- Parameters not computed by expressions remain in the wrapper's signature for
+  pipeline-level resolution
+- Parameter precedence: computed values > node parameters > processor defaults
+
+**Processor Types:**
+
+- **DataSource**: Requires ``collection`` output type; produces a collection of results
+- **DataOperation**: Requires ``collection`` output type; processes input data with
+  swept parameters and produces a collection
+- **DataProbe**: Forbids ``collection``; returns a list of probe results
+
+**Validation:**
+
+- Unknown parameter names in expressions raise ``TypeError``
+- Missing required ``collection`` for DataSource/DataOperation raises ``TypeError``
+- Invalid ``collection`` specification for DataProbe raises ``TypeError``
 """
 
 from __future__ import annotations
