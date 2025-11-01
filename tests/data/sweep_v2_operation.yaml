@@ -1,0 +1,14 @@
+# DROP-IN: tests/data/sweep_v2_operation.yaml
+extensions: ["semantiva-examples"]
+pipeline:
+  nodes:
+    - processor: "FloatValueDataSource"
+      parameters: { value: 2.0 }
+    - processor: "sweep:FloatMultiplyOperation:FloatDataCollection"
+      declarative:
+        vars:
+          f: { lo: 1.0, hi: 3.0, steps: 3 }
+        expr:
+          factor: "f"
+        mode: by_position
+        broadcast: false

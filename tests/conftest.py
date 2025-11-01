@@ -16,8 +16,10 @@
 
 import pytest
 
-from semantiva.registry.builtin_resolvers import reset_to_builtins
+from semantiva.context_processors.context_types import ContextType
 from semantiva.examples.extension import SemantivaExamplesExtension
+from semantiva.examples.test_utils import FloatDataType
+from semantiva.registry.builtin_resolvers import reset_to_builtins
 from semantiva.registry.processor_registry import ProcessorRegistry
 
 
@@ -78,3 +80,17 @@ def _load_examples_extension(request):
         plugin_registry._LOADED_EXTENSIONS.clear()
         plugin_registry._LOADED_EXTENSIONS.update(original_loaded_extensions)
         # Don't call clear() here as it might interfere with other fixtures
+
+
+@pytest.fixture()
+def empty_context():
+    """Provide a fresh empty context for tests."""
+
+    return ContextType()
+
+
+@pytest.fixture()
+def float_data():
+    """Provide a basic float data payload for operation tests."""
+
+    return FloatDataType(2.0)
