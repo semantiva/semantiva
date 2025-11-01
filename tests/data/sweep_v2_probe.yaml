@@ -1,0 +1,12 @@
+# DROP-IN: tests/data/sweep_v2_probe.yaml
+extensions: ["semantiva-examples"]
+pipeline:
+  nodes:
+    - processor: "FloatValueDataSource"
+      parameters: { value: 10.0 }
+    - processor: "sweep:FloatCollectValueProbe"
+      context_key: "probe_values"
+      declarative:
+        vars:
+          n: { lo: 1, hi: 3, steps: 3 }
+        expr: {}
