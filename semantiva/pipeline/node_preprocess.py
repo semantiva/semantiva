@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Literal
 
 from semantiva.data_processors.parametric_sweep_factory import (
     ParametricSweepFactory,
@@ -25,6 +25,7 @@ from semantiva.data_processors.parametric_sweep_factory import (
     FromContext,
 )
 from semantiva.data_io.data_io import DataSource
+from semantiva.data_processors.data_processors import DataOperation, DataProbe
 from semantiva.data_types.data_types import DataCollectionType
 
 from semantiva.registry.processor_registry import ProcessorRegistry
@@ -71,58 +72,85 @@ def preprocess_node_config(node_config: Dict[str, Any]) -> Dict[str, Any]:
     """Handle structured sweep definitions prior to symbol resolution."""
 
     processor_spec = node_config.get("processor")
-    parameters = node_config.get("parameters", {})
 
     if not (isinstance(processor_spec, str) and processor_spec.startswith("sweep:")):
         return node_config
 
-    if not isinstance(parameters, dict):
-        raise ValueError("Sweep parameters must be provided as a mapping")
+    declarative = node_config.get("declarative")
+    if not isinstance(declarative, dict):
+        raise ValueError("Sweep declarative block must be provided as a mapping")
 
-    parts = processor_spec.split(":")
-    if len(parts) != 3:
-        raise ValueError(
-            "Invalid sweep processor; expected 'sweep:DataSource:Collection'"
-        )
-
-    _, source_name, collection_name = parts
-
-    if "vars" not in parameters:
-        raise ValueError("vars must be a non-empty dictionary")
-
-    vars_spec = parameters.get("vars", {})
+    vars_spec = declarative.get("vars")
     if not isinstance(vars_spec, dict) or not vars_spec:
-        raise ValueError("vars must be a non-empty dictionary")
+        raise ValueError("declarative.vars must be a non-empty mapping")
 
     processed_vars = _convert_var_specs(vars_spec)
 
-    parametric_expressions = parameters.get("parametric_expressions") or None
-    static_params = parameters.get("static_params") or None
-    mode = parameters.get("mode", "combinatorial")
-    broadcast = parameters.get("broadcast", False)
-    include_independent = parameters.get("include_independent", False)
+    expr_spec = declarative.get("expr", {}) or {}
+    if not isinstance(expr_spec, dict):
+        raise ValueError("declarative.expr must be a mapping of parameter expressions")
 
-    source_cls = ProcessorRegistry.get_processor(source_name)
-    collection_cls = ProcessorRegistry.get_processor(collection_name)
+    mode = declarative.get("mode", "combinatorial")
+    broadcast = declarative.get("broadcast", False)
+    if not isinstance(broadcast, bool):
+        raise ValueError("declarative.broadcast must be a boolean value")
 
-    if not issubclass(source_cls, DataSource):
-        raise ValueError(f"{source_name} is not a DataSource subclass")
-    if not issubclass(collection_cls, DataCollectionType):
-        raise ValueError(f"{collection_name} is not a DataCollectionType subclass")
+    parts = processor_spec.split(":")
+    if len(parts) not in (2, 3):
+        raise ValueError(
+            "Invalid sweep processor; expected 'sweep:<Element>' or 'sweep:<Element>:<Collection>'"
+        )
+
+    _, element_name, *rest = parts
+    collection_name = rest[0] if rest else None
+
+    element_cls = ProcessorRegistry.get_processor(element_name)
+    if not isinstance(element_cls, type):
+        raise TypeError(f"Processor '{element_name}' did not resolve to a class")
+
+    element_kind: Literal["DataSource", "DataOperation", "DataProbe"]
+    if issubclass(element_cls, DataSource):
+        element_kind = "DataSource"
+    elif issubclass(element_cls, DataOperation):
+        element_kind = "DataOperation"
+    elif issubclass(element_cls, DataProbe):
+        element_kind = "DataProbe"
+    else:
+        raise ValueError(
+            f"{element_name} must resolve to a DataSource, DataOperation, or DataProbe subclass"
+        )
+
+    collection_cls = None
+    if element_kind == "DataProbe":
+        if collection_name is not None:
+            raise ValueError(
+                "DataProbe sweeps must not declare a collection output in the processor string"
+            )
+    else:
+        if collection_name is None:
+            raise ValueError(
+                "DataSource/DataOperation sweeps require an output collection in the processor string"
+            )
+        candidate = ProcessorRegistry.get_processor(collection_name)
+        if not (
+            isinstance(candidate, type) and issubclass(candidate, DataCollectionType)
+        ):
+            raise ValueError(
+                f"{collection_name} must resolve to a DataCollectionType subclass for sweep output"
+            )
+        collection_cls = candidate
 
     sweep_class = ParametricSweepFactory.create(
-        element=source_cls,
-        element_kind="DataSource",
+        element=element_cls,
+        element_kind=element_kind,
         collection_output=collection_cls,
         vars=processed_vars,
-        parametric_expressions=parametric_expressions,
-        static_params=static_params,
+        parametric_expressions=expr_spec,
         mode=mode,
         broadcast=broadcast,
-        include_independent=include_independent,
     )
 
     new_config = dict(node_config)
     new_config["processor"] = sweep_class
-    new_config["parameters"] = {}
+    new_config.pop("declarative", None)
     return new_config

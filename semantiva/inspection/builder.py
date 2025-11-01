@@ -109,6 +109,7 @@ class NodeInspection:
     invalid_parameters: List[Dict[str, Any]]
     is_configuration_valid: bool
     errors: List[str] = field(default_factory=list)
+    required_external_parameters: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -222,6 +223,7 @@ def build_pipeline_inspection(
                     invalid_parameters=[],
                     is_configuration_valid=False,
                     errors=[msg],
+                    required_external_parameters=[],
                 )
             )
             continue
@@ -248,6 +250,7 @@ def build_pipeline_inspection(
                     invalid_parameters=issues,
                     is_configuration_valid=False,
                     errors=[msg],
+                    required_external_parameters=[],
                 )
             )
             continue
@@ -272,6 +275,7 @@ def build_pipeline_inspection(
                     invalid_parameters=[],
                     is_configuration_valid=False,
                     errors=[msg],
+                    required_external_parameters=[],
                 )
             )
             continue
@@ -335,6 +339,27 @@ def build_pipeline_inspection(
 
         all_required_params.update(required_params)
 
+        required_external_parameters: List[str] = []
+        required_hook = getattr(
+            processor.__class__, "get_required_external_parameters", None
+        )
+        if callable(required_hook):
+            seen: set[str] = set()
+            for name in required_hook():
+                if name not in seen:
+                    required_external_parameters.append(name)
+                    seen.add(name)
+        else:
+            gppn = getattr(processor.__class__, "get_processing_parameter_names", None)
+            if callable(gppn):
+                seen_params: set[str] = set()
+                for name in gppn():
+                    if name in required_params and name not in seen_params:
+                        required_external_parameters.append(name)
+                        seen_params.add(name)
+            else:
+                required_external_parameters = sorted(required_params)
+
         # Analyze context key creation
         created_keys: set[str] = set()
         get_ck = getattr(processor.__class__, "get_created_keys", None)
@@ -389,6 +414,7 @@ def build_pipeline_inspection(
             invalid_parameters=issues,
             is_configuration_valid=(len(issues) == 0),
             errors=node_errors,
+            required_external_parameters=required_external_parameters,
         )
         inspection_nodes.append(node_inspection)
 

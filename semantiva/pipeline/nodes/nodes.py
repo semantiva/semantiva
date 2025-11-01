@@ -43,6 +43,7 @@ from semantiva.pipeline._param_resolution import (
     resolve_runtime_value,
     classify_unknown_config_params,
 )
+from semantiva.data_processors.parametric_sweep_factory import _materialize_sequences
 from semantiva.exceptions import InvalidNodeParameterError
 
 
@@ -192,6 +193,7 @@ class _DataNode(_PipelineNode):
         context = payload.context
         # Save the current context to be used by the processor
         self.observer_context = context
+        setattr(self.processor, "observer_context", context)
         parameters = self._get_processor_parameters(self.observer_context)
         output_data = self.processor.process(data, **parameters)
 
@@ -708,9 +710,27 @@ class _DataOperationContextInjectorProbeNode(_DataOperationNode):
         data = payload.data
         context = payload.context
         self.observer_context = context
+        setattr(self.processor, "observer_context", context)
         parameters = self._get_processor_parameters(self.observer_context)
         result = self.processor.process(data, **parameters)
         _ContextObserver.update_context(context, self.context_key, result)
+        created = getattr(self.processor, "_last_created_sequences", None)
+        if created is None:
+            created = getattr(self.processor.__class__, "_last_created_sequences", None)
+        if created is None:
+            vars_spec = getattr(self.processor.__class__, "_vars", None)
+            if isinstance(vars_spec, dict):
+                try:
+                    _, created = _materialize_sequences(
+                        vars=vars_spec,
+                        params=getattr(context, "to_dict", lambda: {})(),
+                    )
+                except Exception:  # pragma: no cover - defensive fallback
+                    created = None
+        if isinstance(created, dict):
+            for key, value in created.items():
+                if key != self.context_key:
+                    _ContextObserver.update_context(context, key, value)
         return Payload(data, context)
 
 
