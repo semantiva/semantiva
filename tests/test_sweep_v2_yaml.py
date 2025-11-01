@@ -41,12 +41,14 @@ class TestRegistrySetup:
         yaml_config = """
         pipeline:
           nodes:
-            - processor: "sweep:FloatValueDataSourceWithDefault:FloatDataCollection"
-              declarative:
-                vars:
-                  t: {lo: -1.0, hi: 2.0, steps: 3}
-                expr:
-                  value: "2.0 * t"
+            - processor: FloatValueDataSourceWithDefault
+              derive:
+                parameter_sweep:
+                  parameters:
+                    value: "2.0 * t"
+                  variables:
+                    t: { lo: -1.0, hi: 2.0, steps: 3 }
+                  collection: FloatDataCollection
         """
 
         node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
@@ -67,12 +69,14 @@ class TestRegistrySetup:
             - processor: "FloatValueDataSourceWithDefault"
               parameters:
                 value: 2.0
-            - processor: "sweep:FloatMultiplyOperation:FloatDataCollection"
-              declarative:
-                vars:
-                  factor: {values: [1.0, 2.0, 3.0]}
-                expr:
-                  factor: "factor"
+            - processor: FloatMultiplyOperation
+              derive:
+                parameter_sweep:
+                  parameters:
+                    factor: "factor"
+                  variables:
+                    factor: { values: [1.0, 2.0, 3.0] }
+                  collection: FloatDataCollection
         """
 
         node_configs = yaml.safe_load(yaml_config)["pipeline"]["nodes"]
@@ -92,11 +96,13 @@ class TestRegistrySetup:
             - processor: "FloatValueDataSourceWithDefault"
               parameters:
                 value: 2.0
-            - processor: "sweep:FloatMultiplyOperation:FloatDataCollection"
-              declarative:
-                vars:
-                  placeholder: {values: [0]}
-                expr: {}
+            - processor: FloatMultiplyOperation
+              derive:
+                parameter_sweep:
+                  parameters: {}
+                  variables:
+                    placeholder: { values: [0] }
+                  collection: FloatDataCollection
               parameters:
                 factor: 5.0
         """
@@ -116,11 +122,12 @@ class TestRegistrySetup:
             - processor: "FloatValueDataSourceWithDefault"
               parameters:
                 value: 10.0
-            - processor: "sweep:FloatCollectValueProbe"
-              declarative:
-                vars:
-                  step: {values: [0, 1, 2]}
-                expr: {}
+            - processor: FloatCollectValueProbe
+              derive:
+                parameter_sweep:
+                  parameters: {}
+                  variables:
+                    step: { values: [0, 1, 2] }
               context_key: "probe_values"
         """
 

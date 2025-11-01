@@ -22,12 +22,14 @@ def test_inspection_required_keys_and_created_and_external(empty_context):
         """
 pipeline:
   nodes:
-    - processor: "sweep:FloatValueDataSource:FloatDataCollection"
-      declarative:
-        vars:
-          vals: { from_context: "vals" }
-        expr:
-          value: "vals"
+    - processor: FloatValueDataSource
+      derive:
+        parameter_sweep:
+          parameters:
+            value: "vals"
+          variables:
+            vals: { from_context: "vals" }
+          collection: FloatDataCollection
     - processor: "FloatMultiplyOperation"
       parameters:
         {}

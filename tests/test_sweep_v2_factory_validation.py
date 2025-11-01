@@ -123,10 +123,13 @@ def test_inspection_reports_required_external_parameters() -> None:
                 "parameters": {"value": 2.0},
             },
             {
-                "processor": "sweep:FloatMultiplyOperation:FloatDataCollection",
-                "declarative": {
-                    "vars": {"placeholder": {"values": [0]}},
-                    "expr": {},
+                "processor": "FloatMultiplyOperation",
+                "derive": {
+                    "parameter_sweep": {
+                        "parameters": {},
+                        "variables": {"placeholder": {"values": [0]}},
+                        "collection": "FloatDataCollection",
+                    }
                 },
                 "parameters": {},
             },

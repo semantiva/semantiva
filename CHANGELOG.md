@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased] - TBD
 
 ### Breaking
+- Parametric sweep pipelines now use the explicit ``derive.parameter_sweep``
+  preprocessor. Legacy ``processor: "sweep:..."`` and ``declarative`` blocks are
+  rejected at load time, and sweeps validate ``collection``, ``mode``, and
+  ``broadcast`` settings more strictly.
 - Probe nodes must now declare ``context_key``. Pipelines that omit it fail
   inspection/validation, and result-collector probe nodes have been removed from
   pipeline configuration support.
