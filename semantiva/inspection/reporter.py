@@ -36,9 +36,11 @@ all receive consistent information about pipeline structure and parameters.
 
 from __future__ import annotations
 
+import json
+
 from typing import Iterable, Dict, Any, List, Optional
 
-from .builder import PipelineInspection
+from .builder import NodeInspection, PipelineInspection
 
 
 def _format_set(values: Iterable[str]) -> str:
@@ -119,6 +121,133 @@ def _format_context_params(context_params: Dict[str, Optional[int]]) -> str:
     return ", ".join(parts)
 
 
+def _stringify(value: Any) -> str:
+    if isinstance(value, bool):
+        return str(value).lower()
+    if isinstance(value, str):
+        return value
+    return repr(value) if isinstance(value, (list, dict, tuple)) else str(value)
+
+
+def _next_indent(indent: str) -> str:
+    return indent + ("\t" if "\t" in indent else "    ")
+
+
+def _format_variable_signature(name: str, sig: Dict[str, Any], indent: str) -> str:
+    kind = sig.get("kind")
+    if kind == "range":
+        parts: List[str] = []
+        for key in ("lo", "hi", "steps", "scale", "endpoint"):
+            if key in sig:
+                parts.append(f"{key}={_stringify(sig[key])}")
+        joined = ", ".join(parts)
+        return f"{indent}{name}: range({joined})"
+    if kind == "sequence":
+        count = sig.get("count")
+        sample = sig.get("sample", {})
+        head = sample.get("head")
+        tail = sample.get("tail")
+        digest = sample.get("digest_sha256")
+        return (
+            f"{indent}{name}: sequence(count={_stringify(count)}, "
+            f"head={_stringify(head)}, tail={_stringify(tail)}, digest={digest})"
+        )
+    if kind == "from_context":
+        sig_key = sig.get("key")
+        return f"{indent}{name}: from_context(key={sig_key})"
+    return f"{indent}{name}: {sig}"
+
+
+def _format_parameter_lines(
+    name: str,
+    info: Dict[str, Any],
+    indent: str,
+    *,
+    extended: bool,
+    expr: Optional[str],
+) -> List[str]:
+    sig = info.get("sig")
+    if extended:
+        lines = [f"{indent}{name}:"]
+        sig_indent = _next_indent(indent)
+        lines.append(f"{sig_indent}sig: {json.dumps(sig, sort_keys=True)}")
+        if expr is not None:
+            lines.append(f"{sig_indent}expr: {expr}")
+        return lines
+    # Normal mode: show human-readable expr if available, otherwise fall back to sig
+    if expr is not None:
+        return [f"{indent}{name}: {expr}"]
+    sig_repr = json.dumps(sig, sort_keys=True)
+    return [f"{indent}{name}: sig={sig_repr}"]
+
+
+def _format_preprocessor_block(
+    node: NodeInspection,
+    indent: str,
+    *,
+    extended: bool,
+) -> List[str]:
+    pre = getattr(node, "preprocessor_metadata", None)
+    if not (isinstance(pre, dict) and pre.get("type") == "derive.parameter_sweep"):
+        return []
+    preview = getattr(node, "preprocessor_view", None)
+    preview_map = (
+        preview.get("param_expressions", {}) if isinstance(preview, dict) else {}
+    )
+    header_prefix = "- " if extended else ""
+    lines: List[str] = [f"{indent}{header_prefix}Derived preprocessor:"]
+    sub_indent = _next_indent(indent)
+    if node.derived_summary:
+        lines.append(f"{sub_indent}summary: {node.derived_summary}")
+    lines.append(f"{sub_indent}type: {pre.get('type')}")
+    version = pre.get("version")
+    if version is not None:
+        lines.append(f"{sub_indent}version: {version}")
+    mode = pre.get("mode")
+    if mode is not None:
+        lines.append(f"{sub_indent}mode: {mode}")
+    broadcast = pre.get("broadcast")
+    if broadcast is not None:
+        lines.append(f"{sub_indent}broadcast: {_stringify(broadcast)}")
+    collection = pre.get("collection")
+    if collection is not None:
+        lines.append(f"{sub_indent}collection: {collection}")
+    variables = pre.get("variables", {})
+    if isinstance(variables, dict) and variables:
+        lines.append(f"{sub_indent}variables:")
+        var_indent = _next_indent(sub_indent)
+        for name, sig in variables.items():
+            if isinstance(sig, dict):
+                lines.append(_format_variable_signature(name, sig, var_indent))
+            else:
+                lines.append(f"{var_indent}{name}: {sig}")
+    param_exprs = pre.get("param_expressions", {})
+    if isinstance(param_exprs, dict) and param_exprs:
+        lines.append(f"{sub_indent}parameters:")
+        param_indent = _next_indent(sub_indent)
+        for name, info in param_exprs.items():
+            info_dict = info if isinstance(info, dict) else {}
+            expr_preview = None
+            if isinstance(preview_map, dict):
+                preview_entry = preview_map.get(name, {})
+                if isinstance(preview_entry, dict):
+                    expr_preview = preview_entry.get("expr")
+            lines.extend(
+                _format_parameter_lines(
+                    name,
+                    info_dict,
+                    param_indent,
+                    extended=extended,
+                    expr=expr_preview,
+                )
+            )
+    if extended:
+        dependencies = pre.get("dependencies")
+        if isinstance(dependencies, dict) and dependencies:
+            lines.append(f"{sub_indent}dependencies: {dependencies}")
+    return lines
+
+
 def summary_report(inspection: PipelineInspection) -> str:
     """Generate a concise summary report of the pipeline structure.
 
@@ -158,6 +287,7 @@ def summary_report(inspection: PipelineInspection) -> str:
             f"\t\t\tFrom context: {_format_context_params(node.context_params)}"
         )
         lines.append(f"\t\tContext additions: {_format_set(node.created_keys)}")
+        lines.extend(_format_preprocessor_block(node, "\t\t", extended=False))
         lines.append(
             f"\t\tInvalid parameters: {_format_set(i['name'] for i in node.invalid_parameters)}"
         )
@@ -225,6 +355,11 @@ def extended_report(inspection: PipelineInspection) -> str:
                 f"    - Parameters from context: {_format_context_params(node.context_params)}",
                 f"    - Context additions: {_format_set(node.created_keys)}",
                 f"    - Context suppressions: {_format_set(node.suppressed_keys)}",
+            ]
+        )
+        lines.extend(_format_preprocessor_block(node, "    ", extended=True))
+        lines.extend(
+            [
                 f"    - Invalid parameters: {_format_set(i['name'] for i in node.invalid_parameters)}",
                 f"    - Configuration valid: {node.is_configuration_valid}",
             ]
@@ -329,6 +464,12 @@ def json_report(inspection: PipelineInspection) -> Dict[str, Any]:
             "is_configuration_valid": node.is_configuration_valid,
             "errors": node.errors,  # Include error information for web GUI
         }
+        if node.derived_summary:
+            node_info["derived_summary"] = node.derived_summary
+        if node.preprocessor_metadata:
+            node_info["preprocessor_metadata"] = node.preprocessor_metadata
+        if node.preprocessor_view:
+            node_info["preprocessor_view"] = node.preprocessor_view
         nodes.append(node_info)
 
         # Create edges representing pipeline flow (sequential execution)

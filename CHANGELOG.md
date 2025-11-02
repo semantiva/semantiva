@@ -40,6 +40,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - JSONL trace driver class renamed to ``JsonlTraceDriver``.
 
 ### Added
+- Pipeline inspection now renders a ``Derived preprocessor`` section for
+  ``derive.parameter_sweep`` nodes, including sanitized semantics (type, mode,
+  variables, parameter signatures, collection) and an optional UI-only
+  expression preview that does not affect semantic identity.
 - Semantic provenance for ``derive.parameter_sweep`` preprocessors:
   ``processor.semantic_id`` + ``processor.preprocessing_provenance`` in SER,
   ``pipeline_config_id`` and per-node ``node_semantic_ids`` emitted at

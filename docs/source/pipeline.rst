@@ -95,7 +95,7 @@ runtime information.
 * **Transparent integration**: Computed parameters merge seamlessly with explicitly 
   provided values and processor defaults
 * **Provenance tracking**: Parameter sources are recorded in trace outputs (see 
-  :ref:`parameter-provenance` in :doc:`sweeps`)
+  :doc:`sweeps`)
 
 Currently available: :doc:`sweeps` for parametric sweeps over variables.
 
