@@ -43,6 +43,7 @@ class RunAggregate:
     run_id: str
     pipeline_id: Optional[str] = None
     pipeline_spec_canonical: Optional[Dict[str, Any]] = None
+    meta: Optional[Dict[str, Any]] = None
     run_space_launch_id: Optional[str] = None
     run_space_attempt: Optional[int] = None
     saw_start: bool = False

@@ -315,6 +315,8 @@ class TraceAggregator:
             run.pipeline_id = record.get("pipeline_id")
         if record.get("pipeline_spec_canonical") is not None:
             run.pipeline_spec_canonical = record.get("pipeline_spec_canonical")
+        if record.get("meta") is not None:
+            run.meta = record.get("meta")
         timestamp = record.get("timestamp") or (record.get("timing") or {}).get(
             "started_at"
         )
