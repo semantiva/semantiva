@@ -166,3 +166,139 @@ def test_missing_fields_are_optional():
     assert run is not None
     assert run.meta is None  # Missing meta is acceptable
     assert "preprocessor_metadata" not in run.pipeline_spec_canonical["nodes"][0]
+
+
+def test_semantic_id_and_config_id_captured():
+    """Verify that both semantic_id and config_id are captured in meta dict."""
+    agg = TraceAggregator()
+
+    pipeline_start_record = {
+        "record_type": "pipeline_start",
+        "schema_version": 1,
+        "timestamp": "2025-11-02T10:00:00.000Z",
+        "seq": 1,
+        "run_id": "run-with-ids",
+        "pipeline_id": "plid-with-ids",
+        "pipeline_spec_canonical": {
+            "version": 1,
+            "nodes": [
+                {
+                    "node_uuid": "node-uuid-1",
+                    "declaration_index": 0,
+                    "declaration_subindex": 0,
+                    "processor_ref": "TestProcessor",
+                    "role": "processor",
+                    "params": {},
+                    "ports": {},
+                }
+            ],
+            "edges": [],
+        },
+        "meta": {
+            "num_nodes": 1,
+            "semantic_id": "plsemid-abcdef0123456789",
+            "config_id": "plcid-xyz789abcdef0123456789",
+            "node_semantic_ids": {
+                "node-uuid-1": "sem-id-node1",
+            },
+        },
+    }
+
+    agg.ingest(pipeline_start_record)
+
+    run = agg.get_run("run-with-ids")
+    assert run is not None
+    assert run.meta is not None
+    assert "semantic_id" in run.meta
+    assert "config_id" in run.meta
+    assert run.meta["semantic_id"] == "plsemid-abcdef0123456789"
+    assert run.meta["config_id"] == "plcid-xyz789abcdef0123456789"
+    assert run.meta["node_semantic_ids"]["node-uuid-1"] == "sem-id-node1"
+
+
+def test_semantic_id_and_config_id_are_distinct():
+    """Verify that semantic_id and config_id are different values."""
+    agg = TraceAggregator()
+
+    pipeline_start_record = {
+        "record_type": "pipeline_start",
+        "schema_version": 1,
+        "timestamp": "2025-11-02T10:00:00.000Z",
+        "seq": 1,
+        "run_id": "run-distinct-ids",
+        "pipeline_id": "plid-distinct",
+        "pipeline_spec_canonical": {
+            "version": 1,
+            "nodes": [
+                {
+                    "node_uuid": "node-uuid-1",
+                    "declaration_index": 0,
+                    "declaration_subindex": 0,
+                    "processor_ref": "TestProcessor",
+                    "role": "processor",
+                    "params": {},
+                    "ports": {},
+                }
+            ],
+            "edges": [],
+        },
+        "meta": {
+            "num_nodes": 1,
+            "semantic_id": "plsemid-structure-hash-123",
+            "config_id": "plcid-config-hash-789",
+            "node_semantic_ids": {
+                "node-uuid-1": "sem-id-1",
+            },
+        },
+    }
+
+    agg.ingest(pipeline_start_record)
+
+    run = agg.get_run("run-distinct-ids")
+    assert run.meta["semantic_id"] != run.meta["config_id"]
+    assert run.meta["semantic_id"].startswith("plsemid-")
+    assert run.meta["config_id"].startswith("plcid-")
+
+
+def test_semantic_id_config_id_backward_compatibility():
+    """Test that old traces with only pipeline_config_id still work."""
+    agg = TraceAggregator()
+
+    # Old format with only pipeline_config_id
+    old_record = {
+        "record_type": "pipeline_start",
+        "schema_version": 1,
+        "timestamp": "2025-11-02T10:00:00.000Z",
+        "seq": 1,
+        "run_id": "run-old-format",
+        "pipeline_id": "plid-old",
+        "pipeline_spec_canonical": {
+            "version": 1,
+            "nodes": [
+                {
+                    "node_uuid": "node-uuid-1",
+                    "declaration_index": 0,
+                    "declaration_subindex": 0,
+                    "processor_ref": "TestProcessor",
+                    "role": "processor",
+                    "params": {},
+                    "ports": {},
+                }
+            ],
+            "edges": [],
+        },
+        "meta": {
+            "num_nodes": 1,
+            "pipeline_config_id": "old-config-id-123",  # Old field name
+            "node_semantic_ids": {
+                "node-uuid-1": "sem-id-old",
+            },
+        },
+    }
+
+    agg.ingest(old_record)
+
+    run = agg.get_run("run-old-format")
+    assert run is not None
+    assert run.meta is not None
+    assert "pipeline_config_id" in run.meta  # Still preserved for compatibility

@@ -106,7 +106,7 @@ def test_ser_contains_preprocessing_provenance() -> None:
 
     assert trace.pipeline_start is not None
     meta = trace.pipeline_start["meta"]
-    assert "pipeline_config_id" in meta
+    assert "config_id" in meta
     assert meta["node_semantic_ids"], "node_semantic_ids should not be empty"
 
     assert trace.records, "SER records were not captured"

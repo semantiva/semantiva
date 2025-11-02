@@ -40,7 +40,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - JSONL trace driver class renamed to ``JsonlTraceDriver``.
 
 ### Added
-- Trace aggregator metadata capture: `RunAggregate` now captures and preserves `meta` dict from `pipeline_start` records, exposing `pipeline_config_id` and `node_semantic_ids` for viewer integration.
+ - Trace aggregator metadata capture: `RunAggregate` now captures and preserves `meta` dict from `pipeline_start` records; orchestrator now emits distinct pipeline identifiers: `semantic_id` (prefixed with `plsemid-`) for pipeline structure identity and `config_id` (prefixed with `plcid-`) for configuration identity, alongside per-node `node_semantic_ids` for viewer integration.
+ - Tests: Added unit and integration tests covering semantic/config ID computation, meta capture, and preprocessor (sweep) metadata preservation.
 - Canonical spec preprocessor metadata: Orchestrator now enriches canonical spec nodes with `preprocessor_metadata` from sweep processors, enabling trace-overlaid visualization of sweep expressions and variables.
 - Pipeline inspection now renders a ``Derived preprocessor`` section for
   ``derive.parameter_sweep`` nodes, including sanitized semantics (type, mode,
