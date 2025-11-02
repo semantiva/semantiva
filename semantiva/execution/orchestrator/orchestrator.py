@@ -172,6 +172,9 @@ class SemantivaOrchestrator(ABC):
                         semantic_id = compute_node_semantic_id(pre)
                     except Exception:
                         semantic_id = "error"
+                    # Enrich canonical spec nodes with preprocessor metadata
+                    if index < len(canonical.get("nodes", [])):
+                        canonical["nodes"][index]["preprocessor_metadata"] = pre
                 semantic_pairs.append((node_uuid, semantic_id))
 
             meta: dict[str, Any] = {"num_nodes": len(node_uuids)}
