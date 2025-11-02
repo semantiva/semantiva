@@ -22,6 +22,21 @@ import json
 from typing import Any, Dict, List, Tuple, cast
 
 
+_UI_ONLY_KEYS = {"preprocessor_view"}
+
+
+def _strip_ui_only(obj: Any) -> Any:
+    if isinstance(obj, dict):
+        return {
+            key: _strip_ui_only(value)
+            for key, value in obj.items()
+            if key not in _UI_ONLY_KEYS
+        }
+    if isinstance(obj, list):
+        return [_strip_ui_only(value) for value in obj]
+    return obj
+
+
 def _dump_ast_commutative(node: ast.AST) -> str:
     """Return a canonical AST dump treating ``+``/``*`` as commutative/associative."""
 
@@ -111,6 +126,8 @@ def variable_domain_signature(spec: Any) -> Dict[str, Any]:
 def compute_node_semantic_id(preproc_meta: Dict[str, Any]) -> str:
     """Return a deterministic fingerprint for preprocessor metadata."""
 
+    payload = _strip_ui_only(preproc_meta)
+
     def _canonicalize(obj: Any) -> Any:
         if isinstance(obj, dict):
             return {k: _canonicalize(v) for k, v in obj.items() if k != "expr"}
@@ -118,7 +135,7 @@ def compute_node_semantic_id(preproc_meta: Dict[str, Any]) -> str:
             return [_canonicalize(v) for v in obj]
         return obj
 
-    canonical = _canonicalize(preproc_meta)
+    canonical = _canonicalize(payload)
     payload = json.dumps(canonical, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(
         f"semantiva:node-sem-v1:{payload}".encode("utf-8")

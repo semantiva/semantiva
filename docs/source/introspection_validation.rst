@@ -97,7 +97,71 @@ discovered via component ``get_metadata()``:
   trace records, enabling correlation between inspection and runtime execution.
   See :doc:`sweeps` for detailed preprocessor semantics.
 
-**Example**: A sweep node inspection might include::
+**preprocessor_view**
+  When the originating processor class exposes ``_expr_src`` (all sweep nodes do
+  by default), inspection also records a ``preprocessor_view`` dictionary. This
+  UI-only structure is never used for hashing or semantic identity—it's stripped
+  before computing semantic IDs—but it allows humans to see the raw expressions
+  that generated each parameter.
+
+Sanitized Semantics and Identity Contract
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The inspection builder stores the sanitized semantics in
+``NodeInspection.preprocessor_metadata``. This structure mirrors
+``processor.get_metadata()['preprocessor']`` and is safe to use in hashing and
+identity checks because it deliberately excludes the raw ``expr`` source. It
+includes the preprocessor version, sweep mode, broadcast flag, variable domain
+signatures, parameter expression signatures, dependencies, and collection
+output (when applicable).
+
+``compute_node_semantic_id`` ignores ``preprocessor_view`` automatically, so
+adding previews to inspection cannot perturb semantic IDs. SER provenance still
+includes the sanitized metadata plus ``expr`` for audit trails. See
+:doc:`ser` for the full SER schema and provenance guarantees.
+
+CLI Inspection Output Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The CLI summary (``semantiva inspect``) prints a dedicated ``Derived preprocessor``
+section for sweep nodes in both normal and ``--extended`` modes.
+
+**Normal inspection** shows human-readable expressions and compact variable signatures::
+
+   Derived preprocessor:
+       summary: Derived: parameter_sweep(mode=combinatorial, vars=['t'], collection=semantiva.examples.test_utils.FloatDataCollection)
+       type: derive.parameter_sweep
+       version: 1
+       mode: combinatorial
+       broadcast: false
+       collection: semantiva.examples.test_utils.FloatDataCollection
+       variables:
+           t: range(lo=-1.0, hi=2.0, steps=3, scale=linear, endpoint=true)
+       parameters:
+           value: 2.0 * t
+
+**Extended inspection** preserves the same structure but expands the signatures and
+shows both the raw expressions and AST signatures for each parameter::
+
+   - Derived preprocessor:
+       summary: Derived: parameter_sweep(mode=combinatorial, vars=['t'], collection=semantiva.examples.test_utils.FloatDataCollection)
+       type: derive.parameter_sweep
+       version: 1
+       mode: combinatorial
+       broadcast: false
+       collection: semantiva.examples.test_utils.FloatDataCollection
+       variables:
+           t: range(lo=-1.0, hi=2.0, steps=3, scale=linear, endpoint=true)
+       parameters:
+           value:
+               sig: {"ast": "BinOp(left=Constant(value=2.0), op=Mult(), right=Name(id='t', ctx=Load()))", "format": "ExpressionSigV1"}
+               expr: 2.0 * t
+       dependencies: {'required_external_parameters': [], 'context_keys': []}
+
+JSON Report Structure
+^^^^^^^^^^^^^^^^^^^^^
+
+A sweep node inspection in the JSON report includes::
 
     {
       "processor": "FloatMultiplyOperationParametricSweep",
@@ -116,6 +180,11 @@ discovered via component ``get_metadata()``:
         "broadcast": false,
         "collection": "semantiva.examples.FloatDataCollection",
         "dependencies": {"required_external_parameters": [], "context_keys": []}
+      },
+      "preprocessor_view": {
+        "param_expressions": {
+          "factor": {"sig": {...}, "expr": "factor"}
+        }
       }
     }
 

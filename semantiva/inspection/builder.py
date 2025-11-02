@@ -63,6 +63,26 @@ def _format_processor_reference(processor: Any) -> str:
     return f"{processor.__class__.__module__}.{processor.__class__.__name__}"
 
 
+def _make_parameter_sweep_summary(pre: Dict[str, Any]) -> str:
+    mode = pre.get("mode")
+    var_names = sorted(pre.get("variables", {}).keys())
+    collection = pre.get("collection")
+    return (
+        "Derived: parameter_sweep("
+        f"mode={mode}, vars={var_names}, collection={collection})"
+    )
+
+
+def _build_preprocessor_view(
+    expr_src: Optional[Dict[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    if not expr_src:
+        return None
+    return {
+        "param_expressions": {name: {"expr": src} for name, src in expr_src.items()}
+    }
+
+
 @dataclass
 class NodeInspection:
     """Detailed inspection data for a single pipeline node.
@@ -110,6 +130,9 @@ class NodeInspection:
     is_configuration_valid: bool
     errors: List[str] = field(default_factory=list)
     required_external_parameters: List[str] = field(default_factory=list)
+    derived_summary: Optional[str] = None
+    preprocessor_metadata: Optional[Dict[str, Any]] = None
+    preprocessor_view: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -424,10 +447,14 @@ def build_pipeline_inspection(
             isinstance(pre_meta, dict)
             and pre_meta.get("type") == "derive.parameter_sweep"
         ):
-            var_names = sorted(pre_meta.get("variables", {}).keys())
-            summary = f"Derived: parameter_sweep(mode={pre_meta.get('mode')}, vars={var_names})"
-            setattr(node_inspection, "derived_summary", summary)
-            setattr(node_inspection, "preprocessor_metadata", pre_meta)
+            node_inspection.derived_summary = _make_parameter_sweep_summary(pre_meta)
+            node_inspection.preprocessor_metadata = pre_meta
+            expr_src = getattr(processor.__class__, "_expr_src", None)
+            if not expr_src and hasattr(node.__class__, "processor"):
+                expr_src = getattr(node.__class__.processor, "_expr_src", None)
+            view = _build_preprocessor_view(expr_src)
+            if view:
+                node_inspection.preprocessor_view = view
         inspection_nodes.append(node_inspection)
 
     # Calculate pipeline-level required context keys
