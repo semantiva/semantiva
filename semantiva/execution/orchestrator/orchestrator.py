@@ -43,6 +43,10 @@ from semantiva.pipeline.nodes._pipeline_node_factory import _pipeline_node_facto
 from semantiva.pipeline.nodes.nodes import _PipelineNode
 from semantiva.pipeline.payload import Payload
 from semantiva.registry.descriptors import instantiate_from_descriptor
+from semantiva.metadata import (
+    compute_node_semantic_id,
+    compute_pipeline_config_id,
+)
 from semantiva.trace._utils import (
     canonical_json_bytes,
     collect_env_pins as _collect_env_pins_util,
@@ -140,12 +144,42 @@ class SemantivaOrchestrator(ABC):
             if "run_space_context" in self._current_run_metadata:
                 run_space_context = self._current_run_metadata["run_space_context"]
 
+        # Compute semantic IDs BEFORE on_pipeline_start (without instantiation)
         if trace is not None:
             pipeline_id = compute_pipeline_id(canonical)
             node_uuids = [n["node_uuid"] for n in canonical.get("nodes", [])]
             upstream_map = compute_upstream_map(canonical)
             run_id = f"run-{uuid.uuid4().hex}"
-            meta = {"num_nodes": len(node_uuids)}
+
+            # Resolve processor classes without instantiating nodes
+            proc_classes = self._resolve_processor_classes(canonical, resolved_spec)
+
+            semantic_pairs: list[tuple[str, str]] = []
+            for index, proc_cls in enumerate(proc_classes):
+                node_uuid = node_uuids[index] if index < len(node_uuids) else ""
+                semantic_id = "none"
+                try:
+                    proc_meta = cast(Any, proc_cls).get_metadata()
+                except Exception:
+                    proc_meta = {}
+                pre = (
+                    proc_meta.get("preprocessor")
+                    if isinstance(proc_meta, dict)
+                    else None
+                )
+                if isinstance(pre, dict):
+                    try:
+                        semantic_id = compute_node_semantic_id(pre)
+                    except Exception:
+                        semantic_id = "error"
+                semantic_pairs.append((node_uuid, semantic_id))
+
+            meta: dict[str, Any] = {"num_nodes": len(node_uuids)}
+            meta["node_semantic_ids"] = {
+                uuid_: sem_id for uuid_, sem_id in semantic_pairs if uuid_
+            }
+            meta["pipeline_config_id"] = compute_pipeline_config_id(semantic_pairs)
+
             run_space_kwargs: dict[str, Any] = {}
             if trace_ctx is not None:
                 fk = trace_ctx.as_run_space_fk()
@@ -159,6 +193,8 @@ class SemantivaOrchestrator(ABC):
                 run_space_kwargs["run_space_index"] = run_space_index
             if run_space_context is not None:
                 run_space_kwargs["run_space_context"] = run_space_context
+
+            # Emit pipeline_start BEFORE instantiating nodes
             trace.on_pipeline_start(
                 pipeline_id,
                 run_id,
@@ -168,6 +204,7 @@ class SemantivaOrchestrator(ABC):
                 **run_space_kwargs,
             )
 
+        # NOW instantiate nodes (this may emit 'instantiate' events)
         nodes, node_defs = self._instantiate_nodes(resolved_spec, logger)
         self._last_nodes = list(nodes)
 
@@ -738,6 +775,32 @@ class SemantivaOrchestrator(ABC):
     def _iso_now(self) -> str:
         return datetime.now().isoformat(timespec="milliseconds") + "Z"
 
+    def _resolve_processor_classes(
+        self, canonical: dict[str, Any], resolved_spec: Sequence[dict[str, Any]]
+    ) -> list[type]:
+        """Resolve processor classes from resolved spec without instantiation.
+
+        This allows computing semantic IDs before emitting any node events.
+        Uses the resolved_spec which contains the actual processor classes.
+        """
+        from semantiva.registry import resolve_symbol
+
+        classes: list[type] = []
+        for node_def in resolved_spec:
+            proc = node_def.get("processor")
+
+            # Resolve class reference
+            if isinstance(proc, str):
+                proc_cls = resolve_symbol(proc)
+            elif isinstance(proc, type):
+                proc_cls = proc
+            else:
+                raise ValueError(f"Invalid processor specification: {proc}")
+
+            classes.append(proc_cls)
+
+        return classes
+
     def _instantiate_nodes(
         self, pipeline_spec: Sequence[dict[str, Any]], logger: Logger
     ) -> tuple[list[_PipelineNode], list[dict[str, Any]]]:
@@ -788,6 +851,31 @@ class SemantivaOrchestrator(ABC):
         }.get(status, status)
         proc_cls = node.processor.__class__
         fqcn = f"{proc_cls.__module__}.{proc_cls.__qualname__}"
+        try:
+            proc_meta = cast(Any, proc_cls).get_metadata()
+        except Exception:
+            proc_meta = {}
+        pre = proc_meta.get("preprocessor") if isinstance(proc_meta, dict) else None
+
+        # Build preprocessing_provenance with raw expressions
+        preprocessing_data = {}
+        if isinstance(pre, dict):
+            import json
+
+            # Deep copy the sanitized metadata
+            prov = json.loads(json.dumps(pre))
+            # Add raw expressions from _expr_src
+            raw_exprs = getattr(proc_cls, "_expr_src", {})
+            if raw_exprs:
+                for param_name, expr_src in raw_exprs.items():
+                    prov.setdefault("param_expressions", {}).setdefault(param_name, {})[
+                        "expr"
+                    ] = expr_src
+            preprocessing_data = {
+                "semantic_id": compute_node_semantic_id(pre),
+                "preprocessing_provenance": prov,
+            }
+
         return SERRecord(
             record_type="ser",
             schema_version=1,
@@ -797,6 +885,7 @@ class SemantivaOrchestrator(ABC):
                 "ref": fqcn,
                 "parameters": params,
                 "parameter_sources": param_sources,
+                **preprocessing_data,
             },
             context_delta=context_delta,
             assertions={

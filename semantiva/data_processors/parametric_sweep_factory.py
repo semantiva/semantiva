@@ -52,6 +52,7 @@ from semantiva.data_io.data_io import DataSource
 from semantiva.data_types import DataCollectionType
 from semantiva.data_processors.data_processors import DataOperation, DataProbe
 from semantiva.utils.safe_eval import ExpressionEvaluator, ExpressionError
+from semantiva.metadata import normalize_expression_sig_v1, variable_domain_signature
 
 
 @dataclass
@@ -362,6 +363,7 @@ class ParametricSweepFactory:
         compiled_exprs = _compile_parametric_expressions(
             parametric_expressions or {}, set(vars.keys()), evaluator
         )
+        expr_src = dict(parametric_expressions or {})
 
         parameters, allowed_names = _allowed_parameter_names(element, element_kind)
 
@@ -395,6 +397,41 @@ class ParametricSweepFactory:
 
         base_kwargs_filter = set(required_external) | set(optional_external.keys())
 
+        def _preprocessor_metadata(cls: Any) -> dict[str, Any]:
+            element_ref = f"{cls._element.__module__}.{cls._element.__qualname__}"
+            # Sanitized metadata: only include "sig", not "expr"
+            param_expressions = {
+                name: {"sig": normalize_expression_sig_v1(src)}
+                for name, src in getattr(cls, "_expr_src", {}).items()
+            }
+            variables_meta = {
+                name: variable_domain_signature(spec)
+                for name, spec in getattr(cls, "_vars", {}).items()
+            }
+            collection = getattr(cls, "_collection_output", None)
+            collection_ref = (
+                f"{collection.__module__}.{collection.__qualname__}"
+                if collection is not None
+                else None
+            )
+            deps = {
+                "required_external_parameters": list(
+                    getattr(cls, "_required_external", ())
+                ),
+                "context_keys": list(getattr(cls, "_from_context_keys", ())),
+            }
+            return {
+                "type": "derive.parameter_sweep",
+                "version": 1,
+                "element_ref": element_ref,
+                "param_expressions": param_expressions,
+                "variables": variables_meta,
+                "mode": getattr(cls, "_mode", "combinatorial"),
+                "broadcast": bool(getattr(cls, "_broadcast", False)),
+                "collection": collection_ref,
+                "dependencies": deps,
+            }
+
         if element_kind == "DataSource":
             # At this point collection_output is guaranteed to be non-None for DataSource
             assert collection_output is not None
@@ -404,6 +441,7 @@ class ParametricSweepFactory:
                 _collection_output: Type[DataCollectionType] = collection_output  # type: ignore[assignment]
                 _vars = vars
                 _compiled_exprs = compiled_exprs
+                _expr_src = expr_src
                 _mode = mode
                 _broadcast = broadcast
                 _allowed_names = allowed_names
@@ -471,6 +509,13 @@ class ParametricSweepFactory:
                     _publish_created_context(created, context)
                     return cls._collection_output.from_list(items)
 
+                @classmethod
+                def _define_metadata(cls) -> dict:
+                    meta = dict(super()._define_metadata())
+                    meta["preprocessor"] = _preprocessor_metadata(cls)
+                    meta.setdefault("component_type", "DataSource")
+                    return meta
+
             signature = _build_signature(
                 is_classmethod=True,
                 context_keys=list(from_context_keys),
@@ -496,6 +541,7 @@ class ParametricSweepFactory:
                 _collection_output: Type[DataCollectionType] = collection_output  # type: ignore[assignment]
                 _vars = vars
                 _compiled_exprs = compiled_exprs
+                _expr_src = expr_src
                 _mode = mode
                 _broadcast = broadcast
                 _allowed_names = allowed_names
@@ -583,6 +629,13 @@ class ParametricSweepFactory:
                     _publish_created_context(created, context_ref)
                     return self._collection_output.from_list(results)
 
+                @classmethod
+                def _define_metadata(cls) -> dict:
+                    meta = dict(super()._define_metadata())
+                    meta["preprocessor"] = _preprocessor_metadata(cls)
+                    meta.setdefault("component_type", "DataOperation")
+                    return meta
+
             signature = _build_signature(
                 is_classmethod=False,
                 context_keys=list(from_context_keys),
@@ -603,6 +656,7 @@ class ParametricSweepFactory:
             _element = element
             _vars = vars
             _compiled_exprs = compiled_exprs
+            _expr_src = expr_src
             _mode = mode
             _broadcast = broadcast
             _allowed_names = allowed_names
@@ -680,6 +734,13 @@ class ParametricSweepFactory:
                     )
                 _publish_created_context(created, context_ref)
                 return results
+
+            @classmethod
+            def _define_metadata(cls) -> dict:
+                meta = dict(super()._define_metadata())
+                meta["preprocessor"] = _preprocessor_metadata(cls)
+                meta.setdefault("component_type", "DataProbe")
+                return meta
 
         signature = _build_signature(
             is_classmethod=False,

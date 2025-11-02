@@ -92,6 +92,36 @@ node ran and why it was considered successful. Additional metadata (like
 ``trigger`` and ``upstream_evidence``) is included alongside the formal
 preconditions/postconditions for convenient consumption.
 
+Processor semantics
+-------------------
+
+When preprocessors modify a processor before execution (for example,
+``derive.parameter_sweep``), the ``processor`` object is enriched with optional
+fields:
+
+* ``semantic_id`` — deterministic fingerprint for the preprocessor metadata.
+* ``preprocessing_provenance`` — normalized, versioned provenance detailing
+  variables, expressions, mode, broadcast flag, collection output, and
+  dependencies used to derive parameters.
+
+These additions are backward compatible with existing SER consumers.
+
+Identity facets
+---------------
+
+Two complementary identifiers appear in trace metadata:
+
+* ``pipeline_id`` — structural identity derived from the canonical graph.
+* ``pipeline_config_id`` — semantic identity derived from sorted
+  ``(node_uuid, semantic_id)`` pairs. Changes to sweep semantics alter this
+  value even when the structural graph is unchanged.
+
+.. note::
+
+   Expression signatures are conservative in v1. ``ExpressionSigV1`` only treats
+   ``+`` and ``*`` as commutative/associative; other algebraic rewrites remain
+   distinct.
+
 Detail flags control which summary fields are emitted when using the JSONL
 driver:
 

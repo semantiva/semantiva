@@ -161,9 +161,12 @@ This pattern supports workflows where:
 
 Inspection
 ----------
+
 Inspection surfaces which parameters were **computed**, **provided**,
 **defaulted**, or remain **required_external_parameters** (unbound callee args
-you still need to provide). See :doc:`pipeline` for inspection details.
+you still need to provide). For nodes using ``derive.parameter_sweep``,
+inspection also includes ``derived_summary`` and ``preprocessor_metadata``
+attributes. See :doc:`introspection_validation` for complete inspection details.
 
 Parameter Provenance Tracking
 ------------------------------

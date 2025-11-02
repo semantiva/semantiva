@@ -495,6 +495,8 @@ class _IOOperationFactory:
                 base["component_type"] = io_meta.get(
                     "component_type", base["component_type"]
                 )
+                if "preprocessor" in io_meta:
+                    base["preprocessor"] = io_meta["preprocessor"]
                 return base
 
             methods["_define_metadata"] = classmethod(_define_metadata_override)
