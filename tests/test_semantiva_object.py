@@ -167,6 +167,7 @@ def test_semantic_id_metadata_consistency():
                     "wrapped_component_docstring",
                     # "class_name",
                     "parameters",
+                    "preprocessor",  # Complex nested structure, verified separately
                 ):
                     print(f"     Checking key '{key}', {value} in semantic_id")
                     if isinstance(value, list):

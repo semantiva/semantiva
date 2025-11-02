@@ -23,7 +23,9 @@ Node Keys (selected)
 **Canonical identity note:** the canonical graph and node UUIDs are derived from
 the **resulting processor class** and its **effective parameter map**; the
 ``derive`` block content is not included in node UUID hashing (to avoid identity
-churn for equivalent derivations).
+churn for equivalent derivations). Semantic changes introduced by preprocessors
+are captured separately via ``pipeline_config_id`` in the trace metadata, which
+hashes the tuple of ``(node_uuid, semantic_id)`` pairs computed at runtime.
 
 ``execution``
    Resolve orchestrators, executors, and transports from the registry. When

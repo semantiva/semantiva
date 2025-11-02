@@ -41,6 +41,10 @@ pipeline:
     assert "vals" in node0.context_params
     assert "vals" in node0.required_external_parameters
     assert any(k.endswith("_values") for k in node0.created_keys)
+    assert hasattr(node0, "derived_summary")
+    assert "parameter_sweep" in node0.derived_summary
+    assert hasattr(node0, "preprocessor_metadata")
+    assert node0.preprocessor_metadata["type"] == "derive.parameter_sweep"
 
     node1 = insp.nodes[1]
     req_ext = getattr(node1, "required_external_parameters", [])

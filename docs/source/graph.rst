@@ -28,7 +28,9 @@ GraphV1 guarantees:
 .. note::
    To avoid identity churn, :term:`derive` blocks (e.g., ``derive.parameter_sweep``)
    are **not** hashed into the node UUID. Only the resolved processor class and the
-   **effective** parameter map (after preprocessing/merging) participate.
+   **effective** parameter map (after preprocessing/merging) participate. Semantic
+   changes introduced by preprocessors are tracked separately in trace metadata via
+   ``pipeline_config_id``.
 
 Example::
 

@@ -43,6 +43,12 @@ All error handling, timing, and tracing responsibilities are handled by the
 base class. ``LocalSemantivaOrchestrator`` simply delegates to the injected
 executor/transport while benefiting from the shared SER logic.
 
+During ``on_pipeline_start`` the orchestrator also emits a semantic fingerprint:
+``pipeline_config_id`` summarises the set of ``(node_uuid, semantic_id)`` pairs
+computed from live processor metadata, and ``node_semantic_ids`` exposes the
+per-node values used in that hash. Structural identifiers (``pipeline_id`` and
+node UUIDs) remain unchanged.
+
 Public API Surface
 ------------------
 

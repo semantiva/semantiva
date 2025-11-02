@@ -40,6 +40,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - JSONL trace driver class renamed to ``JsonlTraceDriver``.
 
 ### Added
+- Semantic provenance for ``derive.parameter_sweep`` preprocessors:
+  ``processor.semantic_id`` + ``processor.preprocessing_provenance`` in SER,
+  ``pipeline_config_id`` and per-node ``node_semantic_ids`` emitted at
+  ``pipeline_start``, and inspection summaries exposing the same metadata.
+- ``semantiva.metadata.semantic_id`` utilities for expression normalization,
+  variable domain signatures, and dual pipeline identity helpers.
 - Core trace aggregator with run-space lifecycle support providing per-run and
   per-launch completeness reporting for downstream tooling. Includes documentation.
 - Run-Space lifecycle trace schemas (`run_space_start`, `run_space_end`) with

@@ -66,7 +66,62 @@ Typical fields present in the JSON summary:
   * ``processor`` - fully qualified class name
   * ``parameters`` - normalized parameter map
   * ``ports`` - declared input/output ports (if present)
+  * ``derived_summary`` - concise preprocessor summary (when applicable)
+  * ``preprocessor_metadata`` - full derive configuration (when applicable)
 * ``issues`` - list of warnings/errors detected by the validator
+
+Preprocessor Metadata in Inspection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For nodes using preprocessors like ``derive.parameter_sweep``, the inspection
+builder (:mod:`semantiva.inspection.builder`) surfaces additional metadata
+discovered via component ``get_metadata()``:
+
+**derived_summary**
+  A concise human-readable string indicating the preprocessor type and key
+  configuration, such as ``Derived: parameter_sweep(mode=combinatorial, vars=['t'])``.
+  This attribute is attached to :class:`~semantiva.inspection.builder.NodeInspection`
+  instances for quick identification in reports.
+
+**preprocessor_metadata**
+  The complete normalized provenance structure containing:
+  
+  * ``param_expressions`` - parameter computation expressions with normalized signatures
+  * ``variables`` - variable domain specifications (ranges, sequences, context sources)
+  * ``mode`` - sweep mode (``combinatorial`` or ``by_position``)
+  * ``broadcast`` - whether positional sweeps broadcast mismatched lengths
+  * ``collection`` - output collection type (for DataSource/DataOperation sweeps)
+  * ``dependencies`` - required external parameters and context keys
+  
+  This structure matches the ``processor.preprocessing_provenance`` field in SER
+  trace records, enabling correlation between inspection and runtime execution.
+  See :doc:`sweeps` for detailed preprocessor semantics.
+
+**Example**: A sweep node inspection might include::
+
+    {
+      "processor": "FloatMultiplyOperationParametricSweep",
+      "derived_summary": "Derived: parameter_sweep(mode=by_position, vars=['factor'])",
+      "preprocessor_metadata": {
+        "type": "derive.parameter_sweep",
+        "version": 1,
+        "element_ref": "semantiva.examples.FloatMultiplyOperation",
+        "param_expressions": {
+          "factor": {"sig": {"format": "ExpressionSigV1", "ast": "..."}}
+        },
+        "variables": {
+          "factor": {"kind": "range", "lo": 1.0, "hi": 3.0, "steps": 3, ...}
+        },
+        "mode": "by_position",
+        "broadcast": false,
+        "collection": "semantiva.examples.FloatDataCollection",
+        "dependencies": {"required_external_parameters": [], "context_keys": []}
+      }
+    }
+
+These attributes maintain backward compatibility—existing consumers that don't
+use preprocessor metadata continue working unchanged, while new tooling can
+leverage the richer semantics for validation, visualization, or analysis.
 
 JSON Outline Example
 --------------------

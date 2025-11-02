@@ -282,7 +282,6 @@ def build_pipeline_inspection(
 
         # Extract node and processor information
         processor = node.processor
-        metadata = node.get_metadata()
 
         issues = classify_unknown_config_params(
             processor_cls=processor.__class__,
@@ -292,8 +291,8 @@ def build_pipeline_inspection(
         # Analyze parameter resolution with defaults
         param_details: Dict[str, ParameterInfo] = {}
         # Use canonical metadata API (works for all component types)
-        metadata = processor.__class__.get_metadata()
-        param_details = metadata.get("parameters", {})
+        processor_metadata = processor.__class__.get_metadata()
+        param_details = processor_metadata.get("parameters", {})
 
         # If metadata doesn't contain parameters, fall back to get_processing_parameter_names
         if not param_details:
@@ -402,7 +401,7 @@ def build_pipeline_inspection(
             index=index,
             node_class=node.__class__.__name__,
             processor_class=processor.__class__.__name__,
-            component_type=metadata.get("component_type", "Unknown"),
+            component_type=processor_metadata.get("component_type", "Unknown"),
             input_type=getattr(node, "input_data_type", lambda: None)(),
             output_type=getattr(node, "output_data_type", lambda: None)(),
             config_params=config_params,
@@ -416,6 +415,19 @@ def build_pipeline_inspection(
             errors=node_errors,
             required_external_parameters=required_external_parameters,
         )
+        pre_meta = (
+            processor_metadata.get("preprocessor")
+            if isinstance(processor_metadata, dict)
+            else None
+        )
+        if (
+            isinstance(pre_meta, dict)
+            and pre_meta.get("type") == "derive.parameter_sweep"
+        ):
+            var_names = sorted(pre_meta.get("variables", {}).keys())
+            summary = f"Derived: parameter_sweep(mode={pre_meta.get('mode')}, vars={var_names})"
+            setattr(node_inspection, "derived_summary", summary)
+            setattr(node_inspection, "preprocessor_metadata", pre_meta)
         inspection_nodes.append(node_inspection)
 
     # Calculate pipeline-level required context keys
