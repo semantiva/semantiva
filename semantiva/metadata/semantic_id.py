@@ -149,9 +149,37 @@ def compute_pipeline_config_id(pairs: List[Tuple[str, str]]) -> str:
     return "plcid-" + _sha256_json(ordered)
 
 
+def compute_pipeline_semantic_id(canonical_spec: Dict[str, Any]) -> str:
+    """Compute semantic identity for a pipeline from its canonical spec structure.
+
+    This represents the pipeline's structure and configuration, independent of
+    node implementation details. It's derived from the pipeline definition itself.
+    """
+
+    # Use the structure of nodes (names, inputs, outputs) but not runtime details
+    pipeline_structure = {
+        "nodes": [
+            {
+                "name": node.get("name"),
+                "node_uuid": node.get("node_uuid"),
+                "payload_from": node.get("payload_from"),
+            }
+            for node in canonical_spec.get("nodes", [])
+        ]
+    }
+    payload = json.dumps(pipeline_structure, sort_keys=True, separators=(",", ":"))
+    return (
+        "plsemid-"
+        + hashlib.sha256(
+            f"semantiva:pipeline-sem-v1:{payload}".encode("utf-8")
+        ).hexdigest()
+    )
+
+
 __all__ = [
     "compute_node_semantic_id",
     "compute_pipeline_config_id",
+    "compute_pipeline_semantic_id",
     "normalize_expression_sig_v1",
     "variable_domain_signature",
 ]

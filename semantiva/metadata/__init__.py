@@ -17,6 +17,7 @@
 from .semantic_id import (
     compute_node_semantic_id,
     compute_pipeline_config_id,
+    compute_pipeline_semantic_id,
     normalize_expression_sig_v1,
     variable_domain_signature,
 )
@@ -24,6 +25,7 @@ from .semantic_id import (
 __all__ = [
     "compute_node_semantic_id",
     "compute_pipeline_config_id",
+    "compute_pipeline_semantic_id",
     "normalize_expression_sig_v1",
     "variable_domain_signature",
 ]

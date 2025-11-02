@@ -46,6 +46,7 @@ from semantiva.registry.descriptors import instantiate_from_descriptor
 from semantiva.metadata import (
     compute_node_semantic_id,
     compute_pipeline_config_id,
+    compute_pipeline_semantic_id,
 )
 from semantiva.trace._utils import (
     canonical_json_bytes,
@@ -181,7 +182,8 @@ class SemantivaOrchestrator(ABC):
             meta["node_semantic_ids"] = {
                 uuid_: sem_id for uuid_, sem_id in semantic_pairs if uuid_
             }
-            meta["pipeline_config_id"] = compute_pipeline_config_id(semantic_pairs)
+            meta["semantic_id"] = compute_pipeline_semantic_id(canonical)
+            meta["config_id"] = compute_pipeline_config_id(semantic_pairs)
 
             run_space_kwargs: dict[str, Any] = {}
             if trace_ctx is not None:

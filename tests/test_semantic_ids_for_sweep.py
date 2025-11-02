@@ -132,12 +132,12 @@ def test_pipeline_config_id_semantics(
     )
 
     plc_a = (
-        trace_a.pipeline_start["meta"].get("pipeline_config_id")
+        trace_a.pipeline_start["meta"].get("config_id")
         if trace_a.pipeline_start
         else None
     )
     plc_b = (
-        trace_b.pipeline_start["meta"].get("pipeline_config_id")
+        trace_b.pipeline_start["meta"].get("config_id")
         if trace_b.pipeline_start
         else None
     )
