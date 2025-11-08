@@ -718,6 +718,40 @@ def _run(args: argparse.Namespace) -> int:
         run_space_meta["override_source"] = "CLI"
     run_count = len(runs)
 
+    # --- Pre-flight aggregation of missing external context keys (single check) ---
+    # Use inspection.required_context_keys as the single source of truth for
+    # keys that must be supplied externally (not produced by any node).
+    try:
+        required_external = set(
+            getattr(inspection, "required_context_keys", set()) or set()
+        )
+    except Exception:
+        required_external = set()
+
+    probe_context: Dict[str, Any] = dict(ctx_dict)
+    if runs:
+        # All runs share the same context-key shape; first run is representative
+        try:
+            probe_context.update(runs[0])
+        except Exception:
+            # defensive: if runs[0] is not a mapping, ignore
+            pass
+
+    missing = sorted(required_external.difference(probe_context.keys()))
+    if missing:
+        msg = [
+            "Error: missing required context keys:",
+            *[f"  - {k}" for k in missing],
+            "",
+            "Provide values via one of:",
+            "  * CLI:  --context key=value   (repeat for multiple)",
+            "  * YAML: run_space.blocks[].context: {key: [values...]}",
+            "  * Override file: --run-space-override path/to/override.yaml",
+            "",
+        ]
+        print("\n".join(msg), file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+
     raw_cfg = pipeline_cfg.raw if isinstance(pipeline_cfg.raw, dict) else {}
     run_space_declared = False
     if isinstance(raw_cfg, dict):
