@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>semantiva.inspection.validator - Semantiva 0.5.0 documentation</title>
+        <title>semantiva.data_processors.copy_data_probe - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -262,7 +262,7 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for semantiva.inspection.validator</h1><div class="highlight"><pre>
+          <h1>Source code for semantiva.data_processors.copy_data_probe</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2025 Semantiva authors</span>
 <span class="c1">#</span>
 <span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
@@ -277,139 +277,37 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="sd">&quot;&quot;&quot;Pipeline Inspection Validator.</span>
+<span class="sd">&quot;&quot;&quot;CopyDataProbe utility component for pass-through inspection.&quot;&quot;&quot;</span>
 
-<span class="sd">This module provides validation functionality for pipeline inspection results.</span>
-<span class="sd">The validator operates on inspection data structures rather than during pipeline</span>
-<span class="sd">construction, allowing for validation of partially constructed or invalid pipelines.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Type</span>
 
-<span class="sd">Key Design Principles:</span>
-<span class="sd">- **Post-inspection Validation**: Operates on inspection results, not during building</span>
-<span class="sd">- **Error Aggregation**: Collects all errors before raising comprehensive exceptions</span>
-<span class="sd">- **Structured Error Messages**: Provides detailed, actionable error information</span>
-<span class="sd">- **Separation of Concerns**: Validation logic is separate from inspection building</span>
-
-<span class="sd">The validator enables inspection tools to analyze invalid configurations without</span>
-<span class="sd">failing, while still providing validation when explicitly requested.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineConfigurationError</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">.builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineInspection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataProbe</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_is_compatible</span><span class="p">(</span><span class="n">prev_out_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">next_in_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if output type is compatible with input type.</span>
+<div class="viewcode-block" id="CopyDataProbe">
+<a class="viewcode-back" href="../../../utility_processors.html#semantiva.data_processors.CopyDataProbe">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CopyDataProbe</span><span class="p">(</span><span class="n">DataProbe</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns input data unchanged.&quot;&quot;&quot;</span>
 
-<span class="sd">    Compatibility follows the same rule as runtime execution:</span>
-<span class="sd">    - Types are equal, OR</span>
-<span class="sd">    - Output type is a subclass of input type</span>
-
-<span class="sd">    This matches the runtime gate in _DataNode._process which uses issubclass,</span>
-<span class="sd">    allowing subclass outputs to be accepted by base-class inputs.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        prev_out_type: Output data type from previous node</span>
-<span class="sd">        next_in_type: Expected input data type of next node</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if types are compatible (equal or subclass relationship)</span>
-
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; _is_compatible(SklearnModel, SklearnModel)  # Equal</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; _is_compatible(SklearnModel, BaseDataType)  # Subclass</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; _is_compatible(SklearnModel, NoDataType)    # Incompatible</span>
-<span class="sd">        False</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        Includes TypeError guard to handle non-type objects gracefully.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">prev_out_type</span> <span class="o">==</span> <span class="n">next_in_type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span>
-            <span class="n">prev_out_type</span><span class="p">,</span> <span class="n">next_in_type</span>
-        <span class="p">)</span>
-    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-        <span class="c1"># One or both arguments are not class objects; treat as incompatible</span>
-        <span class="k">return</span> <span class="kc">False</span>
+<div class="viewcode-block" id="CopyDataProbe.input_data_type">
+<a class="viewcode-back" href="../../../utility_processors.html#semantiva.data_processors.CopyDataProbe.input_data_type">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseDataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Accept any BaseDataType subclass as input.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BaseDataType</span></div>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_validate_data_flow_compatibility</span><span class="p">(</span><span class="n">inspection</span><span class="p">:</span> <span class="n">PipelineInspection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate data type compatibility between consecutive nodes in the pipeline.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseDataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseDataType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the input data unchanged (identity function).</span>
 
-<span class="sd">    This function checks that the output data type of each node is compatible</span>
-<span class="sd">    with the input data type of the next node. Any incompatibilities are recorded</span>
-<span class="sd">    as errors in the affected nodes.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: The input data to pass through.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        inspection: Complete pipeline inspection data to validate</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        - Nodes with None input/output types are skipped (e.g., context processors)</span>
-<span class="sd">        - Errors are added to the node that has the incompatible input type</span>
-<span class="sd">        - Only validates consecutive data-processing nodes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">current_node</span> <span class="o">=</span> <span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">next_node</span> <span class="o">=</span> <span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-
-        <span class="c1"># Skip validation if either node has no data types (e.g., context processors)</span>
-        <span class="k">if</span> <span class="n">current_node</span><span class="o">.</span><span class="n">output_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">next_node</span><span class="o">.</span><span class="n">input_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Check if output type of current node is compatible with input type of next node</span>
-        <span class="c1"># Compatible means: equal types OR output is a subclass of input (same as runtime)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_compatible</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">output_type</span><span class="p">,</span> <span class="n">next_node</span><span class="o">.</span><span class="n">input_type</span><span class="p">):</span>
-            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Data type incompatibility: receives </span><span class="si">{</span><span class="n">next_node</span><span class="o">.</span><span class="n">input_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but previous node (Node </span><span class="si">{</span><span class="n">current_node</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">) outputs </span><span class="si">{</span><span class="n">current_node</span><span class="o">.</span><span class="n">output_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-            <span class="n">next_node</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="validate_pipeline">
-<a class="viewcode-back" href="../../../introspection_validation.html#semantiva.inspection.validator.validate_pipeline">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">validate_pipeline</span><span class="p">(</span><span class="n">inspection</span><span class="p">:</span> <span class="n">PipelineInspection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise :class:`PipelineConfigurationError` if inspection contains errors.</span>
-
-<span class="sd">    This function examines the inspection results and raises a comprehensive</span>
-<span class="sd">    exception if any errors were encountered during inspection. It aggregates</span>
-<span class="sd">    both pipeline-level and node-level errors into a single exception message.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        inspection: Complete pipeline inspection data to validate</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        PipelineConfigurationError: If any errors are found in the inspection.</span>
-<span class="sd">            The exception message contains all errors separated by semicolons,</span>
-<span class="sd">            with node-specific errors prefixed with their node index.</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        This function is the only place in the inspection system that raises</span>
-<span class="sd">        exceptions. The inspection builder always succeeds and records errors</span>
-<span class="sd">        for later validation, allowing tools to inspect invalid configurations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Perform data flow validation first (adds errors to nodes)</span>
-    <span class="n">_validate_data_flow_compatibility</span><span class="p">(</span><span class="n">inspection</span><span class="p">)</span>
-
-    <span class="n">msgs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># Collect pipeline-level errors</span>
-    <span class="n">msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">inspection</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
-
-    <span class="c1"># Collect node-level errors with node identification</span>
-    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">inspection</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
-            <span class="n">msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Node </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Raise comprehensive exception if any errors found</span>
-    <span class="k">if</span> <span class="n">msgs</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">PipelineConfigurationError</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msgs</span><span class="p">))</span></div>
+<span class="sd">        Returns:</span>
+<span class="sd">            The same data object (preserves identity).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
 </pre></div>
         </article>

@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantiva Contracts</a></li>
@@ -500,6 +501,17 @@ character limit).</p></li>
 overlap.</p></li>
 </ul>
 </section>
+<section id="probe-node-contract-mandatory">
+<h2>Probe node contract (mandatory)<a class="headerlink" href="#probe-node-contract-mandatory" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Any pipeline node wrapping a <a class="reference internal" href="data_processors.html#semantiva.data_processors.data_processors.DataProbe" title="semantiva.data_processors.data_processors.DataProbe"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataProbe</span></code></a>
+<strong>must</strong> declare a non-empty <code class="docutils literal notranslate"><span class="pre">context_key</span></code>.</p></li>
+<li><p>The probe result is written to that key by the node—components stay
+context-agnostic.</p></li>
+<li><p>Pipelines that omit <code class="docutils literal notranslate"><span class="pre">context_key</span></code> for probes fail validation via
+<strong class="command">semantiva inspect</strong>.</p></li>
+</ul>
+</section>
 <section id="ci-integration">
 <h2>CI integration<a class="headerlink" href="#ci-integration" title="Link to this heading">¶</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code> in CI pipelines to block merges when contracts are
@@ -566,6 +578,7 @@ violated. The command exits with code <code class="docutils literal notranslate"
 <li><a class="reference internal" href="#">Semantiva Contracts</a><ul>
 <li><a class="reference internal" href="#rule-catalog">Rule catalog</a></li>
 <li><a class="reference internal" href="#fixing-common-sva-errors">Fixing common SVA errors</a></li>
+<li><a class="reference internal" href="#probe-node-contract-mandatory">Probe node contract (mandatory)</a></li>
 <li><a class="reference internal" href="#ci-integration">CI integration</a></li>
 </ul>
 </li>

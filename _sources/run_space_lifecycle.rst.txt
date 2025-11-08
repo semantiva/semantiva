@@ -45,6 +45,16 @@ Planned Runs
 Linkage to Pipelines
 --------------------
 
-Each pipeline spawned from the launch includes **foreign keys** in its
-``pipeline_start`` record: ``run_space_spec_id`` (always), ``run_space_inputs_id`` (if used),
-``run_space_launch_id``, and ``run_space_attempt``. Standalone pipelines omit these.
+Each pipeline spawned from the launch includes a **composite foreign key** in its
+``pipeline_start`` record to uniquely identify the launch:
+
+- ``run_space_launch_id`` + ``run_space_attempt`` — composite FK (both parts needed for retry disambiguation)
+
+Plus run-specific metadata:
+
+- ``run_space_index`` — 0-based position within the launch
+- ``run_space_context`` — parameter values for this specific run
+
+Launch-level constants (``run_space_spec_id``, ``run_space_inputs_id``, ``run_space_combine_mode``, 
+``run_space_total_runs``) are stored once in the ``run_space_start`` event to eliminate redundancy.
+Standalone pipelines omit all run-space fields.

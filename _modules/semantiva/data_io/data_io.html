@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
@@ -335,16 +336,18 @@
 
         <span class="n">excluded_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">]</span>
 
-        <span class="n">annotated_parameter_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">param_type</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_retrieve_parameter_signatures</span><span class="p">(</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_get_data</span><span class="p">,</span> <span class="n">excluded_parameters</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
+        <span class="c1"># Import ParameterInfo to ensure proper metadata structure</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">_BaseDataProcessor</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">details</span> <span class="o">=</span> <span class="n">_BaseDataProcessor</span><span class="o">.</span><span class="n">_retrieve_parameter_details</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_get_data</span><span class="p">,</span> <span class="n">excluded_parameters</span>
+        <span class="p">)</span>
 
         <span class="n">component_metadata</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;component_type&quot;</span><span class="p">:</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">annotated_parameter_list</span> <span class="ow">or</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">details</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -388,16 +391,18 @@
 
         <span class="n">excluded_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">]</span>
 
-        <span class="n">annotated_parameter_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">param_type</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_retrieve_parameter_signatures</span><span class="p">(</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_get_payload</span><span class="p">,</span> <span class="n">excluded_parameters</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
+        <span class="c1"># Import ParameterInfo to ensure proper metadata structure</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">_BaseDataProcessor</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">details</span> <span class="o">=</span> <span class="n">_BaseDataProcessor</span><span class="o">.</span><span class="n">_retrieve_parameter_details</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_get_payload</span><span class="p">,</span> <span class="n">excluded_parameters</span>
+        <span class="p">)</span>
 
         <span class="n">component_metadata</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;component_type&quot;</span><span class="p">:</span> <span class="s2">&quot;PayloadSource&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">annotated_parameter_list</span><span class="p">,</span>
+            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">details</span><span class="p">,</span>
             <span class="s2">&quot;injected_context_keys&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">injected_context_keys</span><span class="p">(),</span>
         <span class="p">}</span>
 
@@ -516,16 +521,18 @@
 
         <span class="n">excluded_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">]</span>
 
-        <span class="n">annotated_parameter_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">param_type</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_retrieve_parameter_signatures</span><span class="p">(</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_send_data</span><span class="p">,</span> <span class="n">excluded_parameters</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
+        <span class="c1"># Import ParameterInfo to ensure proper metadata structure</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">_BaseDataProcessor</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">details</span> <span class="o">=</span> <span class="n">_BaseDataProcessor</span><span class="o">.</span><span class="n">_retrieve_parameter_details</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_send_data</span><span class="p">,</span> <span class="n">excluded_parameters</span>
+        <span class="p">)</span>
 
         <span class="n">component_metadata</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;component_type&quot;</span><span class="p">:</span> <span class="s2">&quot;DataSink&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">annotated_parameter_list</span> <span class="ow">or</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">details</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -622,16 +629,18 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_define_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">excluded_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="s2">&quot;payload&quot;</span><span class="p">]</span>
 
-        <span class="n">annotated_parameter_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">param_type</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_retrieve_parameter_signatures</span><span class="p">(</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_send_payload</span><span class="p">,</span> <span class="n">excluded_parameters</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
+        <span class="c1"># Import ParameterInfo to ensure proper metadata structure</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">_BaseDataProcessor</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">details</span> <span class="o">=</span> <span class="n">_BaseDataProcessor</span><span class="o">.</span><span class="n">_retrieve_parameter_details</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_send_payload</span><span class="p">,</span> <span class="n">excluded_parameters</span>
+        <span class="p">)</span>
 
         <span class="n">component_metadata</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;component_type&quot;</span><span class="p">:</span> <span class="s2">&quot;PayloadSink&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">annotated_parameter_list</span> <span class="ow">or</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">details</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">try</span><span class="p">:</span>

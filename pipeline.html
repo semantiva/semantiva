@@ -200,6 +200,7 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -297,6 +298,25 @@ is defined under <code class="docutils literal notranslate"><span class="pre">no
 <p>Each <code class="docutils literal notranslate"><span class="pre">processor</span></code> entry references a component (by fully qualified class name or
 short name if registered). The <code class="docutils literal notranslate"><span class="pre">parameters</span></code> map configures that processor. Nodes
 may also define <code class="docutils literal notranslate"><span class="pre">ports</span></code> if they connect to non-default inputs/outputs.</p>
+</section>
+<section id="probe-nodes">
+<h2>Probe nodes<a class="headerlink" href="#probe-nodes" title="Link to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Probes require a context key.</strong> Probes observe the data channel but must
+always persist their result to the pipeline context. Configure this at the
+node level with <code class="docutils literal notranslate"><span class="pre">context_key</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my.probes.DatasetEvalProbe</span>
+<span class="w">      </span><span class="nt">context_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metrics.eval</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my.models.Classifier</span>
+</pre></div>
+</div>
+<p>Omitting <code class="docutils literal notranslate"><span class="pre">context_key</span></code> for a probe node is invalid. <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span></code>
+fails validation with a configuration error until the key is provided.</p>
+</div>
 </section>
 <section id="parameter-resolution-precedence">
 <span id="pipeline-yaml-parameters-precedence"></span><h2>Parameter resolution (precedence)<a class="headerlink" href="#parameter-resolution-precedence" title="Link to this heading">¶</a></h2>
@@ -521,6 +541,7 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 <li><a class="reference internal" href="#">Pipelines in Semantiva</a><ul>
 <li><a class="reference internal" href="#overview-mental-model">Overview &amp; Mental Model</a></li>
 <li><a class="reference internal" href="#defining-pipelines-in-yaml">Defining Pipelines in YAML</a></li>
+<li><a class="reference internal" href="#probe-nodes">Probe nodes</a></li>
 <li><a class="reference internal" href="#parameter-resolution-precedence">Parameter resolution (precedence)</a></li>
 <li><a class="reference internal" href="#parameter-validation-in-yaml-configuration">Parameter Validation in YAML Configuration</a><ul>
 <li><a class="reference internal" href="#invalid-parameters-detected">Invalid Parameters Detected</a></li>

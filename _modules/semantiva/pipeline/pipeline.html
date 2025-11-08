@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
@@ -366,7 +367,8 @@
 <span class="sd">            - Info: Logs the start and completion of the pipeline processing.</span>
 <span class="sd">            - Debug: Logs a detailed timing report of the pipeline execution.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting pipeline with </span><span class="si">%s</span><span class="s2"> nodes&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+        <span class="n">node_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canonical_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting pipeline with </span><span class="si">%s</span><span class="s2"> nodes&quot;</span><span class="p">,</span> <span class="n">node_count</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_watch</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  <span class="c1"># existing pipeline timer start</span>
 
         <span class="n">run_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_metadata</span>

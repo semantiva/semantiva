@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -283,17 +284,20 @@ identifiers defined in the <a class="reference internal" href="trace_stream_v1.h
 <li><p><strong>Create launch/session</strong>
 - <code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> — provided via CLI, derived from an idempotency key, or generated as a UUIDv7 fallback
 - <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — integer retry counter (1-based)</p></li>
-<li><p><strong>Emit ``run_space_start``</strong> with the identifiers above and the planned run count</p></li>
+<li><p><strong>Emit ``run_space_start``</strong> with the identifiers above, the combine mode, total runs, max runs limit, and the planned run count</p></li>
 <li><p><strong>Execute pipelines</strong> — each <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> record is linked back to the
-enclosing run-space via foreign keys</p></li>
+enclosing run-space via a composite foreign key (<code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code>)
+plus run-specific metadata (<code class="docutils literal notranslate"><span class="pre">run_space_index</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_context</span></code>)</p></li>
 <li><p><strong>Emit ``run_space_end``</strong> summarising the launch outcome</p></li>
 </ol>
 </section>
 <section id="pipeline-linkage">
 <h2>Pipeline linkage<a class="headerlink" href="#pipeline-linkage" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> records include the run-space identifiers when a run-space
-context is active. Standalone pipelines (without a run-space) omit these
-fields entirely for backwards compatibility.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> records include a <strong>composite foreign key</strong> (<code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code>)
+to link to the <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> record, plus run-specific metadata (<code class="docutils literal notranslate"><span class="pre">run_space_index</span></code> and <code class="docutils literal notranslate"><span class="pre">run_space_context</span></code>).
+Standalone pipelines (without a run-space) omit these fields entirely for backwards compatibility.</p>
+<p>Launch-level constants such as <code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code> are stored once in the <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> event to eliminate redundancy.</p>
 </section>
 <section id="standalone-runs">
 <h2>Standalone runs<a class="headerlink" href="#standalone-runs" title="Link to this heading">¶</a></h2>

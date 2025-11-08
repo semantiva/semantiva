@@ -22,6 +22,16 @@ Fixing common SVA errors
   ``suppressed_context_keys`` must be lists of unique strings without
   overlap.
 
+Probe node contract (mandatory)
+-------------------------------
+
+- Any pipeline node wrapping a :class:`~semantiva.data_processors.data_processors.DataProbe`
+  **must** declare a non-empty ``context_key``.
+- The probe result is written to that key by the node—components stay
+  context-agnostic.
+- Pipelines that omit ``context_key`` for probes fail validation via
+  :command:`semantiva inspect`.
+
 CI integration
 --------------
 

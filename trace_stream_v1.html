@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -299,13 +300,17 @@ corresponding schema.</p></li>
 </dd>
 <dt>Pipeline lifecycle records</dt><dd><p><code class="file docutils literal notranslate"><span class="pre">semantiva/trace/schema/pipeline_start_event_v1.schema.json</span></code>
 <code class="file docutils literal notranslate"><span class="pre">semantiva/trace/schema/pipeline_end_event_v1.schema.json</span></code></p>
-<p>The pipeline start references an enclosing run-space launch via:</p>
+<p>The pipeline start record links to an enclosing run-space launch (when present) via a <strong>composite foreign key</strong>:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code> — Plan identity (Run-Space Configuration Format, <strong>RSCF v1</strong>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code> <em>(optional)</em> — Inputs snapshot (Run-Space Materialization, <strong>RSM v1</strong>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> — Launch/session identifier</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — Retry counter (1-based)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — uniquely identifies the launch (retries need both parts)</p></li>
 </ul>
+<p>Run-specific metadata:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_index</span></code> — 0-based position within the launch</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_context</span></code> — parameter values for this specific run</p></li>
+</ul>
+<p>Launch-level constants (<code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code>)
+are stored once in the <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> record to eliminate redundancy.</p>
 </dd>
 <dt>Semantic Execution Record (SER v1)</dt><dd><p><code class="file docutils literal notranslate"><span class="pre">semantiva/trace/schema/semantic_execution_record_v1.schema.json</span></code></p>
 </dd>
@@ -396,25 +401,25 @@ umbrella definition.</p>
 <td><p>object</p></td>
 <td><p>Canonicalized pipeline specification</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code></p></td>
-<td><p>no</p></td>
-<td><p>hex string</p></td>
-<td><p>Run-Space plan identity</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code></p></td>
-<td><p>no</p></td>
-<td><p>hex string</p></td>
-<td><p>Optional snapshot of external inputs</p></td>
-</tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code></p></td>
 <td><p>no</p></td>
 <td><p>string</p></td>
-<td><p>Launch/session identifier</p></td>
+<td><p>Foreign key to run_space_start (part 1 of composite FK)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code></p></td>
 <td><p>no</p></td>
 <td><p>integer ≥1</p></td>
-<td><p>1-based retry counter within the launch</p></td>
+<td><p>Foreign key to run_space_start (part 2 of composite FK, for retry disambiguation)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_index</span></code></p></td>
+<td><p>no</p></td>
+<td><p>integer ≥0</p></td>
+<td><p>0-based position of this run within the launch</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_context</span></code></p></td>
+<td><p>no</p></td>
+<td><p>object</p></td>
+<td><p>Parameter values for this specific run</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">meta</span></code></p></td>
 <td><p>no</p></td>
@@ -487,12 +492,27 @@ umbrella definition.</p>
 <td><p>integer ≥1</p></td>
 <td><p>1-based retry counter for the launch</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_planned_run_count</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>string</p></td>
+<td><p>Expansion mode: <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> or <code class="docutils literal notranslate"><span class="pre">by_position</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>integer ≥0</p></td>
+<td><p>Total number of runs in this launch</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_max_runs_limit</span></code></p></td>
+<td><p>no</p></td>
+<td><p>integer ≥0</p></td>
+<td><p>Safety limit from configuration (<code class="docutils literal notranslate"><span class="pre">max_runs</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_planned_run_count</span></code></p></td>
 <td><p>no</p></td>
 <td><p>integer ≥0</p></td>
 <td><p>Planned number of runs</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_input_fingerprints</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_space_input_fingerprints</span></code></p></td>
 <td><p>no</p></td>
 <td><p>array</p></td>
 <td><p>External input fingerprints with <code class="docutils literal notranslate"><span class="pre">uri</span></code>/<code class="docutils literal notranslate"><span class="pre">sha256</span></code> metadata</p></td>

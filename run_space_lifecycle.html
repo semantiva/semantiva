@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -305,9 +306,19 @@ Unique id for this launch (e.g., UUIDv7 or sha256(materialization + idempotency_
 </section>
 <section id="linkage-to-pipelines">
 <h2>Linkage to Pipelines<a class="headerlink" href="#linkage-to-pipelines" title="Link to this heading">¶</a></h2>
-<p>Each pipeline spawned from the launch includes <strong>foreign keys</strong> in its
-<code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> record: <code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code> (always), <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code> (if used),
-<code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code>, and <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code>. Standalone pipelines omit these.</p>
+<p>Each pipeline spawned from the launch includes a <strong>composite foreign key</strong> in its
+<code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> record to uniquely identify the launch:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — composite FK (both parts needed for retry disambiguation)</p></li>
+</ul>
+<p>Plus run-specific metadata:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_index</span></code> — 0-based position within the launch</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_context</span></code> — parameter values for this specific run</p></li>
+</ul>
+<p>Launch-level constants (<code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code>,
+<code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code>) are stored once in the <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> event to eliminate redundancy.
+Standalone pipelines omit all run-space fields.</p>
 </section>
 </section>
 

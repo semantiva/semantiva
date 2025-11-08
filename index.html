@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -327,6 +328,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#overview-mental-model">Overview &amp; Mental Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#defining-pipelines-in-yaml">Defining Pipelines in YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#probe-nodes">Probe nodes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-resolution-precedence">Parameter resolution (precedence)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-validation-in-yaml-configuration">Parameter Validation in YAML Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#canonical-spec-identity">Canonical spec &amp; identity</a></li>
@@ -352,6 +354,13 @@
 <li class="toctree-l2"><a class="reference internal" href="data_processors.html#module-semantiva.data_processors.data_processors">Autodoc</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utility_processors.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utility_processors.html#datadump-explicit-data-channel-terminator">DataDump — Explicit Data Channel Terminator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utility_processors.html#copydataprobe-pass-through-inspection">CopyDataProbe — Pass-Through Inspection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utility_processors.html#see-also">See Also</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data_io.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_io.html#public-api-surface">Public API Surface</a></li>
@@ -373,6 +382,7 @@
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contracts.html#rule-catalog">Rule catalog</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contracts.html#fixing-common-sva-errors">Fixing common SVA errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#probe-node-contract-mandatory">Probe node contract (mandatory)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contracts.html#ci-integration">CI integration</a></li>
 </ul>
 </li>
@@ -404,7 +414,7 @@
 <li class="toctree-l2"><a class="reference internal" href="run_space.html#linkage-to-pipelines">Linkage to Pipelines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="run_space.html#rules">Rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="run_space.html#cli-integration">CLI integration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="run_space.html#ser">SER</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run_space.html#trace-emission">Trace Emission</a></li>
 </ul>
 </li>
 </ul>
@@ -487,6 +497,7 @@
 <li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#python-apis-for-introspection">Python APIs for Introspection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#json-outline-example">JSON Outline Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#linking-reports-to-graphv1-identities">Linking Reports to GraphV1 Identities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#type-compatibility-rule">Type Compatibility Rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#common-validation-errors">Common Validation Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#unknown-unused-parameters">Unknown / Unused Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introspection_validation.html#tips">Tips</a></li>

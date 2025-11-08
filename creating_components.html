@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -340,6 +341,12 @@
         <span class="c1"># Analysis only; DO NOT update context</span>
         <span class="k">return</span> <span class="n">data</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Probe components never write to context themselves. When the pipeline node
+specifies <code class="docutils literal notranslate"><span class="pre">context_key</span></code>, the node stores the probe result in context after
+<code class="docutils literal notranslate"><span class="pre">process</span></code> returns, keeping the component stateless.</p>
 </div>
 </section>
 <section id="datasource-produces-data-declares-only-output-type">

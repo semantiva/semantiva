@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contracts.html">Semantiva Contracts</a></li>
@@ -347,6 +348,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">last_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">_PipelineNode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The list of nodes instantiated during the last execute() call.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_nodes</span>
 
 <div class="viewcode-block" id="SemantivaOrchestrator.configure_run_metadata">
@@ -398,10 +400,17 @@
         <span class="n">trace_opts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace_options</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
 
         <span class="n">trace_ctx</span><span class="p">:</span> <span class="n">TraceContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">run_space_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">run_space_context</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">:</span>
             <span class="n">ctx_candidate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;trace_context&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ctx_candidate</span><span class="p">,</span> <span class="n">TraceContext</span><span class="p">):</span>
                 <span class="n">trace_ctx</span> <span class="o">=</span> <span class="n">ctx_candidate</span>
+            <span class="c1"># Extract run-specific data for pipeline_start</span>
+            <span class="k">if</span> <span class="s2">&quot;run_space_index&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">:</span>
+                <span class="n">run_space_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">[</span><span class="s2">&quot;run_space_index&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;run_space_context&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">:</span>
+                <span class="n">run_space_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">[</span><span class="s2">&quot;run_space_context&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">compute_pipeline_id</span><span class="p">(</span><span class="n">canonical</span><span class="p">)</span>
@@ -412,14 +421,16 @@
             <span class="n">run_space_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">if</span> <span class="n">trace_ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">fk</span> <span class="o">=</span> <span class="n">trace_ctx</span><span class="o">.</span><span class="n">as_run_space_fk</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_spec_id&quot;</span><span class="p">]:</span>
-                    <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_spec_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_spec_id&quot;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_inputs_id&quot;</span><span class="p">]:</span>
-                    <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_inputs_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_inputs_id&quot;</span><span class="p">]</span>
+                <span class="c1"># Pass composite FK (launch_id + attempt), not spec_id/inputs_id</span>
                 <span class="k">if</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_launch_id&quot;</span><span class="p">]:</span>
                     <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_launch_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_launch_id&quot;</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_attempt&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_attempt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fk</span><span class="p">[</span><span class="s2">&quot;run_space_attempt&quot;</span><span class="p">]</span>
+            <span class="c1"># Pass run-specific data to pipeline_start</span>
+            <span class="k">if</span> <span class="n">run_space_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_space_index</span>
+            <span class="k">if</span> <span class="n">run_space_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_space_context</span>
             <span class="n">trace</span><span class="o">.</span><span class="n">on_pipeline_start</span><span class="p">(</span>
                 <span class="n">pipeline_id</span><span class="p">,</span>
                 <span class="n">run_id</span><span class="p">,</span>
@@ -1037,9 +1048,8 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SERRecord</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">run_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;SER construction requires pipeline and run identifiers&quot;</span><span class="p">)</span>
+        <span class="c1"># No more run_space args in SER</span>
         <span class="n">args_payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">:</span>
-            <span class="n">args_payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="n">preconditions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pre_checks</span><span class="p">)</span>
         <span class="n">postconditions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">post_checks</span><span class="p">)</span>
         <span class="n">invariants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>

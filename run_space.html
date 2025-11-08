@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -379,13 +380,17 @@ row/object as a single run when <code class="docutils literal notranslate"><span
 </section>
 <section id="linkage-to-pipelines">
 <h2>Linkage to Pipelines<a class="headerlink" href="#linkage-to-pipelines" title="Link to this heading">¶</a></h2>
-<p>Each <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> includes foreign keys when spawned from a Run-Space launch:</p>
+<p>Each <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> includes a <strong>composite foreign key</strong> when spawned from a Run-Space launch:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code> (plan identity)</p></li>
-<li><p>optional <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code> (inputs snapshot)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> (launch/session)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> (retry counter)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — composite FK to <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> (both parts needed for retry disambiguation)</p></li>
 </ul>
+<p>Plus run-specific metadata:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_index</span></code> — 0-based position within the launch</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_context</span></code> — parameter values for this specific run</p></li>
+</ul>
+<p>Launch-level constants (<code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code>,
+<code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code>) are stored once in the <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> event to eliminate redundancy.</p>
 <p>See <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a> for the Run-Space lifecycle and foreign-key
 relationships.</p>
 </section>
@@ -409,12 +414,19 @@ relationships.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">--run-space-dry-run</span></code> - compute the expansion, print block sizes plus previews, and exit without executing.</p></li>
 </ul>
 </section>
-<section id="ser">
-<h2>SER<a class="headerlink" href="#ser" title="Link to this heading">¶</a></h2>
+<section id="trace-emission">
+<h2>Trace Emission<a class="headerlink" href="#trace-emission" title="Link to this heading">¶</a></h2>
+<p>The Run-Space system emits structured trace events:</p>
+<ul class="simple">
+<li><p><strong>run_space_start</strong> — contains launch-level constants (<code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code>,
+<code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code>, etc.) emitted once per launch</p></li>
+<li><p><strong>pipeline_start</strong> — contains composite FK (<code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code>) plus
+run-specific metadata (<code class="docutils literal notranslate"><span class="pre">run_space_index</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_context</span></code>)</p></li>
+<li><p><strong>ser</strong> — Semantic Execution Records contain no run-space fields (clean separation)</p></li>
+</ul>
 <p>The planner returns metadata with block sizes, modes, context keys, and source
-provenance (path, format, SHA-256, selectors, and renames).
-Per-run metadata includes <code class="docutils literal notranslate"><span class="pre">run_space.index</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space.total</span></code>,
-<code class="docutils literal notranslate"><span class="pre">run_space.combine</span></code>, and <code class="docutils literal notranslate"><span class="pre">run_space.context</span></code>.</p>
+provenance (path, format, SHA-256, selectors, and renames).</p>
+<p>See <a class="reference internal" href="trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a> and <a class="reference internal" href="run_space_emission.html"><span class="doc">Run-Space Emission (Runtime)</span></a> for complete details.</p>
 </section>
 </section>
 
@@ -481,7 +493,7 @@ Per-run metadata includes <code class="docutils literal notranslate"><span class
 <li><a class="reference internal" href="#linkage-to-pipelines">Linkage to Pipelines</a></li>
 <li><a class="reference internal" href="#rules">Rules</a></li>
 <li><a class="reference internal" href="#cli-integration">CLI integration</a></li>
-<li><a class="reference internal" href="#ser">SER</a></li>
+<li><a class="reference internal" href="#trace-emission">Trace Emission</a></li>
 </ul>
 </li>
 </ul>

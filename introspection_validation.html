@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
@@ -273,7 +274,12 @@
 <ul class="simple">
 <li><p>Build inspections, summarize, export JSON, validate.</p></li>
 </ul>
-<p>You can perform pre-execution checks from the terminal; see <a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a> (subcommand <strong>inspect</strong>).</p>
+<p>You can perform pre-execution checks from the terminal; see <a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a> (subcommand <strong>inspect</strong>).
+* <strong>Missing parameter</strong> - a required parameter is absent in the YAML.
+* <strong>Unknown processor</strong> - the specified processor class cannot be resolved/imported.
+* <strong>Topology/ports mismatch</strong> - the declared ports do not match available outputs/inputs.
+* <strong>Type incompatibility</strong> - an upstream node’s output type is incompatible with the next node’s expected input type (checked using equal-or-subclass rule).
+* <strong>Probe missing ``context_key``</strong> - a probe node omits <code class="docutils literal notranslate"><span class="pre">context_key</span></code> so the result would never reach context; inspection rejects the configuration.</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.inspection.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">json_report</span>
@@ -375,6 +381,42 @@ inspection output match the values in:</p>
 </ul>
 <p>This identity contract lets you compare results across machines, builds, and formats.</p>
 </section>
+<section id="type-compatibility-rule">
+<h2>Type Compatibility Rule<a class="headerlink" href="#type-compatibility-rule" title="Link to this heading">¶</a></h2>
+<p>Semantiva uses an <strong>equal-or-subclass</strong> compatibility rule for data flow validation,
+matching runtime execution behavior.</p>
+<p><strong>Compatible Types</strong>:</p>
+<ul class="simple">
+<li><p>Output type <strong>equals</strong> input type (exact match)</p></li>
+<li><p>Output type is a <strong>subclass</strong> of input type (inheritance)</p></li>
+</ul>
+<p><strong>Implementation</strong>: The validator’s <code class="docutils literal notranslate"><span class="pre">_is_compatible()</span></code> helper uses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compatible</span> <span class="o">=</span> <span class="p">(</span><span class="n">prev_out_type</span> <span class="o">==</span> <span class="n">next_in_type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">prev_out_type</span><span class="p">,</span> <span class="n">next_in_type</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This matches the runtime gate in <code class="docutils literal notranslate"><span class="pre">_DataNode._process</span></code> which uses <code class="docutils literal notranslate"><span class="pre">issubclass()</span></code>,
+ensuring inspection and runtime have identical type acceptance rules.</p>
+<p><strong>Examples</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Equal types - Compatible ✓</span>
+<span class="n">SklearnModel</span> <span class="o">-&gt;</span> <span class="n">SklearnModel</span>
+
+<span class="c1"># Subclass relationship - Compatible ✓</span>
+<span class="n">SklearnModel</span> <span class="o">-&gt;</span> <span class="n">BaseDataType</span>  <span class="c1"># SklearnModel is subclass of BaseDataType</span>
+<span class="n">TabularXY</span> <span class="o">-&gt;</span> <span class="n">BaseDataType</span>     <span class="c1"># TabularXY is subclass of BaseDataType</span>
+
+<span class="c1"># No relationship - Incompatible ✗</span>
+<span class="n">SklearnModel</span> <span class="o">-&gt;</span> <span class="n">NoDataType</span>    <span class="c1"># SklearnModel not subclass of NoDataType</span>
+<span class="n">NoDataType</span> <span class="o">-&gt;</span> <span class="n">SklearnModel</span>    <span class="c1"># NoDataType not subclass of SklearnModel</span>
+</pre></div>
+</div>
+<p><strong>Common Use Case</strong>: Utility components like <code class="docutils literal notranslate"><span class="pre">DataDump</span></code> and <code class="docutils literal notranslate"><span class="pre">CopyDataProbe</span></code>
+accept <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code> as input, making them compatible with any specific data
+type in the pipeline (since all data types inherit from <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code>).
+See <a class="reference internal" href="utility_processors.html"><span class="doc">Utility Components</span></a> for details on these components.</p>
+<p><strong>Rationale</strong>: This rule eliminates false negatives during inspection while
+maintaining type safety. If runtime can accept a data type, inspection should
+accept it too.</p>
+</section>
 <section id="common-validation-errors">
 <h2>Common Validation Errors<a class="headerlink" href="#common-validation-errors" title="Link to this heading">¶</a></h2>
 <p>Here are representative issues the validator can flag:</p>
@@ -383,15 +425,22 @@ inspection output match the values in:</p>
 <li><p><strong>Unknown processor</strong> - the specified processor class cannot be resolved/imported.</p></li>
 <li><p><strong>Topology/ports mismatch</strong> - the declared ports do not match available outputs/inputs.</p></li>
 <li><p><strong>Type incompatibility</strong> - an upstream node’s output type is incompatible with the next node’s expected input type.</p></li>
+<li><p><strong>Probe missing ``context_key``</strong> - a probe node omits <code class="docutils literal notranslate"><span class="pre">context_key</span></code> so the
+result would never reach context; inspection rejects the configuration.</p></li>
 </ul>
 <p>Example output (truncated):</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ERROR: PipelineConfigurationError
 details:
   node_index: 2
-  node_uuid: &quot;eb3e87c0-97b7-5097-8214-b53b4ba0fd6e&quot;
-  processor: &quot;TransformData&quot;
+ node_uuid: &quot;eb3e87c0-97b7-5097-8214-b53b4ba0fd6e&quot;
+ processor: &quot;TransformData&quot;
  reason: &quot;Incompatible types: expected ImageType, received TextType from previous node&quot;
  hint: &quot;Check the output of node 1 or insert a converter operation.&quot;
+</pre></div>
+</div>
+<p>Missing <code class="docutils literal notranslate"><span class="pre">context_key</span></code> example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PipelineConfigurationError</span><span class="p">:</span> <span class="n">Node</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Probe</span> <span class="n">nodes</span> <span class="n">must</span> <span class="n">declare</span> <span class="n">context_key</span><span class="p">:</span>
+<span class="n">missing</span> <span class="k">for</span> <span class="n">node</span> <span class="mi">2</span> <span class="p">(</span><span class="n">my</span><span class="o">.</span><span class="n">probes</span><span class="o">.</span><span class="n">DriftProbe</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -660,6 +709,7 @@ should be placed in dedicated RST files.</p>
 <li><a class="reference internal" href="#python-apis-for-introspection">Python APIs for Introspection</a></li>
 <li><a class="reference internal" href="#json-outline-example">JSON Outline Example</a></li>
 <li><a class="reference internal" href="#linking-reports-to-graphv1-identities">Linking Reports to GraphV1 Identities</a></li>
+<li><a class="reference internal" href="#type-compatibility-rule">Type Compatibility Rule</a></li>
 <li><a class="reference internal" href="#common-validation-errors">Common Validation Errors</a></li>
 <li><a class="reference internal" href="#unknown-unused-parameters">Unknown / Unused Parameters</a></li>
 <li><a class="reference internal" href="#tips">Tips</a></li>
