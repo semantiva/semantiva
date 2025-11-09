@@ -10,6 +10,12 @@ Runnable examples (copy locally)
    * - Example
      - File
      - How to run
+   * - Derive parameter sweep
+     - ``docs/source/examples/pipeline_sweep_parameters_first.yaml`` *(copy to your workspace)*
+     - ``semantiva run pipeline_sweep_parameters_first.yaml -v``
+   * - FromContext sweep (runtime discovery)
+     - ``semantiva/examples/from_context_sweep_demo.yaml`` *(from repo root)*
+     - ``semantiva run semantiva/examples/from_context_sweep_demo.yaml --context discovered_values='[1.3, 2.5, 3.7]'``
    * - Hello pipeline
      - ``docs/source/examples/hello_pipeline.yaml`` *(copy to your workspace)*
      - ``semantiva run hello_pipeline.yaml -v``

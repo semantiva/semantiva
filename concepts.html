@@ -204,12 +204,14 @@
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
@@ -314,6 +316,14 @@ yourself. They handle the plumbing: feeding data <strong>and</strong> context in
 and chaining outputs to inputs. The <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a> section shows how nodes fit
 into graph execution.</p>
 </section>
+<section id="preprocessors-derive">
+<h2>Preprocessors (derive)<a class="headerlink" href="#preprocessors-derive" title="Link to this heading">¶</a></h2>
+<p><strong>Preprocessors</strong> live under the reserved node key <code class="docutils literal notranslate"><span class="pre">derive</span></code>. They <strong>compute
+or expand configuration</strong> before a processor and node instantiation.
+The most common preprocessor is <a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a>
+(<code class="docutils literal notranslate"><span class="pre">parameter_sweep</span></code>), which computes <strong>parameters</strong> from <strong>variables</strong> and can
+expand a single node into multiple runs with a typed collection.</p>
+</section>
 <section id="context-channel">
 <h2>Context Channel<a class="headerlink" href="#context-channel" title="Link to this heading">¶</a></h2>
 <p>Alongside domain data flows a mutable <strong>context channel</strong>—a key/value store for
@@ -338,11 +348,6 @@ and the <strong>context channel</strong>. Data holds your domain objects; contex
 metadata explaining <em>how</em> and <em>why</em> each step executes. This dual-channel design
 embodies the Epistemic Computing Paradigm (ECP) where computation produces both
 results and rationale.</p>
-</section>
-<section id="minimal-epistemic-unit-meu">
-<span id="id1"></span><h2>Minimal Epistemic Unit (MEU)<a class="headerlink" href="#minimal-epistemic-unit-meu" title="Link to this heading">¶</a></h2>
-<p>Every computation produces an epistemic tuple: <strong>Claim</strong>, <strong>Justification</strong>, <strong>Context</strong>, <strong>Trace</strong>.
-See <a class="reference internal" href="glossary.html"><span class="doc">Glossary</span></a> and <a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> for how context/trace surface in practice.</p>
 </section>
 </section>
 
@@ -406,10 +411,10 @@ See <a class="reference internal" href="glossary.html"><span class="doc">Glossar
 <li><a class="reference internal" href="#data-types">Data Types</a></li>
 <li><a class="reference internal" href="#processors">Processors</a></li>
 <li><a class="reference internal" href="#nodes">Nodes</a></li>
+<li><a class="reference internal" href="#preprocessors-derive">Preprocessors (derive)</a></li>
 <li><a class="reference internal" href="#context-channel">Context Channel</a></li>
 <li><a class="reference internal" href="#resolvers-parameters">Resolvers &amp; Parameters</a></li>
 <li><a class="reference internal" href="#dual-channel-pipeline">Dual-Channel Pipeline</a></li>
-<li><a class="reference internal" href="#minimal-epistemic-unit-meu">Minimal Epistemic Unit (MEU)</a></li>
 </ul>
 </li>
 </ul>

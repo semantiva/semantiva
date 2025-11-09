@@ -26,6 +26,8 @@ Semantiva is a semantic execution framework focused on **typed, transparent, ins
    :caption: Additional Topics
 
    studio_viewer
+   identity_cheatsheet
+   inspection
    ser
    schema_semantic_execution_record_v1
    trace_stream_v1

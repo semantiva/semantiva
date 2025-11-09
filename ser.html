@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="SER v1 JSON Schema" href="schema_semantic_execution_record_v1.html"><link rel="prev" title="Semantiva Studio Viewer" href="studio_viewer.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="SER v1 JSON Schema" href="schema_semantic_execution_record_v1.html"><link rel="prev" title="Inspection Payload &amp; CLI" href="inspection.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Semantic Execution Record (SER) v1 - Semantiva 0.5.0 documentation</title>
@@ -204,12 +204,14 @@
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
@@ -358,6 +360,41 @@ and the Studio viewer consume these records directly.</p>
 node ran and why it was considered successful. Additional metadata (like
 <code class="docutils literal notranslate"><span class="pre">trigger</span></code> and <code class="docutils literal notranslate"><span class="pre">upstream_evidence</span></code>) is included alongside the formal
 preconditions/postconditions for convenient consumption.</p>
+</section>
+<section id="processor-semantics">
+<h2>Processor semantics<a class="headerlink" href="#processor-semantics" title="Link to this heading">¶</a></h2>
+<p>When preprocessors modify a processor before execution (for example,
+<code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>), the <code class="docutils literal notranslate"><span class="pre">processor</span></code> object is enriched with optional
+fields:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">semantic_id</span></code> — deterministic fingerprint for the preprocessor metadata.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">preprocessing_provenance</span></code> — normalized, versioned provenance detailing
+variables, expressions, mode, broadcast flag, collection output, and
+dependencies used to derive parameters.</p></li>
+</ul>
+<p>These additions are backward compatible with existing SER consumers.</p>
+<p>Inspection now exposes the same sanitized metadata in the canonical payload
+(<a class="reference internal" href="inspection.html"><span class="doc">Inspection Payload &amp; CLI</span></a>). Raw <code class="docutils literal notranslate"><span class="pre">expr</span></code> values live only inside the optional
+<code class="docutils literal notranslate"><span class="pre">preprocessor_view</span></code> helper, which is excluded from hashing. Runtime SER still
+captures the normalized provenance via <code class="docutils literal notranslate"><span class="pre">processor.preprocessing_provenance</span></code>
+while keeping original expressions for audit trails. See
+<a class="reference internal" href="introspection_validation.html"><span class="doc">Introspection &amp; Validation</span></a> for rendered examples.</p>
+</section>
+<section id="identity-facets">
+<h2>Identity facets<a class="headerlink" href="#identity-facets" title="Link to this heading">¶</a></h2>
+<p>Two complementary identifiers appear in trace metadata:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_id</span></code> — structural identity derived from the canonical graph.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_config_id</span></code> — semantic identity derived from sorted
+<code class="docutils literal notranslate"><span class="pre">(node_uuid,</span> <span class="pre">semantic_id)</span></code> pairs. Changes to sweep semantics alter this
+value even when the structural graph is unchanged.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Expression signatures are conservative in v1. <code class="docutils literal notranslate"><span class="pre">ExpressionSigV1</span></code> only treats
+<code class="docutils literal notranslate"><span class="pre">+</span></code> and <code class="docutils literal notranslate"><span class="pre">*</span></code> as commutative/associative; other algebraic rewrites remain
+distinct.</p>
+</div>
 <p>Detail flags control which summary fields are emitted when using the JSONL
 driver:</p>
 <ul class="simple">
@@ -495,14 +532,14 @@ GPU-backed processing or remote worker pools).</p></li>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="studio_viewer.html">
+          <a class="prev-page" href="inspection.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Semantiva Studio Viewer</div>
+                <div class="title">Inspection Payload &amp; CLI</div>
                 
               </div>
             </a>
@@ -538,6 +575,8 @@ GPU-backed processing or remote worker pools).</p></li>
             <ul>
 <li><a class="reference internal" href="#">Semantic Execution Record (SER) v1</a><ul>
 <li><a class="reference internal" href="#example-ser">Example SER</a></li>
+<li><a class="reference internal" href="#processor-semantics">Processor semantics</a></li>
+<li><a class="reference internal" href="#identity-facets">Identity facets</a></li>
 <li><a class="reference internal" href="#versioning-policy">Versioning Policy</a></li>
 <li><a class="reference internal" href="#schema">Schema</a></li>
 <li><a class="reference internal" href="#context-delta">Context Delta</a></li>

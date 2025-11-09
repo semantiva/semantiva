@@ -166,6 +166,32 @@ Processor Families
       Interacts with external systems (read/write). Should capture sufficient
       metadata in Context for provenance (e.g., source path, checksums).
 
+Preprocessing
+-------------
+
+.. glossary::
+
+   derive
+      Reserved node key; the boundary where **preprocessors** compute or expand
+      configuration before execution.
+
+   parameter_sweep
+      A preprocessor under :term:`derive` that computes **parameters** from
+      **variables** (expressions) and may expand the node into multiple runs.
+
+   parameters (computed)
+      The mapping under ``derive.parameter_sweep.parameters``. Keys are **callee
+      parameter names**; values are expressions producing call-time values.
+
+   variables
+      The mapping under ``derive.parameter_sweep.variables`` defining named
+      ranges, explicit sequences, or context-fed sequences.
+
+   required_external_parameters
+      Unbound callee argument names still required after preprocessing; displayed
+      by inspection so users can fill them via node ``parameters`` or rely on
+      callee defaults.
+
 Execution Records (SER Vocabulary)
 ----------------------------------
 

@@ -204,12 +204,14 @@
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
@@ -330,6 +332,33 @@ fails validation with a configuration error until the key is provided.</p>
 <p><code class="docutils literal notranslate"><span class="pre">KeyError:</span> <span class="pre">Unable</span> <span class="pre">to</span> <span class="pre">resolve</span> <span class="pre">parameter</span> <span class="pre">'name'</span> <span class="pre">from</span> <span class="pre">context,</span> <span class="pre">node</span> <span class="pre">configuration,</span> <span class="pre">or</span> <span class="pre">defaults.</span></code></p>
 <p>Unknown configuration parameters that are not accepted by the processor are
 reported during inspection and raise an error before execution.</p>
+</section>
+<section id="derive-pre-execution-computation">
+<h2>Derive: pre-execution computation<a class="headerlink" href="#derive-pre-execution-computation" title="Link to this heading">¶</a></h2>
+<p>The reserved node key <code class="docutils literal notranslate"><span class="pre">derive</span></code> establishes the <strong>preprocessor boundary</strong>.
+Preprocessors under <code class="docutils literal notranslate"><span class="pre">derive</span></code> compute parameter values before the processor
+executes, enabling dynamic configuration based on variables, context, or other
+runtime information.</p>
+<p><strong>Execution model</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[YAML node with derive block]
+     |
+     v
+derive.parameter_sweep     (resolves variables → parameter values)
+     |
+     v
+processor execution        (receives computed + explicit + default parameters)
+</pre></div>
+</div>
+<p><strong>Key properties:</strong></p>
+<ul class="simple">
+<li><p><strong>Pre-execution</strong>: All <code class="docutils literal notranslate"><span class="pre">derive</span></code> tools run before the processor is invoked</p></li>
+<li><p><strong>Parameter computation</strong>: Transforms variables and expressions into concrete values</p></li>
+<li><p><strong>Transparent integration</strong>: Computed parameters merge seamlessly with explicitly
+provided values and processor defaults</p></li>
+<li><p><strong>Provenance tracking</strong>: Parameter sources are recorded in trace outputs (see
+<a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a>)</p></li>
+</ul>
+<p>Currently available: <a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a> for parametric sweeps over variables.</p>
 </section>
 <section id="parameter-validation-in-yaml-configuration">
 <h2>Parameter Validation in YAML Configuration<a class="headerlink" href="#parameter-validation-in-yaml-configuration" title="Link to this heading">¶</a></h2>
@@ -543,6 +572,7 @@ dynamic parameter injection, state propagation, and metadata logging.</p>
 <li><a class="reference internal" href="#defining-pipelines-in-yaml">Defining Pipelines in YAML</a></li>
 <li><a class="reference internal" href="#probe-nodes">Probe nodes</a></li>
 <li><a class="reference internal" href="#parameter-resolution-precedence">Parameter resolution (precedence)</a></li>
+<li><a class="reference internal" href="#derive-pre-execution-computation">Derive: pre-execution computation</a></li>
 <li><a class="reference internal" href="#parameter-validation-in-yaml-configuration">Parameter Validation in YAML Configuration</a><ul>
 <li><a class="reference internal" href="#invalid-parameters-detected">Invalid Parameters Detected</a></li>
 <li><a class="reference internal" href="#cli-inspection-with-strict">CLI Inspection with –strict</a></li>

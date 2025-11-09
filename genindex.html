@@ -202,12 +202,14 @@
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
@@ -284,14 +286,16 @@
 </li>
         <li><a href="data_processors.html#semantiva.data_processors.data_processors.ParameterInfo.annotation">annotation (semantiva.data_processors.data_processors.ParameterInfo attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.append">append() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
         <ul>
           <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType.append">(semantiva.data_types.data_types.DataCollectionType method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="introspection_validation.html#semantiva.inspection.reporter.as_json_dict">as_json_dict() (in module semantiva.inspection.reporter)</a>
+</li>
         <li><a href="glossary.html#term-Assertions"><strong>Assertions</strong></a>
 </li>
     </ul></td>
@@ -304,10 +308,14 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="data_types.html#semantiva.data_types.data_types.BaseDataType">BaseDataType (class in semantiva.data_types.data_types)</a>
 </li>
-        <li><a href="execution.html#semantiva.execution.orchestrator.factory.build_orchestrator">build_orchestrator() (in module semantiva.execution.orchestrator.factory)</a>
+        <li><a href="introspection_validation.html#semantiva.inspection.builder.build">build() (in module semantiva.inspection.builder)</a>
+</li>
+        <li><a href="introspection_validation.html#semantiva.inspection.builder.build_canonical_graph">build_canonical_graph() (in module semantiva.inspection.builder)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="execution.html#semantiva.execution.orchestrator.factory.build_orchestrator">build_orchestrator() (in module semantiva.execution.orchestrator.factory)</a>
+</li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.build_pipeline_inspection">build_pipeline_inspection() (in module semantiva.inspection.builder)</a>
 </li>
         <li><a href="glossary.html#term-by_position"><strong>by_position</strong></a>
@@ -338,6 +346,8 @@
           <li><a href="execution.html#semantiva.execution.transport.in_memory.InMemorySubscription.close">(semantiva.execution.transport.in_memory.InMemorySubscription method)</a>
 </li>
         </ul></li>
+        <li><a href="introspection_validation.html#semantiva.inspection.builder.collect_required_context_keys">collect_required_context_keys() (in module semantiva.inspection.builder)</a>
+</li>
         <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType.collection_base_type">collection_base_type() (semantiva.data_types.data_types.DataCollectionType class method)</a>
 </li>
         <li><a href="glossary.html#term-combinatorial"><strong>combinatorial</strong></a>
@@ -432,10 +442,10 @@
 </li>
         <li><a href="data_processors.html#semantiva.data_processors.data_processors.DataOperation">DataOperation (class in semantiva.data_processors.data_processors)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="data_processors.html#semantiva.data_processors.data_processors.DataProbe">DataProbe (class in semantiva.data_processors.data_processors)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="data_io.html#semantiva.data_io.data_io.DataSink">DataSink (class in semantiva.data_io.data_io)</a>
 </li>
         <li><a href="data_io.html#semantiva.data_io.data_io.DataSource">DataSource (class in semantiva.data_io.data_io)</a>
@@ -453,6 +463,10 @@
 </li>
         </ul></li>
         <li><a href="glossary.html#term-Dependencies"><strong>Dependencies</strong></a>
+</li>
+        <li><a href="glossary.html#term-derive"><strong>derive</strong></a>
+</li>
+        <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.derived_summary">derived_summary (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.docstring">docstring (semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
@@ -811,7 +825,11 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="introspection_validation.html#semantiva.inspection.reporter.parameter_resolutions">parameter_resolutions() (in module semantiva.inspection.reporter)</a>
 </li>
+        <li><a href="glossary.html#term-parameter_sweep"><strong>parameter_sweep</strong></a>
+</li>
         <li><a href="data_processors.html#semantiva.data_processors.data_processors.ParameterInfo">ParameterInfo (class in semantiva.data_processors.data_processors)</a>
+</li>
+        <li><a href="glossary.html#term-parameters-computed"><strong>parameters (computed)</strong></a>
 </li>
         <li><a href="data_processors.html#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory">ParametricSweepFactory (class in semantiva.data_processors.parametric_sweep_factory)</a>
 </li>
@@ -833,10 +851,10 @@
 </li>
         <li><a href="glossary.html#term-PipelineId"><strong>PipelineId</strong></a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.PipelineInspection">PipelineInspection (class in semantiva.inspection.builder)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="exceptions.html#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError">PipelineTopologyError</a>
 </li>
         <li><a href="glossary.html#term-Planned-Run-Count"><strong>Planned Run Count</strong></a>
@@ -850,6 +868,12 @@
         <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.post_checks_provider">post_checks_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.pre_checks">pre_checks (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
+</li>
+        <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.preprocessor_metadata">preprocessor_metadata (semantiva.inspection.builder.NodeInspection attribute)</a>
+</li>
+        <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.preprocessor_view">preprocessor_view (semantiva.inspection.builder.NodeInspection attribute)</a>
+</li>
+        <li><a href="introspection_validation.html#semantiva.inspection.reporter.print_cli_inspection">print_cli_inspection() (in module semantiva.inspection.reporter)</a>
 </li>
         <li><a href="glossary.html#term-Processor"><strong>Processor</strong></a>
 </li>
@@ -893,12 +917,18 @@
 </li>
         <li><a href="introspection_validation.html#semantiva.inspection.builder.PipelineInspection.required_context_keys">required_context_keys (semantiva.inspection.builder.PipelineInspection attribute)</a>
 </li>
-        <li><a href="glossary.html#term-Resolver"><strong>Resolver</strong></a>
+        <li><a href="glossary.html#term-required_external_parameters"><strong>required_external_parameters</strong></a>
+
+        <ul>
+          <li><a href="introspection_validation.html#semantiva.inspection.builder.NodeInspection.required_external_parameters">(semantiva.inspection.builder.NodeInspection attribute)</a>
 </li>
-        <li><a href="glossary.html#term-RSCF-v1"><strong>RSCF v1</strong></a>
+        </ul></li>
+        <li><a href="glossary.html#term-Resolver"><strong>Resolver</strong></a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="glossary.html#term-RSCF-v1"><strong>RSCF v1</strong></a>
+</li>
         <li><a href="glossary.html#term-RSM-v1"><strong>RSM v1</strong></a>
 </li>
         <li><a href="glossary.html#term-Run-Aggregate"><strong>Run Aggregate</strong></a>
@@ -1212,16 +1242,18 @@
         </ul></li>
         <li><a href="introspection_validation.html#semantiva.inspection.validator.validate_pipeline">validate_pipeline() (in module semantiva.inspection.validator)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="data_processors.html#semantiva.data_processors.parametric_sweep_factory.SequenceSpec.values">values (semantiva.data_processors.parametric_sweep_factory.SequenceSpec attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextCollectionType.values">values() (semantiva.context_processors.context_types.ContextCollectionType method)</a>
 
         <ul>
           <li><a href="context_processors.html#semantiva.context_processors.context_types.ContextType.values">(semantiva.context_processors.context_types.ContextType method)</a>
 </li>
         </ul></li>
+        <li><a href="glossary.html#term-variables"><strong>variables</strong></a>
+</li>
         <li><a href="logger.html#semantiva.logger.logger.Logger.verbosity_map">verbosity_map (semantiva.logger.logger.Logger attribute)</a>
 </li>
     </ul></td>

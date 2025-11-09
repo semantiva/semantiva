@@ -203,12 +203,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../trace_stream_v1.html">Trace Stream v1</a></li>
@@ -308,6 +310,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.nodes.nodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">_PipelineNode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.payload</span><span class="w"> </span><span class="kn">import</span> <span class="n">Payload</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry.descriptors</span><span class="w"> </span><span class="kn">import</span> <span class="n">instantiate_from_descriptor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_node_semantic_id</span><span class="p">,</span>
+    <span class="n">compute_pipeline_config_id</span><span class="p">,</span>
+    <span class="n">compute_pipeline_semantic_id</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.trace._utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">canonical_json_bytes</span><span class="p">,</span>
     <span class="n">collect_env_pins</span> <span class="k">as</span> <span class="n">_collect_env_pins_util</span><span class="p">,</span>
@@ -412,12 +419,46 @@
             <span class="k">if</span> <span class="s2">&quot;run_space_context&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">:</span>
                 <span class="n">run_space_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_run_metadata</span><span class="p">[</span><span class="s2">&quot;run_space_context&quot;</span><span class="p">]</span>
 
+        <span class="c1"># Compute semantic IDs BEFORE on_pipeline_start (without instantiation)</span>
         <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">compute_pipeline_id</span><span class="p">(</span><span class="n">canonical</span><span class="p">)</span>
             <span class="n">node_uuids</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="s2">&quot;node_uuid&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">canonical</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="p">[])]</span>
             <span class="n">upstream_map</span> <span class="o">=</span> <span class="n">compute_upstream_map</span><span class="p">(</span><span class="n">canonical</span><span class="p">)</span>
             <span class="n">run_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;run-</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num_nodes&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_uuids</span><span class="p">)}</span>
+
+            <span class="c1"># Resolve processor classes without instantiating nodes</span>
+            <span class="n">proc_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_processor_classes</span><span class="p">(</span><span class="n">canonical</span><span class="p">,</span> <span class="n">resolved_spec</span><span class="p">)</span>
+
+            <span class="n">semantic_pairs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">proc_cls</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">proc_classes</span><span class="p">):</span>
+                <span class="n">node_uuid</span> <span class="o">=</span> <span class="n">node_uuids</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_uuids</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">semantic_id</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">proc_meta</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">proc_cls</span><span class="p">)</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">proc_meta</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">pre</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">proc_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;preprocessor&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_meta</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pre</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">semantic_id</span> <span class="o">=</span> <span class="n">compute_node_semantic_id</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">semantic_id</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
+                    <span class="c1"># Enrich canonical spec nodes with preprocessor metadata</span>
+                    <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">canonical</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="p">[])):</span>
+                        <span class="n">canonical</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;preprocessor_metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pre</span>
+                <span class="n">semantic_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node_uuid</span><span class="p">,</span> <span class="n">semantic_id</span><span class="p">))</span>
+
+            <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num_nodes&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_uuids</span><span class="p">)}</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;node_semantic_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">uuid_</span><span class="p">:</span> <span class="n">sem_id</span> <span class="k">for</span> <span class="n">uuid_</span><span class="p">,</span> <span class="n">sem_id</span> <span class="ow">in</span> <span class="n">semantic_pairs</span> <span class="k">if</span> <span class="n">uuid_</span>
+            <span class="p">}</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;semantic_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compute_pipeline_semantic_id</span><span class="p">(</span><span class="n">canonical</span><span class="p">)</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;config_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compute_pipeline_config_id</span><span class="p">(</span><span class="n">semantic_pairs</span><span class="p">)</span>
+
             <span class="n">run_space_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">if</span> <span class="n">trace_ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">fk</span> <span class="o">=</span> <span class="n">trace_ctx</span><span class="o">.</span><span class="n">as_run_space_fk</span><span class="p">()</span>
@@ -431,6 +472,8 @@
                 <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_space_index</span>
             <span class="k">if</span> <span class="n">run_space_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">run_space_kwargs</span><span class="p">[</span><span class="s2">&quot;run_space_context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_space_context</span>
+
+            <span class="c1"># Emit pipeline_start BEFORE instantiating nodes</span>
             <span class="n">trace</span><span class="o">.</span><span class="n">on_pipeline_start</span><span class="p">(</span>
                 <span class="n">pipeline_id</span><span class="p">,</span>
                 <span class="n">run_id</span><span class="p">,</span>
@@ -440,6 +483,7 @@
                 <span class="o">**</span><span class="n">run_space_kwargs</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="c1"># NOW instantiate nodes (this may emit &#39;instantiate&#39; events)</span>
         <span class="n">nodes</span><span class="p">,</span> <span class="n">node_defs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instantiate_nodes</span><span class="p">(</span><span class="n">resolved_spec</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
 
@@ -1011,6 +1055,32 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_iso_now</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_processor_classes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">canonical</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">resolved_spec</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve processor classes from resolved spec without instantiation.</span>
+
+<span class="sd">        This allows computing semantic IDs before emitting any node events.</span>
+<span class="sd">        Uses the resolved_spec which contains the actual processor classes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_symbol</span>
+
+        <span class="n">classes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node_def</span> <span class="ow">in</span> <span class="n">resolved_spec</span><span class="p">:</span>
+            <span class="n">proc</span> <span class="o">=</span> <span class="n">node_def</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;processor&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Resolve class reference</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proc</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">proc_cls</span> <span class="o">=</span> <span class="n">resolve_symbol</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proc</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                <span class="n">proc_cls</span> <span class="o">=</span> <span class="n">proc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid processor specification: </span><span class="si">{</span><span class="n">proc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc_cls</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">classes</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_instantiate_nodes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">pipeline_spec</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">_PipelineNode</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
@@ -1061,6 +1131,31 @@
         <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
         <span class="n">proc_cls</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span>
         <span class="n">fqcn</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">proc_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">proc_cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proc_meta</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">proc_cls</span><span class="p">)</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">proc_meta</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="n">proc_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;preprocessor&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proc_meta</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="c1"># Build preprocessing_provenance with raw expressions</span>
+        <span class="n">preprocessing_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pre</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+            <span class="c1"># Deep copy the sanitized metadata</span>
+            <span class="n">prov</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">pre</span><span class="p">))</span>
+            <span class="c1"># Add raw expressions from _expr_src</span>
+            <span class="n">raw_exprs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">proc_cls</span><span class="p">,</span> <span class="s2">&quot;_expr_src&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="n">raw_exprs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">expr_src</span> <span class="ow">in</span> <span class="n">raw_exprs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">prov</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;param_expressions&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="p">{})[</span>
+                        <span class="s2">&quot;expr&quot;</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="n">expr_src</span>
+            <span class="n">preprocessing_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;semantic_id&quot;</span><span class="p">:</span> <span class="n">compute_node_semantic_id</span><span class="p">(</span><span class="n">pre</span><span class="p">),</span>
+                <span class="s2">&quot;preprocessing_provenance&quot;</span><span class="p">:</span> <span class="n">prov</span><span class="p">,</span>
+            <span class="p">}</span>
+
         <span class="k">return</span> <span class="n">SERRecord</span><span class="p">(</span>
             <span class="n">record_type</span><span class="o">=</span><span class="s2">&quot;ser&quot;</span><span class="p">,</span>
             <span class="n">schema_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -1070,6 +1165,7 @@
                 <span class="s2">&quot;ref&quot;</span><span class="p">:</span> <span class="n">fqcn</span><span class="p">,</span>
                 <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">params</span><span class="p">,</span>
                 <span class="s2">&quot;parameter_sources&quot;</span><span class="p">:</span> <span class="n">param_sources</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">preprocessing_data</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="n">context_delta</span><span class="o">=</span><span class="n">context_delta</span><span class="p">,</span>
             <span class="n">assertions</span><span class="o">=</span><span class="p">{</span>

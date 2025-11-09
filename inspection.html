@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Testing Strategies and Best Practices" href="development/testing_strategies.html"><link rel="prev" title="Glossary" href="glossary.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Semantic Execution Record (SER) v1" href="ser.html"><link rel="prev" title="Identity Cheatsheet" href="identity_cheatsheet.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Trace ↔ Graph Alignment - Semantiva 0.5.0 documentation</title>
+        <title>Inspection Payload &amp; CLI - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -211,7 +211,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
@@ -231,7 +231,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -253,7 +253,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/trace_graph_alignment.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/inspection.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -271,45 +271,137 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="trace-graph-alignment">
-<h1>Trace ↔ Graph Alignment<a class="headerlink" href="#trace-graph-alignment" title="Link to this heading">¶</a></h1>
-<p>This page explains how <strong>Semantic Execution Records (SER)</strong> align with the
-<strong>GraphV1</strong> pipeline graph. The canonical mapping allows tools to reconstruct
-execution topology solely from SER files.</p>
-<section id="node-identity">
-<h2>Node Identity<a class="headerlink" href="#node-identity" title="Link to this heading">¶</a></h2>
-<ul>
-<li><p>Every pipeline node is assigned a deterministic <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code> by the
-GraphV1 builder.</p></li>
-<li><p>The same <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code> appears:
-* In the canonical spec (<code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical.nodes[*].node_uuid</span></code>).
-* In each SER record as <code class="docutils literal notranslate"><span class="pre">identity.node_id</span></code>.</p>
-<p><strong>Rule:</strong> Consumers must always join SER data to the graph using <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code>.</p>
-</li>
-</ul>
-</section>
-<section id="ser-output">
-<h2>SER Output<a class="headerlink" href="#ser-output" title="Link to this heading">¶</a></h2>
-<p>SER records contain minimal information. Optional fields may be supplied by the
-runtime and consumers should ignore unknown fields gracefully.</p>
-</section>
-<section id="pipeline-run-identity">
-<h2>Pipeline &amp; Run Identity<a class="headerlink" href="#pipeline-run-identity" title="Link to this heading">¶</a></h2>
+          <section id="inspection-payload-cli">
+<h1>Inspection Payload &amp; CLI<a class="headerlink" href="#inspection-payload-cli" title="Link to this heading">¶</a></h1>
+<p>Inspection computes a <strong>configuration-only</strong> view of a pipeline. The builder
+exposes a canonical payload that both the CLI and GUI consume.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The inspection payload is the single source of truth for GUI/CLI in
+config-only mode. It never contains runtime or run-space live identifiers.</p>
+</div>
+<p>See also <a class="reference internal" href="identity_cheatsheet.html"><span class="doc">Identity Cheatsheet</span></a> for a quick reference to the identities.</p>
+<section id="payload-shape">
+<h2>Payload shape<a class="headerlink" href="#payload-shape" title="Link to this heading">¶</a></h2>
+<p>The payload returned by <a class="reference internal" href="introspection_validation.html#semantiva.inspection.builder.build" title="semantiva.inspection.builder.build"><code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.builder.build()</span></code></a> is JSON-safe
+and deterministic. All ordering is canonical:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_id</span></code>: deterministic hash of the canonical spec.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_id</span></code>: unique per execution.</p></li>
-<li><p>Both appear in <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> records and in the <code class="docutils literal notranslate"><span class="pre">identity</span></code> of each SER.</p></li>
+<li><p>Nodes appear in pipeline execution order.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">required_context_keys</span></code> are sorted alphabetically.</p></li>
+<li><p>All dictionaries contributing to identity computation are key-sorted.</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;identity&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;semantic_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plsemid-…&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;config_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plcid-…&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;run_space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;spec_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;pipeline_spec_canonical&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;nodes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DataOperation&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;fqcn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;package.Class&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;node_semantic_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;preprocessor_metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;derive&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;parameter_sweep&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;parameters_sig&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ExpressionSigV1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;ast&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">}},</span>
+<span class="w">              </span><span class="nt">&quot;variables_sig&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;t&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;range&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;lo&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;hi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;scale&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linear&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}},</span>
+<span class="w">              </span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;broadcast&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;collection&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;semantiva.examples.test_utils.FloatDataCollection&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;required_context_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;seed&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">run_space</span></code> object contains only <code class="docutils literal notranslate"><span class="pre">spec_id</span></code> at inspection time.
+The <code class="docutils literal notranslate"><span class="pre">inputs_id</span></code> field is <strong>never computed</strong> during inspection—it appears
+only in runtime traces after input sources are fingerprinted.</p>
+</div>
+<section id="excluded-fields">
+<h3>Excluded fields<a class="headerlink" href="#excluded-fields" title="Link to this heading">¶</a></h3>
+<p>The payload never exposes runtime identifiers or UI-only metadata:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_id</span></code> (<code class="docutils literal notranslate"><span class="pre">plid-*</span></code>) — runtime-only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_id</span></code> (<code class="docutils literal notranslate"><span class="pre">run-*</span></code>) — runtime-only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> — runtime-only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — runtime-only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_index</span></code> — runtime-only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_context</span></code> — runtime-only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code> — computed at runtime, <strong>never</strong> at inspection</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">preprocessor_view</span></code> — UI-only (raw expressions for display)</p></li>
+</ul>
+<p>These exclusions ensure the payload remains a pure configuration-time artifact
+suitable for caching, comparison, and use as a single source of truth (SSOT)
+for configuration identity.</p>
+</section>
+</section>
+<section id="cli-contract">
+<h2>CLI contract<a class="headerlink" href="#cli-contract" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">&lt;pipeline.yaml&gt;</span></code> renders the payload in two modes:</p>
+<section id="concise-mode-default">
+<h3>Concise mode (default)<a class="headerlink" href="#concise-mode-default" title="Link to this heading">¶</a></h3>
+<p>Prints exactly four lines of identity information:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Configuration Identity
+- Semantic ID: plsemid-…
+- Config ID:   plcid-…
+- Run-Space Config ID: &lt;spec_id or &quot;none&quot;&gt;
+Required Context Keys: a, b, c
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">semantic_id</span></code> and <code class="docutils literal notranslate"><span class="pre">config_id</span></code> are always present.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Run-Space</span> <span class="pre">Config</span> <span class="pre">ID</span></code> shows the run-space plan fingerprint if a <code class="docutils literal notranslate"><span class="pre">run_space</span></code>
+section exists in the YAML, otherwise displays <code class="docutils literal notranslate"><span class="pre">none</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Required</span> <span class="pre">Context</span> <span class="pre">Keys</span></code> lists all keys that must be provided in the initial
+payload context, sorted alphabetically.</p></li>
 </ul>
 </section>
-<section id="trace-graph-usage">
-<h2>Trace → Graph Usage<a class="headerlink" href="#trace-graph-usage" title="Link to this heading">¶</a></h2>
-<p>To recreate the execution graph from SER files:</p>
-<ol class="arabic simple">
-<li><p>Read <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> records (<code class="docutils literal notranslate"><span class="pre">record_type='pipeline_start'</span></code>) to obtain the canonical graph from <code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical</span></code>.</p></li>
-<li><p>For each SER record, use <code class="docutils literal notranslate"><span class="pre">identity.node_id</span></code> and <code class="docutils literal notranslate"><span class="pre">dependencies.upstream</span></code> to build edges.</p></li>
-<li><p>Combine with per-step information from <code class="docutils literal notranslate"><span class="pre">processor</span></code>, <code class="docutils literal notranslate"><span class="pre">context_delta</span></code> and <code class="docutils literal notranslate"><span class="pre">assertions</span></code>.</p></li>
-</ol>
-<p>The canonical graph exposes <code class="docutils literal notranslate"><span class="pre">processor_ref</span></code> (FQCN); SER mirrors this as <code class="docutils literal notranslate"><span class="pre">processor.ref</span></code>.</p>
+<section id="extended-mode-extended">
+<h3>Extended mode (<code class="docutils literal notranslate"><span class="pre">--extended</span></code>)<a class="headerlink" href="#extended-mode-extended" title="Link to this heading">¶</a></h3>
+<p>Appends a per-node table after the concise output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Nodes:
+- UUID: &lt;node_uuid&gt;
+  Role: DataOperation
+  FQCN: package.module.ClassName
+  Node Semantic ID: &lt;semantic_id or &quot;none&quot;&gt;
+  Sweep:
+    parameters_sig: arg1, arg2
+    variables_sig: var1, var2
+    mode: combinatorial
+    broadcast: false
+    collection: package.CollectionClass
+</pre></div>
+</div>
+<p>For nodes with <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code> metadata, the sweep summary includes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parameters_sig</span></code> — keys of swept parameters (not the full expressions or signatures)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables_sig</span></code> — keys of sweep variables</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code> — sweep mode (e.g., <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>, <code class="docutils literal notranslate"><span class="pre">zip</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code> — whether broadcast is enabled</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">collection</span></code> — fully-qualified collection class name</p></li>
+</ul>
+<p><strong>Guarantees</strong></p>
+<ul class="simple">
+<li><p>The CLI never prints runtime IDs (<code class="docutils literal notranslate"><span class="pre">plid-*</span></code>, <code class="docutils literal notranslate"><span class="pre">run-*</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code>, etc.).</p></li>
+<li><p>Raw sweep expressions (<code class="docutils literal notranslate"><span class="pre">expr</span></code> fields) are never shown—only sanitized signatures.</p></li>
+<li><p>The output is deterministic and suitable for snapshot testing.</p></li>
+</ul>
+</section>
+<section id="invalid-configuration-parameters">
+<h3>Invalid configuration parameters<a class="headerlink" href="#invalid-configuration-parameters" title="Link to this heading">¶</a></h3>
+<p>Invalid configuration parameters are still reported after the identity block,
+and <code class="docutils literal notranslate"><span class="pre">--strict</span></code> continues to exit non-zero when invalid parameters are present.</p>
+</section>
 </section>
 </section>
 
@@ -318,23 +410,23 @@ runtime and consumers should ignore unknown fields gracefully.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="development/testing_strategies.html">
+          <a class="next-page" href="ser.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Testing Strategies and Best Practices</div>
+                <div class="title">Semantic Execution Record (SER) v1</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="glossary.html">
+          <a class="prev-page" href="identity_cheatsheet.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Glossary</div>
+                <div class="title">Identity Cheatsheet</div>
                 
               </div>
             </a>
@@ -368,11 +460,17 @@ runtime and consumers should ignore unknown fields gracefully.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Trace ↔ Graph Alignment</a><ul>
-<li><a class="reference internal" href="#node-identity">Node Identity</a></li>
-<li><a class="reference internal" href="#ser-output">SER Output</a></li>
-<li><a class="reference internal" href="#pipeline-run-identity">Pipeline &amp; Run Identity</a></li>
-<li><a class="reference internal" href="#trace-graph-usage">Trace → Graph Usage</a></li>
+<li><a class="reference internal" href="#">Inspection Payload &amp; CLI</a><ul>
+<li><a class="reference internal" href="#payload-shape">Payload shape</a><ul>
+<li><a class="reference internal" href="#excluded-fields">Excluded fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cli-contract">CLI contract</a><ul>
+<li><a class="reference internal" href="#concise-mode-default">Concise mode (default)</a></li>
+<li><a class="reference internal" href="#extended-mode-extended">Extended mode (<code class="docutils literal notranslate"><span class="pre">--extended</span></code>)</a></li>
+<li><a class="reference internal" href="#invalid-configuration-parameters">Invalid configuration parameters</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

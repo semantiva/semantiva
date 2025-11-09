@@ -204,12 +204,14 @@
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
@@ -419,6 +421,27 @@ outside SER emission must be implemented as a Context Processor.</p>
 </dd>
 <dt id="term-IO-Processor">IO Processor<a class="headerlink" href="#term-IO-Processor" title="Link to this term">¶</a></dt><dd><p>Interacts with external systems (read/write). Should capture sufficient
 metadata in Context for provenance (e.g., source path, checksums).</p>
+</dd>
+</dl>
+</section>
+<section id="preprocessing">
+<h2>Preprocessing<a class="headerlink" href="#preprocessing" title="Link to this heading">¶</a></h2>
+<dl class="simple glossary">
+<dt id="term-derive">derive<a class="headerlink" href="#term-derive" title="Link to this term">¶</a></dt><dd><p>Reserved node key; the boundary where <strong>preprocessors</strong> compute or expand
+configuration before execution.</p>
+</dd>
+<dt id="term-parameter_sweep">parameter_sweep<a class="headerlink" href="#term-parameter_sweep" title="Link to this term">¶</a></dt><dd><p>A preprocessor under <a class="reference internal" href="#term-derive"><span class="xref std std-term">derive</span></a> that computes <strong>parameters</strong> from
+<strong>variables</strong> (expressions) and may expand the node into multiple runs.</p>
+</dd>
+<dt id="term-parameters-computed">parameters (computed)<a class="headerlink" href="#term-parameters-computed" title="Link to this term">¶</a></dt><dd><p>The mapping under <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep.parameters</span></code>. Keys are <strong>callee
+parameter names</strong>; values are expressions producing call-time values.</p>
+</dd>
+<dt id="term-variables">variables<a class="headerlink" href="#term-variables" title="Link to this term">¶</a></dt><dd><p>The mapping under <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep.variables</span></code> defining named
+ranges, explicit sequences, or context-fed sequences.</p>
+</dd>
+<dt id="term-required_external_parameters">required_external_parameters<a class="headerlink" href="#term-required_external_parameters" title="Link to this term">¶</a></dt><dd><p>Unbound callee argument names still required after preprocessing; displayed
+by inspection so users can fill them via node <code class="docutils literal notranslate"><span class="pre">parameters</span></code> or rely on
+callee defaults.</p>
 </dd>
 </dl>
 </section>
@@ -635,6 +658,7 @@ See <a class="reference internal" href="trace_aggregator_v1.html#trace-aggregato
 <li><a class="reference internal" href="#core-runtime-objects">Core Runtime Objects</a></li>
 <li><a class="reference internal" href="#channels-data">Channels &amp; Data</a></li>
 <li><a class="reference internal" href="#processor-families">Processor Families</a></li>
+<li><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
 <li><a class="reference internal" href="#execution-records-ser-vocabulary">Execution Records (SER Vocabulary)</a></li>
 <li><a class="reference internal" href="#run-space-identity">Run-Space Identity</a></li>
 <li><a class="reference internal" href="#trace-drivers">Trace &amp; Drivers</a></li>

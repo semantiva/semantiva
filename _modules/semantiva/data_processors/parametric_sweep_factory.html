@@ -203,12 +203,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../trace_stream_v1.html">Trace Stream v1</a></li>
@@ -277,25 +279,31 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="sd">&quot;&quot;&quot;Parametric sweep factory.</span>
+<span class="sd">&quot;&quot;&quot;Factory for creating parametric sweep processors.</span>
 
-<span class="sd">This module provides a factory for creating &quot;sweep&quot; DataSource classes that</span>
-<span class="sd">produce a typed collection by iterating over one or more independent variables</span>
-<span class="sd">and invoking an underlying element DataSource for each combination (product)</span>
-<span class="sd">or element-wise (zip) combination.</span>
+<span class="sd">This module implements the ``derive.parameter_sweep`` preprocessor, which generates</span>
+<span class="sd">specialized processor classes that evaluate parameters across variable ranges.</span>
 
-<span class="sd">The factory implements:</span>
-<span class="sd">- numeric ranges (RangeSpec), explicit sequences (SequenceSpec), and</span>
-<span class="sd">    context-driven sequences (FromContext)</span>
-<span class="sd">- safe expression evaluation for parametric expressions via</span>
-<span class="sd">    :class:`semantiva.utils.safe_eval.ExpressionEvaluator` (tuples and simple</span>
-<span class="sd">    type conversion functions are supported)</span>
-<span class="sd">- automatic creation of context keys named ``{var}_values`` for downstream</span>
-<span class="sd">    processors</span>
+<span class="sd">**Parameter Resolution:**</span>
 
-<span class="sd">This file is intentionally implementation-only: use the public</span>
-<span class="sd">`ParametricSweepFactory.create` call documented below to construct sweep</span>
-<span class="sd">sources.</span>
+<span class="sd">- Expressions evaluate **parameters** using **variables** as inputs</span>
+<span class="sd">- Expression parameter names must match the target processor&#39;s argument names</span>
+<span class="sd">- Parameters not computed by expressions remain in the wrapper&#39;s signature for</span>
+<span class="sd">  pipeline-level resolution</span>
+<span class="sd">- Parameter precedence: computed values &gt; node parameters &gt; processor defaults</span>
+
+<span class="sd">**Processor Types:**</span>
+
+<span class="sd">- **DataSource**: Requires ``collection`` output type; produces a collection of results</span>
+<span class="sd">- **DataOperation**: Requires ``collection`` output type; processes input data with</span>
+<span class="sd">  swept parameters and produces a collection</span>
+<span class="sd">- **DataProbe**: Forbids ``collection``; returns a list of probe results</span>
+
+<span class="sd">**Validation:**</span>
+
+<span class="sd">- Unknown parameter names in expressions raise ``TypeError``</span>
+<span class="sd">- Missing required ``collection`` for DataSource/DataOperation raises ``TypeError``</span>
+<span class="sd">- Invalid ``collection`` specification for DataProbe raises ``TypeError``</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -303,13 +311,15 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_io.data_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataSource</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollectionType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataOperation</span><span class="p">,</span> <span class="n">DataProbe</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.utils.safe_eval</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExpressionEvaluator</span><span class="p">,</span> <span class="n">ExpressionError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_expression_sig_v1</span><span class="p">,</span> <span class="n">variable_domain_signature</span>
 
 
 <div class="viewcode-block" id="RangeSpec">
@@ -482,41 +492,6 @@
             <span class="k">yield</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">var_names</span><span class="p">,</span> <span class="n">combo</span><span class="p">))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_validate_element_source_signature</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">element_source</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataSource</span><span class="p">],</span>
-    <span class="nb">vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VarSpec</span><span class="p">],</span>
-    <span class="n">parametric_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">static_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">include_independent</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate planned parameters against the element source signature.&quot;&quot;&quot;</span>
-    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">element_source</span><span class="o">.</span><span class="n">_get_data</span><span class="p">)</span>
-    <span class="n">source_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="s2">&quot;self&quot;</span><span class="p">}</span>
-    <span class="n">independent_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="n">expr_out</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">parametric_expressions</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="n">static_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">static_params</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="n">forwarded</span> <span class="o">=</span> <span class="n">independent_names</span> <span class="k">if</span> <span class="n">include_independent</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="n">planned</span> <span class="o">=</span> <span class="n">expr_out</span> <span class="o">|</span> <span class="n">static_names</span> <span class="o">|</span> <span class="n">forwarded</span>
-
-    <span class="n">unknown</span> <span class="o">=</span> <span class="n">planned</span> <span class="o">-</span> <span class="n">source_params</span>
-    <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Parametric sweep will pass parameters not accepted by </span><span class="si">{</span><span class="n">element_source</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Allowed parameters: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">source_params</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-
-    <span class="n">missing_required</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">n</span>
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="s2">&quot;self&quot;</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">_empty</span> <span class="ow">and</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">planned</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="n">missing_required</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Element source </span><span class="si">{</span><span class="n">element_source</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> requires parameters not provided by sweep: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing_required</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-
-
 <span class="k">def</span><span class="w"> </span><span class="nf">_compile_parametric_expressions</span><span class="p">(</span>
     <span class="n">exprs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">allowed_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">evaluator</span><span class="p">:</span> <span class="n">ExpressionEvaluator</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -531,163 +506,536 @@
     <span class="k">return</span> <span class="n">compiled</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span> <span class="s2">&quot;by_position&quot;</span><span class="p">}:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode must be &#39;combinatorial&#39; or &#39;by_position&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_publish_created_context</span><span class="p">(</span>
+    <span class="n">created</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;set_value&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">created</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">):</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">created</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_allowed_parameter_names</span><span class="p">(</span>
+    <span class="n">element</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+    <span class="n">element_kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;DataSource&quot;</span><span class="p">,</span> <span class="s2">&quot;DataOperation&quot;</span><span class="p">,</span> <span class="s2">&quot;DataProbe&quot;</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="n">element_kind</span> <span class="o">==</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">:</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">_get_data</span><span class="p">)</span>
+        <span class="n">excluded</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cls&quot;</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">_process_logic</span><span class="p">)</span>
+        <span class="n">excluded</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">}</span>
+
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">,</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">names</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_signature</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">is_classmethod</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">context_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">required_parameters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">optional_parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="s2">&quot;cls&quot;</span> <span class="k">if</span> <span class="n">is_classmethod</span> <span class="k">else</span> <span class="s2">&quot;self&quot;</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">context_keys</span><span class="p">:</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">required_parameters</span><span class="p">:</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="n">optional_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">,</span>
+                <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">&quot;kwargs&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_call_parameters</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">base_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">expression_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">base_kwargs</span><span class="p">)</span>
+    <span class="n">merged</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">expression_outputs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged</span>
+
+
 <div class="viewcode-block" id="ParametricSweepFactory">
 <a class="viewcode-back" href="../../../data_processors.html#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParametricSweepFactory</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory for creating parametric sweep data sources.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory for creating sweep processors across DataSource, DataOperation, and DataProbe.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ParametricSweepFactory.create">
 <a class="viewcode-back" href="../../../data_processors.html#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory.create">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">element</span><span class="p">:</span> <span class="n">Type</span><span class="p">,</span>
-        <span class="n">element_kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;DataSource&quot;</span><span class="p">,</span> <span class="s2">&quot;DataOperation&quot;</span><span class="p">,</span> <span class="s2">&quot;DataProbe&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">,</span>
-        <span class="n">collection_output</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataCollectionType</span><span class="p">],</span>
+        <span class="n">element</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">element_kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;DataSource&quot;</span><span class="p">,</span> <span class="s2">&quot;DataOperation&quot;</span><span class="p">,</span> <span class="s2">&quot;DataProbe&quot;</span><span class="p">],</span>
+        <span class="n">collection_output</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataCollectionType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="nb">vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VarSpec</span><span class="p">],</span>
         <span class="n">parametric_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">static_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">include_independent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span> <span class="s2">&quot;by_position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span>
         <span class="n">broadcast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">expression_evaluator</span><span class="p">:</span> <span class="n">ExpressionEvaluator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataSource</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a DataSource subclass that sweeps over parameter combinations.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">element_kind</span> <span class="o">!=</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;Sweep factory currently supports element_kind=&#39;DataSource&#39; only. &quot;</span>
-                <span class="s2">&quot;API is future-ready for DataOperation/DataProbe but not implemented in this epic.&quot;</span>
-            <span class="p">)</span>
-        <span class="n">element_source</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataSource</span><span class="p">]</span> <span class="o">=</span> <span class="n">element</span>  <span class="c1"># type: ignore[assignment]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">element_source</span><span class="p">,</span> <span class="n">DataSource</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;element must be a DataSource subclass&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">collection_output</span><span class="p">,</span> <span class="n">DataCollectionType</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;collection_output must be a DataCollectionType subclass&quot;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">vars</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;vars must be non-empty&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;combinatorial&quot;</span><span class="p">,</span> <span class="s2">&quot;by_position&quot;</span><span class="p">}:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode must be &#39;combinatorial&#39; or &#39;by_position&#39;&quot;</span><span class="p">)</span>
+        <span class="n">_validate_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">element_kind</span> <span class="o">==</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">DataSource</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;element must be a DataSource subclass&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">collection_output</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span>
+                <span class="n">collection_output</span><span class="p">,</span> <span class="n">DataCollectionType</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;collection_output must be provided and be a DataCollectionType subclass&quot;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">element_kind</span> <span class="o">==</span> <span class="s2">&quot;DataOperation&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">DataOperation</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;element must be a DataOperation subclass&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">collection_output</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span>
+                <span class="n">collection_output</span><span class="p">,</span> <span class="n">DataCollectionType</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;DataOperation sweeps require a DataCollectionType collection_output&quot;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">element_kind</span> <span class="o">==</span> <span class="s2">&quot;DataProbe&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">DataProbe</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;element must be a DataProbe subclass&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">collection_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;DataProbe sweeps must not provide a collection_output&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover - defensive</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported element_kind &#39;</span><span class="si">{</span><span class="n">element_kind</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
         <span class="n">evaluator</span> <span class="o">=</span> <span class="n">expression_evaluator</span> <span class="ow">or</span> <span class="n">ExpressionEvaluator</span><span class="p">()</span>
-
-        <span class="n">_validate_element_source_signature</span><span class="p">(</span>
-            <span class="n">element_source</span><span class="o">=</span><span class="n">element_source</span><span class="p">,</span>
-            <span class="nb">vars</span><span class="o">=</span><span class="nb">vars</span><span class="p">,</span>
-            <span class="n">parametric_expressions</span><span class="o">=</span><span class="n">parametric_expressions</span><span class="p">,</span>
-            <span class="n">static_params</span><span class="o">=</span><span class="n">static_params</span><span class="p">,</span>
-            <span class="n">include_independent</span><span class="o">=</span><span class="n">include_independent</span><span class="p">,</span>
-        <span class="p">)</span>
-
         <span class="n">compiled_exprs</span> <span class="o">=</span> <span class="n">_compile_parametric_expressions</span><span class="p">(</span>
             <span class="n">parametric_expressions</span> <span class="ow">or</span> <span class="p">{},</span> <span class="nb">set</span><span class="p">(</span><span class="nb">vars</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">evaluator</span>
         <span class="p">)</span>
+        <span class="n">expr_src</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parametric_expressions</span> <span class="ow">or</span> <span class="p">{})</span>
 
-        <span class="n">normalized_static</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">{}</span> <span class="k">if</span> <span class="n">static_params</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cast</span><span class="p">(</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">static_params</span><span class="p">)</span>
+        <span class="n">parameters</span><span class="p">,</span> <span class="n">allowed_names</span> <span class="o">=</span> <span class="n">_allowed_parameter_names</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">element_kind</span><span class="p">)</span>
+
+        <span class="n">unknown_expr</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">parametric_expressions</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">allowed_names</span>
+        <span class="k">if</span> <span class="n">unknown_expr</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Parametric expressions target unknown parameters for </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unknown_expr</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">bound_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">parametric_expressions</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">required_external</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">optional_external</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">bound_names</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
+                <span class="n">required_external</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">optional_external</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span>
+
+        <span class="n">from_context_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">spec</span><span class="o">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">vars</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">FromContext</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">external_param_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">from_context_keys</span><span class="p">)</span>
+            <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">required_external</span><span class="p">)</span>
+            <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">optional_external</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="p">)</span>
 
-        <span class="n">processed_vars</span> <span class="o">=</span> <span class="nb">vars</span>
+        <span class="n">base_kwargs_filter</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">required_external</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">optional_external</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-        <span class="k">class</span><span class="w"> </span><span class="nc">ParametricSweepSource</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
-            <span class="n">_element_source</span> <span class="o">=</span> <span class="n">element_source</span>
-            <span class="n">_collection_output</span> <span class="o">=</span> <span class="n">collection_output</span>
-            <span class="n">_vars</span> <span class="o">=</span> <span class="n">processed_vars</span>
-            <span class="n">_parametric_expressions</span> <span class="o">=</span> <span class="n">parametric_expressions</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_preprocessor_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+            <span class="n">element_ref</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="c1"># Sanitized metadata: only include &quot;sig&quot;, not &quot;expr&quot;</span>
+            <span class="n">param_expressions</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sig&quot;</span><span class="p">:</span> <span class="n">normalize_expression_sig_v1</span><span class="p">(</span><span class="n">src</span><span class="p">)}</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_expr_src&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="n">variables_meta</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="n">variable_domain_signature</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_vars&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_collection_output&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">collection_ref</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">collection</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">collection</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">collection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">deps</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;required_external_parameters&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_required_external&quot;</span><span class="p">,</span> <span class="p">())</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;context_keys&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_from_context_keys&quot;</span><span class="p">,</span> <span class="p">())),</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;derive.parameter_sweep&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;element_ref&quot;</span><span class="p">:</span> <span class="n">element_ref</span><span class="p">,</span>
+                <span class="s2">&quot;param_expressions&quot;</span><span class="p">:</span> <span class="n">param_expressions</span><span class="p">,</span>
+                <span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="n">variables_meta</span><span class="p">,</span>
+                <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_mode&quot;</span><span class="p">,</span> <span class="s2">&quot;combinatorial&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;broadcast&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_broadcast&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
+                <span class="s2">&quot;collection&quot;</span><span class="p">:</span> <span class="n">collection_ref</span><span class="p">,</span>
+                <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="n">deps</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">element_kind</span> <span class="o">==</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">:</span>
+            <span class="c1"># At this point collection_output is guaranteed to be non-None for DataSource</span>
+            <span class="k">assert</span> <span class="n">collection_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+            <span class="k">class</span><span class="w"> </span><span class="nc">ParametricSweepSource</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
+                <span class="n">_element</span> <span class="o">=</span> <span class="n">element</span>
+                <span class="n">_collection_output</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataCollectionType</span><span class="p">]</span> <span class="o">=</span> <span class="n">collection_output</span>  <span class="c1"># type: ignore[assignment]</span>
+                <span class="n">_vars</span> <span class="o">=</span> <span class="nb">vars</span>
+                <span class="n">_compiled_exprs</span> <span class="o">=</span> <span class="n">compiled_exprs</span>
+                <span class="n">_expr_src</span> <span class="o">=</span> <span class="n">expr_src</span>
+                <span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
+                <span class="n">_broadcast</span> <span class="o">=</span> <span class="n">broadcast</span>
+                <span class="n">_allowed_names</span> <span class="o">=</span> <span class="n">allowed_names</span>
+                <span class="n">_required_external</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">required_external</span><span class="p">)</span>
+                <span class="n">_optional_external</span> <span class="o">=</span> <span class="n">optional_external</span>
+                <span class="n">_from_context_keys</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">from_context_keys</span><span class="p">)</span>
+                <span class="n">_external_param_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">external_param_names</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataCollectionType</span><span class="p">]:</span>  <span class="c1"># type: ignore[type-var]</span>
+                    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_collection_output</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_context_requirements</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_processing_parameter_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_external_param_names</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_required_external_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_required_external</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_values&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="p">]</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">_get_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataCollectionType</span><span class="p">:</span>  <span class="c1"># type: ignore[type-var]</span>
+                    <span class="n">context</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">sequences</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">_materialize_sequences</span><span class="p">(</span>
+                        <span class="nb">vars</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="p">,</span>
+                        <span class="n">params</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">:</span>
+                        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                    <span class="n">base_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">name</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">base_kwargs_filter</span>
+                        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span>
+                    <span class="p">}</span>
+
+                    <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">sweep_args</span> <span class="ow">in</span> <span class="n">_iterate_sweep</span><span class="p">(</span>
+                        <span class="n">sequences</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_mode</span><span class="p">,</span> <span class="n">broadcast</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_broadcast</span>
+                    <span class="p">):</span>
+                        <span class="n">expr_outputs</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="n">out_param</span><span class="p">:</span> <span class="n">fn</span><span class="p">(</span><span class="o">**</span><span class="n">sweep_args</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">out_param</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_compiled_exprs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                        <span class="p">}</span>
+                        <span class="n">call_params</span> <span class="o">=</span> <span class="n">_merge_call_parameters</span><span class="p">(</span>
+                            <span class="n">base_kwargs</span><span class="o">=</span><span class="n">base_kwargs</span><span class="p">,</span>
+                            <span class="n">expression_outputs</span><span class="o">=</span><span class="n">expr_outputs</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">call_params</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">call_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_allowed_names</span>
+                        <span class="p">}</span>
+                        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="o">**</span><span class="n">call_params</span><span class="p">))</span>
+
+                    <span class="n">_publish_created_context</span><span class="p">(</span><span class="n">created</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_collection_output</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">_define_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_define_metadata</span><span class="p">())</span>
+                    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;preprocessor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_preprocessor_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+                    <span class="n">meta</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;component_type&quot;</span><span class="p">,</span> <span class="s2">&quot;DataSource&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">meta</span>
+
+            <span class="n">signature</span> <span class="o">=</span> <span class="n">_build_signature</span><span class="p">(</span>
+                <span class="n">is_classmethod</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">context_keys</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">from_context_keys</span><span class="p">),</span>
+                <span class="n">required_parameters</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">required_external</span><span class="p">),</span>
+                <span class="n">optional_parameters</span><span class="o">=</span><span class="n">optional_external</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Set signature on the underlying function, not the classmethod descriptor</span>
+            <span class="n">ParametricSweepSource</span><span class="o">.</span><span class="n">_get_data</span><span class="o">.</span><span class="vm">__func__</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span>  <span class="c1"># type: ignore[attr-defined]</span>
+
+            <span class="n">ParametricSweepSource</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">ParametricSweep&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">collection_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># For mypy</span>
+            <span class="n">ParametricSweepSource</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Parametric sweep data source for </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> producing </span><span class="si">{</span><span class="n">collection_output</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">return</span> <span class="n">ParametricSweepSource</span>
+
+        <span class="k">if</span> <span class="n">element_kind</span> <span class="o">==</span> <span class="s2">&quot;DataOperation&quot;</span><span class="p">:</span>
+            <span class="c1"># At this point collection_output is guaranteed to be non-None for DataOperation</span>
+            <span class="k">assert</span> <span class="n">collection_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+            <span class="k">class</span><span class="w"> </span><span class="nc">ParametricSweepOperation</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
+                <span class="n">_element</span> <span class="o">=</span> <span class="n">element</span>
+                <span class="n">_collection_output</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataCollectionType</span><span class="p">]</span> <span class="o">=</span> <span class="n">collection_output</span>  <span class="c1"># type: ignore[assignment]</span>
+                <span class="n">_vars</span> <span class="o">=</span> <span class="nb">vars</span>
+                <span class="n">_compiled_exprs</span> <span class="o">=</span> <span class="n">compiled_exprs</span>
+                <span class="n">_expr_src</span> <span class="o">=</span> <span class="n">expr_src</span>
+                <span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
+                <span class="n">_broadcast</span> <span class="o">=</span> <span class="n">broadcast</span>
+                <span class="n">_allowed_names</span> <span class="o">=</span> <span class="n">allowed_names</span>
+                <span class="n">_required_external</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">required_external</span><span class="p">)</span>
+                <span class="n">_optional_external</span> <span class="o">=</span> <span class="n">optional_external</span>
+                <span class="n">_from_context_keys</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">from_context_keys</span><span class="p">)</span>
+                <span class="n">_external_param_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">external_param_names</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>  <span class="c1"># type: ignore[override]</span>
+                    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="o">.</span><span class="n">input_data_type</span><span class="p">()</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>  <span class="c1"># type: ignore[override]</span>
+                    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_collection_output</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_processing_parameter_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_external_param_names</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_required_external_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_required_external</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_context_requirements</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                    <span class="n">created</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_values&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="p">]</span>
+                    <span class="n">base_created</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="p">,</span> <span class="s2">&quot;get_created_keys&quot;</span><span class="p">):</span>
+                        <span class="n">base_created</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="o">.</span><span class="n">get_created_keys</span><span class="p">())</span>
+                    <span class="k">return</span> <span class="n">created</span> <span class="o">+</span> <span class="n">base_created</span>
+
+                <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># type: ignore[override]</span>
+                    <span class="n">sequences</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">_materialize_sequences</span><span class="p">(</span>
+                        <span class="nb">vars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vars</span><span class="p">,</span>
+                        <span class="n">params</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">:</span>
+                        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                    <span class="n">base_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">name</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">base_kwargs_filter</span>
+                        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span>
+                    <span class="p">}</span>
+
+                    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">sweep_args</span> <span class="ow">in</span> <span class="n">_iterate_sweep</span><span class="p">(</span>
+                        <span class="n">sequences</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="p">,</span> <span class="n">broadcast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_broadcast</span>
+                    <span class="p">):</span>
+                        <span class="n">expr_outputs</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="n">out_param</span><span class="p">:</span> <span class="n">fn</span><span class="p">(</span><span class="o">**</span><span class="n">sweep_args</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">out_param</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compiled_exprs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                        <span class="p">}</span>
+                        <span class="n">call_params</span> <span class="o">=</span> <span class="n">_merge_call_parameters</span><span class="p">(</span>
+                            <span class="n">base_kwargs</span><span class="o">=</span><span class="n">base_kwargs</span><span class="p">,</span>
+                            <span class="n">expression_outputs</span><span class="o">=</span><span class="n">expr_outputs</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">call_params</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">call_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_names</span>
+                        <span class="p">}</span>
+                        <span class="n">element_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_element</span><span class="p">(</span>
+                            <span class="n">context_observer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context_observer</span><span class="p">,</span>
+                            <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element_instance</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">call_params</span><span class="p">))</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_last_created_sequences</span> <span class="o">=</span> <span class="n">created</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_last_created_sequences</span> <span class="o">=</span> <span class="n">created</span>
+                    <span class="n">context_ref</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;observer_context&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">context_ref</span> <span class="ow">is</span> <span class="kc">None</span>
+                        <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;context_observer&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="p">):</span>
+                        <span class="n">context_ref</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">context_observer</span><span class="p">,</span> <span class="s2">&quot;observer_context&quot;</span><span class="p">,</span> <span class="kc">None</span>
+                        <span class="p">)</span>
+                    <span class="n">_publish_created_context</span><span class="p">(</span><span class="n">created</span><span class="p">,</span> <span class="n">context_ref</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection_output</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+                <span class="nd">@classmethod</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">_define_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_define_metadata</span><span class="p">())</span>
+                    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;preprocessor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_preprocessor_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+                    <span class="n">meta</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;component_type&quot;</span><span class="p">,</span> <span class="s2">&quot;DataOperation&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">meta</span>
+
+            <span class="n">signature</span> <span class="o">=</span> <span class="n">_build_signature</span><span class="p">(</span>
+                <span class="n">is_classmethod</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">context_keys</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">from_context_keys</span><span class="p">),</span>
+                <span class="n">required_parameters</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">required_external</span><span class="p">),</span>
+                <span class="n">optional_parameters</span><span class="o">=</span><span class="n">optional_external</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Set signature directly on the method</span>
+            <span class="n">ParametricSweepOperation</span><span class="o">.</span><span class="n">_process_logic</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span>  <span class="c1"># type: ignore[attr-defined]</span>
+
+            <span class="n">ParametricSweepOperation</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">ParametricSweep&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">collection_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># For mypy</span>
+            <span class="n">ParametricSweepOperation</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Parametric sweep data operation for </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> producing </span><span class="si">{</span><span class="n">collection_output</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">return</span> <span class="n">ParametricSweepOperation</span>
+
+        <span class="k">class</span><span class="w"> </span><span class="nc">ParametricSweepProbe</span><span class="p">(</span><span class="n">DataProbe</span><span class="p">):</span>
+            <span class="n">_element</span> <span class="o">=</span> <span class="n">element</span>
+            <span class="n">_vars</span> <span class="o">=</span> <span class="nb">vars</span>
             <span class="n">_compiled_exprs</span> <span class="o">=</span> <span class="n">compiled_exprs</span>
-            <span class="n">_static_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_static</span>
-            <span class="n">_include_independent</span> <span class="o">=</span> <span class="n">include_independent</span>
+            <span class="n">_expr_src</span> <span class="o">=</span> <span class="n">expr_src</span>
             <span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
             <span class="n">_broadcast</span> <span class="o">=</span> <span class="n">broadcast</span>
+            <span class="n">_allowed_names</span> <span class="o">=</span> <span class="n">allowed_names</span>
+            <span class="n">_required_external</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">required_external</span><span class="p">)</span>
+            <span class="n">_optional_external</span> <span class="o">=</span> <span class="n">optional_external</span>
+            <span class="n">_from_context_keys</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">from_context_keys</span><span class="p">)</span>
+            <span class="n">_external_param_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">external_param_names</span><span class="p">)</span>
 
             <span class="nd">@classmethod</span>
-            <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataCollectionType</span><span class="p">]:</span>  <span class="c1"># type: ignore[type-var]</span>
-                <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_collection_output</span>
-
-            <span class="nd">@classmethod</span>
-            <span class="k">def</span><span class="w"> </span><span class="nf">get_context_requirements</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;Return list of context keys required by FromContext variable specifications.&quot;&quot;&quot;</span>
-                <span class="n">required</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">FromContext</span><span class="p">):</span>
-                        <span class="n">required</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">required</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>  <span class="c1"># type: ignore[override]</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="o">.</span><span class="n">input_data_type</span><span class="p">()</span>
 
             <span class="nd">@classmethod</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">get_processing_parameter_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;Return list of parameter names needed for processing.&quot;&quot;&quot;</span>
-                <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_context_requirements</span><span class="p">()</span>
+                <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_external_param_names</span><span class="p">)</span>
+
+            <span class="nd">@classmethod</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_required_external_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_required_external</span><span class="p">)</span>
+
+            <span class="nd">@classmethod</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_context_requirements</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">)</span>
 
             <span class="nd">@classmethod</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;Return list of context keys created by the sweep for each variable.&quot;&quot;&quot;</span>
-                <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_values&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="p">]</span>
+                <span class="n">created</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_values&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="p">]</span>
+                <span class="n">base_created</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="p">,</span> <span class="s2">&quot;get_created_keys&quot;</span><span class="p">):</span>
+                    <span class="n">base_created</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_element</span><span class="o">.</span><span class="n">get_created_keys</span><span class="p">())</span>
+                <span class="k">return</span> <span class="n">created</span> <span class="o">+</span> <span class="n">base_created</span>
 
-            <span class="nd">@classmethod</span>
-            <span class="k">def</span><span class="w"> </span><span class="nf">_get_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataCollectionType</span><span class="p">:</span>  <span class="c1"># type: ignore[type-var]</span>
-                <span class="n">ctx</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># type: ignore[override]</span>
                 <span class="n">sequences</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">_materialize_sequences</span><span class="p">(</span>
-                    <span class="nb">vars</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_vars</span><span class="p">,</span>
+                    <span class="nb">vars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vars</span><span class="p">,</span>
                     <span class="n">params</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s2">&quot;set_value&quot;</span><span class="p">):</span>
-                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">created</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                            <span class="n">ctx</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">):</span>
-                        <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">created</span><span class="p">)</span>
-                <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_context_keys</span><span class="p">:</span>
+                    <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="n">base_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">base_kwargs_filter</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span>
+                <span class="p">}</span>
+
+                <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">sweep_args</span> <span class="ow">in</span> <span class="n">_iterate_sweep</span><span class="p">(</span>
-                    <span class="n">sequences</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_mode</span><span class="p">,</span> <span class="n">broadcast</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_broadcast</span>
+                    <span class="n">sequences</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="p">,</span> <span class="n">broadcast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_broadcast</span>
                 <span class="p">):</span>
-                    <span class="n">call_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_static_params</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_include_independent</span><span class="p">:</span>
-                        <span class="n">call_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sweep_args</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">out_param</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_compiled_exprs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="n">call_params</span><span class="p">[</span><span class="n">out_param</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">**</span><span class="n">sweep_args</span><span class="p">)</span>
-                    <span class="n">elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_element_source</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="o">**</span><span class="n">call_params</span><span class="p">)</span>
-                    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
-                <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_collection_output</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
-
-        <span class="c1"># Create proper signature for _get_data to expose FromContext parameters</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">create_get_data_with_signature</span><span class="p">():</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-
-            <span class="c1"># Collect FromContext parameter names</span>
-            <span class="n">from_context_params</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">processed_vars</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">FromContext</span><span class="p">):</span>
-                    <span class="n">from_context_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">from_context_params</span><span class="p">:</span>
-                <span class="c1"># Create signature with explicit FromContext parameters</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">),</span>
-                <span class="p">]</span>
-                <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">from_context_params</span><span class="p">:</span>
-                    <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
-                            <span class="n">param_name</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span>
-                        <span class="p">)</span>
+                    <span class="n">expr_outputs</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">out_param</span><span class="p">:</span> <span class="n">fn</span><span class="p">(</span><span class="o">**</span><span class="n">sweep_args</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">out_param</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compiled_exprs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="p">}</span>
+                    <span class="n">call_params</span> <span class="o">=</span> <span class="n">_merge_call_parameters</span><span class="p">(</span>
+                        <span class="n">base_kwargs</span><span class="o">=</span><span class="n">base_kwargs</span><span class="p">,</span>
+                        <span class="n">expression_outputs</span><span class="o">=</span><span class="n">expr_outputs</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">&quot;kwargs&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">)</span>
-                <span class="p">)</span>
+                    <span class="n">call_params</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">call_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_names</span>
+                    <span class="p">}</span>
+                    <span class="n">probe_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_element</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probe_instance</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">call_params</span><span class="p">))</span>
 
-                <span class="n">new_sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-                <span class="n">ParametricSweepSource</span><span class="o">.</span><span class="n">_get_data</span><span class="o">.</span><span class="vm">__func__</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">new_sig</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_last_created_sequences</span> <span class="o">=</span> <span class="n">created</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_last_created_sequences</span> <span class="o">=</span> <span class="n">created</span>
+                <span class="n">context_ref</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;observer_context&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">context_ref</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;context_observer&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="p">):</span>
+                    <span class="n">context_ref</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">context_observer</span><span class="p">,</span> <span class="s2">&quot;observer_context&quot;</span><span class="p">,</span> <span class="kc">None</span>
+                    <span class="p">)</span>
+                <span class="n">_publish_created_context</span><span class="p">(</span><span class="n">created</span><span class="p">,</span> <span class="n">context_ref</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">results</span>
 
-        <span class="c1"># Create proper signature for _get_data to expose FromContext parameters</span>
+            <span class="nd">@classmethod</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_define_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_define_metadata</span><span class="p">())</span>
+                <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;preprocessor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_preprocessor_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+                <span class="n">meta</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;component_type&quot;</span><span class="p">,</span> <span class="s2">&quot;DataProbe&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">meta</span>
 
-        <span class="n">create_get_data_with_signature</span><span class="p">()</span>
-
-        <span class="n">ParametricSweepSource</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element_source</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">ParametricSweep&quot;</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="n">_build_signature</span><span class="p">(</span>
+            <span class="n">is_classmethod</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">context_keys</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">from_context_keys</span><span class="p">),</span>
+            <span class="n">required_parameters</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">required_external</span><span class="p">),</span>
+            <span class="n">optional_parameters</span><span class="o">=</span><span class="n">optional_external</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">ParametricSweepSource</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Parametric sweep data source for </span><span class="si">{</span><span class="n">element_source</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> producing </span><span class="si">{</span><span class="n">collection_output</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="k">return</span> <span class="n">ParametricSweepSource</span></div>
+        <span class="c1"># Set signature directly on the method</span>
+        <span class="n">ParametricSweepProbe</span><span class="o">.</span><span class="n">_process_logic</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span>  <span class="c1"># type: ignore[attr-defined]</span>
+
+        <span class="n">ParametricSweepProbe</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">ParametricSweep&quot;</span>
+        <span class="n">ParametricSweepProbe</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Parametric sweep data probe for </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ParametricSweepProbe</span></div>
 </div>
 
 </pre></div>

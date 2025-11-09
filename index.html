@@ -204,12 +204,14 @@
 <li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
@@ -319,10 +321,10 @@
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#data-types">Data Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#processors">Processors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#nodes">Nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#preprocessors-derive">Preprocessors (derive)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#context-channel">Context Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#resolvers-parameters">Resolvers &amp; Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="concepts.html#dual-channel-pipeline">Dual-Channel Pipeline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="concepts.html#minimal-epistemic-unit-meu">Minimal Epistemic Unit (MEU)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a><ul>
@@ -330,6 +332,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#defining-pipelines-in-yaml">Defining Pipelines in YAML</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#probe-nodes">Probe nodes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-resolution-precedence">Parameter resolution (precedence)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#derive-pre-execution-computation">Derive: pre-execution computation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#parameter-validation-in-yaml-configuration">Parameter Validation in YAML Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#canonical-spec-identity">Canonical spec &amp; identity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html#running-a-pipeline-from-python">Running a Pipeline from Python</a></li>
@@ -349,8 +352,6 @@
 <li class="toctree-l2"><a class="reference internal" href="data_processors.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_processors.html#parameter-validation-examples">Parameter Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_processors.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#annotated-walkthrough">Annotated walkthrough</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_processors.html#run-it">Run it</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_processors.html#module-semantiva.data_processors.data_processors">Autodoc</a></li>
 </ul>
 </li>
@@ -386,24 +387,17 @@
 <li class="toctree-l2"><a class="reference internal" href="contracts.html#ci-integration">CI integration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Sweeps in YAML</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sweeps.html#objective">Objective</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#key-concepts-and-parameters">Key concepts and parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#variable-specification-types">Variable specification types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#modes">Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#basic-example">Basic example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#explanation">Explanation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#from-context-by-position-mode">From context &amp; by_position mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#id1">Explanation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#inspection">Inspection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#api-reference-short">API reference (short)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#notes-on-expressions">Notes on expressions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#good-practices">Good practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#key-idea">Key Idea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#what-it-does">What it does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#supported-kinds">Supported kinds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#yaml-reference-inside-derive-parameter-sweep">YAML Reference (inside <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#merge-semantics">Merge semantics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#modes-failure-cases">Modes &amp; failure cases</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sweeps.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#id2">Explanation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#id3">Explanation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sweeps.html#expressions">Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#inspection">Inspection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sweeps.html#parameter-provenance-tracking">Parameter Provenance Tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a><ul>
@@ -435,8 +429,25 @@
 <li class="toctree-l2"><a class="reference internal" href="studio_viewer.html#see-also">See also</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="identity_cheatsheet.html#identity-layers-at-a-glance">Identity Layers at a Glance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="identity_cheatsheet.html#semantic-id-plsemid">Semantic ID (<code class="docutils literal notranslate"><span class="pre">plsemid-*</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="identity_cheatsheet.html#config-id-plcid">Config ID (<code class="docutils literal notranslate"><span class="pre">plcid-*</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="identity_cheatsheet.html#run-space-plan-id">Run-Space Plan ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="identity_cheatsheet.html#ssot-rules-exclusions">SSOT Rules &amp; Exclusions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="identity_cheatsheet.html#inspection-payload-snapshot">Inspection Payload Snapshot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="identity_cheatsheet.html#where-to-find-the-ids">Where to Find the IDs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspection.html#payload-shape">Payload shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inspection.html#cli-contract">CLI contract</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ser.html#example-ser">Example SER</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#processor-semantics">Processor semantics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ser.html#identity-facets">Identity facets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ser.html#versioning-policy">Versioning Policy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ser.html#schema">Schema</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ser.html#context-delta">Context Delta</a></li>
@@ -533,6 +544,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture/pipeline_schema.html#node-keys-selected">Node Keys (selected)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture/pipeline_schema.html#validation">Validation</a></li>
 </ul>
 </li>
@@ -588,6 +600,7 @@
 <li class="toctree-l2"><a class="reference internal" href="glossary.html#core-runtime-objects">Core Runtime Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="glossary.html#channels-data">Channels &amp; Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="glossary.html#processor-families">Processor Families</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html#preprocessing">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="glossary.html#execution-records-ser-vocabulary">Execution Records (SER Vocabulary)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="glossary.html#run-space-identity">Run-Space Identity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="glossary.html#trace-drivers">Trace &amp; Drivers</a></li>

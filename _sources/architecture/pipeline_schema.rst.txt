@@ -5,6 +5,28 @@ Semantiva pipeline YAML supports declarative configuration of execution and trac
 behaviour alongside the node graph. The following optional top-level sections
 extend the base ``pipeline.nodes`` definition:
 
+Node Keys (selected)
+--------------------
+
+- ``processor`` (required): FQCN or registered name of the processor class.
+- ``parameters`` (optional): literal/resolver-backed call-args passed at runtime.
+- ``derive`` (optional): preprocessor boundary (mapping). Known tools include:
+
+  - ``parameter_sweep``: see :doc:`../sweeps`. Keys:
+
+    - ``parameters`` (required): computed call-args (expressions; keys = callee args)
+    - ``variables`` (required): variable definitions
+    - ``mode``: ``combinatorial|by_position`` (default: ``combinatorial``)
+    - ``broadcast``: boolean (default: ``false``)
+    - ``collection``: **required** for DataSource/DataOperation; **forbidden** for DataProbe
+
+**Canonical identity note:** the canonical graph and node UUIDs are derived from
+the **resulting processor class** and its **effective parameter map**; the
+``derive`` block content is not included in node UUID hashing (to avoid identity
+churn for equivalent derivations). Semantic changes introduced by preprocessors
+are captured separately via ``pipeline_config_id`` in the trace metadata, which
+hashes the tuple of ``(node_uuid, semantic_id)`` pairs computed at runtime.
+
 ``execution``
    Resolve orchestrators, executors, and transports from the registry. When
    omitted, the local sequential orchestrator with the in-memory transport is

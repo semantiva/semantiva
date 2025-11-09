@@ -204,12 +204,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../sweeps.html">Sweeps in YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sweeps.html">Derive Parameter Sweep</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run_space.html">Run Space (v1): blocks that expand context</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../trace_stream_v1.html">Trace Stream v1</a></li>
@@ -274,6 +276,31 @@
 <p>Semantiva pipeline YAML supports declarative configuration of execution and tracing
 behaviour alongside the node graph. The following optional top-level sections
 extend the base <code class="docutils literal notranslate"><span class="pre">pipeline.nodes</span></code> definition:</p>
+<section id="node-keys-selected">
+<h2>Node Keys (selected)<a class="headerlink" href="#node-keys-selected" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">processor</span></code> (required): FQCN or registered name of the processor class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (optional): literal/resolver-backed call-args passed at runtime.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">derive</span></code> (optional): preprocessor boundary (mapping). Known tools include:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">parameter_sweep</span></code>: see <a class="reference internal" href="../sweeps.html"><span class="doc">Derive Parameter Sweep</span></a>. Keys:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (required): computed call-args (expressions; keys = callee args)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> (required): variable definitions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: <code class="docutils literal notranslate"><span class="pre">combinatorial|by_position</span></code> (default: <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code>: boolean (default: <code class="docutils literal notranslate"><span class="pre">false</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">collection</span></code>: <strong>required</strong> for DataSource/DataOperation; <strong>forbidden</strong> for DataProbe</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Canonical identity note:</strong> the canonical graph and node UUIDs are derived from
+the <strong>resulting processor class</strong> and its <strong>effective parameter map</strong>; the
+<code class="docutils literal notranslate"><span class="pre">derive</span></code> block content is not included in node UUID hashing (to avoid identity
+churn for equivalent derivations). Semantic changes introduced by preprocessors
+are captured separately via <code class="docutils literal notranslate"><span class="pre">pipeline_config_id</span></code> in the trace metadata, which
+hashes the tuple of <code class="docutils literal notranslate"><span class="pre">(node_uuid,</span> <span class="pre">semantic_id)</span></code> pairs computed at runtime.</p>
 <dl>
 <dt><code class="docutils literal notranslate"><span class="pre">execution</span></code></dt><dd><p>Resolve orchestrators, executors, and transports from the registry. When
 omitted, the local sequential orchestrator with the in-memory transport is
@@ -359,6 +386,7 @@ the block. Duplicate context keys across blocks (or within a block between
 </div>
 </dd>
 </dl>
+</section>
 <section id="validation">
 <h2>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h2>
 <p>The loader enforces strict shapes for these blocks:</p>
@@ -433,6 +461,7 @@ mirroring the schema and <a class="reference internal" href="../examples_index.h
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Pipeline Configuration Schema</a><ul>
+<li><a class="reference internal" href="#node-keys-selected">Node Keys (selected)</a></li>
 <li><a class="reference internal" href="#validation">Validation</a></li>
 </ul>
 </li>
