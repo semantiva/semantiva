@@ -21,5 +21,11 @@ def test_cli_inspect_extended():
     yaml_path = Path(__file__).parent / "pipeline_config.yaml"
     res = run_cli(["inspect", "--extended", str(yaml_path)])
     assert res.returncode == 0
+    assert "Configuration Identity" in res.stdout
     assert "Extended Pipeline Inspection" in res.stdout
     assert "Footnotes" in res.stdout
+    # Check that UUID/Role/FQCN are integrated in node blocks
+    assert "UUID:" in res.stdout
+    assert "Role:" in res.stdout
+    assert "FQCN:" in res.stdout
+    assert "Node Semantic ID:" in res.stdout

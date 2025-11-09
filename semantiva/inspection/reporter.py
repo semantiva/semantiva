@@ -37,10 +37,116 @@ all receive consistent information about pipeline structure and parameters.
 from __future__ import annotations
 
 import json
+import sys
 
-from typing import Iterable, Dict, Any, List, Optional
+from typing import Iterable, Dict, Any, List, Optional, TextIO
 
 from .builder import NodeInspection, PipelineInspection
+
+
+def as_json_dict(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Return inspection payload as-is for JSON serialization."""
+
+    return payload
+
+
+def _format_required_keys(keys: Iterable[str]) -> str:
+    values = list(keys)
+    return ", ".join(values) if values else "none"
+
+
+def _format_run_space(identity: Dict[str, Any]) -> str:
+    run_space = identity.get("run_space")
+    if isinstance(run_space, dict):
+        spec_id = run_space.get("spec_id")
+        if spec_id:
+            return str(spec_id)
+    return "none"
+
+
+def _write(text: str, stream: TextIO) -> None:
+    stream.write(text)
+
+
+def _format_sweep_summary(block: Dict[str, Any]) -> List[str]:
+    params = block.get("parameters_sig")
+    vars_sig = block.get("variables_sig")
+    mode = block.get("mode")
+    broadcast = block.get("broadcast")
+    collection = block.get("collection")
+    lines = ["  Sweep:"]
+    param_keys = sorted(params.keys()) if isinstance(params, dict) else []
+    var_keys = sorted(vars_sig.keys()) if isinstance(vars_sig, dict) else []
+    # Use a user-friendly label for CLI output
+    lines.append(
+        f"    swept_parameters: {', '.join(param_keys) if param_keys else 'none'}"
+    )
+    lines.append(f"    variables: {', '.join(var_keys) if var_keys else 'none'}")
+    lines.append(f"    mode: {mode}")
+    lines.append(f"    broadcast: {broadcast}")
+    lines.append(f"    collection: {collection}")
+    return lines
+
+
+def print_cli_inspection(
+    payload: Dict[str, Any],
+    *,
+    extended: bool = False,
+    stream: TextIO | None = None,
+) -> None:
+    """Print concise or extended CLI inspection report from payload."""
+
+    identity = payload.get("identity", {}) if isinstance(payload, dict) else {}
+    semantic_id = identity.get("semantic_id", "unknown")
+    config_id = identity.get("config_id", "unknown")
+    required_keys = payload.get("required_context_keys")
+    required_keys = required_keys if isinstance(required_keys, list) else []
+
+    stream = stream or sys.stdout
+
+    _write("Configuration Identity\n", stream)
+    _write(f"- Semantic ID: {semantic_id}\n", stream)
+    _write(f"- Config ID:   {config_id}\n", stream)
+    _write(
+        f"- Run-Space Config ID: {_format_run_space(identity)}\n",
+        stream,
+    )
+    _write(
+        f"Required Context Keys: {_format_required_keys(required_keys)}\n",
+        stream,
+    )
+
+    if not extended:
+        return
+
+    nodes = (
+        payload.get("pipeline_spec_canonical", {}).get("nodes", [])
+        if isinstance(payload, dict)
+        else []
+    )
+    if not isinstance(nodes, list) or not nodes:
+        return
+
+    _write("\nNodes:\n", stream)
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        _write(f"- UUID: {node.get('uuid', '')}\n", stream)
+        _write(f"  Role: {node.get('role', '')}\n", stream)
+        _write(f"  FQCN: {node.get('fqcn', '')}\n", stream)
+        _write(
+            f"  Node Semantic ID: {node.get('node_semantic_id', 'none')}\n",
+            stream,
+        )
+        sweep = node.get("preprocessor_metadata")
+        if isinstance(sweep, dict):
+            derive = sweep.get("derive")
+            if isinstance(derive, dict):
+                block = derive.get("parameter_sweep")
+                if isinstance(block, dict) and block:
+                    for line in _format_sweep_summary(block):
+                        _write(f"{line}\n", stream)
+        _write("\n", stream)
 
 
 def _format_set(values: Iterable[str]) -> str:
@@ -331,10 +437,34 @@ def extended_report(inspection: PipelineInspection) -> str:
     Returns:
         Multi-line string with formatted extended report
     """
+    return _extended_report_impl(inspection, payload=None)
+
+
+def _extended_report_impl(
+    inspection: PipelineInspection, payload: Dict[str, Any] | None = None
+) -> str:
+    """Internal implementation that can optionally use payload for enrichment."""
     lines: List[str] = ["Extended Pipeline Inspection:"]
     lines.append(
         f"\tRequired context keys: {_format_set(inspection.required_context_keys)}"
     )
+
+    # Extract node identity info from payload if available
+    node_identity_map = {}
+    if payload and isinstance(payload, dict):
+        nodes_list = (
+            payload.get("pipeline_spec_canonical", {}).get("nodes", [])
+            if isinstance(payload, dict)
+            else []
+        )
+        for idx, node_info in enumerate(nodes_list):
+            if isinstance(node_info, dict):
+                node_identity_map[idx] = {
+                    "uuid": node_info.get("uuid", ""),
+                    "role": node_info.get("role", ""),
+                    "fqcn": node_info.get("fqcn", ""),
+                    "node_semantic_id": node_info.get("node_semantic_id", "none"),
+                }
 
     # Collect unique processor documentation for footnotes
     footnotes: Dict[str, str] = {}
@@ -344,9 +474,24 @@ def extended_report(inspection: PipelineInspection) -> str:
         input_name = node.input_type.__name__ if node.input_type else "None"
         output_name = node.output_type.__name__ if node.output_type else "None"
 
+        node_header = f"\nNode {node.index}: {node.processor_class} ({node.node_class})"
+        lines.append(node_header)
+
+        # Add identity information if available
+        node_idx = node.index - 1  # Convert to 0-based
+        if node_idx in node_identity_map:
+            identity = node_identity_map[node_idx]
+            lines.extend(
+                [
+                    f"    - UUID: {identity['uuid']}",
+                    f"    - Role: {identity['role']}",
+                    f"    - FQCN: {identity['fqcn']}",
+                    f"    - Node Semantic ID: {identity['node_semantic_id']}",
+                ]
+            )
+
         lines.extend(
             [
-                f"\nNode {node.index}: {node.processor_class} ({node.node_class})",
                 f"    - Component type: {node.component_type}",
                 f"    - Input data type: {input_name}",
                 f"    - Output data type: {output_name}",

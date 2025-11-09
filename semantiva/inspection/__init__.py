@@ -40,7 +40,14 @@ Key Features:
 - **Origin Traceability**: Records which nodes create or consume context keys
 """
 
-from .builder import NodeInspection, PipelineInspection, build_pipeline_inspection
+from .builder import (
+    NodeInspection,
+    PipelineInspection,
+    build,
+    build_canonical_graph,
+    build_pipeline_inspection,
+    collect_required_context_keys,
+)
 from .reporter import (
     summary_report,
     extended_report,
@@ -52,7 +59,10 @@ from .validator import validate_pipeline
 __all__ = [
     "NodeInspection",
     "PipelineInspection",
+    "build",
+    "build_canonical_graph",
     "build_pipeline_inspection",
+    "collect_required_context_keys",
     "summary_report",
     "extended_report",
     "json_report",
