@@ -106,11 +106,12 @@ fields:
 
 These additions are backward compatible with existing SER consumers.
 
-Inspection surfaces the same sanitized metadata under a ``Derived preprocessor``
-section, keeping the raw ``expr`` values in an optional ``preprocessor_view``
-that is excluded from hashing. The canonical provenance (``processor.preprocessing_provenance``)
-continues to include both the normalized signatures and the original
-expressions for audit trails. See :doc:`introspection_validation` for rendered examples.
+Inspection now exposes the same sanitized metadata in the canonical payload
+(:doc:`inspection`). Raw ``expr`` values live only inside the optional
+``preprocessor_view`` helper, which is excluded from hashing. Runtime SER still
+captures the normalized provenance via ``processor.preprocessing_provenance``
+while keeping original expressions for audit trails. See
+:doc:`introspection_validation` for rendered examples.
 
 Identity facets
 ---------------

@@ -21,5 +21,7 @@ def test_cli_inspect_summary():
     yaml_path = Path(__file__).parent / "pipeline_config.yaml"
     res = run_cli(["inspect", str(yaml_path)])
     assert res.returncode == 0
+    assert "Configuration Identity" in res.stdout
+    assert "Semantic ID:" in res.stdout
     assert "Pipeline Structure" in res.stdout
     assert "FloatValueDataSource" in res.stdout

@@ -33,8 +33,10 @@ The inspection data structures provide a single source of truth for:
 
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 import inspect
 from semantiva.data_processors.data_processors import ParameterInfo
 from semantiva.exceptions import InvalidNodeParameterError, PipelineConfigurationError
@@ -49,6 +51,16 @@ from semantiva.pipeline._param_resolution import (
     inspect_origin,
     classify_unknown_config_params,
 )
+
+from semantiva.metadata.semantic_id import (
+    compute_node_semantic_id,
+    compute_pipeline_config_id,
+    compute_pipeline_semantic_id,
+    normalize_expression_sig_v1,
+    variable_domain_signature,
+)
+from semantiva.pipeline.graph_builder import build_canonical_spec
+from semantiva.registry import resolve_symbol
 
 
 def _format_processor_reference(processor: Any) -> str:
@@ -81,6 +93,275 @@ def _build_preprocessor_view(
     return {
         "param_expressions": {name: {"expr": src} for name, src in expr_src.items()}
     }
+
+
+def _fqcn(proc_cls: Any) -> str:
+    if isinstance(proc_cls, type):
+        return f"{proc_cls.__module__}.{proc_cls.__qualname__}"
+    if isinstance(proc_cls, str):
+        return proc_cls
+    return "Unknown"
+
+
+def _resolve_processor_classes(
+    resolved_spec: Sequence[Mapping[str, Any]],
+) -> List[Optional[type]]:
+    classes: List[Optional[type]] = []
+    for node_def in resolved_spec:
+        proc = node_def.get("processor")
+        if isinstance(proc, type):
+            classes.append(proc)
+        elif isinstance(proc, str):
+            try:
+                classes.append(resolve_symbol(proc))
+            except Exception:  # pragma: no cover - defensive
+                classes.append(None)
+        else:
+            classes.append(None)
+    return classes
+
+
+def _extract_nodes_and_run_space(
+    config: Any,
+) -> Tuple[List[Dict[str, Any]], Optional[Mapping[str, Any]]]:
+    if isinstance(config, list):
+        return [dict(node) for node in config], None
+    if isinstance(config, Mapping):
+        run_space = config.get("run_space")
+        pipeline = config.get("pipeline")
+        if isinstance(pipeline, Mapping):
+            nodes = pipeline.get("nodes", [])
+        else:
+            nodes = config.get("nodes", [])
+        if not isinstance(nodes, list):
+            raise PipelineConfigurationError(
+                "pipeline configuration must contain a list of nodes"
+            )
+        run_space_mapping = run_space if isinstance(run_space, Mapping) else None
+        return [dict(node) for node in nodes], run_space_mapping
+    raise PipelineConfigurationError(
+        f"Unsupported pipeline configuration type: {type(config)!r}"
+    )
+
+
+def _normalize_run_space(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return {key: _normalize_run_space(value[key]) for key in sorted(value)}
+    if isinstance(value, list):
+        return [_normalize_run_space(item) for item in value]
+    if isinstance(value, str):
+        return value.replace("\r\n", "\n").replace("\r", "\n")
+    return value
+
+
+def _compute_run_space_spec_id(run_space: Mapping[str, Any]) -> str:
+    normalized = _normalize_run_space(run_space)
+    payload = json.dumps(normalized, separators=(",", ":"), ensure_ascii=False).encode(
+        "utf-8"
+    )
+    digest = hashlib.sha256()
+    digest.update(b"semantiva:rscf1:")
+    digest.update(payload)
+    return digest.hexdigest()
+
+
+def _build_sweep_payload(
+    proc_cls: Optional[type], pre_meta: Mapping[str, Any] | None
+) -> Dict[str, Any]:
+    """Build sanitized sweep payload for inspection.
+
+    This function implements the explicit sanitize→fingerprint→ID flow:
+    1. Extract raw expressions and variable definitions from the processor
+    2. Sanitize them using normalize_expression_sig_v1 and variable_domain_signature
+    3. Return the sanitized block that will be passed to compute_node_semantic_id
+
+    The sanitized signatures ensure deterministic identity computation without
+    exposing raw expression strings in the inspection payload.
+    """
+    if not isinstance(pre_meta, Mapping):
+        return {}
+    if pre_meta.get("type") != "derive.parameter_sweep":
+        return {}
+
+    # Sanitize parameter expressions to canonical signatures
+    parameters_sig: Dict[str, Any] = {}
+    expr_src = getattr(proc_cls, "_expr_src", None)
+    if isinstance(expr_src, Mapping):
+        for name, expr in expr_src.items():
+            if isinstance(expr, str):
+                parameters_sig[name] = normalize_expression_sig_v1(expr)
+            else:
+                parameters_sig[name] = {"format": "ExpressionSigV1", "ast": repr(expr)}
+    else:
+        param_meta = pre_meta.get("param_expressions")
+        if isinstance(param_meta, Mapping):
+            for name, info in param_meta.items():
+                if isinstance(info, Mapping) and "sig" in info:
+                    parameters_sig[name] = info["sig"]
+
+    # Sanitize variable domains to canonical signatures
+    variables_sig: Dict[str, Any] = {}
+    vars_src = getattr(proc_cls, "_vars", None)
+    if isinstance(vars_src, Mapping):
+        for name, spec in vars_src.items():
+            try:
+                variables_sig[name] = variable_domain_signature(spec)
+            except Exception:  # pragma: no cover - defensive
+                variables_sig[name] = {"kind": type(spec).__name__}
+    else:
+        vars_meta = pre_meta.get("variables")
+        if isinstance(vars_meta, Mapping):
+            for name, info in vars_meta.items():
+                if isinstance(info, Mapping):
+                    variables_sig[name] = info
+
+    mode = getattr(proc_cls, "_mode", pre_meta.get("mode"))
+    broadcast_attr = getattr(proc_cls, "_broadcast", pre_meta.get("broadcast", False))
+    broadcast = bool(broadcast_attr) if broadcast_attr is not None else False
+    collection_cls = getattr(proc_cls, "_collection_output", None)
+    if isinstance(collection_cls, type):
+        collection: Optional[str] = (
+            f"{collection_cls.__module__}.{collection_cls.__qualname__}"
+        )
+    else:
+        collection = pre_meta.get("collection")
+
+    return {
+        "derive": {
+            "parameter_sweep": {
+                "parameters_sig": parameters_sig,
+                "variables_sig": variables_sig,
+                "mode": mode,
+                "broadcast": broadcast,
+                "collection": collection,
+            }
+        }
+    }
+
+
+def collect_required_context_keys(inspection: "PipelineInspection") -> List[str]:
+    """Collect and return a deterministic sorted list of required context keys.
+
+    This ensures stable identity computation across inspection runs.
+    """
+    if inspection is None:
+        return []
+    keys: Iterable[str] = getattr(inspection, "required_context_keys", []) or []
+    return sorted(set(keys))
+
+
+def build_canonical_graph(
+    config: Any,
+    *,
+    inspection: "PipelineInspection" | None = None,
+) -> Dict[str, Any]:
+    nodes, _ = _extract_nodes_and_run_space(config)
+    canonical_spec, _ = build_canonical_spec(nodes)
+    if inspection is None:
+        inspection = build_pipeline_inspection(nodes)
+
+    canonical_nodes: List[Dict[str, Any]] = []
+    for idx, node in enumerate(canonical_spec.get("nodes", [])):
+        enriched = dict(node)
+        if idx < len(inspection.nodes):
+            pre_meta = inspection.nodes[idx].preprocessor_metadata
+            if isinstance(pre_meta, dict):
+                enriched["preprocessor_metadata"] = pre_meta
+        canonical_nodes.append(enriched)
+
+    return {
+        "version": canonical_spec.get("version"),
+        "nodes": canonical_nodes,
+        "edges": canonical_spec.get("edges", []),
+    }
+
+
+def build(
+    config: Any,
+    *,
+    inspection: "PipelineInspection" | None = None,
+) -> Dict[str, Any]:
+    nodes, run_space = _extract_nodes_and_run_space(config)
+    if inspection is None:
+        inspection = build_pipeline_inspection(nodes)
+
+    canonical_spec, resolved_spec = build_canonical_spec(nodes)
+    proc_classes = _resolve_processor_classes(resolved_spec)
+
+    payload_nodes: List[Dict[str, Any]] = []
+    semantic_pairs: List[Tuple[str, str]] = []
+    canonical_nodes: List[Dict[str, Any]] = []
+
+    for idx, node in enumerate(canonical_spec.get("nodes", [])):
+        node_uuid = node.get("node_uuid", "")
+        proc_cls = proc_classes[idx] if idx < len(proc_classes) else None
+        component_type = (
+            inspection.nodes[idx].component_type
+            if idx < len(inspection.nodes)
+            else node.get("role", "Unknown")
+        )
+        fqcn = (
+            _fqcn(proc_cls)
+            if proc_cls is not None
+            else _fqcn(node.get("processor_ref"))
+        )
+
+        pre_meta = (
+            inspection.nodes[idx].preprocessor_metadata
+            if idx < len(inspection.nodes)
+            else None
+        )
+        node_semantic_id = "none"
+        if isinstance(pre_meta, dict):
+            try:
+                node_semantic_id = compute_node_semantic_id(pre_meta)
+            except Exception:  # pragma: no cover - defensive
+                node_semantic_id = "error"
+        sweep_payload = _build_sweep_payload(proc_cls, pre_meta)
+
+        payload_nodes.append(
+            {
+                "uuid": node_uuid,
+                "role": component_type,
+                "fqcn": fqcn,
+                "node_semantic_id": node_semantic_id,
+                "preprocessor_metadata": sweep_payload,
+            }
+        )
+        semantic_pairs.append((node_uuid, node_semantic_id))
+
+        enriched = dict(node)
+        if isinstance(pre_meta, dict):
+            enriched["preprocessor_metadata"] = pre_meta
+        canonical_nodes.append(enriched)
+
+    canonical_for_identity = {
+        "version": canonical_spec.get("version"),
+        "nodes": canonical_nodes,
+        "edges": canonical_spec.get("edges", []),
+    }
+
+    identity: Dict[str, Any] = {
+        "semantic_id": compute_pipeline_semantic_id(canonical_for_identity),
+        "config_id": compute_pipeline_config_id(semantic_pairs),
+    }
+
+    if run_space:
+        try:
+            spec_id = _compute_run_space_spec_id(run_space)
+        except Exception:
+            spec_id = None
+        # Only emit spec_id; inputs_id is never computed at inspection time
+        identity["run_space"] = {"spec_id": spec_id}
+    else:
+        identity["run_space"] = None
+
+    payload = {
+        "identity": identity,
+        "pipeline_spec_canonical": {"nodes": payload_nodes},
+        "required_context_keys": collect_required_context_keys(inspection),
+    }
+    return payload
 
 
 @dataclass

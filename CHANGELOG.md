@@ -40,6 +40,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - JSONL trace driver class renamed to ``JsonlTraceDriver``.
 
 ### Added
+- **Core — Identity Inspection v2 Completion**: Finalized deterministic identity
+  system for pipeline configuration:
+  - Deterministic ordering enforced for `required_context_keys` (sorted alphabetically).
+  - Extended CLI mode (`--extended`) now displays sweep summary including
+    `parameters_sig`, `variables_sig`, `mode`, `broadcast`, and `collection`.
+  - Inspection payload remains sanitized and excludes all runtime IDs
+    (`pipeline_id`, `run_id`, `run_space_launch_id`, etc.) and `run_space.inputs_id`
+    (computed only at runtime, never at inspection).
+  - New tests: determinism (including `required_context_keys`), forbidden fields,
+    and sanitize-proof guarantees.
+  - Documentation: finalized `identity_cheatsheet.rst` and `inspection.rst` with
+    SSOT rules, exclusion list, and explicit CLI contract.
+- Inspection payload hardened: :func:`semantiva.inspection.builder.build`
+  now emits deterministic ``plsemid-*``/``plcid-*`` identities, sanitized
+  sweep metadata, and ``run_space_spec_id`` during inspection. The CLI renders
+  the payload directly (concise vs ``--extended``), omitting all runtime IDs,
+  and documentation covers the new contract.
 - CLI pre-flight now lists **all** missing external context keys at once (previously only the first was reported). Uses `inspection.required_context_keys`. Exit codes unchanged.
  - Trace aggregator metadata capture: `RunAggregate` now captures and preserves `meta` dict from `pipeline_start` records; orchestrator now emits distinct pipeline identifiers: `semantic_id` (prefixed with `plsemid-`) for pipeline structure identity and `config_id` (prefixed with `plcid-`) for configuration identity, alongside per-node `node_semantic_ids` for viewer integration.
  - Tests: Added unit and integration tests covering semantic/config ID computation, meta capture, and preprocessor (sweep) metadata preservation.
