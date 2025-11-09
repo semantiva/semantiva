@@ -421,11 +421,19 @@ def _parse_args(argv: List[str] | None) -> argparse.Namespace:
     run_p.add_argument("--version", action="version", version=_get_version())
 
     inspect_p = sub.add_parser(
-        "inspect", help="Inspect a pipeline configuration from a YAML file"
+        "inspect",
+        help="Inspect a pipeline configuration from a YAML file",
+        description=(
+            "Analyze pipeline configuration and display identity information. "
+            "Shows semantic ID, config ID, run-space config ID, and required context keys. "
+            "Use --extended to see per-node details including sweep parameters."
+        ),
     )
     inspect_p.add_argument("pipeline", help="Path to the pipeline YAML file")
     inspect_p.add_argument(
-        "--extended", action="store_true", help="Show extended inspection report"
+        "--extended",
+        action="store_true",
+        help="Show extended report with per-node details and sweep summaries",
     )
     inspect_p.add_argument(
         "-v", "--verbose", action="store_true", help="Increase log verbosity"
@@ -913,10 +921,14 @@ def _inspect(args: argparse.Namespace) -> int:
     from semantiva.pipeline import Pipeline as _PipelineInit  # noqa: F401
     from semantiva.registry import load_extensions
     from semantiva.inspection import (
+        build,
         build_pipeline_inspection,
-        extended_report,
-        summary_report,
         validate_pipeline,
+        summary_report,
+    )
+    from semantiva.inspection.reporter import (
+        print_cli_inspection,
+        _extended_report_impl,
     )
 
     _configure_logger(args.verbose, args.quiet)
@@ -935,6 +947,11 @@ def _inspect(args: argparse.Namespace) -> int:
                 return EXIT_CONFIG_ERROR
 
     # For inspection, use error-resilient builder directly
+    invalid_lines: List[str] = []
+    node_error_lines: List[str] = []
+    strict_fail = False
+    payload: Dict[str, Any] | None = None
+
     try:
         # Try to extract node configs, but fall back gracefully if structure is invalid
         try:
@@ -969,28 +986,42 @@ def _inspect(args: argparse.Namespace) -> int:
                     file=sys.stderr,
                 )
 
-        invalid_lines: List[str] = []
-        strict_fail = False
         for node in inspection.nodes:
             for issue in node.invalid_parameters:
                 invalid_lines.append(
                     f"- node #{node.index} ({node.processor_class}): {issue['name']}"
                 )
-        if invalid_lines:
-            print("Invalid configuration parameters:")
-            for line in invalid_lines:
-                print(line)
-            if args.strict:
-                strict_fail = True
+            for err in node.errors:
+                node_error_lines.append(f"- node #{node.index}: {err}")
+
+        payload = build(config, inspection=inspection)
+
+        if invalid_lines and args.strict:
+            strict_fail = True
 
     except Exception as exc:
         print(f"Failed to build inspection: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
 
-    report = (
-        extended_report(inspection) if args.extended else summary_report(inspection)
-    )
-    print(report)
+    assert payload is not None, "Payload must be built before inspection"
+    # Print identity header (always shown)
+    print_cli_inspection(payload, extended=False)  # Never show Nodes section
+    print()  # Add blank line between identity and structure
+    # Print detailed structure based on mode
+    if args.extended:
+        print(_extended_report_impl(inspection, payload=payload))
+    else:
+        print(summary_report(inspection))
+    if invalid_lines:
+        print()
+        print("Invalid configuration parameters:")
+        for line in invalid_lines:
+            print(line)
+    if node_error_lines:
+        print()
+        print("Inspection errors detected:")
+        for line in node_error_lines:
+            print(line)
     return 1 if strict_fail else EXIT_SUCCESS
 
 
