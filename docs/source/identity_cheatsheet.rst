@@ -64,7 +64,7 @@ in :doc:`ser` and :doc:`trace_stream_v1`.
 Semantic ID (``plsemid-*``)
 ---------------------------
 
-* Computed by :func:`semantiva.inspection.builder.build` from the canonical
+* Computed by :func:`semantiva.inspection.build` from the canonical
   GraphV1 structure.
 * Includes sanitized ``derive.parameter_sweep`` metadata. Expressions are
   reduced to ``normalize_expression_sig_v1`` signatures and sweep domains are
@@ -179,7 +179,7 @@ Where to Find the IDs
 
 * CLI: ``semantiva inspect [--extended]`` prints the payload above in a
   human-readable form.
-* Python: call :func:`semantiva.inspection.builder.build` to obtain the same
+* Python: call :func:`semantiva.inspection.build` to obtain the same
   dictionary.
 * Runtime traces: ``semantic_id`` and ``config_id`` are attached to
   ``pipeline_start`` events; run-space identities appear on ``run_space_start``.

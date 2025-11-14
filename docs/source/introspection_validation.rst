@@ -1,399 +1,98 @@
 Introspection & Validation
 ==========================
 
-- Build inspections, summarize, export JSON, validate.
+Semantiva provides an **inspection pipeline** that lets you check pipelines
+*before* execution and export structured inspection payloads for tooling.
 
-You can perform pre-execution checks from the terminal; see :doc:`cli` (subcommand **inspect**).
-* **Missing parameter** - a required parameter is absent in the YAML.
-* **Unknown processor** - the specified processor class cannot be resolved/imported.
-* **Topology/ports mismatch** - the declared ports do not match available outputs/inputs.
-* **Type incompatibility** - an upstream node's output type is incompatible with the next node's expected input type (checked using equal-or-subclass rule).
-* **Probe missing ``context_key``** - a probe node omits ``context_key`` so the result would never reach context; inspection rejects the configuration.
-
-Examples
+Overview
 --------
 
-.. code-block:: python
+There are two main entry points:
 
-   from semantiva.inspection.reporter import json_report
-   # Assume p is a Pipeline instance
-   report = json_report(p)
-   print(report)
+- :command:`semantiva inspect` - CLI inspection with optional extended report.
+- The ``semantiva.inspection`` module - Python APIs for programmatic access.
 
-CLI Inspection
---------------
+The goals are to:
 
-Use the CLI to parse and validate a pipeline before executing it.
+- Catch configuration errors early.
+- Compute and expose pipeline identities.
+- Summarise required context keys.
+- Provide a stable JSON payload for GUI and other tools.
+
+CLI usage
+---------
+
+Basic inspection:
 
 .. code-block:: bash
 
-   # Basic inspection: parse YAML, build canonical :term:`GraphV1`, run basic checks
-   semantiva inspect my_pipeline.yaml
+   semantiva inspect pipeline.yaml
 
-   # Extended inspection: include node identities, ports, inferred types (where available)
-   semantiva inspect my_pipeline.yaml --extended
+This will:
 
-What to expect
-~~~~~~~~~~~~~~
+- Load extensions and the pipeline configuration.
+- Build a canonical inspection model.
+- Print a summary of identities and required context keys.
+- Exit with a non-zero status if validation fails and ``--strict`` is set.
 
-* A summary of the pipeline (number of nodes, topological order).
-* The canonical :term:`PipelineId` (deterministic across formatting changes).
-* For ``--extended``:
-  * Each node’s processor (FQCN or registered name).
-  * The positional :term:`node_uuid` from :term:`GraphV1`.
-  * Declared **ports** (if any) and parameter snapshot.
-  * Any inferred or declared **input/output** types the validator can derive.
+Extended inspection:
 
-If a configuration problem is found, inspection exits non-zero and prints a structured error (see **Common Validation Errors** below).
+.. code-block:: bash
 
-Python APIs for Introspection
------------------------------
+   semantiva inspect pipeline.yaml --extended
 
-For programmatic use, generate a JSON summary from a :class:`~semantiva.pipeline.pipeline.Pipeline`.
+'The extended report includes:
 
-.. code-block:: python
+- Per-node details (processor reference, parameters).
+- Sweep parameters and expansions.
+- Context-probe information.
+- Links between node identities and trace identities.
 
-   from semantiva.inspection.reporter import json_report
-   # assume p is a Pipeline instance (built from YAML or programmatically)
-   summary = json_report(p)   # -> python dict or JSON-serializable structure
-   print(summary)
+Use ``--strict`` to enforce that validation errors cause a non-zero exit code.
 
-Typical fields present in the JSON summary:
+What is validated?
+------------------
 
-* ``pipeline_id`` - the deterministic :term:`PipelineId` (see :doc:`graph`).
-* ``nodes`` - list of nodes with:
-  * ``node_uuid`` - positional identity from :term:`GraphV1`
-  * ``processor`` - fully qualified class name
-  * ``parameters`` - normalized parameter map
-  * ``ports`` - declared input/output ports (if present)
-  * ``derived_summary`` - concise preprocessor summary (when applicable)
-  * ``preprocessor_metadata`` - full derive configuration (when applicable)
-* ``issues`` - list of warnings/errors detected by the validator
+Validation checks (non-exhaustive):
 
-Preprocessor Metadata in Inspection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- **Missing parameters** - required parameters absent from YAML.
+- **Unknown processors** - processor class cannot be resolved/imported.
+- **Topology/ports mismatch** - declared ports do not match available
+  inputs/outputs.
+- **Type compatibility** - output data type is not equal or subclass of the
+  downstream input type.
+- **Context probes without ``context_key``** - probes that would never update
+  context.
+- **Unknown / unused parameters** - configuration keys that do not map to
+  processor parameters.
 
-For nodes using preprocessors like ``derive.parameter_sweep``, the inspection
-builder (:mod:`semantiva.inspection.builder`) surfaces additional metadata
-discovered via component ``get_metadata()``:
+Using the inspection payload from Python
+----------------------------------------
 
-**derived_summary**
-  A concise human-readable string indicating the preprocessor type and key
-  configuration, such as ``Derived: parameter_sweep(mode=combinatorial, vars=['t'])``.
-  This attribute is attached to :class:`~semantiva.inspection.builder.NodeInspection`
-  instances for quick identification in reports.
-
-**preprocessor_metadata**
-  The complete normalized provenance structure containing:
-  
-  * ``param_expressions`` - parameter computation expressions with normalized signatures
-  * ``variables`` - variable domain specifications (ranges, sequences, context sources)
-  * ``mode`` - sweep mode (``combinatorial`` or ``by_position``)
-  * ``broadcast`` - whether positional sweeps broadcast mismatched lengths
-  * ``collection`` - output collection type (for DataSource/DataOperation sweeps)
-  * ``dependencies`` - required external parameters and context keys
-  
-  This structure matches the ``processor.preprocessing_provenance`` field in SER
-  trace records, enabling correlation between inspection and runtime execution.
-  See :doc:`sweeps` for detailed preprocessor semantics.
-
-**preprocessor_view**
-  When the originating processor class exposes ``_expr_src`` (all sweep nodes do
-  by default), inspection also records a ``preprocessor_view`` dictionary. This
-  UI-only structure is never used for hashing or semantic identity—it's stripped
-  before computing semantic IDs—but it allows humans to see the raw expressions
-  that generated each parameter.
-
-Sanitized Semantics and Identity Contract
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The inspection builder stores the sanitized semantics in
-``NodeInspection.preprocessor_metadata``. This structure mirrors
-``processor.get_metadata()['preprocessor']`` and is safe to use in hashing and
-identity checks because it deliberately excludes the raw ``expr`` source. It
-includes the preprocessor version, sweep mode, broadcast flag, variable domain
-signatures, parameter expression signatures, dependencies, and collection
-output (when applicable).
-
-``compute_node_semantic_id`` ignores ``preprocessor_view`` automatically, so
-adding previews to inspection cannot perturb semantic IDs. SER provenance still
-includes the sanitized metadata plus ``expr`` for audit trails. See
-:doc:`ser` for the full SER schema and provenance guarantees.
-
-CLI Inspection Output Examples
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The CLI summary (``semantiva inspect``) prints a dedicated ``Derived preprocessor``
-section for sweep nodes in both normal and ``--extended`` modes.
-
-**Normal inspection** shows human-readable expressions and compact variable signatures::
-
-   Derived preprocessor:
-       summary: Derived: parameter_sweep(mode=combinatorial, vars=['t'], collection=semantiva.examples.test_utils.FloatDataCollection)
-       type: derive.parameter_sweep
-       version: 1
-       mode: combinatorial
-       broadcast: false
-       collection: semantiva.examples.test_utils.FloatDataCollection
-       variables:
-           t: range(lo=-1.0, hi=2.0, steps=3, scale=linear, endpoint=true)
-       parameters:
-           value: 2.0 * t
-
-**Extended inspection** preserves the same structure but expands the signatures and
-shows both the raw expressions and AST signatures for each parameter::
-
-   - Derived preprocessor:
-       summary: Derived: parameter_sweep(mode=combinatorial, vars=['t'], collection=semantiva.examples.test_utils.FloatDataCollection)
-       type: derive.parameter_sweep
-       version: 1
-       mode: combinatorial
-       broadcast: false
-       collection: semantiva.examples.test_utils.FloatDataCollection
-       variables:
-           t: range(lo=-1.0, hi=2.0, steps=3, scale=linear, endpoint=true)
-       parameters:
-           value:
-               sig: {"ast": "BinOp(left=Constant(value=2.0), op=Mult(), right=Name(id='t', ctx=Load()))", "format": "ExpressionSigV1"}
-               expr: 2.0 * t
-       dependencies: {'required_external_parameters': [], 'context_keys': []}
-
-JSON Report Structure
-^^^^^^^^^^^^^^^^^^^^^
-
-A sweep node inspection in the JSON report includes::
-
-    {
-      "processor": "FloatMultiplyOperationParametricSweep",
-      "derived_summary": "Derived: parameter_sweep(mode=by_position, vars=['factor'])",
-      "preprocessor_metadata": {
-        "type": "derive.parameter_sweep",
-        "version": 1,
-        "element_ref": "semantiva.examples.FloatMultiplyOperation",
-        "param_expressions": {
-          "factor": {"sig": {"format": "ExpressionSigV1", "ast": "..."}}
-        },
-        "variables": {
-          "factor": {"kind": "range", "lo": 1.0, "hi": 3.0, "steps": 3, ...}
-        },
-        "mode": "by_position",
-        "broadcast": false,
-        "collection": "semantiva.examples.FloatDataCollection",
-        "dependencies": {"required_external_parameters": [], "context_keys": []}
-      },
-      "preprocessor_view": {
-        "param_expressions": {
-          "factor": {"sig": {...}, "expr": "factor"}
-        }
-      }
-    }
-
-These attributes maintain backward compatibility—existing consumers that don't
-use preprocessor metadata continue working unchanged, while new tooling can
-leverage the richer semantics for validation, visualization, or analysis.
-
-JSON Outline Example
---------------------
-
-Below is a truncated outline of the JSON structure produced by
-:func:`semantiva.inspection.reporter.json_report`. Field names shown here are
-stable; values are illustrative.
-
-.. code-block:: json
-
-   {
-     "pipeline_id": "plid-033c3704...300e",
-     "nodes": [
-       {
-         "index": 0,
-         "node_uuid": "2bd52eb9-9556-5663-b633-b69c9418f3ab",
-         "processor": "FloatMockDataSource",
-         "parameters": {},
-         "ports": {}
-       },
-       {
-         "index": 1,
-         "node_uuid": "eb3e87c0-97b7-5097-8214-b53b4ba0fd6e",
-         "processor": "FloatMultiplyOperation",
-         "parameters": {"factor": 2.0},
-         "ports": {}
-       }
-     ],
-     "issues": []
-   }
-
-*Note:* If you need to reference these identities elsewhere (e.g., in trace logs),
-see :doc:`trace_graph_alignment`.
+The inspection module can emit a stable JSON-serialisable payload:
 
 .. code-block:: python
 
-   from semantiva import Pipeline, load_pipeline_from_yaml
-   from semantiva.inspection.reporter import json_report
-   p = Pipeline(load_pipeline_from_yaml("tests/hello_pipeline.yaml"))
-   report = json_report(p)
-   assert "pipeline_id" in report and "nodes" in report
+   from semantiva.configurations import load_pipeline_from_yaml
+   from semantiva import inspection
 
-Linking Reports to GraphV1 Identities
--------------------------------------
+   cfg = load_pipeline_from_yaml("pipeline.yaml")
+   payload = inspection.build(cfg.nodes)
 
-Inspection always works over the canonical :term:`GraphV1` representation.
-That means the :term:`PipelineId` and every node’s ``node_uuid`` shown in
-inspection output match the values in:
+   # Serialize or hand over to GUI tooling
+   import json
+   print(json.dumps(payload, indent=2))
 
-* the canonical spec (see :doc:`graph`), and
-* runtime trace records (see :doc:`trace_graph_alignment`).
+The payload contains:
 
-This identity contract lets you compare results across machines, builds, and formats.
+- Global pipeline summary (node count, topological order).
+- Identity section (semantic ID, config ID, run-space config ID if present).
+- Per-node entries with ports, types and processor references.
+- Context-related information such as required context keys.
 
-Type Compatibility Rule
------------------------
+Where to go next
+----------------
 
-Semantiva uses an **equal-or-subclass** compatibility rule for data flow validation,
-matching runtime execution behavior.
-
-**Compatible Types**:
-
-- Output type **equals** input type (exact match)
-- Output type is a **subclass** of input type (inheritance)
-
-**Implementation**: The validator's ``_is_compatible()`` helper uses::
-
-    compatible = (prev_out_type == next_in_type) or issubclass(prev_out_type, next_in_type)
-
-This matches the runtime gate in ``_DataNode._process`` which uses ``issubclass()``,
-ensuring inspection and runtime have identical type acceptance rules.
-
-**Examples**:
-
-.. code-block:: python
-
-    # Equal types - Compatible ✓
-    SklearnModel -> SklearnModel
-
-    # Subclass relationship - Compatible ✓
-    SklearnModel -> BaseDataType  # SklearnModel is subclass of BaseDataType
-    TabularXY -> BaseDataType     # TabularXY is subclass of BaseDataType
-
-    # No relationship - Incompatible ✗
-    SklearnModel -> NoDataType    # SklearnModel not subclass of NoDataType
-    NoDataType -> SklearnModel    # NoDataType not subclass of SklearnModel
-
-**Common Use Case**: Utility components like ``DataDump`` and ``CopyDataProbe`` 
-accept ``BaseDataType`` as input, making them compatible with any specific data 
-type in the pipeline (since all data types inherit from ``BaseDataType``). 
-See :doc:`utility_processors` for details on these components.
-
-**Rationale**: This rule eliminates false negatives during inspection while 
-maintaining type safety. If runtime can accept a data type, inspection should 
-accept it too.
-
-Common Validation Errors
-------------------------
-
-Here are representative issues the validator can flag:
-
-* **Missing parameter** - a required parameter is absent in the YAML.
-* **Unknown processor** - the specified processor class cannot be resolved/imported.
-* **Topology/ports mismatch** - the declared ports do not match available outputs/inputs.
-* **Type incompatibility** - an upstream node’s output type is incompatible with the next node’s expected input type.
-* **Probe missing ``context_key``** - a probe node omits ``context_key`` so the
-  result would never reach context; inspection rejects the configuration.
-
-Example output (truncated):
-
-.. code-block:: text
-
-   ERROR: PipelineConfigurationError
-   details:
-     node_index: 2
-    node_uuid: "eb3e87c0-97b7-5097-8214-b53b4ba0fd6e"
-    processor: "TransformData"
-    reason: "Incompatible types: expected ImageType, received TextType from previous node"
-    hint: "Check the output of node 1 or insert a converter operation."
-
-Missing ``context_key`` example::
-
-   PipelineConfigurationError: Node 2: Probe nodes must declare context_key:
-   missing for node 2 (my.probes.DriftProbe)
-
-Unknown / Unused Parameters
----------------------------
-
-Semantiva validates node configuration keys against the processor signature.
-Parameters present in YAML ``parameters`` that are not accepted by the processor
-are reported during inspection under ``invalid_parameters``:
-
-.. code-block:: text
-
-   invalid_parameters:
-     - name: facotr
-       reason: unknown_parameter
-
-The GUI and CLI can highlight these entries. When using ``inspect --strict``,
-the command exits non-zero if any node contains invalid parameters. During
-execution, invalid configuration causes a validation error before running.
-
-Tips
-----
-
-* Use ``--extended`` to include identities and port/type summaries for faster debugging.
-* If resolving classes from your own packages, ensure they are importable (installed in the environment).
-* Increase verbosity with ``-v`` to see more details during inspection (see :doc:`logger`).
-
-Component Documentation in Introspection
------------------------------------------
-
-Semantiva components (subclasses of :class:`~semantiva.core.semantiva_component._SemantivaComponent`) 
-automatically include their class docstrings in introspection metadata. Docstrings are extracted using 
-``inspect.getdoc()`` and appear in:
-
-* **Component metadata** - accessible via ``get_metadata()["docstring"]``
-* **Semantic identity** - formatted in ``semantic_id()`` output for debugging and LLM queries  
-* **Pipeline inspection** - included in both summary and extended reports
-* **Tracing and orchestration** - used for channel identification in transport systems
-
-**Best Practice**: Keep component docstrings lean and concise (one-liner preferred) since they become 
-part of the semantic identity used throughout the pipeline introspection system. Detailed documentation 
-should be placed in dedicated RST files.
-
-.. _spec-phase-vs-runtime-vs-execution:
-
-Validation Phases
------------------
-
-Semantiva applies checks at three moments:
-
-* **Spec-phase (pre-run)** - when parsing YAML and building :term:`GraphV1`:
-  * missing parameters, unknown processors, invalid ports/topology.
-  * surfaced via ``semantiva inspect`` and during pipeline load.
-
-* **Runtime (initialization)** - after classes are resolved and nodes are realized:
-  * parameter coercion/normalization errors, environment/import issues.
-  * surfaced when constructing the :class:`~semantiva.pipeline.pipeline.Pipeline`.
-
-* **Execution (process)** - during node operation on a :class:`~semantiva.pipeline.payload.Payload`:
-  * actual input/output type contracts, context key requirements, invariant checks.
-  * surfaced with node identity (:term:`node_uuid`) to support precise debugging and tracing.
-
-Troubleshooting Checklist
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-* Re-run with ``semantiva inspect --extended`` to confirm identities and topology.
-* Increase log verbosity (``-v``/``-vv``) and capture the first error.
-* Check :doc:`exceptions` for common error classes and meanings.
-* If the failure mentions a custom processor, ensure your package is installed and importable.
-
-Autodoc
--------
-
-.. automodule:: semantiva.inspection.builder
-   :members:
-   :undoc-members:
-
-.. automodule:: semantiva.inspection.reporter
-   :members:
-   :undoc-members:
-
-.. automodule:: semantiva.inspection.validator
-   :members:
-   :undoc-members:
+- :doc:`cli` - for more examples of the ``inspect`` subcommand.
+- :doc:`identity_cheatsheet` - for a detailed mapping of identities.
+- :doc:`trace_graph_alignment` - for how inspection identities map to the SER.

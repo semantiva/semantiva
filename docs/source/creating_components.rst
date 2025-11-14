@@ -48,12 +48,23 @@ DataOperation (transforms; may update context)
         def output_data_type(cls):
             return FloatDataType
 
+        @classmethod
+        def get_created_keys(cls) -> set[str]:
+            """Context keys this processor may create."""
+            return {"norm.mean", "norm.std"}
+
         def _process_logic(self, data: FloatDataType, *, epsilon: float = 1e-8):
             # Example context write via observer hook
             self._notify_context_update("norm.mean", 0.0)
             self._notify_context_update("norm.std", 1.0)
             return data
 
+
+
+In real components you must **register** any context keys you create. The
+``get_created_keys`` class method is used by the inspection and context observer
+machinery to validate updates and to expose them in tools such as
+``semantiva inspect`` and ``semantiva dev lint``.
 DataProbe (read-only; no context creation)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
