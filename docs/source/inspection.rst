@@ -14,7 +14,7 @@ See also :doc:`identity_cheatsheet` for a quick reference to the identities.
 Payload shape
 -------------
 
-The payload returned by :func:`semantiva.inspection.builder.build` is JSON-safe
+The payload returned by :func:`semantiva.inspection.build` is JSON-safe
 and deterministic. All ordering is canonical:
 
 * Nodes appear in pipeline execution order.

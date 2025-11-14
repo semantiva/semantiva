@@ -1,6 +1,19 @@
 Semantiva Studio Viewer
 =======================
 
+.. warning::
+
+   Semantiva Studio Viewer is **not part of Semantiva core**. It is
+   experimental and its APIs may change between releases.
+
+   It must be installed separately:
+
+   .. code-block:: bash
+
+      pip install semantiva-studio-viewer
+
+
+
 The Studio Viewer renders pipeline YAML as an interactive diagram and can browse
 installed components. It is **read-only** and designed for understanding,
 review, and sharing.

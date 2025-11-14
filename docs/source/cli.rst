@@ -1,180 +1,101 @@
 Semantiva CLI
 =============
 
-.. note::
-   **Single Source of Truth (SSoT)** — This page mirrors the CLI implementation at
-   ``semantiva/cli/__init__.py``. Update code and docs together to avoid drift.
+The CLI is the main entry point for executing pipelines, inspecting
+configurations and running developer tools.
 
 Overview
 --------
+
+Subcommands:
+
 - ``semantiva run``  — Execute a pipeline from YAML.
 - ``semantiva inspect``  — Inspect a pipeline configuration.
 - ``semantiva dev lint`` — Lint components against contracts.
 
-Exit Codes
-----------
-0: success, 1: CLI error, 2: file error, 3: config error, 4: runtime error, 5: interrupt.
-
-Run
----
-Execute a pipeline.
-
-**Syntax**
-
-.. code-block:: text
-
-    semantiva run PIPELINE.yaml
-                      [--dry-run]
-                      [--validate]
-                      [--set key=value]...
-                      [--context key=value]...
-                      [-v | --verbose]
-                      [-q | --quiet]
-                      [--execution.orchestrator CLASS]
-                      [--execution.executor CLASS]
-                      [--execution.transport CLASS]
-                      [--execution.option key=value]...
-                      [--trace.driver NAME]
-                      [--trace.output PATH-or-DriverSpec]
-                      [--trace.option key=value]...
-                      [--run-space-file PATH]
-                      [--run-space-max-runs INT]
-                      [--run-space-dry-run]
-                      [--run-space-launch-id TEXT]
-                      [--run-space-idempotency-key TEXT]
-                      [--run-space-attempt INT]
-                      [--version]
-
-**Arguments**
-- ``PIPELINE.yaml``            Path to the pipeline YAML file.
-- ``--dry-run``                Build graph without executing nodes.
-- ``--validate``               Validate configuration only.
-- ``--set key=value``          Override by dotted path (lists use numeric indices).
-
-  - Value parsing: YAML first; falls back to string on parse error.
-
-- ``--context key=value``      Inject initial context key/values.
-
-  - Value parsing: YAML first; falls back to string on parse error.
-
-- ``-v / --verbose``           Increase log verbosity.
-- ``-q / --quiet``             Only show errors.
-- ``--execution.orchestrator`` Resolve orchestrator via the Execution Component Registry (ECR).
-- ``--execution.executor``     Resolve executor via the Execution Component Registry (ECR).
-- ``--execution.transport``    Resolve transport via the Execution Component Registry (ECR).
-- ``--execution.option``       Key/value pairs forwarded to the orchestrator ``options``.
-- ``--trace.driver``           Trace driver name (``jsonl``).
-- ``--trace.output``           Trace output path for the JSONL driver (directory or file).
-- ``--trace.option``           Additional driver keyword arguments (repeatable).
-- ``--run-space-file``         Path to a YAML file containing a ``run_space`` block (overrides pipeline YAML).
-- ``--run-space-max-runs``     Override the run-space safety limit on total runs.
-- ``--run-space-dry-run``      Plan the run space and print the expansion without executing nodes.
-- ``--run-space-launch-id``    Explicit ``run_space_launch_id`` to reuse for this execution.
-- ``--run-space-idempotency-key``  Deterministically derive ``run_space_launch_id`` using the spec/inputs hash.
-- ``--run-space-attempt``      Retry counter (integer ≥ 1) for the specified run-space launch.
-- ``--version``                Show CLI version.
-
-CLI flags mirror the YAML schema. Any value provided on the command line
-overrides the matching YAML block before validation and execution. Trace detail
-flags are supplied via ``--trace.option detail=...`` (``hash`` is implied when no
-detail is provided). Environment pins and why-ok invariants are always
-captured by :py:class:`~semantiva.execution.orchestrator.orchestrator.SemantivaOrchestrator`,
-ensuring consistent SER output across orchestrator implementations.
-
-.. note::
-  In YAML, use the plural key ``options`` under ``trace`` and ``execution``. The
-  CLI uses repeatable singular flags ``--trace.option`` and ``--execution.option``
-  to populate those mappings.
-
-Plan-only example
------------------
-
-.. code-block:: console
-
-   $ semantiva run --run-space-file rs.yaml --run-space-dry-run
-   Run Space Plan
-     combine: combinatorial
-     max_runs: 1000
-     expanded_runs: 12
-     blocks:
-       - #0: mode=by_position, size=3, keys=['value', 'factor', 'addend']
-       - #1: mode=combinatorial, size=4, keys=['seed']
-     preview:
-       1: {"value":1.0,"factor":10.0,"addend":1.0,"seed":1}
-       2: {"value":1.0,"factor":10.0,"addend":1.0,"seed":2}
-       …
-       11: {"value":3.5,"factor":30.0,"addend":1.0,"seed":1}
-       12: {"value":3.5,"factor":30.0,"addend":1.0,"seed":2}
-
-**Component Resolution**
-The CLI loads extensions before constructing execution components so that the
-Execution Component Registry (ECR) contains all orchestrators, executors, and
-transports. Built-in identifiers include ``local`` (orchestrator), ``sequential``
-(executor), and ``in_memory`` (transport). Unknown component names result in an
-error with ``did-you-mean`` suggestions based on the registered inventory.
-
-**YAML Extension Loading**
-If your YAML contains:
-
-.. code-block:: yaml
-
-    extensions: ["my_package.ext"]
-
-or:
-
-.. code-block:: yaml
-
-    pipeline:
-      extensions: ["my_package.ext"]
-
-those extensions are loaded before validation/execution. Extension registration
-is deterministic and idempotent: each extension is imported once and must expose
-either an entry point under ``semantiva.extensions`` or a module-level
-``register()`` hook.
-
-Inspect
--------
-
-**Syntax**
-
-.. code-block:: text
-
-    semantiva inspect PIPELINE.yaml
-                        [--extended]
-                        [-v | --verbose]
-                        [-q | --quiet]
-                        [--strict]
-                        [--version]
-
-**Arguments**
-- ``PIPELINE.yaml``  Path to the pipeline YAML file.
-- ``--extended``     Show extended inspection details.
-- ``-v / --verbose`` Increase log verbosity.
-- ``-q / --quiet``   Only show errors.
-- ``--strict``       Exit non-zero if configuration is invalid.
-- ``--version``      Show CLI version.
-
-Dev / Lint
+Exit codes
 ----------
 
-**Syntax**
+- ``0`` – Success.
+- ``1`` – CLI usage error.
+- ``2`` – File error (missing or unreadable files).
+- ``3`` – Configuration error (invalid YAML or contract violations).
+- ``4`` – Runtime error during execution.
+- ``5`` – Interrupted by user.
 
-.. code-block:: text
+Run – execute a pipeline
+------------------------
 
-    semantiva dev lint
-      [--modules MOD ...]
-      [--paths PATH ...]
-      [--extensions NAME ...]
-      [--yaml FILE ...]
-      [--export-contracts PATH]
-      [--debug]
-      [--version]
+Minimal usage:
 
-**Arguments**
-- ``--modules``          Python modules to import and validate
-- ``--paths``            Paths to scan for Python components
-- ``--extensions``       Extension names (entry points or module names) to load and validate
-- ``--yaml``             Pipeline YAML files (discovers referenced components)
-- ``--export-contracts`` Write rule catalog to PATH (Markdown)
-- ``--debug``            Detailed rule-by-rule diagnostics
-- ``--version``          Show CLI version
+.. code-block:: bash
+
+   semantiva run PIPELINE.yaml
+
+Common options:
+
+- ``--context key=value`` – Provide initial context key/values.
+- ``--run-space-override path.yaml`` – Override the ``run_space`` block.
+- ``--dry-run`` – Build the graph without executing nodes.
+- ``--validate`` – Validate configuration only.
+
+``--context`` vs ``--set``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are two ways to influence a run from the command line:
+
+- ``--context key=value``
+
+  - Writes into the **context channel**.
+  - Typical for values that conceptually belong to the run (experiment IDs,
+    seeds, ranges, file paths and so on).
+  - Values are parsed as YAML first, then treated as strings on parse error.
+
+- ``--set dotted.path=value``
+
+  - Overrides a key *inside the pipeline configuration*.
+  - Uses dotted paths to navigate the YAML structure (lists use numeric indices).
+  - Intended for advanced and debug scenarios where you need an ad-hoc tweak
+    without editing the YAML file.
+  - Values are also parsed as YAML.
+
+For most day-to-day use, prefer ``--context``. Use ``--set`` when you explicitly
+want to change the configuration itself.
+
+Inspect – pre-flight checks & identities
+----------------------------------------
+
+See :doc:`introspection_validation` for details. From the CLI:
+
+.. code-block:: bash
+
+   # Basic inspection
+   semantiva inspect pipeline.yaml
+
+   # Extended report with per-node details
+   semantiva inspect pipeline.yaml --extended
+
+Developer tools – dev lint
+--------------------------
+
+The ``dev`` subcommand hosts developer-oriented tools. Currently:
+
+.. code-block:: bash
+
+   semantiva dev lint
+
+This command scans registered components and validates them against the
+Semantiva contracts. It reports issues with stable ``SVA`` codes. See
+:doc:`contracts` for details.
+
+Full options
+------------
+
+Run ``--help`` on each subcommand for the authoritative list of options and
+flags:
+
+.. code-block:: bash
+
+   semantiva run --help
+   semantiva inspect --help
+   semantiva dev lint --help

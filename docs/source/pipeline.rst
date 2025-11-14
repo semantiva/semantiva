@@ -61,7 +61,7 @@ At runtime, node parameters are resolved as:
 
 1. Node ``parameters:`` in YAML
 2. Existing ``payload.context`` values
-3. Python defaults in the processor’s ``_process_logic`` signature
+3. Python defaults in the processor's ``_process_logic`` signature
 
 Missing required parameters raise:
 
@@ -90,14 +90,17 @@ runtime information.
 
 **Key properties:**
 
-* **Pre-execution**: All ``derive`` tools run before the processor is invoked
-* **Parameter computation**: Transforms variables and expressions into concrete values
-* **Transparent integration**: Computed parameters merge seamlessly with explicitly 
-  provided values and processor defaults
-* **Provenance tracking**: Parameter sources are recorded in trace outputs (see 
-  :doc:`sweeps`)
+* **Pre-execution**: All ``derive`` tools run before the processor is invoked.
+* **Parameter computation**: Transforms variables and expressions into concrete values.
+* **Transparent integration**: Computed parameters merge seamlessly with explicitly
+  provided values and processor defaults.
+* **Provenance tracking**: Parameter sources are recorded in trace outputs (see
+  :doc:`collection_modifiers`).
 
-Currently available: :doc:`sweeps` for parametric sweeps over variables.
+The most common derive tool is ``parameter_sweep`` (see
+:doc:`collection_modifiers`), which computes parameters from variables and can
+produce collection outputs for data sources and operations or lists of results
+for probes.
 
 Parameter Validation in YAML Configuration
 -------------------------------------------

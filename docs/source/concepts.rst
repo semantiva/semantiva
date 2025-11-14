@@ -1,87 +1,139 @@
-Concepts
-========
+Basic Concepts
+==============
 
-Semantiva narrows the gap between bold ideas and concrete code. The framework
-promotes **clarity**, **type-safety**, and **semantic transparency** so that a
-pipeline can be read, reasoned about, and audited. The sections below tell the
-story behind the core pieces and link to deeper references when you want more
-detail.
+Semantiva narrows the gap between ideas and executable pipelines. It is built
+around **typed payloads**, a **dual data/context channel**, and clear contracts
+for every processor.
 
-Domain-Driven & Type-Oriented Design
-------------------------------------
+The payload: data + context
+---------------------------
 
-Semantiva pipelines are designed around your *domain concepts*. Data types are
-not afterthoughts - they are **contracts** between pipeline steps. When you
-declare a ``StringLiteralDataType`` or a domain type like ``DNASequence``, you
-state the expectations for both data and meaning. These contracts prevent
-miswired steps and make intent explicit. For more on defining custom types see
-the :doc:`data_types` guide.
+Every Semantiva pipeline step processes a *payload* with two channels:
 
-Data Types
-----------
+- **Data channel** - your domain objects (images, arrays, records, models…).
+- **Context channel** - structured metadata that flows with the data through
+  the pipeline. It carries configuration parameters, derived values, quality
+  indicators, and other state used by processors to share information and
+  adapt execution.
 
-Data types describe the *shape and semantics* of data moving through a pipeline.
-Because every processor declares the types it accepts and returns, mismatched
-inputs are caught at configuration time instead of failing deep inside a
-workflow. Type-safe workflows communicate purpose: a ``SingleChannelImage``
-clearly differs from a ``FloatCollection``. Learn how types enforce these
-guarantees in :doc:`data_types`.
+The two channels always move together. A run is fully described by:
 
-Processors
-----------
+- The pipeline definition and configuration.
+- The run-space plan (if any).
+- The sequence of payloads (data + context) as they pass through nodes.
 
-Processors are the workhorses of Semantiva, each with a single
-responsibility:
+Identifiers such as run IDs are assigned by the execution and tracing layers
+and are not stored in the context channel.
 
-* A **DataOperation** transforms input data.
-* A **DataProbe** inspects or logs data without changing it.
-* **I/O processors** load or save data from external systems.
+Data channel: types, operations and collections
+-----------------------------------------------
 
-Each processor focuses on one task, reinforcing clarity and maintainability.
-See :doc:`data_processors` and :doc:`data_io` for implementation details.
+Key concepts on the data side:
 
-Nodes
------
+- **Data types** - subclasses of the core ``BaseDataType`` class.
+  They encode contracts for shape, units and semantics (for example a
+  ``SingleChannelImage`` vs. a ``FloatCollection``).
+- **Data sources** - components that *produce* data from outside the pipeline.
+  They are not processors themselves; factories wrap them so they can participate
+  in pipelines as payload processors.
+- **Data operations** - processors that transform one data type into another,
+  with clear input/output type contracts.
+- **Data probes** - processors that observe the data channel and write
+  summaries into the context channel.
+- **Data sinks** - components that write data out of the pipeline (files, sockets,
+  viewers, message buses…). Like sources, they are wrapped by factories and are not
+  native processors.
 
-Pipelines are built from **nodes**, thin wrappers around processors. Nodes are
-generated when Semantiva reads your declarative YAML; you rarely subclass them
-yourself. They handle the plumbing: feeding data **and** context into processors
-and chaining outputs to inputs. The :doc:`pipeline` section shows how nodes fit
-into graph execution.
+Collections:
 
-Preprocessors (derive)
-----------------------
+- **Data collections** model sequences of data objects of the same base type.
+- Modifiers such as ``slice`` and **parameter sweeps** build on top of
+  collections to describe families of runs without hand-writing loops.
 
-**Preprocessors** live under the reserved node key ``derive``. They **compute
-or expand configuration** before a processor and node instantiation. 
-The most common preprocessor is :doc:`sweeps`
-(``parameter_sweep``), which computes **parameters** from **variables** and can
-expand a single node into multiple runs with a typed collection.
-
-Context Channel
+Context channel
 ---------------
 
-Alongside domain data flows a mutable **context channel**—a key/value store for
-metadata, parameters, or runtime state. Context processors can inspect or
-mutate this channel, enabling adaptive behaviours and rich execution traces.
-Understanding context manipulation is key to building semantic workflows; dive
-deeper in :doc:`context_processors`.
+The context channel is handled by context processors. They:
 
-Resolvers & Parameters
-----------------------
+- Propose context updates and deletions via notifier helpers,
+  without direct access to the underlying context object.
+- Derive new parameters from existing context and configuration.
+- Maintain state across nodes (for example running statistics).
+- Record metrics and metadata used by downstream analysis.
 
-Declarative specifications in YAML become executable graphs through **resolvers**.
-Class resolvers (``slice:``, ``rename:``, ``delete:``) map concise strings to
-Python classes, while parameter resolvers (``model:``) inject runtime objects
-without hard-coding them. This mechanism keeps pipelines declarative yet
-flexible. For the full resolver registry and extension mechanism consult
-:doc:`extensions`.
+Run-space expansion injects values into the initial context for each run. At
+runtime there is no distinction between parameters provided by the run-space
+and parameters set by other means; all are resolved from the context channel.
 
-Dual-Channel Pipeline
----------------------
+Parameter resolution
+--------------------
 
-Every Semantiva pipeline carries two synchronized streams: the **data channel**
-and the **context channel**. Data holds your domain objects; context carries the
-metadata explaining *how* and *why* each step executes. This dual-channel design
-embodies the Epistemic Computing Paradigm (ECP) where computation produces both
-results and rationale.
+Processor parameters are resolved just before a node runs. Semantiva combines
+values from three sources into a single parameter set:
+
+- The node's ``parameters`` mapping from the pipeline configuration.
+- Values available in the context channel.
+- Defaults declared by the processor's contract.
+
+When multiple sources provide a value for the same parameter, the following
+priority applies (from highest to lowest):
+
+1. Explicit values in the node's ``parameters``.
+2. Values resolved from the context channel (including run-space injected
+   values).
+3. Processor-level default values.
+
+This keeps pipeline configuration explicit, while still allowing context and
+defaults to supply values when configuration is silent.
+
+Payload operations, pipelines and nodes
+---------------------------------------
+
+A pipeline is a directed graph of **nodes**. Each node wraps a processor and has:
+
+- A reference to the processor class or registered name.
+- Parameter values (possibly resolved from context or the run-space).
+- Ports for incoming and outgoing data.
+
+At runtime:
+
+1. The pipeline expands any pre-processors (such as ``derive`` and sweeps)
+   and run-space blocks.
+2. Data flows along edges, constrained by data type contracts.
+3. Context processors observe and update the context channel.
+4. Optional trace drivers observe execution and emit **Semantic Execution
+   Records (SER)**.
+
+Processors (data operations, probes, and context processors) and pipeline
+nodes operate only on the data and context channels. SER records are produced
+by trace drivers attached to the orchestrator and executor and do not change
+data or context.
+
+From a user perspective:
+
+- You **define processors** in Python (see :doc:`creating_components`).
+- You **configure pipelines** in YAML (see :doc:`pipeline`).
+- You **execute** via :doc:`cli` or the Python API, always working with the
+  payload abstraction.
+
+For a more visual explanation of how all this fits together:
+
+- :doc:`data_types`
+- :doc:`data_processors`
+- :doc:`context_processors`
+- :doc:`data_collections`
+
+Trace records and trace drivers
+-------------------------------
+
+Tracing is an optional layer that records how pipelines execute over time.
+
+- **Semantic Execution Records (SER)** capture which processors ran, how they
+  were connected, and summary information about payloads and context at each
+  step.
+- **Trace drivers** attach to the orchestrator and executor. They observe
+  execution events and write SER streams, typically to files or external sinks.
+
+Trace drivers are configured in the pipeline YAML (see
+:doc:`architecture/pipeline_schema`) and described in more detail in
+:doc:`trace_stream_v1` and :doc:`ser`.
