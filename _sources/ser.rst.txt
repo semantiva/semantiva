@@ -104,7 +104,7 @@ fields:
   variables, expressions, mode, broadcast flag, collection output, and
   dependencies used to derive parameters.
 
-These additions are backward compatible with existing SER consumers.
+These additions extend SER while keeping previously documented fields and shapes intact.
 
 Inspection now exposes the same sanitized metadata in the canonical payload
 (:doc:`inspection`). Raw ``expr`` values live only inside the optional

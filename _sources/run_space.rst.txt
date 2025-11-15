@@ -1,137 +1,88 @@
 Run Space (v1): blocks that expand context
 ==========================================
 
-Semantiva's run space defines a set of executions by expanding **context** keys.
-Each *block* expands its own keys using either ``by_position`` (index-aligned)
-or ``combinatorial`` (Cartesian). Blocks then combine globally via a top-level
-``combine`` (default: ``combinatorial``).
+A **run-space** describes a *family of runs* for a single pipeline. Instead of
+manually looping over ``semantiva run`` with different ``--context`` values,
+you declare the combinations once in YAML.
 
-**Rows-as-runs:** CSV, JSON, YAML, and NDJSON sources emit one run per
-row/object by default. Use ``by_position`` when aligning multiple lists by
-index, and ``combinatorial`` for Cartesian expansion within a block or across
-blocks.
+Conceptually:
 
-Schema
-------
+- The pipeline definition stays the same.
+- The run-space expands into individual runs, each with a concrete context.
+- The run-space and each run have stable identities that appear in the trace
+  stream and viewer.
+
+From repeated CLI calls to run-space
+------------------------------------
+
+Without run-space, you might write:
+
+.. code-block:: bash
+
+   semantiva run hello.yaml --context value=1.0 factor=10.0 addend=1.0
+   semantiva run hello.yaml --context value=2.0 factor=20.0 addend=1.0
+   semantiva run hello.yaml --context value=3.5 factor=30.0 addend=1.0
+
+With run-space, you express the same idea in YAML:
 
 .. code-block:: yaml
 
    run_space:
      combine: combinatorial
-     max_runs: 1000
+     max_runs: 20
      dry_run: false
      blocks:
        - mode: by_position
          context:
-           value: [1.0, 2.0, 3.5]
+           value:  [1.0, 2.0, 3.5]
            factor: [10.0, 20.0, 30.0]
-       - mode: combinatorial
-         context:
-           addend: [0.0, 1.0]
+           addend: [1.0, 1.0, 1.0]
 
-Cheat-sheet
------------
+   pipeline:
+     # your nodes here
 
-- **Block modes**
-  - ``by_position`` — index-aligned lists; index *i* travels together → one run per index.
-  - ``combinatorial`` — Cartesian product over the listed keys.
-- **Blocks combination**
-  - ``combine: combinatorial`` *(default)* — Cartesian product across blocks.
-  - ``combine: by_position`` — align blocks by index; all blocks must expand to the same size.
-- **External sources**
-  - Default: **rows-as-runs** for CSV/JSON/YAML/NDJSON when selecting rows/objects (no extra mode needed). Use ``by_position`` when aligning multiple lists; use ``combinatorial`` for Cartesian expansions.
-- **Conflicts**
-  - Duplicate context keys **across blocks** → fail fast.
-  - Duplicate key **within a block** (``context`` vs ``source``) → fail fast.
-- **Safety switches**
-  - ``max_runs`` limits total expansions; exceeding it raises an error.
-  - ``dry_run`` prints the plan (with previews) and exits without execution. See also :doc:`cli`.
+Key fields
+----------
 
-Examples
---------
+- ``combine`` – how to combine blocks (for example ``by_position`` or
+  ``combinatorial``).
+- ``max_runs`` – hard safety cap to avoid accidental explosion of runs.
+- ``dry_run`` – when ``true``, Semantiva will expand the plan and print it
+  without executing the pipeline.
+- ``blocks`` – a list of blocks, each with a ``mode`` and a ``context``
+  mapping.
 
-.. literalinclude:: ../examples/run_space/csv_rows.yaml
-   :language: yaml
-   :caption: docs/examples/run_space/csv_rows.yaml
+See :doc:`tutorials/run_space_quickstart` for more complete examples.
 
-.. literalinclude:: ../examples/run_space/block_combinatorial_two_sources.yaml
-   :language: yaml
-   :caption: docs/examples/run_space/block_combinatorial_two_sources.yaml
+Identity and traceability
+-------------------------
 
-.. literalinclude:: ../examples/run_space/csv_columns_combinatorial.yaml
-   :language: yaml
-   :caption: docs/examples/run_space/csv_columns_combinatorial.yaml
+Each run-space has:
 
-External sources (rows-as-runs by default)
-------------------------------------------
+- A **run-space configuration ID** – derived from the run-space section itself.
+- A **run-space launch ID** – derived from the configuration plus launch
+  parameters.
 
-Blocks can read values from external files. Rows are treated as runs unless a
-block explicitly requests ``mode: combinatorial`` for Cartesian expansion.
+Each expanded run has:
 
-.. note::
+- A **run ID** – part of the Semantic Execution Record (SER) identity block.
+- A link back to both the pipeline configuration and the run-space
+  configuration.
 
-   **Rows-as-runs by default.** CSV, JSON, YAML, and NDJSON sources interpret each
-   row/object as a single run when ``mode`` is omitted or set to ``by_position``.
+These IDs are documented in :doc:`identity_cheatsheet` and appear in:
 
-.. code-block:: yaml
+- :doc:`ser`
+- :doc:`trace_stream_v1`
+- :doc:`trace_aggregator_v1`
+- :doc:`run_space_emission`
+- :doc:`run_space_lifecycle`
 
-   - mode: by_position
-     source:
-       format: csv | json | yaml | ndjson
-       path: runs.csv
-       select: [value, factor]
-       rename: { factor: multiplier }
-       # rows are runs when mode is omitted or ``by_position``
+External sources
+----------------
 
-Linkage to Pipelines
---------------------
+Run-space blocks can also pull values from external sources such as CSV files.
+Those patterns are more advanced and are covered in
+:doc:`tutorials/run_space_quickstart`.
 
-Each ``pipeline_start`` includes a **composite foreign key** when spawned from a Run-Space launch:
-
-- ``run_space_launch_id`` + ``run_space_attempt`` — composite FK to ``run_space_start`` (both parts needed for retry disambiguation)
-
-Plus run-specific metadata:
-
-- ``run_space_index`` — 0-based position within the launch
-- ``run_space_context`` — parameter values for this specific run
-
-Launch-level constants (``run_space_spec_id``, ``run_space_inputs_id``, ``run_space_combine_mode``, 
-``run_space_total_runs``) are stored once in the ``run_space_start`` event to eliminate redundancy.
-
-See :doc:`run_space_lifecycle` for the Run-Space lifecycle and foreign-key
-relationships.
-
-Rules
------
-
-* Duplicate context keys **across blocks** raise an error (fail-fast).
-* Within a block, keys from ``context`` and ``source`` must be disjoint.
-* ``by_position`` blocks require all lists to have identical length.
-* ``combinatorial`` blocks compute the Cartesian product of their lists.
-* Blocks combine via ``combine`` (``combinatorial`` or ``by_position``).
-* ``max_runs`` prevents accidental explosions; ``dry_run`` prints the plan and exits.
-
-CLI integration
----------------
-
-``semantiva run`` exposes run-space helpers:
-
-* ``--run-space-file`` - load a ``run_space`` block from a separate YAML file.
-* ``--run-space-max-runs`` - override the safety limit on the number of runs.
-* ``--run-space-dry-run`` - compute the expansion, print block sizes plus previews, and exit without executing.
-
-Trace Emission
---------------
-
-The Run-Space system emits structured trace events:
-
-- **run_space_start** — contains launch-level constants (``run_space_spec_id``, ``run_space_combine_mode``, 
-  ``run_space_total_runs``, etc.) emitted once per launch
-- **pipeline_start** — contains composite FK (``run_space_launch_id`` + ``run_space_attempt``) plus 
-  run-specific metadata (``run_space_index``, ``run_space_context``)
-- **ser** — Semantic Execution Records contain no run-space fields (clean separation)
-
-The planner returns metadata with block sizes, modes, context keys, and source
-provenance (path, format, SHA-256, selectors, and renames).
-
-See :doc:`trace_stream_v1` and :doc:`run_space_emission` for complete details.
+For local, single-machine experiments, the YAML-only form is often sufficient
+and keeps the configuration self-contained.

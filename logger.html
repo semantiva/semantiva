@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Examples Index" href="examples_index.html"><link rel="prev" title="Run Space Quickstart (Local)" href="tutorials/run_space_quickstart.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Exceptions" href="exceptions.html"><link rel="prev" title="API Reference" href="api_reference.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Logger - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -271,8 +282,12 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-semantiva.logger.logger">
-<span id="logger"></span><h1>Logger<a class="headerlink" href="#module-semantiva.logger.logger" title="Link to this heading">¶</a></h1>
+          <section id="logger">
+<h1>Logger<a class="headerlink" href="#logger" title="Link to this heading">¶</a></h1>
+<p>Semantiva uses Python’s standard <code class="docutils literal notranslate"><span class="pre">logging</span></code> module and exposes a small layer
+on top for convenience and trace consistency.</p>
+<section id="module-semantiva.logger.logger">
+<span id="module"></span><h2>Module<a class="headerlink" href="#module-semantiva.logger.logger" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="semantiva.logger.logger.Logger">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.logger.logger.</span></span><span class="sig-name descname"><span class="pre">Logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Semantiva'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/logger/logger.html#Logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.logger.logger.Logger" title="Link to this definition">¶</a></dt>
@@ -303,6 +318,7 @@
 
 </dd></dl>
 
+</section>
 <section id="from-the-cli">
 <h2>From the CLI<a class="headerlink" href="#from-the-cli" title="Link to this heading">¶</a></h2>
 <p>Verbosity flags map to logging levels:</p>
@@ -311,7 +327,23 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">-v</span></code> → INFO</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-vv</span></code> → DEBUG</p></li>
 </ul>
-<p>Adjust file/console handlers via standard Python logging configuration.</p>
+<p>When running via <strong class="command">semantiva run</strong> or <strong class="command">semantiva inspect</strong> these
+flags control both console output and, where configured, file logging.</p>
+</section>
+<section id="advanced-configuration">
+<h2>Advanced configuration<a class="headerlink" href="#advanced-configuration" title="Link to this heading">¶</a></h2>
+<p>You can customise logging using standard logging configuration mechanisms
+(for example <code class="docutils literal notranslate"><span class="pre">logging.config.dictConfig</span></code> or file-based configs) as long as
+they respect:</p>
+<ul class="simple">
+<li><p>The logger names used in Semantiva (such as <code class="docutils literal notranslate"><span class="pre">semantiva</span></code> and
+<code class="docutils literal notranslate"><span class="pre">semantiva.trace</span></code>).</p></li>
+<li><p>The fact that trace drivers may emit structured records independently of
+logging.</p></li>
+</ul>
+<p>In distributed settings (for example when using <code class="docutils literal notranslate"><span class="pre">semantiva-ray</span></code>) log file
+naming and log shipping are handled by the integration layer. See the
+corresponding extension documentation for details.</p>
 </section>
 </section>
 
@@ -320,23 +352,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="examples_index.html">
+          <a class="next-page" href="exceptions.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Examples Index</div>
+                <div class="title">Exceptions</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="tutorials/run_space_quickstart.html">
+          <a class="prev-page" href="api_reference.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Run Space Quickstart (Local)</div>
+                <div class="title">API Reference</div>
                 
               </div>
             </a>
@@ -371,6 +403,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Logger</a><ul>
+<li><a class="reference internal" href="#module-semantiva.logger.logger">Module</a><ul>
 <li><a class="reference internal" href="#semantiva.logger.logger.Logger"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><ul>
 <li><a class="reference internal" href="#semantiva.logger.logger.Logger.logger"><code class="docutils literal notranslate"><span class="pre">Logger.logger</span></code></a></li>
 <li><a class="reference internal" href="#semantiva.logger.logger.Logger.set_console_output"><code class="docutils literal notranslate"><span class="pre">Logger.set_console_output()</span></code></a></li>
@@ -379,7 +412,10 @@
 <li><a class="reference internal" href="#semantiva.logger.logger.Logger.verbosity_map"><code class="docutils literal notranslate"><span class="pre">Logger.verbosity_map</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
 <li><a class="reference internal" href="#from-the-cli">From the CLI</a></li>
+<li><a class="reference internal" href="#advanced-configuration">Advanced configuration</a></li>
 </ul>
 </li>
 </ul>

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Glossary" href="glossary.html"><link rel="prev" title="Logger" href="logger.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data Processors" href="data_processors.html"><link rel="prev" title="Data Types" href="data_types.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Exceptions - Semantiva 0.5.0 documentation</title>
+        <title>Data collections - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -198,11 +198,11 @@
 <li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
@@ -237,11 +237,11 @@
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
@@ -264,7 +264,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/exceptions.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/data_collections.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -282,39 +282,81 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="exceptions">
-<h1>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading">¶</a></h1>
+          <section id="data-collections">
+<h1>Data collections<a class="headerlink" href="#data-collections" title="Link to this heading">¶</a></h1>
+<p>Data collections represent ordered sequences of data objects of the same base
+<code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code>. They let pipelines express “many items of the same kind”
+without turning every element into a separate run.</p>
+<section id="what-is-a-data-collection">
+<h2>What is a data collection?<a class="headerlink" href="#what-is-a-data-collection" title="Link to this heading">¶</a></h2>
+<p>A data collection is a container data type whose elements all share the same
+base type. Examples include sequences of images, batches of measurement
+records, or lists of scalar values.</p>
+<p>Collections behave like any other data type:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError" title="semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError" title="semantiva.exceptions.pipeline_exceptions.PipelineTopologyError"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.exceptions.pipeline_exceptions.PipelineTopologyError</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError" title="semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError</span></code></a></p></li>
+<li><p>they have a well-defined element type,</p></li>
+<li><p>they can be produced by sources or operations, and</p></li>
+<li><p>they can be consumed by downstream processors that expect a collection.</p></li>
 </ul>
-<dl class="py exception" id="module-semantiva.exceptions.pipeline_exceptions">
-<dt class="sig sig-object py" id="semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidNodeParameterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processor_fqcn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_uuid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invalid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#InvalidNodeParameterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">PipelineConfigurationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#PipelineConfigurationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="semantiva.exceptions.pipeline_exceptions.PipelineTopologyError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">PipelineTopologyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#PipelineTopologyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="semantiva.exceptions.pipeline_exceptions.RunSpaceMaxRunsExceededError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.exceptions.pipeline_exceptions.</span></span><span class="sig-name descname"><span class="pre">RunSpaceMaxRunsExceededError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actual_runs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_runs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/exceptions/pipeline_exceptions.html#RunSpaceMaxRunsExceededError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.exceptions.pipeline_exceptions.RunSpaceMaxRunsExceededError" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
-<p>For when errors are raised during the pipeline lifecycle, see
-<a class="reference internal" href="introspection_validation.html"><span class="doc">Introspection &amp; Validation</span></a> (Validation Phases).
-Identity terms used in messages (<a class="reference internal" href="glossary.html#term-PipelineId"><span class="xref std std-term">PipelineId</span></a>, <a class="reference internal" href="glossary.html#term-node_uuid"><span class="xref std std-term">node_uuid</span></a>) are
-defined in the <a class="reference internal" href="glossary.html"><span class="doc">Glossary</span></a>.</p>
+<p>Data processors for collections can be implemented directly for the collection
+type, just as for any other data type. Slicers and parameter sweeps are
+<strong>optional automation tools</strong> that simplify common patterns.</p>
+</section>
+<section id="slicers">
+<h2>Slicers<a class="headerlink" href="#slicers" title="Link to this heading">¶</a></h2>
+<p>Slicer processors automate element-wise traversal of collections. Given a
+processor built for the base element type, the slicer factory lifts it to
+operate on the entire collection by applying the processor to each element in
+sequence.</p>
+<p>For data operations, the slicer:</p>
+<ul class="simple">
+<li><p>consumes a collection as input,</p></li>
+<li><p>applies the wrapped operation to every element in order, and</p></li>
+<li><p>returns a new collection of the same collection type with the processed
+elements.</p></li>
+</ul>
+<p>For probes, the slicer:</p>
+<ul class="simple">
+<li><p>consumes a collection as input,</p></li>
+<li><p>runs the wrapped probe on every element, and</p></li>
+<li><p>returns a list of probe results.</p></li>
+</ul>
+<p>The slicer preserves collection structure and ordering; it does not select
+arbitrary subsets or re-order elements. This automation also ensures that the
+element-wise pattern is visible in trace records and pipeline inspection
+output.</p>
+</section>
+<section id="derive-sweeps-and-collections">
+<h2>Derive sweeps and collections<a class="headerlink" href="#derive-sweeps-and-collections" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code> preprocessor automates the creation of
+processors that invoke a base processor multiple times with varied parameters,
+collecting the outputs into a data collection or list.</p>
+<p>Given:</p>
+<ul class="simple">
+<li><p>a processor (data source, data operation, or data probe), and</p></li>
+<li><p>a set of variables and expressions that define parameter grids,</p></li>
+</ul>
+<p>parameter sweeps:</p>
+<ul class="simple">
+<li><p>evaluate parameter expressions over the variable grid,</p></li>
+<li><p>invoke the underlying processor repeatedly on the same input (for
+operations/probes) or to produce a sequence of outputs (for sources), and</p></li>
+<li><p>collect the results into a typed data collection or a list of probe results.</p></li>
+</ul>
+<p>Like slicers, sweeps bring structure to trace records and inspection by
+exposing the parameter grid and the generated sequence.</p>
+<p>In summary:</p>
+<ul class="simple">
+<li><p><strong>Slicers</strong> automate element-wise traversal of an existing collection using
+a processor designed for the base element type.</p></li>
+<li><p><strong>Sweeps</strong> automate parameter-space traversal, building a collection by
+repeatedly invoking a processor with different parameter values.</p></li>
+<li><p>Both are optional conveniences; collection processors can also be
+implemented directly.</p></li>
+</ul>
+<p>See <a class="reference internal" href="collection_modifiers.html"><span class="doc">Collection-based modifiers</span></a> for detailed mechanics of slicers and sweeps,
+and <a class="reference internal" href="data_types.html"><span class="doc">Data Types</span></a> for the collection data type contracts available in
+Semantiva.</p>
 </section>
 </section>
 
@@ -323,23 +365,23 @@ defined in the <a class="reference internal" href="glossary.html"><span class="d
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="glossary.html">
+          <a class="next-page" href="data_processors.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Glossary</div>
+                <div class="title">Data Processors</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="logger.html">
+          <a class="prev-page" href="data_types.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Logger</div>
+                <div class="title">Data Types</div>
                 
               </div>
             </a>
@@ -373,12 +415,10 @@ defined in the <a class="reference internal" href="glossary.html"><span class="d
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Exceptions</a><ul>
-<li><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.InvalidNodeParameterError"><code class="docutils literal notranslate"><span class="pre">InvalidNodeParameterError</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError"><code class="docutils literal notranslate"><span class="pre">PipelineConfigurationError</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError"><code class="docutils literal notranslate"><span class="pre">PipelineTopologyError</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.exceptions.pipeline_exceptions.RunSpaceMaxRunsExceededError"><code class="docutils literal notranslate"><span class="pre">RunSpaceMaxRunsExceededError</span></code></a></li>
-<li><a class="reference internal" href="#see-also">See also</a></li>
+<li><a class="reference internal" href="#">Data collections</a><ul>
+<li><a class="reference internal" href="#what-is-a-data-collection">What is a data collection?</a></li>
+<li><a class="reference internal" href="#slicers">Slicers</a></li>
+<li><a class="reference internal" href="#derive-sweeps-and-collections">Derive sweeps and collections</a></li>
 </ul>
 </li>
 </ul>

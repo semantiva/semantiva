@@ -1,9 +1,26 @@
 Execution
 =========
 
-The execution module provides the orchestration infrastructure for running Semantiva pipelines.
-It includes comprehensive error handling and integration with the tracing system to capture
-complete execution records, including error events with timing data and exception details.
+The execution layer controls how a configured pipeline runs. It is built from
+three components working together:
+
+- an **orchestrator** that walks the pipeline graph and coordinates node
+   execution,
+- an **executor** that runs individual node tasks, and
+- a **transport** that carries payloads between nodes.
+
+By default Semantiva uses a local, single-process stack that is well suited for
+development and small-scale runs on a single machine:
+
+- ``LocalSemantivaOrchestrator`` traverses the pipeline graph, instantiates
+   nodes, and drives execution.
+- ``SequentialSemantivaExecutor`` runs node tasks one after another in the
+   current process.
+- ``InMemorySemantivaTransport`` publishes node outputs via in-memory
+   channels without serialization.
+
+These defaults can be overridden via the ``execution`` block in the pipeline
+configuration or the corresponding CLI flags (see :doc:`cli`).
 
 Component Registry System
 --------------------------

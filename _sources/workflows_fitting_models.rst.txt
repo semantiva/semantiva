@@ -18,9 +18,8 @@ back into the **context**. It supports both traditional fixed parameter names
 Key Features
 ------------
 
-**Traditional Interface (Backward Compatible)**
+**Traditional interface**
   Uses standard ``x_values`` and ``y_values`` parameter names with configurable output keys.
-  Maintains full compatibility with existing pipelines.
 
 **Flexible Parameter Mapping**
   Supports custom parameter names and nested path extraction using dot notation
@@ -124,7 +123,7 @@ The system automatically detects and handles data from slice aggregators:
    - processor: ModelFittingContextProcessor
      parameters:
        fitting_model: "model:PolynomialFittingModel:degree=1"
-       independent_var_key: "slice_indices"
+       independent_var_key: "t_values"
        dependent_var_key: "aggregated_data.mean_values"
        context_key: "trend_analysis"
 
@@ -230,17 +229,9 @@ Nested path example:
 
 The resulting coefficients are written to the specified context keyword.
 
-**3) Visualize the config**
-
-.. code-block:: bash
-
-   semantiva-studio-viewer serve-pipeline tests/pipeline_model_fitting.yaml --port 8000
-   # open http://127.0.0.1:8000 and click the fitting node to see its parameters and node_uuid
-
 Link-outs:
 - :doc:`pipeline` (Payload and dual channels)
 - :doc:`extensions` (``model:`` resolver and extensions)
-- :doc:`studio_viewer` (serve and export diagrams)
 - :doc:`context_processors` (Context processor fundamentals)
 - :doc:`data_processors` (Data slice integration)
 

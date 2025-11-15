@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Inspection Payload &amp; CLI" href="inspection.html"><link rel="prev" title="Semantiva Studio Viewer" href="studio_viewer.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Canonical Graph Builder" href="graph.html"><link rel="prev" title="Trace ↔ Graph Alignment" href="trace_graph_alignment.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Identity Cheatsheet - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -357,7 +368,7 @@ in <a class="reference internal" href="ser.html"><span class="doc">Semantic Exec
 <section id="semantic-id-plsemid">
 <h2><a class="toc-backref" href="#id2" role="doc-backlink">Semantic ID (<code class="docutils literal notranslate"><span class="pre">plsemid-*</span></code>)</a><a class="headerlink" href="#semantic-id-plsemid" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Computed by <a class="reference internal" href="introspection_validation.html#semantiva.inspection.builder.build" title="semantiva.inspection.builder.build"><code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.builder.build()</span></code></a> from the canonical
+<li><p>Computed by <code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.build()</span></code> from the canonical
 GraphV1 structure.</p></li>
 <li><p>Includes sanitized <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code> metadata. Expressions are
 reduced to <code class="docutils literal notranslate"><span class="pre">normalize_expression_sig_v1</span></code> signatures and sweep domains are
@@ -472,7 +483,7 @@ UI-only metadata (<code class="docutils literal notranslate"><span class="pre">p
 <ul class="simple">
 <li><p>CLI: <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">[--extended]</span></code> prints the payload above in a
 human-readable form.</p></li>
-<li><p>Python: call <a class="reference internal" href="introspection_validation.html#semantiva.inspection.builder.build" title="semantiva.inspection.builder.build"><code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.builder.build()</span></code></a> to obtain the same
+<li><p>Python: call <code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.build()</span></code> to obtain the same
 dictionary.</p></li>
 <li><p>Runtime traces: <code class="docutils literal notranslate"><span class="pre">semantic_id</span></code> and <code class="docutils literal notranslate"><span class="pre">config_id</span></code> are attached to
 <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> events; run-space identities appear on <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code>.</p></li>
@@ -485,23 +496,23 @@ dictionary.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="inspection.html">
+          <a class="next-page" href="graph.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Inspection Payload &amp; CLI</div>
+                <div class="title">Canonical Graph Builder</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="studio_viewer.html">
+          <a class="prev-page" href="trace_graph_alignment.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Semantiva Studio Viewer</div>
+                <div class="title">Trace ↔ Graph Alignment</div>
                 
               </div>
             </a>

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Pipelines in Semantiva" href="pipeline.html"><link rel="prev" title="Extending Semantiva (Registries &amp; Extensions)" href="extensions.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Pipelines in Semantiva" href="pipeline.html"><link rel="prev" title="Examples Index" href="examples_index.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Concepts - Semantiva 0.5.0 documentation</title>
+        <title>Basic Concepts - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -271,83 +282,138 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="concepts">
-<h1>Concepts<a class="headerlink" href="#concepts" title="Link to this heading">¶</a></h1>
-<p>Semantiva narrows the gap between bold ideas and concrete code. The framework
-promotes <strong>clarity</strong>, <strong>type-safety</strong>, and <strong>semantic transparency</strong> so that a
-pipeline can be read, reasoned about, and audited. The sections below tell the
-story behind the core pieces and link to deeper references when you want more
-detail.</p>
-<section id="domain-driven-type-oriented-design">
-<h2>Domain-Driven &amp; Type-Oriented Design<a class="headerlink" href="#domain-driven-type-oriented-design" title="Link to this heading">¶</a></h2>
-<p>Semantiva pipelines are designed around your <em>domain concepts</em>. Data types are
-not afterthoughts - they are <strong>contracts</strong> between pipeline steps. When you
-declare a <code class="docutils literal notranslate"><span class="pre">StringLiteralDataType</span></code> or a domain type like <code class="docutils literal notranslate"><span class="pre">DNASequence</span></code>, you
-state the expectations for both data and meaning. These contracts prevent
-miswired steps and make intent explicit. For more on defining custom types see
-the <a class="reference internal" href="data_types.html"><span class="doc">Data Types</span></a> guide.</p>
-</section>
-<section id="data-types">
-<h2>Data Types<a class="headerlink" href="#data-types" title="Link to this heading">¶</a></h2>
-<p>Data types describe the <em>shape and semantics</em> of data moving through a pipeline.
-Because every processor declares the types it accepts and returns, mismatched
-inputs are caught at configuration time instead of failing deep inside a
-workflow. Type-safe workflows communicate purpose: a <code class="docutils literal notranslate"><span class="pre">SingleChannelImage</span></code>
-clearly differs from a <code class="docutils literal notranslate"><span class="pre">FloatCollection</span></code>. Learn how types enforce these
-guarantees in <a class="reference internal" href="data_types.html"><span class="doc">Data Types</span></a>.</p>
-</section>
-<section id="processors">
-<h2>Processors<a class="headerlink" href="#processors" title="Link to this heading">¶</a></h2>
-<p>Processors are the workhorses of Semantiva, each with a single
-responsibility:</p>
+          <section id="basic-concepts">
+<h1>Basic Concepts<a class="headerlink" href="#basic-concepts" title="Link to this heading">¶</a></h1>
+<p>Semantiva narrows the gap between ideas and executable pipelines. It is built
+around <strong>typed payloads</strong>, a <strong>dual data/context channel</strong>, and clear contracts
+for every processor.</p>
+<section id="the-payload-data-context">
+<h2>The payload: data + context<a class="headerlink" href="#the-payload-data-context" title="Link to this heading">¶</a></h2>
+<p>Every Semantiva pipeline step processes a <em>payload</em> with two channels:</p>
 <ul class="simple">
-<li><p>A <strong>DataOperation</strong> transforms input data.</p></li>
-<li><p>A <strong>DataProbe</strong> inspects or logs data without changing it.</p></li>
-<li><p><strong>I/O processors</strong> load or save data from external systems.</p></li>
+<li><p><strong>Data channel</strong> - your domain objects (images, arrays, records, models…).</p></li>
+<li><p><strong>Context channel</strong> - structured metadata that flows with the data through
+the pipeline. It carries configuration parameters, derived values, quality
+indicators, and other state used by processors to share information and
+adapt execution.</p></li>
 </ul>
-<p>Each processor focuses on one task, reinforcing clarity and maintainability.
-See <a class="reference internal" href="data_processors.html"><span class="doc">Data Processors</span></a> and <a class="reference internal" href="data_io.html"><span class="doc">Data IO (Sources &amp; Sinks)</span></a> for implementation details.</p>
+<p>The two channels always move together. A run is fully described by:</p>
+<ul class="simple">
+<li><p>The pipeline definition and configuration.</p></li>
+<li><p>The run-space plan (if any).</p></li>
+<li><p>The sequence of payloads (data + context) as they pass through nodes.</p></li>
+</ul>
+<p>Identifiers such as run IDs are assigned by the execution and tracing layers
+and are not stored in the context channel.</p>
 </section>
-<section id="nodes">
-<h2>Nodes<a class="headerlink" href="#nodes" title="Link to this heading">¶</a></h2>
-<p>Pipelines are built from <strong>nodes</strong>, thin wrappers around processors. Nodes are
-generated when Semantiva reads your declarative YAML; you rarely subclass them
-yourself. They handle the plumbing: feeding data <strong>and</strong> context into processors
-and chaining outputs to inputs. The <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a> section shows how nodes fit
-into graph execution.</p>
-</section>
-<section id="preprocessors-derive">
-<h2>Preprocessors (derive)<a class="headerlink" href="#preprocessors-derive" title="Link to this heading">¶</a></h2>
-<p><strong>Preprocessors</strong> live under the reserved node key <code class="docutils literal notranslate"><span class="pre">derive</span></code>. They <strong>compute
-or expand configuration</strong> before a processor and node instantiation.
-The most common preprocessor is <a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a>
-(<code class="docutils literal notranslate"><span class="pre">parameter_sweep</span></code>), which computes <strong>parameters</strong> from <strong>variables</strong> and can
-expand a single node into multiple runs with a typed collection.</p>
+<section id="data-channel-types-operations-and-collections">
+<h2>Data channel: types, operations and collections<a class="headerlink" href="#data-channel-types-operations-and-collections" title="Link to this heading">¶</a></h2>
+<p>Key concepts on the data side:</p>
+<ul class="simple">
+<li><p><strong>Data types</strong> - subclasses of the core <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code> class.
+They encode contracts for shape, units and semantics (for example a
+<code class="docutils literal notranslate"><span class="pre">SingleChannelImage</span></code> vs. a <code class="docutils literal notranslate"><span class="pre">FloatCollection</span></code>).</p></li>
+<li><p><strong>Data sources</strong> - components that <em>produce</em> data from outside the pipeline.
+They are not processors themselves; factories wrap them so they can participate
+in pipelines as payload processors.</p></li>
+<li><p><strong>Data operations</strong> - processors that transform one data type into another,
+with clear input/output type contracts.</p></li>
+<li><p><strong>Data probes</strong> - processors that observe the data channel and write
+summaries into the context channel.</p></li>
+<li><p><strong>Data sinks</strong> - components that write data out of the pipeline (files, sockets,
+viewers, message buses…). Like sources, they are wrapped by factories and are not
+native processors.</p></li>
+</ul>
+<p>Collections:</p>
+<ul class="simple">
+<li><p><strong>Data collections</strong> model sequences of data objects of the same base type.</p></li>
+<li><p>Modifiers such as <code class="docutils literal notranslate"><span class="pre">slice</span></code> and <strong>parameter sweeps</strong> build on top of
+collections to describe families of runs without hand-writing loops.</p></li>
+</ul>
 </section>
 <section id="context-channel">
-<h2>Context Channel<a class="headerlink" href="#context-channel" title="Link to this heading">¶</a></h2>
-<p>Alongside domain data flows a mutable <strong>context channel</strong>—a key/value store for
-metadata, parameters, or runtime state. Context processors can inspect or
-mutate this channel, enabling adaptive behaviours and rich execution traces.
-Understanding context manipulation is key to building semantic workflows; dive
-deeper in <a class="reference internal" href="context_processors.html"><span class="doc">Context Processors</span></a>.</p>
+<h2>Context channel<a class="headerlink" href="#context-channel" title="Link to this heading">¶</a></h2>
+<p>The context channel is handled by context processors. They:</p>
+<ul class="simple">
+<li><p>Propose context updates and deletions via notifier helpers,
+without direct access to the underlying context object.</p></li>
+<li><p>Derive new parameters from existing context and configuration.</p></li>
+<li><p>Maintain state across nodes (for example running statistics).</p></li>
+<li><p>Record metrics and metadata used by downstream analysis.</p></li>
+</ul>
+<p>Run-space expansion injects values into the initial context for each run. At
+runtime there is no distinction between parameters provided by the run-space
+and parameters set by other means; all are resolved from the context channel.</p>
 </section>
-<section id="resolvers-parameters">
-<h2>Resolvers &amp; Parameters<a class="headerlink" href="#resolvers-parameters" title="Link to this heading">¶</a></h2>
-<p>Declarative specifications in YAML become executable graphs through <strong>resolvers</strong>.
-Class resolvers (<code class="docutils literal notranslate"><span class="pre">slice:</span></code>, <code class="docutils literal notranslate"><span class="pre">rename:</span></code>, <code class="docutils literal notranslate"><span class="pre">delete:</span></code>) map concise strings to
-Python classes, while parameter resolvers (<code class="docutils literal notranslate"><span class="pre">model:</span></code>) inject runtime objects
-without hard-coding them. This mechanism keeps pipelines declarative yet
-flexible. For the full resolver registry and extension mechanism consult
-<a class="reference internal" href="extensions.html"><span class="doc">Extending Semantiva (Registries &amp; Extensions)</span></a>.</p>
+<section id="parameter-resolution">
+<h2>Parameter resolution<a class="headerlink" href="#parameter-resolution" title="Link to this heading">¶</a></h2>
+<p>Processor parameters are resolved just before a node runs. Semantiva combines
+values from three sources into a single parameter set:</p>
+<ul class="simple">
+<li><p>The node’s <code class="docutils literal notranslate"><span class="pre">parameters</span></code> mapping from the pipeline configuration.</p></li>
+<li><p>Values available in the context channel.</p></li>
+<li><p>Defaults declared by the processor’s contract.</p></li>
+</ul>
+<p>When multiple sources provide a value for the same parameter, the following
+priority applies (from highest to lowest):</p>
+<ol class="arabic simple">
+<li><p>Explicit values in the node’s <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p></li>
+<li><p>Values resolved from the context channel (including run-space injected
+values).</p></li>
+<li><p>Processor-level default values.</p></li>
+</ol>
+<p>This keeps pipeline configuration explicit, while still allowing context and
+defaults to supply values when configuration is silent.</p>
 </section>
-<section id="dual-channel-pipeline">
-<h2>Dual-Channel Pipeline<a class="headerlink" href="#dual-channel-pipeline" title="Link to this heading">¶</a></h2>
-<p>Every Semantiva pipeline carries two synchronized streams: the <strong>data channel</strong>
-and the <strong>context channel</strong>. Data holds your domain objects; context carries the
-metadata explaining <em>how</em> and <em>why</em> each step executes. This dual-channel design
-embodies the Epistemic Computing Paradigm (ECP) where computation produces both
-results and rationale.</p>
+<section id="payload-operations-pipelines-and-nodes">
+<h2>Payload operations, pipelines and nodes<a class="headerlink" href="#payload-operations-pipelines-and-nodes" title="Link to this heading">¶</a></h2>
+<p>A pipeline is a directed graph of <strong>nodes</strong>. Each node wraps a processor and has:</p>
+<ul class="simple">
+<li><p>A reference to the processor class or registered name.</p></li>
+<li><p>Parameter values (possibly resolved from context or the run-space).</p></li>
+<li><p>Ports for incoming and outgoing data.</p></li>
+</ul>
+<p>At runtime:</p>
+<ol class="arabic simple">
+<li><p>The pipeline expands any pre-processors (such as <code class="docutils literal notranslate"><span class="pre">derive</span></code> and sweeps)
+and run-space blocks.</p></li>
+<li><p>Data flows along edges, constrained by data type contracts.</p></li>
+<li><p>Context processors observe and update the context channel.</p></li>
+<li><p>Optional trace drivers observe execution and emit <strong>Semantic Execution
+Records (SER)</strong>.</p></li>
+</ol>
+<p>Processors (data operations, probes, and context processors) and pipeline
+nodes operate only on the data and context channels. SER records are produced
+by trace drivers attached to the orchestrator and executor and do not change
+data or context.</p>
+<p>From a user perspective:</p>
+<ul class="simple">
+<li><p>You <strong>define processors</strong> in Python (see <a class="reference internal" href="creating_components.html"><span class="doc">Creating Components (Authoring Guide)</span></a>).</p></li>
+<li><p>You <strong>configure pipelines</strong> in YAML (see <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a>).</p></li>
+<li><p>You <strong>execute</strong> via <a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a> or the Python API, always working with the
+payload abstraction.</p></li>
+</ul>
+<p>For a more visual explanation of how all this fits together:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="data_types.html"><span class="doc">Data Types</span></a></p></li>
+<li><p><a class="reference internal" href="data_processors.html"><span class="doc">Data Processors</span></a></p></li>
+<li><p><a class="reference internal" href="context_processors.html"><span class="doc">Context Processors</span></a></p></li>
+<li><p><a class="reference internal" href="data_collections.html"><span class="doc">Data collections</span></a></p></li>
+</ul>
+</section>
+<section id="trace-records-and-trace-drivers">
+<h2>Trace records and trace drivers<a class="headerlink" href="#trace-records-and-trace-drivers" title="Link to this heading">¶</a></h2>
+<p>Tracing is an optional layer that records how pipelines execute over time.</p>
+<ul class="simple">
+<li><p><strong>Semantic Execution Records (SER)</strong> capture which processors ran, how they
+were connected, and summary information about payloads and context at each
+step.</p></li>
+<li><p><strong>Trace drivers</strong> attach to the orchestrator and executor. They observe
+execution events and write SER streams, typically to files or external sinks.</p></li>
+</ul>
+<p>Trace drivers are configured in the pipeline YAML (see
+<a class="reference internal" href="architecture/pipeline_schema.html"><span class="doc">Pipeline Configuration Schema</span></a>) and described in more detail in
+<a class="reference internal" href="trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a> and <a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a>.</p>
 </section>
 </section>
 
@@ -365,14 +431,14 @@ results and rationale.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="extensions.html">
+          <a class="prev-page" href="examples_index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Extending Semantiva (Registries &amp; Extensions)</div>
+                <div class="title">Examples Index</div>
                 
               </div>
             </a>
@@ -406,15 +472,13 @@ results and rationale.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Concepts</a><ul>
-<li><a class="reference internal" href="#domain-driven-type-oriented-design">Domain-Driven &amp; Type-Oriented Design</a></li>
-<li><a class="reference internal" href="#data-types">Data Types</a></li>
-<li><a class="reference internal" href="#processors">Processors</a></li>
-<li><a class="reference internal" href="#nodes">Nodes</a></li>
-<li><a class="reference internal" href="#preprocessors-derive">Preprocessors (derive)</a></li>
-<li><a class="reference internal" href="#context-channel">Context Channel</a></li>
-<li><a class="reference internal" href="#resolvers-parameters">Resolvers &amp; Parameters</a></li>
-<li><a class="reference internal" href="#dual-channel-pipeline">Dual-Channel Pipeline</a></li>
+<li><a class="reference internal" href="#">Basic Concepts</a><ul>
+<li><a class="reference internal" href="#the-payload-data-context">The payload: data + context</a></li>
+<li><a class="reference internal" href="#data-channel-types-operations-and-collections">Data channel: types, operations and collections</a></li>
+<li><a class="reference internal" href="#context-channel">Context channel</a></li>
+<li><a class="reference internal" href="#parameter-resolution">Parameter resolution</a></li>
+<li><a class="reference internal" href="#payload-operations-pipelines-and-nodes">Payload operations, pipelines and nodes</a></li>
+<li><a class="reference internal" href="#trace-records-and-trace-drivers">Trace records and trace drivers</a></li>
 </ul>
 </li>
 </ul>

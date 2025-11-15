@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Semantiva Contracts" href="contracts.html"><link rel="prev" title="Data IO (Sources &amp; Sinks)" href="data_io.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data IO (Sources &amp; Sinks)" href="data_io.html"><link rel="prev" title="Collection-based modifiers" href="collection_modifiers.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Context Processors - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -273,400 +284,90 @@
         <article role="main" id="furo-main-content">
           <section id="context-processors">
 <h1>Context Processors<a class="headerlink" href="#context-processors" title="Link to this heading">¶</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>A ContextProcessor is <strong>stateless</strong>: it implements <code class="docutils literal notranslate"><span class="pre">_process_logic(**kwargs)</span></code> and
-never mutates context directly. All writes/deletes are <strong>mediated</strong> through the node’s
-observer via <code class="docutils literal notranslate"><span class="pre">_notify_context_update(key,</span> <span class="pre">value)</span></code> and <code class="docutils literal notranslate"><span class="pre">_notify_context_deletion(key)</span></code>.</p>
-<p><strong>Important</strong>: All parameters must be explicitly declared in the <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> signature.
-<cite>**kwargs</cite> is not allowed for reliable provenance tracking.</p>
-</section>
-<section id="context-observer-pattern">
-<h2>Context Observer Pattern<a class="headerlink" href="#context-observer-pattern" title="Link to this heading">¶</a></h2>
-<p>ContextProcessors use an <strong>observer pattern</strong> for context updates:</p>
-<ul class="simple">
-<li><p><strong>Processors</strong>: Call <code class="docutils literal notranslate"><span class="pre">_notify_context_update()</span></code> to request context changes</p></li>
-<li><p><strong>Observers</strong>: Handle the actual context mutations and validation</p></li>
-<li><p><strong>Nodes</strong>: Create and manage observers automatically</p></li>
-</ul>
-<p><strong>For Users</strong>: You should never instantiate <code class="docutils literal notranslate"><span class="pre">_ContextObserver</span></code> directly. The framework
-handles this through pipeline nodes.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyContextProcessor</span><span class="p">(</span><span class="n">ContextProcessor</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">input_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># ✅ Correct: Use the notification method</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="n">input_value</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-
-        <span class="c1"># ❌ Wrong: Never access context directly</span>
-        <span class="c1"># context[&quot;result&quot;] = input_value * 2</span>
-</pre></div>
-</div>
-<section id="observer-lifecycle">
-<h3>Observer Lifecycle<a class="headerlink" href="#observer-lifecycle" title="Link to this heading">¶</a></h3>
+<p>Context processors implement <strong>context-only logic</strong>. They are responsible for
+creating and updating context keys, but they never see the full context object
+directly and they never touch the data channel.</p>
+<section id="high-level-model">
+<h2>High-level model<a class="headerlink" href="#high-level-model" title="Link to this heading">¶</a></h2>
+<p>At runtime, a context processor is invoked roughly as follows:</p>
 <ol class="arabic simple">
-<li><p><strong>Node Creation</strong>: Pipeline nodes create <code class="docutils literal notranslate"><span class="pre">_ValidatingContextObserver</span></code> with declared keys</p></li>
-<li><p><strong>Validation Setup</strong>: Observer configured with <code class="docutils literal notranslate"><span class="pre">get_created_keys()</span></code> and <code class="docutils literal notranslate"><span class="pre">get_suppressed_keys()</span></code></p></li>
-<li><p><strong>Processor Execution</strong>: Processor calls <code class="docutils literal notranslate"><span class="pre">_notify_context_update()</span></code></p></li>
-<li><p><strong>Observer Validation</strong>: Observer validates key is allowed and performs the update</p></li>
-<li><p><strong>Context Updated</strong>: Changes are written to the active context</p></li>
+<li><p>The node builds the pipeline graph and resolves parameters
+(node configuration &gt; context &gt; defaults).</p></li>
+<li><p>The node constructs a validating context observer.</p></li>
+<li><p>The node calls <code class="docutils literal notranslate"><span class="pre">processor.operate_context(context,</span> <span class="pre">context_observer,</span> <span class="pre">**params)</span></code>.</p></li>
+<li><p>The processor executes its internal logic and uses notifier hooks to propose
+context updates or deletions.</p></li>
+<li><p>The observer validates and applies those changes to the active context.</p></li>
 </ol>
-</section>
-</section>
-<section id="parameter-validation-examples">
-<h2>Parameter Validation Examples<a class="headerlink" href="#parameter-validation-examples" title="Link to this heading">¶</a></h2>
-<section id="valid-parameter-patterns">
-<h3>Valid Parameter Patterns<a class="headerlink" href="#valid-parameter-patterns" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors.context_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextProcessor</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ValidContextProcessor</span><span class="p">(</span><span class="n">ContextProcessor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes result based on input_value and threshold.&quot;&quot;&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">input_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># ✅ All parameters explicitly declared</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span> <span class="k">if</span> <span class="n">input_value</span> <span class="o">&gt;</span> <span class="n">threshold</span> <span class="k">else</span> <span class="s2">&quot;low&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="invalid-parameter-patterns-rejected">
-<h3>Invalid Parameter Patterns (Rejected)<a class="headerlink" href="#invalid-parameter-patterns-rejected" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ This will also raise ValueError</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">InvalidMixedProcessor</span><span class="p">(</span><span class="n">ContextProcessor</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">param1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># Even mixed explicit + kwargs is rejected</span>
-        <span class="k">pass</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors.context_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextProcessor</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">AdvancedProcessor</span><span class="p">(</span><span class="n">ContextProcessor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes two output keys based on input_value and threshold.&quot;&quot;&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;result.status&quot;</span><span class="p">,</span> <span class="s2">&quot;result.confidence&quot;</span><span class="p">]</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_suppressed_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># nothing deleted here</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">input_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">input_value</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;result.status&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;result.confidence&quot;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;result.status&quot;</span><span class="p">,</span> <span class="s2">&quot;low&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;result.confidence&quot;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="where-do-required-keys-come-from">
-<h2>Where do required keys come from?<a class="headerlink" href="#where-do-required-keys-come-from" title="Link to this heading">¶</a></h2>
-<p>Required inputs are determined at <strong>node level</strong> by the
-<a class="reference internal" href="pipeline.html#pipeline-yaml-parameters-precedence"><span class="std std-ref">Parameter resolution (precedence)</span></a> policy:</p>
-<ol class="arabic simple">
-<li><p>Node <code class="docutils literal notranslate"><span class="pre">parameters</span></code> in YAML</p></li>
-<li><p>Existing values in <code class="docutils literal notranslate"><span class="pre">payload.context</span></code></p></li>
-<li><p>Python defaults in <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> signature</p></li>
-</ol>
-<p>If a name cannot be resolved by any of the above, it is a <strong>required context key</strong> for the pipeline.</p>
-</section>
-<section id="validation-safe-mutation">
-<h2>Validation &amp; Safe Mutation<a class="headerlink" href="#validation-safe-mutation" title="Link to this heading">¶</a></h2>
-<p>Context writes/deletes are validated by the node’s validating observer:</p>
+<p>The key points for authors:</p>
 <ul class="simple">
-<li><p>Allowed writes = <code class="docutils literal notranslate"><span class="pre">get_created_keys</span></code></p></li>
-<li><p>Allowed deletes = <code class="docutils literal notranslate"><span class="pre">get_suppressed_keys</span></code></p></li>
+<li><p>You <strong>do not override</strong> <code class="docutils literal notranslate"><span class="pre">process</span></code> / <code class="docutils literal notranslate"><span class="pre">operate_context</span></code>.</p></li>
+<li><p>You <strong>never receive</strong> the context object as a user-facing argument.</p></li>
+<li><p>You implement a stateless <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> method and use notifier helpers
+such as <code class="docutils literal notranslate"><span class="pre">_notify_context_update</span></code> and <code class="docutils literal notranslate"><span class="pre">_notify_context_deletion</span></code>.</p></li>
+<li><p>You declare which context keys you may create or suppress so that validation
+and inspection can remain deterministic.</p></li>
 </ul>
-<p>If a processor tries to update or delete an undeclared key, a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> is raised.</p>
-<section id="typical-errors">
-<h3>Typical errors<a class="headerlink" href="#typical-errors" title="Link to this heading">¶</a></h3>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>RuntimeError: AdvancedProcessor attempted a context update without an active ContextObserver.
-</pre></div>
-</div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>KeyError: Invalid context key &#39;invalid.key&#39; for processor. Allowed keys: [&#39;result.confidence&#39;, &#39;result.status&#39;]
-</pre></div>
-</div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>KeyError: Invalid suppressed key &#39;temp&#39; for processor. Allowed suppressed keys: [&#39;old.key&#39;]
-</pre></div>
-</div>
 </section>
+<section id="minimal-example">
+<h2>Minimal example<a class="headerlink" href="#minimal-example" title="Link to this heading">¶</a></h2>
+<p>A typical pattern looks like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextProcessor</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ComputeLearningRate</span><span class="p">(</span><span class="n">ContextProcessor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive learning rate from batch size.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># Keys this processor may create</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;training.learning_rate&quot;</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base_lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="c1"># ``batch_size`` and ``base_lr`` are resolved by Semantiva from</span>
+        <span class="c1"># node parameters and/or context; no Context object is passed in.</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="n">base_lr</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify_context_update</span><span class="p">(</span><span class="s2">&quot;training.learning_rate&quot;</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>Parameters from YAML (for example <code class="docutils literal notranslate"><span class="pre">base_lr:</span> <span class="pre">0.05</span></code>) are not passed through
+the constructor; they are resolved and injected into <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code>.</p></li>
+<li><p>Any context value read by the processor is resolved into a parameter as well
+(here: <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>).</p></li>
+<li><p>All writes go through <code class="docutils literal notranslate"><span class="pre">_notify_context_update</span></code> / <code class="docutils literal notranslate"><span class="pre">_notify_context_deletion</span></code>
+and are validated by the context observer.</p></li>
+</ul>
 </section>
-<section id="factories-rename-delete">
-<h2>Factories: rename/delete<a class="headerlink" href="#factories-rename-delete" title="Link to this heading">¶</a></h2>
-<p>Use factory resolvers in YAML for common context transforms (no Python class needed):</p>
+<section id="yaml-configuration">
+<h2>YAML configuration<a class="headerlink" href="#yaml-configuration" title="Link to this heading">¶</a></h2>
+<p>In a pipeline, the corresponding node might look like:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rename:metrics.sharpness:features.sharpness&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;delete:metrics.temp&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ComputeLearningRate</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">base_lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.05</span>
+<span class="w">        </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128</span><span class="w">  </span><span class="c1"># may also come from context</span>
 </pre></div>
 </div>
-<p>These map to dynamic <code class="docutils literal notranslate"><span class="pre">ContextProcessor</span></code> classes via the registry resolvers. They
-also participate in validation:</p>
+<p>The parameter resolution rules are the same as for data processors:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">rename:a:b</span></code> — requires <code class="docutils literal notranslate"><span class="pre">a</span></code>, creates <code class="docutils literal notranslate"><span class="pre">b</span></code>, suppresses <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delete:k</span></code> — suppresses <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p></li>
+<li><p>Node parameters</p></li>
+<li><p>Then context</p></li>
+<li><p>Then default values from the function signature</p></li>
 </ul>
 </section>
-<section id="factories-template">
-<h2>Factories: template<a class="headerlink" href="#factories-template" title="Link to this heading">¶</a></h2>
-<p>Compose deterministic strings from existing context values without writing a
-custom processor:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;template:&quot;exp_{subject}_{run}.png&quot;:filename&#39;</span>
-</pre></div>
-</div>
-<p>Rules:</p>
+<section id="design-guidelines">
+<h2>Design guidelines<a class="headerlink" href="#design-guidelines" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Placeholders must be simple identifiers like <code class="docutils literal notranslate"><span class="pre">{subject}</span></code> or <code class="docutils literal notranslate"><span class="pre">{run}</span></code>.</p></li>
-<li><p>Every placeholder is required at runtime; missing keys raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p></li>
-<li><p>Format conversions or specs (e.g., <code class="docutils literal notranslate"><span class="pre">{value!r}</span></code>, <code class="docutils literal notranslate"><span class="pre">{value:.3f}</span></code>) are not supported.</p></li>
-<li><p>The destination key may already exist and will be overwritten, mirroring rename/delete behavior.</p></li>
+<li><p>Keep context processors <strong>small and composable</strong>.</p></li>
+<li><p>Use clear, namespaced keys (for example <code class="docutils literal notranslate"><span class="pre">training.learning_rate</span></code>).</p></li>
+<li><p>Declare created/suppressed keys via <code class="docutils literal notranslate"><span class="pre">get_created_keys</span></code> /
+<code class="docutils literal notranslate"><span class="pre">get_suppressed_keys</span></code> so that observers can validate behaviour.</p></li>
+<li><p>Use context processors to prepare domain-specific state; keep data processors
+focused on computations over the data channel itself.</p></li>
 </ul>
-</section>
-<section id="testing-context-processors">
-<h2>Testing Context Processors<a class="headerlink" href="#testing-context-processors" title="Link to this heading">¶</a></h2>
-<p><strong>Recommended Approach</strong>: Use pipeline nodes for testing, not direct processor instantiation.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.payload</span><span class="w"> </span><span class="kn">import</span> <span class="n">Payload</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors.context_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">test_my_context_processor</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test using pipeline infrastructure (recommended).&quot;&quot;&quot;</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;processor&quot;</span><span class="p">:</span> <span class="s2">&quot;MyContextProcessor&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;input_value&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">initial_payload</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ContextType</span><span class="p">())</span>
-    <span class="n">result_payload</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">initial_payload</span><span class="p">)</span>
-
-    <span class="c1"># Check results in the final context</span>
-    <span class="k">assert</span> <span class="n">result_payload</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">10.0</span>
-</pre></div>
-</div>
-<p><strong>Alternative for Unit Tests</strong>: If you must test processors directly, use this pattern:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_context_processor_direct</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Direct testing (use sparingly).&quot;&quot;&quot;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors.context_observer</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ContextObserver</span>
-
-    <span class="n">processor</span> <span class="o">=</span> <span class="n">MyContextProcessor</span><span class="p">()</span>
-    <span class="n">context</span> <span class="o">=</span> <span class="n">ContextType</span><span class="p">()</span>
-    <span class="n">observer</span> <span class="o">=</span> <span class="n">_ContextObserver</span><span class="p">()</span>
-
-    <span class="c1"># Execute processor</span>
-    <span class="n">processor</span><span class="o">.</span><span class="n">operate_context</span><span class="p">(</span>
-        <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
-        <span class="n">context_observer</span><span class="o">=</span><span class="n">observer</span><span class="p">,</span>
-        <span class="n">input_value</span><span class="o">=</span><span class="mf">5.0</span>
-    <span class="p">)</span>
-
-    <span class="c1"># ⚠️ Important: Check observer&#39;s context, not original context</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">observer</span><span class="o">.</span><span class="n">observer_context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mf">10.0</span>
-</pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p><strong>Do not instantiate</strong> <code class="docutils literal notranslate"><span class="pre">_ContextObserver</span></code> in production code or regular tests.
-Context observers are <strong>framework internals</strong> managed by pipeline nodes.</p>
-<p>Direct observer usage should be limited to:</p>
-<ul class="simple">
-<li><p>Extension development and testing</p></li>
-<li><p>Framework debugging</p></li>
-<li><p>Advanced integration scenarios</p></li>
-</ul>
-<p>For most testing needs, use pipeline-based tests which provide better integration
-coverage and follow the intended usage patterns.</p>
-</div>
-</section>
-<section id="module-semantiva.context_processors.context_processors">
-<span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.context_processors.context_processors" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.context_processors.</span></span><span class="sig-name descname"><span class="pre">ContextProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor.context_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor.context_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor.context_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor.get_created_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor.get_created_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_processing_parameter_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor.get_processing_parameter_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor.get_required_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_required_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor.get_required_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor.get_required_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor.get_suppressed_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_suppressed_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor.get_suppressed_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor.get_suppressed_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor.input_data_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor.input_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor.input_data_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_processors.ContextProcessor.operate_context">
-<span class="sig-name descname"><span class="pre">operate_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_observer</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_processors.html#ContextProcessor.operate_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_processors.ContextProcessor.operate_context" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class" id="module-semantiva.context_processors.context_types">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.context_types.</span></span><span class="sig-name descname"><span class="pre">ContextCollectionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.append">
-<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.append" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.clear" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.delete_item_value">
-<span class="sig-name descname"><span class="pre">delete_item_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.delete_item_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.delete_item_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.delete_value">
-<span class="sig-name descname"><span class="pre">delete_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.delete_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.delete_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.get_item">
-<span class="sig-name descname"><span class="pre">get_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.get_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.get_item" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.get_slice_context">
-<span class="sig-name descname"><span class="pre">get_slice_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.get_slice_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.get_slice_context" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.get_value">
-<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.get_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.items" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.set_item_value">
-<span class="sig-name descname"><span class="pre">set_item_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.set_item_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.set_item_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.set_value">
-<span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.set_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.set_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.to_dict" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextCollectionType.values">
-<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextCollectionType.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextCollectionType.values" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.context_types.</span></span><span class="sig-name descname"><span class="pre">ContextType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.clear" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.delete_value">
-<span class="sig-name descname"><span class="pre">delete_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.delete_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.delete_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.get_value">
-<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.get_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.items" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.set_value">
-<span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.set_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.set_value" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.to_dict" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.context_processors.context_types.ContextType.values">
-<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/context_types.html#ContextType.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.context_types.ContextType.values" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function" id="module-semantiva.context_processors.factory">
-<dt class="sig sig-object py" id="semantiva.context_processors.factory.create_delete_operation">
-<span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.factory.</span></span><span class="sig-name descname"><span class="pre">create_delete_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/factory.html#create_delete_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.factory.create_delete_operation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.context_processors.factory.create_rename_operation">
-<span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.factory.</span></span><span class="sig-name descname"><span class="pre">create_rename_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/factory.html#create_rename_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.factory.create_rename_operation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.context_processors.factory.create_template_operation">
-<span class="sig-prename descclassname"><span class="pre">semantiva.context_processors.factory.</span></span><span class="sig-name descname"><span class="pre">create_template_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/context_processors/factory.html#create_template_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.context_processors.factory.create_template_operation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<p>For deeper architectural details, see <a class="reference internal" href="architecture/context_processing.html"><span class="doc">Context Processing Architecture</span></a>.</p>
 </section>
 </section>
 
@@ -675,23 +376,23 @@ coverage and follow the intended usage patterns.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="contracts.html">
+          <a class="next-page" href="data_io.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Semantiva Contracts</div>
+                <div class="title">Data IO (Sources &amp; Sinks)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="data_io.html">
+          <a class="prev-page" href="collection_modifiers.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Data IO (Sources &amp; Sinks)</div>
+                <div class="title">Collection-based modifiers</div>
                 
               </div>
             </a>
@@ -726,67 +427,10 @@ coverage and follow the intended usage patterns.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Context Processors</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#context-observer-pattern">Context Observer Pattern</a><ul>
-<li><a class="reference internal" href="#observer-lifecycle">Observer Lifecycle</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#parameter-validation-examples">Parameter Validation Examples</a><ul>
-<li><a class="reference internal" href="#valid-parameter-patterns">Valid Parameter Patterns</a></li>
-<li><a class="reference internal" href="#invalid-parameter-patterns-rejected">Invalid Parameter Patterns (Rejected)</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#where-do-required-keys-come-from">Where do required keys come from?</a></li>
-<li><a class="reference internal" href="#validation-safe-mutation">Validation &amp; Safe Mutation</a><ul>
-<li><a class="reference internal" href="#typical-errors">Typical errors</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#factories-rename-delete">Factories: rename/delete</a></li>
-<li><a class="reference internal" href="#factories-template">Factories: template</a></li>
-<li><a class="reference internal" href="#testing-context-processors">Testing Context Processors</a></li>
-<li><a class="reference internal" href="#module-semantiva.context_processors.context_processors">Autodoc</a><ul>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor"><code class="docutils literal notranslate"><span class="pre">ContextProcessor</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor.context_keys"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.context_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor.get_created_keys"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_created_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor.get_processing_parameter_names"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_processing_parameter_names()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor.get_required_keys"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_required_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor.get_suppressed_keys"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.get_suppressed_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor.input_data_type"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.input_data_type()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_processors.ContextProcessor.operate_context"><code class="docutils literal notranslate"><span class="pre">ContextProcessor.operate_context()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.append"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.append()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.clear"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.clear()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.delete_item_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.delete_item_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.delete_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.delete_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.get_item"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.get_item()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.get_slice_context"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.get_slice_context()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.get_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.get_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.items"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.items()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.keys"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.set_item_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.set_item_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.set_value"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.set_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.to_dict"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.to_dict()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextCollectionType.values"><code class="docutils literal notranslate"><span class="pre">ContextCollectionType.values()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType"><code class="docutils literal notranslate"><span class="pre">ContextType</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.clear"><code class="docutils literal notranslate"><span class="pre">ContextType.clear()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.delete_value"><code class="docutils literal notranslate"><span class="pre">ContextType.delete_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.get_value"><code class="docutils literal notranslate"><span class="pre">ContextType.get_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.items"><code class="docutils literal notranslate"><span class="pre">ContextType.items()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.keys"><code class="docutils literal notranslate"><span class="pre">ContextType.keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.set_value"><code class="docutils literal notranslate"><span class="pre">ContextType.set_value()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.to_dict"><code class="docutils literal notranslate"><span class="pre">ContextType.to_dict()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.context_types.ContextType.values"><code class="docutils literal notranslate"><span class="pre">ContextType.values()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.context_processors.factory.create_delete_operation"><code class="docutils literal notranslate"><span class="pre">create_delete_operation()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.factory.create_rename_operation"><code class="docutils literal notranslate"><span class="pre">create_rename_operation()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.context_processors.factory.create_template_operation"><code class="docutils literal notranslate"><span class="pre">create_template_operation()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#high-level-model">High-level model</a></li>
+<li><a class="reference internal" href="#minimal-example">Minimal example</a></li>
+<li><a class="reference internal" href="#yaml-configuration">YAML configuration</a></li>
+<li><a class="reference internal" href="#design-guidelines">Design guidelines</a></li>
 </ul>
 </li>
 </ul>

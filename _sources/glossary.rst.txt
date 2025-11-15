@@ -3,7 +3,7 @@
 Glossary
 ========
 
-This glossary defines Semantiva’s public concepts as used in the graph model,
+This glossary defines Semantiva's public concepts as used in the graph model,
 runtime execution, and the SER (Semantic Execution Record).
 
 Core Runtime Objects

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Canonical Graph Builder" href="graph.html"><link rel="prev" title="Run-Space Lifecycle" href="run_space_lifecycle.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Run-Space Emission (Runtime)" href="run_space_emission.html"><link rel="prev" title="Inspection Payload &amp; CLI" href="inspection.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Introspection &amp; Validation - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -273,540 +284,94 @@
         <article role="main" id="furo-main-content">
           <section id="introspection-validation">
 <h1>Introspection &amp; Validation<a class="headerlink" href="#introspection-validation" title="Link to this heading">¶</a></h1>
+<p>Semantiva provides an <strong>inspection pipeline</strong> that lets you check pipelines
+<em>before</em> execution and export structured inspection payloads for tooling.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>There are two main entry points:</p>
 <ul class="simple">
-<li><p>Build inspections, summarize, export JSON, validate.</p></li>
+<li><p><strong class="command">semantiva inspect</strong> - CLI inspection with optional extended report.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">semantiva.inspection</span></code> module - Python APIs for programmatic access.</p></li>
 </ul>
-<p>You can perform pre-execution checks from the terminal; see <a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a> (subcommand <strong>inspect</strong>).
-* <strong>Missing parameter</strong> - a required parameter is absent in the YAML.
-* <strong>Unknown processor</strong> - the specified processor class cannot be resolved/imported.
-* <strong>Topology/ports mismatch</strong> - the declared ports do not match available outputs/inputs.
-* <strong>Type incompatibility</strong> - an upstream node’s output type is incompatible with the next node’s expected input type (checked using equal-or-subclass rule).
-* <strong>Probe missing ``context_key``</strong> - a probe node omits <code class="docutils literal notranslate"><span class="pre">context_key</span></code> so the result would never reach context; inspection rejects the configuration.</p>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.inspection.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">json_report</span>
-<span class="c1"># Assume p is a Pipeline instance</span>
-<span class="n">report</span> <span class="o">=</span> <span class="n">json_report</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="cli-inspection">
-<h2>CLI Inspection<a class="headerlink" href="#cli-inspection" title="Link to this heading">¶</a></h2>
-<p>Use the CLI to parse and validate a pipeline before executing it.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic inspection: parse YAML, build canonical :term:`GraphV1`, run basic checks</span>
-semantiva<span class="w"> </span>inspect<span class="w"> </span>my_pipeline.yaml
-
-<span class="c1"># Extended inspection: include node identities, ports, inferred types (where available)</span>
-semantiva<span class="w"> </span>inspect<span class="w"> </span>my_pipeline.yaml<span class="w"> </span>--extended
-</pre></div>
-</div>
-<section id="what-to-expect">
-<h3>What to expect<a class="headerlink" href="#what-to-expect" title="Link to this heading">¶</a></h3>
+<p>The goals are to:</p>
 <ul class="simple">
-<li><p>A summary of the pipeline (number of nodes, topological order).</p></li>
-<li><p>The canonical <a class="reference internal" href="glossary.html#term-PipelineId"><span class="xref std std-term">PipelineId</span></a> (deterministic across formatting changes).</p></li>
-<li><p>For <code class="docutils literal notranslate"><span class="pre">--extended</span></code>:
-* Each node’s processor (FQCN or registered name).
-* The positional <a class="reference internal" href="glossary.html#term-node_uuid"><span class="xref std std-term">node_uuid</span></a> from <a class="reference internal" href="glossary.html#term-GraphV1"><span class="xref std std-term">GraphV1</span></a>.
-* Declared <strong>ports</strong> (if any) and parameter snapshot.
-* Any inferred or declared <strong>input/output</strong> types the validator can derive.</p></li>
-</ul>
-<p>If a configuration problem is found, inspection exits non-zero and prints a structured error (see <strong>Common Validation Errors</strong> below).</p>
-</section>
-</section>
-<section id="python-apis-for-introspection">
-<h2>Python APIs for Introspection<a class="headerlink" href="#python-apis-for-introspection" title="Link to this heading">¶</a></h2>
-<p>For programmatic use, generate a JSON summary from a <a class="reference internal" href="pipeline.html#semantiva.pipeline.pipeline.Pipeline" title="semantiva.pipeline.pipeline.Pipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.inspection.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">json_report</span>
-<span class="c1"># assume p is a Pipeline instance (built from YAML or programmatically)</span>
-<span class="n">summary</span> <span class="o">=</span> <span class="n">json_report</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>   <span class="c1"># -&gt; python dict or JSON-serializable structure</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Typical fields present in the JSON summary:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_id</span></code> - the deterministic <a class="reference internal" href="glossary.html#term-PipelineId"><span class="xref std std-term">PipelineId</span></a> (see <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nodes</span></code> - list of nodes with:
-* <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code> - positional identity from <a class="reference internal" href="glossary.html#term-GraphV1"><span class="xref std std-term">GraphV1</span></a>
-* <code class="docutils literal notranslate"><span class="pre">processor</span></code> - fully qualified class name
-* <code class="docutils literal notranslate"><span class="pre">parameters</span></code> - normalized parameter map
-* <code class="docutils literal notranslate"><span class="pre">ports</span></code> - declared input/output ports (if present)
-* <code class="docutils literal notranslate"><span class="pre">derived_summary</span></code> - concise preprocessor summary (when applicable)
-* <code class="docutils literal notranslate"><span class="pre">preprocessor_metadata</span></code> - full derive configuration (when applicable)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">issues</span></code> - list of warnings/errors detected by the validator</p></li>
-</ul>
-<section id="preprocessor-metadata-in-inspection">
-<h3>Preprocessor Metadata in Inspection<a class="headerlink" href="#preprocessor-metadata-in-inspection" title="Link to this heading">¶</a></h3>
-<p>For nodes using preprocessors like <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>, the inspection
-builder (<a class="reference internal" href="#module-semantiva.inspection.builder" title="semantiva.inspection.builder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">semantiva.inspection.builder</span></code></a>) surfaces additional metadata
-discovered via component <code class="docutils literal notranslate"><span class="pre">get_metadata()</span></code>:</p>
-<dl>
-<dt><strong>derived_summary</strong></dt><dd><p>A concise human-readable string indicating the preprocessor type and key
-configuration, such as <code class="docutils literal notranslate"><span class="pre">Derived:</span> <span class="pre">parameter_sweep(mode=combinatorial,</span> <span class="pre">vars=['t'])</span></code>.
-This attribute is attached to <a class="reference internal" href="#semantiva.inspection.builder.NodeInspection" title="semantiva.inspection.builder.NodeInspection"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeInspection</span></code></a>
-instances for quick identification in reports.</p>
-</dd>
-<dt><strong>preprocessor_metadata</strong></dt><dd><p>The complete normalized provenance structure containing:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">param_expressions</span></code> - parameter computation expressions with normalized signatures</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> - variable domain specifications (ranges, sequences, context sources)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code> - sweep mode (<code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> or <code class="docutils literal notranslate"><span class="pre">by_position</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code> - whether positional sweeps broadcast mismatched lengths</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">collection</span></code> - output collection type (for DataSource/DataOperation sweeps)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dependencies</span></code> - required external parameters and context keys</p></li>
-</ul>
-<p>This structure matches the <code class="docutils literal notranslate"><span class="pre">processor.preprocessing_provenance</span></code> field in SER
-trace records, enabling correlation between inspection and runtime execution.
-See <a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a> for detailed preprocessor semantics.</p>
-</dd>
-<dt><strong>preprocessor_view</strong></dt><dd><p>When the originating processor class exposes <code class="docutils literal notranslate"><span class="pre">_expr_src</span></code> (all sweep nodes do
-by default), inspection also records a <code class="docutils literal notranslate"><span class="pre">preprocessor_view</span></code> dictionary. This
-UI-only structure is never used for hashing or semantic identity—it’s stripped
-before computing semantic IDs—but it allows humans to see the raw expressions
-that generated each parameter.</p>
-</dd>
-</dl>
-<section id="sanitized-semantics-and-identity-contract">
-<h4>Sanitized Semantics and Identity Contract<a class="headerlink" href="#sanitized-semantics-and-identity-contract" title="Link to this heading">¶</a></h4>
-<p>The inspection builder stores the sanitized semantics in
-<code class="docutils literal notranslate"><span class="pre">NodeInspection.preprocessor_metadata</span></code>. This structure mirrors
-<code class="docutils literal notranslate"><span class="pre">processor.get_metadata()['preprocessor']</span></code> and is safe to use in hashing and
-identity checks because it deliberately excludes the raw <code class="docutils literal notranslate"><span class="pre">expr</span></code> source. It
-includes the preprocessor version, sweep mode, broadcast flag, variable domain
-signatures, parameter expression signatures, dependencies, and collection
-output (when applicable).</p>
-<p><code class="docutils literal notranslate"><span class="pre">compute_node_semantic_id</span></code> ignores <code class="docutils literal notranslate"><span class="pre">preprocessor_view</span></code> automatically, so
-adding previews to inspection cannot perturb semantic IDs. SER provenance still
-includes the sanitized metadata plus <code class="docutils literal notranslate"><span class="pre">expr</span></code> for audit trails. See
-<a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> for the full SER schema and provenance guarantees.</p>
-</section>
-<section id="cli-inspection-output-examples">
-<h4>CLI Inspection Output Examples<a class="headerlink" href="#cli-inspection-output-examples" title="Link to this heading">¶</a></h4>
-<p>The CLI summary (<code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span></code>) prints a dedicated <code class="docutils literal notranslate"><span class="pre">Derived</span> <span class="pre">preprocessor</span></code>
-section for sweep nodes in both normal and <code class="docutils literal notranslate"><span class="pre">--extended</span></code> modes.</p>
-<p><strong>Normal inspection</strong> shows human-readable expressions and compact variable signatures:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Derived</span> <span class="n">preprocessor</span><span class="p">:</span>
-    <span class="n">summary</span><span class="p">:</span> <span class="n">Derived</span><span class="p">:</span> <span class="n">parameter_sweep</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">combinatorial</span><span class="p">,</span> <span class="nb">vars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">],</span> <span class="n">collection</span><span class="o">=</span><span class="n">semantiva</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">FloatDataCollection</span><span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">derive</span><span class="o">.</span><span class="n">parameter_sweep</span>
-    <span class="n">version</span><span class="p">:</span> <span class="mi">1</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="n">combinatorial</span>
-    <span class="n">broadcast</span><span class="p">:</span> <span class="n">false</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">semantiva</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">FloatDataCollection</span>
-    <span class="n">variables</span><span class="p">:</span>
-        <span class="n">t</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="n">lo</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">linear</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">true</span><span class="p">)</span>
-    <span class="n">parameters</span><span class="p">:</span>
-        <span class="n">value</span><span class="p">:</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">t</span>
-</pre></div>
-</div>
-<p><strong>Extended inspection</strong> preserves the same structure but expands the signatures and
-shows both the raw expressions and AST signatures for each parameter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">Derived</span> <span class="n">preprocessor</span><span class="p">:</span>
-    <span class="n">summary</span><span class="p">:</span> <span class="n">Derived</span><span class="p">:</span> <span class="n">parameter_sweep</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">combinatorial</span><span class="p">,</span> <span class="nb">vars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">],</span> <span class="n">collection</span><span class="o">=</span><span class="n">semantiva</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">FloatDataCollection</span><span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">derive</span><span class="o">.</span><span class="n">parameter_sweep</span>
-    <span class="n">version</span><span class="p">:</span> <span class="mi">1</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="n">combinatorial</span>
-    <span class="n">broadcast</span><span class="p">:</span> <span class="n">false</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">semantiva</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">FloatDataCollection</span>
-    <span class="n">variables</span><span class="p">:</span>
-        <span class="n">t</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="n">lo</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">linear</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">true</span><span class="p">)</span>
-    <span class="n">parameters</span><span class="p">:</span>
-        <span class="n">value</span><span class="p">:</span>
-            <span class="n">sig</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ast&quot;</span><span class="p">:</span> <span class="s2">&quot;BinOp(left=Constant(value=2.0), op=Mult(), right=Name(id=&#39;t&#39;, ctx=Load()))&quot;</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;ExpressionSigV1&quot;</span><span class="p">}</span>
-            <span class="n">expr</span><span class="p">:</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">t</span>
-    <span class="n">dependencies</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;required_external_parameters&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;context_keys&#39;</span><span class="p">:</span> <span class="p">[]}</span>
-</pre></div>
-</div>
-</section>
-<section id="json-report-structure">
-<h4>JSON Report Structure<a class="headerlink" href="#json-report-structure" title="Link to this heading">¶</a></h4>
-<p>A sweep node inspection in the JSON report includes:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;processor&quot;</span><span class="p">:</span> <span class="s2">&quot;FloatMultiplyOperationParametricSweep&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;derived_summary&quot;</span><span class="p">:</span> <span class="s2">&quot;Derived: parameter_sweep(mode=by_position, vars=[&#39;factor&#39;])&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;preprocessor_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;derive.parameter_sweep&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;element_ref&quot;</span><span class="p">:</span> <span class="s2">&quot;semantiva.examples.FloatMultiplyOperation&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;param_expressions&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sig&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;ExpressionSigV1&quot;</span><span class="p">,</span> <span class="s2">&quot;ast&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">}}</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;range&quot;</span><span class="p">,</span> <span class="s2">&quot;lo&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;hi&quot;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span> <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="o">...</span><span class="p">}</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;by_position&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;broadcast&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
-    <span class="s2">&quot;collection&quot;</span><span class="p">:</span> <span class="s2">&quot;semantiva.examples.FloatDataCollection&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;required_external_parameters&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;context_keys&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-  <span class="p">},</span>
-  <span class="s2">&quot;preprocessor_view&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;param_expressions&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sig&quot;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">},</span> <span class="s2">&quot;expr&quot;</span><span class="p">:</span> <span class="s2">&quot;factor&quot;</span><span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>These attributes maintain backward compatibility—existing consumers that don’t
-use preprocessor metadata continue working unchanged, while new tooling can
-leverage the richer semantics for validation, visualization, or analysis.</p>
-</section>
-</section>
-</section>
-<section id="json-outline-example">
-<h2>JSON Outline Example<a class="headerlink" href="#json-outline-example" title="Link to this heading">¶</a></h2>
-<p>Below is a truncated outline of the JSON structure produced by
-<a class="reference internal" href="#semantiva.inspection.reporter.json_report" title="semantiva.inspection.reporter.json_report"><code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.reporter.json_report()</span></code></a>. Field names shown here are
-stable; values are illustrative.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;pipeline_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plid-033c3704...300e&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;nodes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;node_uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2bd52eb9-9556-5663-b633-b69c9418f3ab&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;processor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatMockDataSource&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">      </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;node_uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eb3e87c0-97b7-5097-8214-b53b4ba0fd6e&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;processor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FloatMultiplyOperation&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;issues&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><em>Note:</em> If you need to reference these identities elsewhere (e.g., in trace logs),
-see <a class="reference internal" href="trace_graph_alignment.html"><span class="doc">Trace ↔ Graph Alignment</span></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">load_pipeline_from_yaml</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.inspection.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">json_report</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;tests/hello_pipeline.yaml&quot;</span><span class="p">))</span>
-<span class="n">report</span> <span class="o">=</span> <span class="n">json_report</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-<span class="k">assert</span> <span class="s2">&quot;pipeline_id&quot;</span> <span class="ow">in</span> <span class="n">report</span> <span class="ow">and</span> <span class="s2">&quot;nodes&quot;</span> <span class="ow">in</span> <span class="n">report</span>
-</pre></div>
-</div>
-</section>
-<section id="linking-reports-to-graphv1-identities">
-<h2>Linking Reports to GraphV1 Identities<a class="headerlink" href="#linking-reports-to-graphv1-identities" title="Link to this heading">¶</a></h2>
-<p>Inspection always works over the canonical <a class="reference internal" href="glossary.html#term-GraphV1"><span class="xref std std-term">GraphV1</span></a> representation.
-That means the <a class="reference internal" href="glossary.html#term-PipelineId"><span class="xref std std-term">PipelineId</span></a> and every node’s <code class="docutils literal notranslate"><span class="pre">node_uuid</span></code> shown in
-inspection output match the values in:</p>
-<ul class="simple">
-<li><p>the canonical spec (see <a class="reference internal" href="graph.html"><span class="doc">Canonical Graph Builder</span></a>), and</p></li>
-<li><p>runtime trace records (see <a class="reference internal" href="trace_graph_alignment.html"><span class="doc">Trace ↔ Graph Alignment</span></a>).</p></li>
-</ul>
-<p>This identity contract lets you compare results across machines, builds, and formats.</p>
-</section>
-<section id="type-compatibility-rule">
-<h2>Type Compatibility Rule<a class="headerlink" href="#type-compatibility-rule" title="Link to this heading">¶</a></h2>
-<p>Semantiva uses an <strong>equal-or-subclass</strong> compatibility rule for data flow validation,
-matching runtime execution behavior.</p>
-<p><strong>Compatible Types</strong>:</p>
-<ul class="simple">
-<li><p>Output type <strong>equals</strong> input type (exact match)</p></li>
-<li><p>Output type is a <strong>subclass</strong> of input type (inheritance)</p></li>
-</ul>
-<p><strong>Implementation</strong>: The validator’s <code class="docutils literal notranslate"><span class="pre">_is_compatible()</span></code> helper uses:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compatible</span> <span class="o">=</span> <span class="p">(</span><span class="n">prev_out_type</span> <span class="o">==</span> <span class="n">next_in_type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">prev_out_type</span><span class="p">,</span> <span class="n">next_in_type</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This matches the runtime gate in <code class="docutils literal notranslate"><span class="pre">_DataNode._process</span></code> which uses <code class="docutils literal notranslate"><span class="pre">issubclass()</span></code>,
-ensuring inspection and runtime have identical type acceptance rules.</p>
-<p><strong>Examples</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Equal types - Compatible ✓</span>
-<span class="n">SklearnModel</span> <span class="o">-&gt;</span> <span class="n">SklearnModel</span>
-
-<span class="c1"># Subclass relationship - Compatible ✓</span>
-<span class="n">SklearnModel</span> <span class="o">-&gt;</span> <span class="n">BaseDataType</span>  <span class="c1"># SklearnModel is subclass of BaseDataType</span>
-<span class="n">TabularXY</span> <span class="o">-&gt;</span> <span class="n">BaseDataType</span>     <span class="c1"># TabularXY is subclass of BaseDataType</span>
-
-<span class="c1"># No relationship - Incompatible ✗</span>
-<span class="n">SklearnModel</span> <span class="o">-&gt;</span> <span class="n">NoDataType</span>    <span class="c1"># SklearnModel not subclass of NoDataType</span>
-<span class="n">NoDataType</span> <span class="o">-&gt;</span> <span class="n">SklearnModel</span>    <span class="c1"># NoDataType not subclass of SklearnModel</span>
-</pre></div>
-</div>
-<p><strong>Common Use Case</strong>: Utility components like <code class="docutils literal notranslate"><span class="pre">DataDump</span></code> and <code class="docutils literal notranslate"><span class="pre">CopyDataProbe</span></code>
-accept <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code> as input, making them compatible with any specific data
-type in the pipeline (since all data types inherit from <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code>).
-See <a class="reference internal" href="utility_processors.html"><span class="doc">Utility Components</span></a> for details on these components.</p>
-<p><strong>Rationale</strong>: This rule eliminates false negatives during inspection while
-maintaining type safety. If runtime can accept a data type, inspection should
-accept it too.</p>
-</section>
-<section id="common-validation-errors">
-<h2>Common Validation Errors<a class="headerlink" href="#common-validation-errors" title="Link to this heading">¶</a></h2>
-<p>Here are representative issues the validator can flag:</p>
-<ul class="simple">
-<li><p><strong>Missing parameter</strong> - a required parameter is absent in the YAML.</p></li>
-<li><p><strong>Unknown processor</strong> - the specified processor class cannot be resolved/imported.</p></li>
-<li><p><strong>Topology/ports mismatch</strong> - the declared ports do not match available outputs/inputs.</p></li>
-<li><p><strong>Type incompatibility</strong> - an upstream node’s output type is incompatible with the next node’s expected input type.</p></li>
-<li><p><strong>Probe missing ``context_key``</strong> - a probe node omits <code class="docutils literal notranslate"><span class="pre">context_key</span></code> so the
-result would never reach context; inspection rejects the configuration.</p></li>
-</ul>
-<p>Example output (truncated):</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ERROR: PipelineConfigurationError
-details:
-  node_index: 2
- node_uuid: &quot;eb3e87c0-97b7-5097-8214-b53b4ba0fd6e&quot;
- processor: &quot;TransformData&quot;
- reason: &quot;Incompatible types: expected ImageType, received TextType from previous node&quot;
- hint: &quot;Check the output of node 1 or insert a converter operation.&quot;
-</pre></div>
-</div>
-<p>Missing <code class="docutils literal notranslate"><span class="pre">context_key</span></code> example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PipelineConfigurationError</span><span class="p">:</span> <span class="n">Node</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Probe</span> <span class="n">nodes</span> <span class="n">must</span> <span class="n">declare</span> <span class="n">context_key</span><span class="p">:</span>
-<span class="n">missing</span> <span class="k">for</span> <span class="n">node</span> <span class="mi">2</span> <span class="p">(</span><span class="n">my</span><span class="o">.</span><span class="n">probes</span><span class="o">.</span><span class="n">DriftProbe</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="unknown-unused-parameters">
-<h2>Unknown / Unused Parameters<a class="headerlink" href="#unknown-unused-parameters" title="Link to this heading">¶</a></h2>
-<p>Semantiva validates node configuration keys against the processor signature.
-Parameters present in YAML <code class="docutils literal notranslate"><span class="pre">parameters</span></code> that are not accepted by the processor
-are reported during inspection under <code class="docutils literal notranslate"><span class="pre">invalid_parameters</span></code>:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>invalid_parameters:
-  - name: facotr
-    reason: unknown_parameter
-</pre></div>
-</div>
-<p>The GUI and CLI can highlight these entries. When using <code class="docutils literal notranslate"><span class="pre">inspect</span> <span class="pre">--strict</span></code>,
-the command exits non-zero if any node contains invalid parameters. During
-execution, invalid configuration causes a validation error before running.</p>
-</section>
-<section id="tips">
-<h2>Tips<a class="headerlink" href="#tips" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">--extended</span></code> to include identities and port/type summaries for faster debugging.</p></li>
-<li><p>If resolving classes from your own packages, ensure they are importable (installed in the environment).</p></li>
-<li><p>Increase verbosity with <code class="docutils literal notranslate"><span class="pre">-v</span></code> to see more details during inspection (see <a class="reference internal" href="logger.html"><span class="doc">Logger</span></a>).</p></li>
+<li><p>Catch configuration errors early.</p></li>
+<li><p>Compute and expose pipeline identities.</p></li>
+<li><p>Summarise required context keys.</p></li>
+<li><p>Provide a stable JSON payload for GUI and other tools.</p></li>
 </ul>
 </section>
-<section id="component-documentation-in-introspection">
-<h2>Component Documentation in Introspection<a class="headerlink" href="#component-documentation-in-introspection" title="Link to this heading">¶</a></h2>
-<p>Semantiva components (subclasses of <code class="xref py py-class docutils literal notranslate"><span class="pre">_SemantivaComponent</span></code>)
-automatically include their class docstrings in introspection metadata. Docstrings are extracted using
-<code class="docutils literal notranslate"><span class="pre">inspect.getdoc()</span></code> and appear in:</p>
+<section id="cli-usage">
+<h2>CLI usage<a class="headerlink" href="#cli-usage" title="Link to this heading">¶</a></h2>
+<p>Basic inspection:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>pipeline.yaml
+</pre></div>
+</div>
+<p>This will:</p>
 <ul class="simple">
-<li><p><strong>Component metadata</strong> - accessible via <code class="docutils literal notranslate"><span class="pre">get_metadata()[&quot;docstring&quot;]</span></code></p></li>
-<li><p><strong>Semantic identity</strong> - formatted in <code class="docutils literal notranslate"><span class="pre">semantic_id()</span></code> output for debugging and LLM queries</p></li>
-<li><p><strong>Pipeline inspection</strong> - included in both summary and extended reports</p></li>
-<li><p><strong>Tracing and orchestration</strong> - used for channel identification in transport systems</p></li>
+<li><p>Load extensions and the pipeline configuration.</p></li>
+<li><p>Build a canonical inspection model.</p></li>
+<li><p>Print a summary of identities and required context keys.</p></li>
+<li><p>Exit with a non-zero status if validation fails and <code class="docutils literal notranslate"><span class="pre">--strict</span></code> is set.</p></li>
 </ul>
-<p><strong>Best Practice</strong>: Keep component docstrings lean and concise (one-liner preferred) since they become
-part of the semantic identity used throughout the pipeline introspection system. Detailed documentation
-should be placed in dedicated RST files.</p>
-</section>
-<section id="validation-phases">
-<span id="spec-phase-vs-runtime-vs-execution"></span><h2>Validation Phases<a class="headerlink" href="#validation-phases" title="Link to this heading">¶</a></h2>
-<p>Semantiva applies checks at three moments:</p>
+<p>Extended inspection:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>pipeline.yaml<span class="w"> </span>--extended
+</pre></div>
+</div>
+<p>‘The extended report includes:</p>
 <ul class="simple">
-<li><p><strong>Spec-phase (pre-run)</strong> - when parsing YAML and building <a class="reference internal" href="glossary.html#term-GraphV1"><span class="xref std std-term">GraphV1</span></a>:
-* missing parameters, unknown processors, invalid ports/topology.
-* surfaced via <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span></code> and during pipeline load.</p></li>
-<li><p><strong>Runtime (initialization)</strong> - after classes are resolved and nodes are realized:
-* parameter coercion/normalization errors, environment/import issues.
-* surfaced when constructing the <a class="reference internal" href="pipeline.html#semantiva.pipeline.pipeline.Pipeline" title="semantiva.pipeline.pipeline.Pipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>.</p></li>
-<li><p><strong>Execution (process)</strong> - during node operation on a <a class="reference internal" href="pipeline.html#semantiva.pipeline.payload.Payload" title="semantiva.pipeline.payload.Payload"><code class="xref py py-class docutils literal notranslate"><span class="pre">Payload</span></code></a>:
-* actual input/output type contracts, context key requirements, invariant checks.
-* surfaced with node identity (<a class="reference internal" href="glossary.html#term-node_uuid"><span class="xref std std-term">node_uuid</span></a>) to support precise debugging and tracing.</p></li>
+<li><p>Per-node details (processor reference, parameters).</p></li>
+<li><p>Sweep parameters and expansions.</p></li>
+<li><p>Context-probe information.</p></li>
+<li><p>Links between node identities and trace identities.</p></li>
 </ul>
-<section id="troubleshooting-checklist">
-<h3>Troubleshooting Checklist<a class="headerlink" href="#troubleshooting-checklist" title="Link to this heading">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--strict</span></code> to enforce that validation errors cause a non-zero exit code.</p>
+</section>
+<section id="what-is-validated">
+<h2>What is validated?<a class="headerlink" href="#what-is-validated" title="Link to this heading">¶</a></h2>
+<p>Validation checks (non-exhaustive):</p>
 <ul class="simple">
-<li><p>Re-run with <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">inspect</span> <span class="pre">--extended</span></code> to confirm identities and topology.</p></li>
-<li><p>Increase log verbosity (<code class="docutils literal notranslate"><span class="pre">-v</span></code>/<code class="docutils literal notranslate"><span class="pre">-vv</span></code>) and capture the first error.</p></li>
-<li><p>Check <a class="reference internal" href="exceptions.html"><span class="doc">Exceptions</span></a> for common error classes and meanings.</p></li>
-<li><p>If the failure mentions a custom processor, ensure your package is installed and importable.</p></li>
+<li><p><strong>Missing parameters</strong> - required parameters absent from YAML.</p></li>
+<li><p><strong>Unknown processors</strong> - processor class cannot be resolved/imported.</p></li>
+<li><p><strong>Topology/ports mismatch</strong> - declared ports do not match available
+inputs/outputs.</p></li>
+<li><p><strong>Type compatibility</strong> - output data type is not equal or subclass of the
+downstream input type.</p></li>
+<li><p><strong>Context probes without ``context_key``</strong> - probes that would never update
+context.</p></li>
+<li><p><strong>Unknown / unused parameters</strong> - configuration keys that do not map to
+processor parameters.</p></li>
 </ul>
 </section>
+<section id="using-the-inspection-payload-from-python">
+<h2>Using the inspection payload from Python<a class="headerlink" href="#using-the-inspection-payload-from-python" title="Link to this heading">¶</a></h2>
+<p>The inspection module can emit a stable JSON-serialisable payload:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_pipeline_from_yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspection</span>
+
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;pipeline.yaml&quot;</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">inspection</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+
+<span class="c1"># Serialize or hand over to GUI tooling</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The payload contains:</p>
+<ul class="simple">
+<li><p>Global pipeline summary (node count, topological order).</p></li>
+<li><p>Identity section (semantic ID, config ID, run-space config ID if present).</p></li>
+<li><p>Per-node entries with ports, types and processor references.</p></li>
+<li><p>Context-related information such as required context keys.</p></li>
+</ul>
 </section>
-<section id="module-semantiva.inspection.builder">
-<span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.inspection.builder" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.inspection.builder.</span></span><span class="sig-name descname"><span class="pre">NodeInspection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processor_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppressed_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docstring</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invalid_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_configuration_valid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_external_parameters=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derived_summary=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessor_metadata=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessor_view=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/builder.html#NodeInspection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection" title="Link to this definition">¶</a></dt>
-<dd><dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.component_type">
-<span class="sig-name descname"><span class="pre">component_type</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.component_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.config_params">
-<span class="sig-name descname"><span class="pre">config_params</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.config_params" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.context_params">
-<span class="sig-name descname"><span class="pre">context_params</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.context_params" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.created_keys">
-<span class="sig-name descname"><span class="pre">created_keys</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.created_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.default_params">
-<span class="sig-name descname"><span class="pre">default_params</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.default_params" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.derived_summary">
-<span class="sig-name descname"><span class="pre">derived_summary</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.derived_summary" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.docstring">
-<span class="sig-name descname"><span class="pre">docstring</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.docstring" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.errors">
-<span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.errors" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.index">
-<span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.index" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.input_type">
-<span class="sig-name descname"><span class="pre">input_type</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.input_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.invalid_parameters">
-<span class="sig-name descname"><span class="pre">invalid_parameters</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.invalid_parameters" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.is_configuration_valid">
-<span class="sig-name descname"><span class="pre">is_configuration_valid</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.is_configuration_valid" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.node_class">
-<span class="sig-name descname"><span class="pre">node_class</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.node_class" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.output_type">
-<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.output_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.preprocessor_metadata">
-<span class="sig-name descname"><span class="pre">preprocessor_metadata</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.preprocessor_metadata" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.preprocessor_view">
-<span class="sig-name descname"><span class="pre">preprocessor_view</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.preprocessor_view" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.processor_class">
-<span class="sig-name descname"><span class="pre">processor_class</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.processor_class" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.required_external_parameters">
-<span class="sig-name descname"><span class="pre">required_external_parameters</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.required_external_parameters" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.NodeInspection.suppressed_keys">
-<span class="sig-name descname"><span class="pre">suppressed_keys</span></span><a class="headerlink" href="#semantiva.inspection.builder.NodeInspection.suppressed_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.PipelineInspection">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.inspection.builder.</span></span><span class="sig-name descname"><span class="pre">PipelineInspection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_context_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/builder.html#PipelineInspection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.builder.PipelineInspection" title="Link to this definition">¶</a></dt>
-<dd><dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.PipelineInspection.errors">
-<span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#semantiva.inspection.builder.PipelineInspection.errors" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.PipelineInspection.key_origin">
-<span class="sig-name descname"><span class="pre">key_origin</span></span><a class="headerlink" href="#semantiva.inspection.builder.PipelineInspection.key_origin" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.PipelineInspection.nodes">
-<span class="sig-name descname"><span class="pre">nodes</span></span><a class="headerlink" href="#semantiva.inspection.builder.PipelineInspection.nodes" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.PipelineInspection.required_context_keys">
-<span class="sig-name descname"><span class="pre">required_context_keys</span></span><a class="headerlink" href="#semantiva.inspection.builder.PipelineInspection.required_context_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.build">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.builder.</span></span><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/builder.html#build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.builder.build" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.build_canonical_graph">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.builder.</span></span><span class="sig-name descname"><span class="pre">build_canonical_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/builder.html#build_canonical_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.builder.build_canonical_graph" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.build_pipeline_inspection">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.builder.</span></span><span class="sig-name descname"><span class="pre">build_pipeline_inspection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_configs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/builder.html#build_pipeline_inspection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.builder.build_pipeline_inspection" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.builder.collect_required_context_keys">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.builder.</span></span><span class="sig-name descname"><span class="pre">collect_required_context_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/builder.html#collect_required_context_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.builder.collect_required_context_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function" id="module-semantiva.inspection.reporter">
-<dt class="sig sig-object py" id="semantiva.inspection.reporter.as_json_dict">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.reporter.</span></span><span class="sig-name descname"><span class="pre">as_json_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/reporter.html#as_json_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.reporter.as_json_dict" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.reporter.extended_report">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.reporter.</span></span><span class="sig-name descname"><span class="pre">extended_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/reporter.html#extended_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.reporter.extended_report" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.reporter.json_report">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.reporter.</span></span><span class="sig-name descname"><span class="pre">json_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/reporter.html#json_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.reporter.json_report" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.reporter.parameter_resolutions">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.reporter.</span></span><span class="sig-name descname"><span class="pre">parameter_resolutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/reporter.html#parameter_resolutions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.reporter.parameter_resolutions" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.reporter.print_cli_inspection">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.reporter.</span></span><span class="sig-name descname"><span class="pre">print_cli_inspection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extended</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/reporter.html#print_cli_inspection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.reporter.print_cli_inspection" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="semantiva.inspection.reporter.summary_report">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.reporter.</span></span><span class="sig-name descname"><span class="pre">summary_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/reporter.html#summary_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.reporter.summary_report" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function" id="module-semantiva.inspection.validator">
-<dt class="sig sig-object py" id="semantiva.inspection.validator.validate_pipeline">
-<span class="sig-prename descclassname"><span class="pre">semantiva.inspection.validator.</span></span><span class="sig-name descname"><span class="pre">validate_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/inspection/validator.html#validate_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.inspection.validator.validate_pipeline" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<section id="where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a> - for more examples of the <code class="docutils literal notranslate"><span class="pre">inspect</span></code> subcommand.</p></li>
+<li><p><a class="reference internal" href="identity_cheatsheet.html"><span class="doc">Identity Cheatsheet</span></a> - for a detailed mapping of identities.</p></li>
+<li><p><a class="reference internal" href="trace_graph_alignment.html"><span class="doc">Trace ↔ Graph Alignment</span></a> - for how inspection identities map to the SER.</p></li>
+</ul>
 </section>
 </section>
 
@@ -815,23 +380,23 @@ should be placed in dedicated RST files.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="graph.html">
+          <a class="next-page" href="run_space_emission.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Canonical Graph Builder</div>
+                <div class="title">Run-Space Emission (Runtime)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="run_space_lifecycle.html">
+          <a class="prev-page" href="inspection.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Run-Space Lifecycle</div>
+                <div class="title">Inspection Payload &amp; CLI</div>
                 
               </div>
             </a>
@@ -866,74 +431,11 @@ should be placed in dedicated RST files.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Introspection &amp; Validation</a><ul>
-<li><a class="reference internal" href="#examples">Examples</a></li>
-<li><a class="reference internal" href="#cli-inspection">CLI Inspection</a><ul>
-<li><a class="reference internal" href="#what-to-expect">What to expect</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#python-apis-for-introspection">Python APIs for Introspection</a><ul>
-<li><a class="reference internal" href="#preprocessor-metadata-in-inspection">Preprocessor Metadata in Inspection</a><ul>
-<li><a class="reference internal" href="#sanitized-semantics-and-identity-contract">Sanitized Semantics and Identity Contract</a></li>
-<li><a class="reference internal" href="#cli-inspection-output-examples">CLI Inspection Output Examples</a></li>
-<li><a class="reference internal" href="#json-report-structure">JSON Report Structure</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#json-outline-example">JSON Outline Example</a></li>
-<li><a class="reference internal" href="#linking-reports-to-graphv1-identities">Linking Reports to GraphV1 Identities</a></li>
-<li><a class="reference internal" href="#type-compatibility-rule">Type Compatibility Rule</a></li>
-<li><a class="reference internal" href="#common-validation-errors">Common Validation Errors</a></li>
-<li><a class="reference internal" href="#unknown-unused-parameters">Unknown / Unused Parameters</a></li>
-<li><a class="reference internal" href="#tips">Tips</a></li>
-<li><a class="reference internal" href="#component-documentation-in-introspection">Component Documentation in Introspection</a></li>
-<li><a class="reference internal" href="#validation-phases">Validation Phases</a><ul>
-<li><a class="reference internal" href="#troubleshooting-checklist">Troubleshooting Checklist</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-semantiva.inspection.builder">Autodoc</a><ul>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection"><code class="docutils literal notranslate"><span class="pre">NodeInspection</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.component_type"><code class="docutils literal notranslate"><span class="pre">NodeInspection.component_type</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.config_params"><code class="docutils literal notranslate"><span class="pre">NodeInspection.config_params</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.context_params"><code class="docutils literal notranslate"><span class="pre">NodeInspection.context_params</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.created_keys"><code class="docutils literal notranslate"><span class="pre">NodeInspection.created_keys</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.default_params"><code class="docutils literal notranslate"><span class="pre">NodeInspection.default_params</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.derived_summary"><code class="docutils literal notranslate"><span class="pre">NodeInspection.derived_summary</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.docstring"><code class="docutils literal notranslate"><span class="pre">NodeInspection.docstring</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.errors"><code class="docutils literal notranslate"><span class="pre">NodeInspection.errors</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.index"><code class="docutils literal notranslate"><span class="pre">NodeInspection.index</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.input_type"><code class="docutils literal notranslate"><span class="pre">NodeInspection.input_type</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.invalid_parameters"><code class="docutils literal notranslate"><span class="pre">NodeInspection.invalid_parameters</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.is_configuration_valid"><code class="docutils literal notranslate"><span class="pre">NodeInspection.is_configuration_valid</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.node_class"><code class="docutils literal notranslate"><span class="pre">NodeInspection.node_class</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.output_type"><code class="docutils literal notranslate"><span class="pre">NodeInspection.output_type</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.preprocessor_metadata"><code class="docutils literal notranslate"><span class="pre">NodeInspection.preprocessor_metadata</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.preprocessor_view"><code class="docutils literal notranslate"><span class="pre">NodeInspection.preprocessor_view</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.processor_class"><code class="docutils literal notranslate"><span class="pre">NodeInspection.processor_class</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.required_external_parameters"><code class="docutils literal notranslate"><span class="pre">NodeInspection.required_external_parameters</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.NodeInspection.suppressed_keys"><code class="docutils literal notranslate"><span class="pre">NodeInspection.suppressed_keys</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.PipelineInspection"><code class="docutils literal notranslate"><span class="pre">PipelineInspection</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.inspection.builder.PipelineInspection.errors"><code class="docutils literal notranslate"><span class="pre">PipelineInspection.errors</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.PipelineInspection.key_origin"><code class="docutils literal notranslate"><span class="pre">PipelineInspection.key_origin</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.PipelineInspection.nodes"><code class="docutils literal notranslate"><span class="pre">PipelineInspection.nodes</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.PipelineInspection.required_context_keys"><code class="docutils literal notranslate"><span class="pre">PipelineInspection.required_context_keys</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.build"><code class="docutils literal notranslate"><span class="pre">build()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.build_canonical_graph"><code class="docutils literal notranslate"><span class="pre">build_canonical_graph()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.build_pipeline_inspection"><code class="docutils literal notranslate"><span class="pre">build_pipeline_inspection()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.builder.collect_required_context_keys"><code class="docutils literal notranslate"><span class="pre">collect_required_context_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.reporter.as_json_dict"><code class="docutils literal notranslate"><span class="pre">as_json_dict()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.reporter.extended_report"><code class="docutils literal notranslate"><span class="pre">extended_report()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.reporter.json_report"><code class="docutils literal notranslate"><span class="pre">json_report()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.reporter.parameter_resolutions"><code class="docutils literal notranslate"><span class="pre">parameter_resolutions()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.reporter.print_cli_inspection"><code class="docutils literal notranslate"><span class="pre">print_cli_inspection()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.reporter.summary_report"><code class="docutils literal notranslate"><span class="pre">summary_report()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.inspection.validator.validate_pipeline"><code class="docutils literal notranslate"><span class="pre">validate_pipeline()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#cli-usage">CLI usage</a></li>
+<li><a class="reference internal" href="#what-is-validated">What is validated?</a></li>
+<li><a class="reference internal" href="#using-the-inspection-payload-from-python">Using the inspection payload from Python</a></li>
+<li><a class="reference internal" href="#where-to-go-next">Where to go next</a></li>
 </ul>
 </li>
 </ul>

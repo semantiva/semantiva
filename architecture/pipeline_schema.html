@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Execution" href="../execution.html"><link rel="prev" title="Context Processing Architecture" href="context_processing.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Registry System" href="registry.html"><link rel="prev" title="Context Processing Architecture" href="context_processing.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Pipeline Configuration Schema - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../inspection.html">Inspection Payload &amp; CLI</a></li>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -273,135 +284,150 @@
         <article role="main" id="furo-main-content">
           <section id="pipeline-configuration-schema">
 <h1>Pipeline Configuration Schema<a class="headerlink" href="#pipeline-configuration-schema" title="Link to this heading">¶</a></h1>
-<p>Semantiva pipeline YAML supports declarative configuration of execution and tracing
-behaviour alongside the node graph. The following optional top-level sections
-extend the base <code class="docutils literal notranslate"><span class="pre">pipeline.nodes</span></code> definition:</p>
-<section id="node-keys-selected">
-<h2>Node Keys (selected)<a class="headerlink" href="#node-keys-selected" title="Link to this heading">¶</a></h2>
+<p>Semantiva pipeline YAML has a small set of <strong>top-level sections</strong> that work
+together:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">extensions</span></code> - which Python packages/extensions to load.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline</span></code> - the node graph and its configuration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_space</span></code> - optional description of multiple runs for a single pipeline.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trace</span></code> - trace driver configuration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">execution</span></code> - orchestration/executor configuration.</p></li>
+</ol>
+<p>This page describes the expected shape of each section with an emphasis on
+validation behaviour.</p>
+<section id="extensions">
+<h2>Extensions<a class="headerlink" href="#extensions" title="Link to this heading">¶</a></h2>
+<p>Extensions are imported before the pipeline graph is built so that their
+processors, data types, and trace drivers are registered.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;semantiva-imaging&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;my_package.my_semantiva_extension&quot;</span>
+</pre></div>
+</div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">processor</span></code> (required): FQCN or registered name of the processor class.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (optional): literal/resolver-backed call-args passed at runtime.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">derive</span></code> (optional): preprocessor boundary (mapping). Known tools include:</p>
+<li><p>Must be a list of importable module paths.</p></li>
+<li><p>The list is ordered; later extensions can register additional components or
+override names, depending on the registry implementation.</p></li>
+</ul>
+</section>
+<section id="pipeline">
+<h2>Pipeline<a class="headerlink" href="#pipeline" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">pipeline</span></code> block contains the node graph and optional pipeline-level
+configuration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MySource</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyOperation</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+<p>Each node entry is validated according to the processor contracts (see
+<a class="reference internal" href="../creating_components.html"><span class="doc">Creating Components (Authoring Guide)</span></a>). At minimum, a node declares a processor and,
+optionally, a parameters mapping.</p>
+</section>
+<section id="node-definition-schema">
+<h2>Node definition schema<a class="headerlink" href="#node-definition-schema" title="Link to this heading">¶</a></h2>
+<p>Common node keys include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">processor</span></code> (required): fully qualified class name or a registered short name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (optional): mapping of parameters to be resolved at runtime.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">derive</span></code> (optional): preprocessor boundary with tools such as
+<code class="docutils literal notranslate"><span class="pre">parameter_sweep</span></code> (see <a class="reference internal" href="../collection_modifiers.html"><span class="doc">Collection-based modifiers</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ports</span></code> (optional): explicit port wiring when the defaults are not sufficient.</p></li>
+</ul>
+<p>The loader enforces that <code class="docutils literal notranslate"><span class="pre">parameters</span></code> is a mapping when present, and that
+derived tools receive the correct shape.</p>
+</section>
+<section id="run-space-schema">
+<h2>Run-space schema<a class="headerlink" href="#run-space-schema" title="Link to this heading">¶</a></h2>
+<p>The optional <code class="docutils literal notranslate"><span class="pre">run_space</span></code> section describes <strong>families of runs</strong> using context
+combinations. A minimal example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">run_space</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">combine</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
+<span class="w">  </span><span class="nt">max_runs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">  </span><span class="nt">dry_run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.5</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">10.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">30.0</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">addend</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Top-level keys:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">combine</span></code>: expansion strategy (for example <code class="docutils literal notranslate"><span class="pre">by_position</span></code> or
+<code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_runs</span></code>: upper bound on expanded runs for safety.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dry_run</span></code>: when true, expand but do not execute.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blocks</span></code>: list of blocks with a <code class="docutils literal notranslate"><span class="pre">mode</span></code> and a <code class="docutils literal notranslate"><span class="pre">context</span></code> mapping.</p></li>
+</ul>
+<p>See <a class="reference internal" href="../run_space.html"><span class="doc">Run Space (v1): blocks that expand context</span></a> and <a class="reference internal" href="../tutorials/run_space_quickstart.html"><span class="doc">Run Space Quickstart (Local)</span></a> for details.</p>
+</section>
+<section id="trace-driver-configuration-trace">
+<h2>Trace driver configuration (<code class="docutils literal notranslate"><span class="pre">trace</span></code>)<a class="headerlink" href="#trace-driver-configuration-trace" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">trace</span></code> block configures how Semantic Execution Records (SER) are written:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">trace</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jsonl&quot;</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;traces/&quot;</span>
+<span class="w">  </span><span class="nt">detail</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hash&quot;</span>
+</pre></div>
+</div>
+<p>Fields:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">driver</span></code> (required): registered driver name, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;jsonl&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_path</span></code> (optional): directory or file path. For JSONL, a timestamped
+<code class="docutils literal notranslate"><span class="pre">*.ser.jsonl</span></code> file is created when a directory is given.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">detail</span></code> (optional): one of:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">parameter_sweep</span></code>: see <a class="reference internal" href="../sweeps.html"><span class="doc">Derive Parameter Sweep</span></a>. Keys:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (required): computed call-args (expressions; keys = callee args)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> (required): variable definitions</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: <code class="docutils literal notranslate"><span class="pre">combinatorial|by_position</span></code> (default: <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code>: boolean (default: <code class="docutils literal notranslate"><span class="pre">false</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">collection</span></code>: <strong>required</strong> for DataSource/DataOperation; <strong>forbidden</strong> for DataProbe</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code> (default): SHA-256 digests only.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repr</span></code>: also include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for input/output data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code>: with <code class="docutils literal notranslate"><span class="pre">repr</span></code>, also include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for pre/post context.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">all</span></code>: enable <code class="docutils literal notranslate"><span class="pre">hash</span></code> + <code class="docutils literal notranslate"><span class="pre">repr</span></code> + <code class="docutils literal notranslate"><span class="pre">context</span></code>.</p></li>
 </ul>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">options</span></code> (optional): additional driver keyword arguments (must be a mapping).</p></li>
 </ul>
-</li>
+<p>Validation rules:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">trace.options</span></code> must be a mapping when present.</p></li>
+<li><p>Singular <code class="docutils literal notranslate"><span class="pre">option</span></code> keys are invalid and will produce a clear error.</p></li>
 </ul>
-<p><strong>Canonical identity note:</strong> the canonical graph and node UUIDs are derived from
-the <strong>resulting processor class</strong> and its <strong>effective parameter map</strong>; the
-<code class="docutils literal notranslate"><span class="pre">derive</span></code> block content is not included in node UUID hashing (to avoid identity
-churn for equivalent derivations). Semantic changes introduced by preprocessors
-are captured separately via <code class="docutils literal notranslate"><span class="pre">pipeline_config_id</span></code> in the trace metadata, which
-hashes the tuple of <code class="docutils literal notranslate"><span class="pre">(node_uuid,</span> <span class="pre">semantic_id)</span></code> pairs computed at runtime.</p>
-<dl>
-<dt><code class="docutils literal notranslate"><span class="pre">execution</span></code></dt><dd><p>Resolve orchestrators, executors, and transports from the registry. When
-omitted, the local sequential orchestrator with the in-memory transport is
-used.</p>
-<p>Only the plural key <code class="docutils literal notranslate"><span class="pre">options</span></code> is accepted for additional execution options.
-Using <code class="docutils literal notranslate"><span class="pre">option</span></code> is invalid and will raise a configuration error.</p>
+<p>See <a class="reference internal" href="../trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a> and <a class="reference internal" href="../ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> for the runtime record format.</p>
+</section>
+<section id="execution-configuration-execution">
+<h2>Execution configuration (<code class="docutils literal notranslate"><span class="pre">execution</span></code>)<a class="headerlink" href="#execution-configuration-execution" title="Link to this heading">¶</a></h2>
+<p>The optional <code class="docutils literal notranslate"><span class="pre">execution</span></code> block configures how a pipeline is orchestrated and
+executed. When omitted, Semantiva uses the default single-machine configuration
+shown below, which is well suited for development and small-scale runs on a
+single host:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">execution</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">orchestrator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LocalSemantivaOrchestrator</span>
 <span class="w">  </span><span class="nt">executor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SequentialSemantivaExecutor</span>
 <span class="w">  </span><span class="nt">transport</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">InMemorySemantivaTransport</span>
-<span class="w">  </span><span class="nt">options</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
 </pre></div>
 </div>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">trace</span></code></dt><dd><p>Configure tracing backends. The driver name is resolved via the registry,
-with <code class="docutils literal notranslate"><span class="pre">jsonl</span></code> and <code class="docutils literal notranslate"><span class="pre">none</span></code> supported out of the box. <code class="docutils literal notranslate"><span class="pre">output_path</span></code> accepts
-either a directory (a timestamped <code class="docutils literal notranslate"><span class="pre">*.ser.jsonl</span></code> file is created) or a
-concrete file path. Arbitrary driver keyword arguments must be supplied via
-the plural key <code class="docutils literal notranslate"><span class="pre">options</span></code>.</p>
-<p>Detail flags (for the JSONL driver) control how much evidence is captured:</p>
+<p>Fields:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code> (default): include SHA-256 digests for input/output data and context</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">repr</span></code>: additionally include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for input/output data</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code>: with <code class="docutils literal notranslate"><span class="pre">repr</span></code>, also include <code class="docutils literal notranslate"><span class="pre">repr</span></code> for pre/post context</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">all</span></code>: enable <code class="docutils literal notranslate"><span class="pre">hash</span></code> + <code class="docutils literal notranslate"><span class="pre">repr</span></code> + <code class="docutils literal notranslate"><span class="pre">context</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">orchestrator</span></code>: orchestrator class or registered name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">executor</span></code>: executor class or registered name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">transport</span></code>: transport class or registered name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">options</span></code> (optional): mapping of additional execution options.</p></li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Only <code class="docutils literal notranslate"><span class="pre">options</span></code> is valid in this block. <code class="docutils literal notranslate"><span class="pre">option</span></code> is not accepted.</p>
-</div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">trace</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jsonl</span>
-<span class="w">    </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./trace/</span>
-<span class="w">    </span><span class="nt">options</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">detail</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
-
-<span class="nt">The CLI mirrors these keys; for example</span><span class="p">:</span>
-
-<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bash</span>
-
-<span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">semantiva run my_pipeline.yaml \</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--trace.driver jsonl \</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--trace.output ./trace/ \</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">--trace.option detail=all</span>
-</pre></div>
-</div>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">run_space</span></code></dt><dd><p>Define a set of runs by expanding context keys. A run space contains:</p>
-<dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">combine</span></code></dt><dd><p>How blocks combine globally. <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> (default) computes a Cartesian
-product across blocks; <code class="docutils literal notranslate"><span class="pre">by_position</span></code> requires blocks to have identical run
-counts and aligns them by index.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">max_runs</span></code></dt><dd><p>Safety limit on the total number of runs. The planner raises a
-configuration error when the expansion exceeds this cap.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">dry_run</span></code></dt><dd><p>When <code class="docutils literal notranslate"><span class="pre">true</span></code>, the planner reports the expansion (sizes, block metadata,
-sample runs) and exits before executing nodes.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">blocks</span></code></dt><dd><p>A list of block objects. Each block defines <code class="docutils literal notranslate"><span class="pre">mode</span></code> (<code class="docutils literal notranslate"><span class="pre">by_position</span></code> or
-<code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>) and either <code class="docutils literal notranslate"><span class="pre">context</span></code> (mapping of key -&gt; list) or
-<code class="docutils literal notranslate"><span class="pre">source</span></code> (CSV/JSON/YAML/NDJSON file with optional <code class="docutils literal notranslate"><span class="pre">select</span></code>/<code class="docutils literal notranslate"><span class="pre">rename</span></code>).
-Sources follow rows-as-runs semantics: each row/object becomes one run,
-and the block’s <code class="docutils literal notranslate"><span class="pre">mode</span></code> controls whether lists are aligned by index or
-combined combinatorially. <code class="docutils literal notranslate"><span class="pre">by_position</span></code> blocks require all lists to have
-equal length; <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> blocks compute full Cartesian products within
-the block. Duplicate context keys across blocks (or within a block between
-<code class="docutils literal notranslate"><span class="pre">context</span></code> and <code class="docutils literal notranslate"><span class="pre">source</span></code>) raise an error.</p>
-</dd>
-</dl>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">run_space</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
-<span class="w">      </span><span class="nt">context</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.5</span><span class="p p-Indicator">]</span>
-<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5.0</span><span class="p p-Indicator">]</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
-<span class="w">      </span><span class="nt">context</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]</span>
-<span class="w">        </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">16</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">32</span><span class="p p-Indicator">]</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</section>
-<section id="validation">
-<h2>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h2>
-<p>The loader enforces strict shapes for these blocks:</p>
+<p>Validation rules:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">execution.options</span></code> must be a mapping</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">trace.options</span></code> must be a mapping</p></li>
-<li><p>Singular <code class="docutils literal notranslate"><span class="pre">option</span></code> keys are invalid in both blocks and will produce a clear error</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">execution.options</span></code> must be a mapping.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">option</span></code> (singular) is not accepted; only <code class="docutils literal notranslate"><span class="pre">options</span></code> is valid.</p></li>
 </ul>
-<p>Refer to <a class="reference internal" href="../cli.html"><span class="doc">Semantiva CLI</span></a> for the corresponding command-line flags and to
-<a class="reference internal" href="../examples_index.html"><span class="doc">Examples Index</span></a> for runnable YAML examples.</p>
-<p>Each run-space expansion produces SER evidence with <code class="docutils literal notranslate"><span class="pre">assertions.args</span></code> populated
-with <code class="docutils literal notranslate"><span class="pre">run_space.index</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space.total</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space.combine</span></code>, and the
-per-run context. Block metadata includes source provenance (path, type,
-SHA-256) when external files are involved. See <a class="reference internal" href="../cli.html"><span class="doc">Semantiva CLI</span></a> for CLI flags
-mirroring the schema and <a class="reference internal" href="../examples_index.html"><span class="doc">Examples Index</span></a> for runnable examples.</p>
+<p>These shapes mirror the CLI flags documented in <a class="reference internal" href="../cli.html"><span class="doc">Semantiva CLI</span></a> and are exercised
+in the runnable examples under <a class="reference internal" href="../examples_index.html"><span class="doc">Examples Index</span></a>.</p>
+<p>For an overview of the execution layer and default components see
+<a class="reference internal" href="../execution.html"><span class="doc">Execution</span></a>.</p>
 </section>
 </section>
 
@@ -410,12 +436,12 @@ mirroring the schema and <a class="reference internal" href="../examples_index.h
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../execution.html">
+          <a class="next-page" href="registry.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Execution</div>
+                <div class="title">Registry System</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -461,8 +487,12 @@ mirroring the schema and <a class="reference internal" href="../examples_index.h
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Pipeline Configuration Schema</a><ul>
-<li><a class="reference internal" href="#node-keys-selected">Node Keys (selected)</a></li>
-<li><a class="reference internal" href="#validation">Validation</a></li>
+<li><a class="reference internal" href="#extensions">Extensions</a></li>
+<li><a class="reference internal" href="#pipeline">Pipeline</a></li>
+<li><a class="reference internal" href="#node-definition-schema">Node definition schema</a></li>
+<li><a class="reference internal" href="#run-space-schema">Run-space schema</a></li>
+<li><a class="reference internal" href="#trace-driver-configuration-trace">Trace driver configuration (<code class="docutils literal notranslate"><span class="pre">trace</span></code>)</a></li>
+<li><a class="reference internal" href="#execution-configuration-execution">Execution configuration (<code class="docutils literal notranslate"><span class="pre">execution</span></code>)</a></li>
 </ul>
 </li>
 </ul>

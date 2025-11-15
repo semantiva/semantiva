@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Utility Components" href="utility_processors.html"><link rel="prev" title="Data Types" href="data_types.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Collection-based modifiers" href="collection_modifiers.html"><link rel="prev" title="Data collections" href="data_collections.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Data Processors - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -273,317 +284,107 @@
         <article role="main" id="furo-main-content">
           <section id="data-processors">
 <h1>Data Processors<a class="headerlink" href="#data-processors" title="Link to this heading">¶</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>Data processors implement the <strong>domain logic</strong> of your pipeline. They transform
+data in the payload and may emit new context information, while remaining
+fully traceable.</p>
+<section id="what-is-a-data-processor">
+<h2>What is a data processor?<a class="headerlink" href="#what-is-a-data-processor" title="Link to this heading">¶</a></h2>
+<p>A data processor is a subclass of the core <em>data processor</em> base class. It
+typically:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#semantiva.data_processors.data_processors.DataOperation" title="semantiva.data_processors.data_processors.DataOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.data_processors.DataOperation</span></code></a>: transforms data</p></li>
-<li><p><a class="reference internal" href="#semantiva.data_processors.data_processors.DataProbe" title="semantiva.data_processors.data_processors.DataProbe"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.data_processors.DataProbe</span></code></a>: inspects/records</p></li>
-<li><p><a class="reference internal" href="#semantiva.data_processors.data_processors.OperationTopologyFactory" title="semantiva.data_processors.data_processors.OperationTopologyFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.data_processors.OperationTopologyFactory</span></code></a> and slicing utilities</p></li>
-<li><p><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory" title="semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory</span></code></a>: engine behind <a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a> (<code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>). Variables are declared with <a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec" title="semantiva.data_processors.parametric_sweep_factory.RangeSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">RangeSpec</span></code></a>, <a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.SequenceSpec" title="semantiva.data_processors.parametric_sweep_factory.SequenceSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSpec</span></code></a>, and <a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.FromContext" title="semantiva.data_processors.parametric_sweep_factory.FromContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">FromContext</span></code></a>; modes <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> and <code class="docutils literal notranslate"><span class="pre">by_position</span></code> are supported.</p></li>
+<li><p>Declares its input and output data types.</p></li>
+<li><p>Implements a <code class="docutils literal notranslate"><span class="pre">process</span></code> method.</p></li>
+<li><p>Is registered so it can be referenced from YAML.</p></li>
 </ul>
-<p><strong>Important</strong>: All processor parameters must be explicitly declared in the <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> signature.
-<cite>**kwargs</cite> is not allowed for reliable provenance tracking. Each parameter must be individually named
-to ensure proper parameter resolution and inspection.</p>
 </section>
-<section id="parameter-validation-examples">
-<h2>Parameter Validation Examples<a class="headerlink" href="#parameter-validation-examples" title="Link to this heading">¶</a></h2>
-<section id="valid-parameter-patterns">
-<h3>Valid Parameter Patterns<a class="headerlink" href="#valid-parameter-patterns" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataOperation</span>
+<section id="example-simple-arithmetic-processor">
+<h2>Example: simple arithmetic processor<a class="headerlink" href="#example-simple-arithmetic-processor" title="Link to this heading">¶</a></h2>
+<p>This example shows the essence of a data processor without context interaction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">ValidProcessor</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
-        <span class="c1"># ✅ All parameters explicitly declared</span>
-        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">apply_transformation</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatDataType</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple float wrapper.&quot;&quot;&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AddConstant</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a constant value to a float.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_addend</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">addend</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatDataType</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addend</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="invalid-parameter-patterns-rejected">
-<h3>Invalid Parameter Patterns (Rejected)<a class="headerlink" href="#invalid-parameter-patterns-rejected" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ This will raise ValueError during introspection</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">InvalidProcessor</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># This pattern is rejected for provenance reliability</span>
-        <span class="k">pass</span>
-</pre></div>
-</div>
-</section>
-<section id="exception-parametric-sweep-processors">
-<h3>Exception: Parametric Sweep Processors<a class="headerlink" href="#exception-parametric-sweep-processors" title="Link to this heading">¶</a></h3>
-<p>Only certain factory-generated processors are allowed to use <cite>**kwargs</cite>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ✅ This is allowed - generated by ParametricSweepFactory</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ParametricSweepSomeProcessor</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># This works because class name contains &quot;ParametricSweep&quot;</span>
-        <span class="k">pass</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<section id="derive-parameter-sweep-variables">
-<h3>derive.parameter_sweep variables<a class="headerlink" href="#derive-parameter-sweep-variables" title="Link to this heading">¶</a></h3>
-<p>The <a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory" title="semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParametricSweepFactory</span></code></a>
-drives <a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a> by turning the <code class="docutils literal notranslate"><span class="pre">variables</span></code> mapping into typed objects:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec" title="semantiva.data_processors.parametric_sweep_factory.RangeSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">RangeSpec</span></code></a>
-produces numeric ranges with optional logarithmic spacing and endpoint
-control.</p></li>
-<li><p><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.SequenceSpec" title="semantiva.data_processors.parametric_sweep_factory.SequenceSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSpec</span></code></a>
-wraps explicit sequences (numbers, strings, paths, etc.).</p></li>
-<li><p><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.FromContext" title="semantiva.data_processors.parametric_sweep_factory.FromContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">FromContext</span></code></a>
-reads a sequence from <code class="docutils literal notranslate"><span class="pre">payload.context</span></code> at runtime and exposes the
-required key to inspection.</p></li>
-</ul>
-<p>Each variable becomes available to expressions declared under
-<code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep.parameters</span></code>.</p>
-</section>
-<section id="expressions-for-computed-parameters">
-<h3>Expressions for computed parameters<a class="headerlink" href="#expressions-for-computed-parameters" title="Link to this heading">¶</a></h3>
-<p>Expressions execute under a safe evaluator. Keys inside the
-<code class="docutils literal notranslate"><span class="pre">parameters</span></code> mapping <strong>must</strong> match the callee’s parameter names. Any
-unknown name raises an error during preprocessing and inspection.</p>
-</section>
-<section id="modes">
-<h3>Modes<a class="headerlink" href="#modes" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code> supports <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> (Cartesian product) and
-<code class="docutils literal notranslate"><span class="pre">by_position</span></code> (zip-style alignment) modes. <code class="docutils literal notranslate"><span class="pre">broadcast:</span> <span class="pre">true</span></code> repeats shorter
-sequences for <code class="docutils literal notranslate"><span class="pre">by_position</span></code> sweeps.</p>
-<p><strong>Performance tip</strong>: combinatorial mode scales with the product of variable
-lengths; monitor run-space size carefully for large grids.</p>
-<p><strong>YAML Configuration (derive boundary)</strong></p>
-<p>Configure parametric sweeps using the <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code> preprocessor:</p>
+<p>Use in YAML:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ModelDataSource</span>
-<span class="w">      </span><span class="nt">derive</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">parameter_sweep</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">learning_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10 ** p</span>
-<span class="w">          </span><span class="nt">variables</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">p</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> lo</span><span class="p">:</span><span class="w"> </span><span class="nv">-3</span><span class="p p-Indicator">,</span><span class="nt"> hi</span><span class="p">:</span><span class="w"> </span><span class="nv">-1</span><span class="p p-Indicator">,</span><span class="nt"> steps</span><span class="p">:</span><span class="w"> </span><span class="nv">3</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">          </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
-<span class="w">          </span><span class="nt">collection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ResultCollection</span>
-</pre></div>
-</div>
-<p>Data operations use the same pattern and <strong>require</strong> <code class="docutils literal notranslate"><span class="pre">collection</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatMultiplyOperation</span>
-<span class="w">  </span><span class="nt">derive</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">parameter_sweep</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">f</span>
-<span class="w">      </span><span class="nt">variables</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">f</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
-<span class="w">      </span><span class="nt">collection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatDataCollection</span>
-</pre></div>
-</div>
-<p>Probes omit <code class="docutils literal notranslate"><span class="pre">collection</span></code> and persist results via the node-level <code class="docutils literal notranslate"><span class="pre">context_key</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatCollectValueProbe</span>
-<span class="w">  </span><span class="nt">derive</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">parameter_sweep</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
-<span class="w">      </span><span class="nt">variables</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> lo</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="nt"> hi</span><span class="p">:</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nt"> steps</span><span class="p">:</span><span class="w"> </span><span class="nv">3</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">  </span><span class="nt">context_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sweep_probe_results</span>
-</pre></div>
-</div>
-</section>
-<section id="runnable-example">
-<h3>Runnable example<a class="headerlink" href="#runnable-example" title="Link to this heading">¶</a></h3>
-<p>Copy <a class="reference download internal" download="" href="_downloads/4e00b3e2a00a7e0183f41cfd6dc64aba/pipeline_sweep_parameters_first.yaml"><code class="xref download docutils literal notranslate"><span class="pre">pipeline_sweep_parameters_first.yaml</span></code></a> and run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>pipeline_sweep_parameters_first.yaml<span class="w"> </span>-v
-</pre></div>
-</div>
-<p>Inspection reports computed parameters, the variable values published to
-context, and any <code class="docutils literal notranslate"><span class="pre">required_external_parameters</span></code> that remain.</p>
-</section>
-<section id="fromcontext-variable-specification">
-<h3>FromContext variable specification<a class="headerlink" href="#fromcontext-variable-specification" title="Link to this heading">¶</a></h3>
-<p>The <a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.FromContext" title="semantiva.data_processors.parametric_sweep_factory.FromContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">FromContext</span></code></a>
-specification enables sweeps over sequences discovered at runtime. Use this when
-sweep values are produced by earlier pipeline stages or provided via CLI context.</p>
-<p><strong>Minimal example:</strong></p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">FromContext sweep demo</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;semantiva-examples&quot;</span><span class="p p-Indicator">]</span>
-
-<span class="nt">pipeline</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
-<span class="w">      </span><span class="nt">derive</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">parameter_sweep</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">float(input_value)</span>
-<span class="w">          </span><span class="nt">variables</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">input_value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> from_context</span><span class="p">:</span><span class="w"> </span><span class="nv">discovered_values</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">          </span><span class="nt">collection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatDataCollection</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AddConstant</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">addend</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
 </pre></div>
 </div>
-</div>
-<p>Run with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>semantiva/examples/from_context_sweep_demo.yaml<span class="w"> </span>--context<span class="w"> </span><span class="nv">discovered_values</span><span class="o">=</span><span class="s1">&#39;[1.3, 2.5, 3.7]&#39;</span>
+</section>
+<section id="context-aware-data-processors">
+<h2>Context-aware data processors<a class="headerlink" href="#context-aware-data-processors" title="Link to this heading">¶</a></h2>
+<p>Some data processors also <strong>notify context updates</strong>. For example, a probe may
+compute a summary and store it under a context key:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MeanProbe</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the mean and write to context.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatCollectionDataType</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_key</span> <span class="o">=</span> <span class="n">context_key</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextType</span><span class="p">):</span>
+        <span class="n">mean_value</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_key</span><span class="p">,</span> <span class="n">mean_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>  <span class="c1"># probes usually forward the data unchanged</span>
 </pre></div>
 </div>
-<p><strong>Behavior:</strong></p>
+<p>When you execute such a processor <strong>outside</strong> a pipeline, you can still call
+<code class="docutils literal notranslate"><span class="pre">process</span></code> directly, but you must provide a context object yourself.</p>
+<p>Inside a pipeline:</p>
 <ul class="simple">
-<li><p>The sweep reads the <code class="docutils literal notranslate"><span class="pre">discovered_values</span></code> context key at runtime</p></li>
-<li><p>Validates it contains a non-empty, non-string sequence</p></li>
-<li><p>Creates <code class="docutils literal notranslate"><span class="pre">input_value_values</span></code> in context for downstream processors</p></li>
-<li><p>Invokes the processor once per sequence item</p></li>
-<li><p>Produces a typed collection (<code class="docutils literal notranslate"><span class="pre">FloatDataCollection</span></code>)</p></li>
+<li><p>Context updates are gated by the pipeline configuration.</p></li>
+<li><p>Required context keys are validated during inspection and validation.</p></li>
+<li><p>Probes without a <code class="docutils literal notranslate"><span class="pre">context_key</span></code> will fail validation.</p></li>
 </ul>
-<p><strong>Inspection:</strong></p>
-<p>The processor exposes <code class="docutils literal notranslate"><span class="pre">discovered_values</span></code> via <code class="docutils literal notranslate"><span class="pre">get_context_requirements()</span></code>,
-allowing inspection tools to report missing dependencies before execution.</p>
-<p><strong>Provenance Tracking:</strong></p>
-<p>All parameters, including those derived from <code class="docutils literal notranslate"><span class="pre">FromContext</span></code> variables, are tracked
-with full provenance in Semantic Execution Records (SER). The trace records show:</p>
+</section>
+<section id="design-guidelines">
+<h2>Design guidelines<a class="headerlink" href="#design-guidelines" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>The actual runtime values in <code class="docutils literal notranslate"><span class="pre">processor.parameters</span></code></p></li>
-<li><p>The origin in <code class="docutils literal notranslate"><span class="pre">processor.parameter_sources</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;</span></code> for FromContext variables)</p></li>
-<li><p>Context reads/writes in <code class="docutils literal notranslate"><span class="pre">context_delta</span></code> (created <code class="docutils literal notranslate"><span class="pre">{var}_values</span></code> sequences)</p></li>
+<li><p>Keep processors <strong>pure</strong> with respect to arguments:
+configuration goes into parameters, not global state.</p></li>
+<li><p>Use data types to encode contracts; avoid passing raw dictionaries where
+a dedicated type would be clearer.</p></li>
+<li><p>Do not accept arbitrary <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> in your processor constructors; this
+hinders validation and introspection.</p></li>
+<li><p>Use <strong class="command">semantiva dev lint</strong> to enforce contracts and catch violations
+early (see <a class="reference internal" href="contracts.html"><span class="doc">Semantiva Contracts</span></a>).</p></li>
 </ul>
-<p>See <a class="reference internal" href="sweeps.html"><span class="doc">Derive Parameter Sweep</span></a> for comprehensive details on parameter provenance tracking.</p>
-</section>
-</section>
-<section id="module-semantiva.data_processors.data_processors">
-<span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.data_processors.data_processors" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context_observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseDataProcessor</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.context_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.context_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.context_observer">
-<span class="sig-name descname"><span class="pre">context_observer</span></span><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.context_observer" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.get_created_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.get_created_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.output_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.output_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.output_data_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataOperation.signature_string">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataOperation.signature_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataOperation.signature_string" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">DataProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseDataProcessor</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe.get_created_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_created_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe.get_created_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.get_created_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.DataProbe.signature_string">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#DataProbe.signature_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.DataProbe.signature_string" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.OperationTopologyFactory">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">OperationTopologyFactory</span></span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#OperationTopologyFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.OperationTopologyFactory" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.OperationTopologyFactory.create_data_operation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_data_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_process_logic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#OperationTopologyFactory.create_data_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.OperationTopologyFactory.create_data_operation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.ParameterInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_processors.</span></span><span class="sig-name descname"><span class="pre">ParameterInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default=&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation='Unknown'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_processors.html#ParameterInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_processors.ParameterInfo" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.ParameterInfo.annotation">
-<span class="sig-name descname"><span class="pre">annotation</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Unknown'</span></em><a class="headerlink" href="#semantiva.data_processors.data_processors.ParameterInfo.annotation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_processors.ParameterInfo.default">
-<span class="sig-name descname"><span class="pre">default</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#semantiva.data_processors.data_processors.ParameterInfo.default" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function" id="module-semantiva.data_processors.data_slicer_factory">
-<dt class="sig sig-object py" id="semantiva.data_processors.data_slicer_factory.slice">
-<span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.data_slicer_factory.</span></span><span class="sig-name descname"><span class="pre">slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_collection_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/data_slicer_factory.html#slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.data_slicer_factory.slice" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py class" id="module-semantiva.data_processors.parametric_sweep_factory">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.FromContext">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.parametric_sweep_factory.</span></span><span class="sig-name descname"><span class="pre">FromContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#FromContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.FromContext" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.parametric_sweep_factory.</span></span><span class="sig-name descname"><span class="pre">ParametricSweepFactory</span></span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#ParametricSweepFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory.create">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametric_expressions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'combinatorial'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broadcast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expression_evaluator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#ParametricSweepFactory.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory.create" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.RangeSpec">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.parametric_sweep_factory.</span></span><span class="sig-name descname"><span class="pre">RangeSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#RangeSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec" title="Link to this definition">¶</a></dt>
-<dd><dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.RangeSpec.endpoint">
-<span class="sig-name descname"><span class="pre">endpoint</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.endpoint" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.RangeSpec.hi">
-<span class="sig-name descname"><span class="pre">hi</span></span><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.hi" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.RangeSpec.lo">
-<span class="sig-name descname"><span class="pre">lo</span></span><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.lo" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.RangeSpec.scale">
-<span class="sig-name descname"><span class="pre">scale</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'linear'</span></em><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.scale" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.RangeSpec.steps">
-<span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.steps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.SequenceSpec">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_processors.parametric_sweep_factory.</span></span><span class="sig-name descname"><span class="pre">SequenceSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_processors/parametric_sweep_factory.html#SequenceSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.SequenceSpec" title="Link to this definition">¶</a></dt>
-<dd><dl class="py attribute">
-<dt class="sig sig-object py" id="semantiva.data_processors.parametric_sweep_factory.SequenceSpec.values">
-<span class="sig-name descname"><span class="pre">values</span></span><a class="headerlink" href="#semantiva.data_processors.parametric_sweep_factory.SequenceSpec.values" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<p>For more advanced examples, including collection processors and utility
+components, see:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="utility_processors.html"><span class="doc">Utility Components</span></a></p></li>
+<li><p><a class="reference internal" href="collection_modifiers.html"><span class="doc">Collection-based modifiers</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -592,23 +393,23 @@ with full provenance in Semantic Execution Records (SER). The trace records show
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="utility_processors.html">
+          <a class="next-page" href="collection_modifiers.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Utility Components</div>
+                <div class="title">Collection-based modifiers</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="data_types.html">
+          <a class="prev-page" href="data_collections.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Data Types</div>
+                <div class="title">Data collections</div>
                 
               </div>
             </a>
@@ -643,64 +444,10 @@ with full provenance in Semantic Execution Records (SER). The trace records show
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Data Processors</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#parameter-validation-examples">Parameter Validation Examples</a><ul>
-<li><a class="reference internal" href="#valid-parameter-patterns">Valid Parameter Patterns</a></li>
-<li><a class="reference internal" href="#invalid-parameter-patterns-rejected">Invalid Parameter Patterns (Rejected)</a></li>
-<li><a class="reference internal" href="#exception-parametric-sweep-processors">Exception: Parametric Sweep Processors</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#examples">Examples</a><ul>
-<li><a class="reference internal" href="#derive-parameter-sweep-variables">derive.parameter_sweep variables</a></li>
-<li><a class="reference internal" href="#expressions-for-computed-parameters">Expressions for computed parameters</a></li>
-<li><a class="reference internal" href="#modes">Modes</a></li>
-<li><a class="reference internal" href="#runnable-example">Runnable example</a></li>
-<li><a class="reference internal" href="#fromcontext-variable-specification">FromContext variable specification</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-semantiva.data_processors.data_processors">Autodoc</a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataOperation"><code class="docutils literal notranslate"><span class="pre">DataOperation</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataOperation.context_keys"><code class="docutils literal notranslate"><span class="pre">DataOperation.context_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataOperation.context_observer"><code class="docutils literal notranslate"><span class="pre">DataOperation.context_observer</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataOperation.get_created_keys"><code class="docutils literal notranslate"><span class="pre">DataOperation.get_created_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataOperation.output_data_type"><code class="docutils literal notranslate"><span class="pre">DataOperation.output_data_type()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataOperation.signature_string"><code class="docutils literal notranslate"><span class="pre">DataOperation.signature_string()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataProbe"><code class="docutils literal notranslate"><span class="pre">DataProbe</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataProbe.get_created_keys"><code class="docutils literal notranslate"><span class="pre">DataProbe.get_created_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.DataProbe.signature_string"><code class="docutils literal notranslate"><span class="pre">DataProbe.signature_string()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.OperationTopologyFactory"><code class="docutils literal notranslate"><span class="pre">OperationTopologyFactory</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.OperationTopologyFactory.create_data_operation"><code class="docutils literal notranslate"><span class="pre">OperationTopologyFactory.create_data_operation()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.ParameterInfo"><code class="docutils literal notranslate"><span class="pre">ParameterInfo</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.ParameterInfo.annotation"><code class="docutils literal notranslate"><span class="pre">ParameterInfo.annotation</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_processors.ParameterInfo.default"><code class="docutils literal notranslate"><span class="pre">ParameterInfo.default</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_processors.data_slicer_factory.slice"><code class="docutils literal notranslate"><span class="pre">slice()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.FromContext"><code class="docutils literal notranslate"><span class="pre">FromContext</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory"><code class="docutils literal notranslate"><span class="pre">ParametricSweepFactory</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.ParametricSweepFactory.create"><code class="docutils literal notranslate"><span class="pre">ParametricSweepFactory.create()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec"><code class="docutils literal notranslate"><span class="pre">RangeSpec</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.endpoint"><code class="docutils literal notranslate"><span class="pre">RangeSpec.endpoint</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.hi"><code class="docutils literal notranslate"><span class="pre">RangeSpec.hi</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.lo"><code class="docutils literal notranslate"><span class="pre">RangeSpec.lo</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.scale"><code class="docutils literal notranslate"><span class="pre">RangeSpec.scale</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.RangeSpec.steps"><code class="docutils literal notranslate"><span class="pre">RangeSpec.steps</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.SequenceSpec"><code class="docutils literal notranslate"><span class="pre">SequenceSpec</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_processors.parametric_sweep_factory.SequenceSpec.values"><code class="docutils literal notranslate"><span class="pre">SequenceSpec.values</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#what-is-a-data-processor">What is a data processor?</a></li>
+<li><a class="reference internal" href="#example-simple-arithmetic-processor">Example: simple arithmetic processor</a></li>
+<li><a class="reference internal" href="#context-aware-data-processors">Context-aware data processors</a></li>
+<li><a class="reference internal" href="#design-guidelines">Design guidelines</a></li>
 </ul>
 </li>
 </ul>

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Run Space (v1): blocks that expand context" href="run_space.html"><link rel="prev" title="Semantiva Contracts" href="contracts.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Context Processors" href="context_processors.html"><link rel="prev" title="Data Processors" href="data_processors.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Derive Parameter Sweep - Semantiva 0.5.0 documentation</title>
+        <title>Collection-based modifiers - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -253,7 +264,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/sweeps.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/collection_modifiers.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -271,20 +282,85 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="derive-parameter-sweep">
-<h1>Derive Parameter Sweep<a class="headerlink" href="#derive-parameter-sweep" title="Link to this heading">¶</a></h1>
-<section id="objective">
-<h2>Objective<a class="headerlink" href="#objective" title="Link to this heading">¶</a></h2>
-<p>This page documents <strong>derive-based parameter sweeps</strong> — the mechanism that
-<strong>computes processor parameters before execution</strong> and <strong>expands</strong> a node into
-multiple runs when variables enumerate more than one value.</p>
+          <section id="collection-based-modifiers">
+<h1>Collection-based modifiers<a class="headerlink" href="#collection-based-modifiers" title="Link to this heading">¶</a></h1>
+<p>Semantiva provides two families of helpers for working with data collections:</p>
+<ul class="simple">
+<li><p><strong>slicers</strong>, which apply a processor element-wise to an existing collection,
+and</p></li>
+<li><p><strong>derive-based parameter sweeps</strong>, which build collections by repeatedly
+invoking a processor with different parameter values.</p></li>
+</ul>
+<p>These helpers are optional. Processors can always be implemented directly for
+collection types, but slicers and sweeps remove boilerplate loops and make the
+structure of collection processing visible in inspection and trace records.</p>
+<p>For an overview of collection types themselves, see <a class="reference internal" href="data_collections.html"><span class="doc">Data collections</span></a>.</p>
+<section id="slicers">
+<h2>Slicers<a class="headerlink" href="#slicers" title="Link to this heading">¶</a></h2>
+<p>Slicers are generated by the factory in
+<code class="docutils literal notranslate"><span class="pre">semantiva.data_processors.data_slicer_factory</span></code>. Given a data processor
+that works on a single element, the factory
+creates a new processor class that operates on a
+<a class="reference internal" href="data_types.html#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataCollectionType</span></code></a> by iterating
+over its elements.</p>
+<p>The factory supports both data operations and probes:</p>
+<ul class="simple">
+<li><p>DataOperation-based slicers</p></li>
+<li><p>DataProbe-based slicers</p></li>
+</ul>
+<section id="dataoperation-slicers">
+<h3>DataOperation slicers<a class="headerlink" href="#dataoperation-slicers" title="Link to this heading">¶</a></h3>
+<p>For data operations, the slicer:</p>
+<ul class="simple">
+<li><p>consumes a collection of elements,</p></li>
+<li><p>applies the wrapped operation to each element in sequence, and</p></li>
+<li><p>returns a new collection of the same collection type with the processed
+elements.</p></li>
+</ul>
+<p>The underlying processor must have matching input and output element types; the
+slicer preserves the collection type and ordering. Under the hood this is
+implemented by dynamically subclassing the original operation and overriding
+<code class="docutils literal notranslate"><span class="pre">input_data_type</span></code> / <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code> to point to the collection type.</p>
 </section>
-<section id="key-idea">
-<h2>Key Idea<a class="headerlink" href="#key-idea" title="Link to this heading">¶</a></h2>
+<section id="dataprobe-slicers">
+<h3>DataProbe slicers<a class="headerlink" href="#dataprobe-slicers" title="Link to this heading">¶</a></h3>
+<p>For probes, the slicer:</p>
+<ul class="simple">
+<li><p>consumes a collection of elements,</p></li>
+<li><p>runs the wrapped probe on each element, and</p></li>
+<li><p>returns a list of probe results.</p></li>
+</ul>
+<p>The collection itself flows through as the data channel (for downstream
+processors), while probe results are usually written into context via
+<code class="docutils literal notranslate"><span class="pre">context_key</span></code> when the probe is used in a node.</p>
+<p>In both cases, the slicer keeps the element-wise pattern explicit. Inspection
+and trace records reflect that the collection was processed by a single slicer
+processor rather than by hand-written loops.</p>
+</section>
+</section>
+<section id="derive-based-parameter-sweeps">
+<h2>Derive-based parameter sweeps<a class="headerlink" href="#derive-based-parameter-sweeps" title="Link to this heading">¶</a></h2>
+<p>Parameter sweeps are derive preprocessors that compute processor parameters
+from variables and, when variables enumerate more than one value, execute the
+processor multiple times to build a collection or a list of results.</p>
+<p>They are configured under the reserved <code class="docutils literal notranslate"><span class="pre">derive</span></code> key on a node using the
+<code class="docutils literal notranslate"><span class="pre">parameter_sweep</span></code> tool.</p>
+<section id="objective">
+<h3>Objective<a class="headerlink" href="#objective" title="Link to this heading">¶</a></h3>
+<p>Derive-based parameter sweeps:</p>
+<ul class="simple">
+<li><p><strong>compute</strong> call-time parameters from variable specifications,</p></li>
+<li><p><strong>optionally expand</strong> a node into a collection-producing processor when
+variables take multiple values, and</p></li>
+<li><p><strong>publish</strong> the materialised variable values into context.</p></li>
+</ul>
+</section>
+<section id="basic-shape">
+<h3>Basic shape<a class="headerlink" href="#basic-shape" title="Link to this heading">¶</a></h3>
 <p>Under a node, the reserved preprocessor boundary <code class="docutils literal notranslate"><span class="pre">derive</span></code> hosts named
-preprocessors. The <strong>parameter_sweep</strong> preprocessor computes <strong>call-time
-parameters</strong> from <strong>variables</strong> and (optionally) expands the run-space.</p>
-<p><strong>Parameters first, Variables second:</strong></p>
+preprocessors. The <code class="docutils literal notranslate"><span class="pre">parameter_sweep</span></code> preprocessor computes parameters from
+variables and, for data sources and operations, declares the collection type
+produced:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
@@ -301,7 +377,7 @@ parameters</strong> from <strong>variables</strong> and (optionally) expands the
 </div>
 </section>
 <section id="what-it-does">
-<h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
+<h3>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><strong>Computes</strong> the parameter <code class="docutils literal notranslate"><span class="pre">value</span></code> from an expression using variable <code class="docutils literal notranslate"><span class="pre">t</span></code>.</p></li>
 <li><p><strong>Expands</strong> into a collection typed by <code class="docutils literal notranslate"><span class="pre">collection</span></code> (DataSource/DataOperation).</p></li>
@@ -309,65 +385,54 @@ parameters</strong> from <strong>variables</strong> and (optionally) expands the
 </ul>
 </section>
 <section id="supported-kinds">
-<h2>Supported kinds<a class="headerlink" href="#supported-kinds" title="Link to this heading">¶</a></h2>
+<h3>Supported kinds<a class="headerlink" href="#supported-kinds" title="Link to this heading">¶</a></h3>
+<p>Sweeps can wrap three kinds of processors:</p>
 <ul class="simple">
-<li><p><strong>DataSource</strong> → generates a collection via repeated <code class="docutils literal notranslate"><span class="pre">get_data(...)</span></code></p></li>
-<li><p><strong>DataOperation</strong> → augmentation-style expansion via repeated <code class="docutils literal notranslate"><span class="pre">process(data,</span> <span class="pre">...)</span></code></p></li>
-<li><p><strong>DataProbe</strong> → returns a <strong>list</strong> of probe results (no <code class="docutils literal notranslate"><span class="pre">collection</span></code>); probe nodes
-persist via <code class="docutils literal notranslate"><span class="pre">context_key</span></code> (node-level) and pass-through input</p></li>
+<li><p><strong>DataSource</strong> → generates a collection via repeated <code class="docutils literal notranslate"><span class="pre">get_data(...)</span></code>.</p></li>
+<li><p><strong>DataOperation</strong> → augmentation-style expansion via repeated
+<code class="docutils literal notranslate"><span class="pre">process(data,</span> <span class="pre">...)</span></code> on the same input.</p></li>
+<li><p><strong>DataProbe</strong> → returns a <strong>list</strong> of probe results; probe nodes persist via
+a node-level <code class="docutils literal notranslate"><span class="pre">context_key</span></code> and pass through their input data.</p></li>
+</ul>
+<p>For DataSource and DataOperation sweeps a <code class="docutils literal notranslate"><span class="pre">collection</span></code> output type is
+required. For DataProbe sweeps <code class="docutils literal notranslate"><span class="pre">collection</span></code> is forbidden; probes always
+return a list.</p>
+</section>
+<section id="configuration-reference">
+<h3>Configuration reference<a class="headerlink" href="#configuration-reference" title="Link to this heading">¶</a></h3>
+<p>Inside <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code> the following keys are recognised:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (mapping; <strong>required</strong>): expressions that compute call-time
+arguments. Keys <strong>must</strong> match the wrapped processor’s parameter names.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> (mapping; <strong>required</strong>): variable definitions used by the
+expressions:</p>
+<ul>
+<li><p>Range: <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">lo:</span> <span class="pre">&lt;float&gt;,</span> <span class="pre">hi:</span> <span class="pre">&lt;float&gt;,</span> <span class="pre">steps:</span> <span class="pre">&lt;int&gt;</span> <span class="pre">[,</span> <span class="pre">scale:</span> <span class="pre">linear|log]</span> <span class="pre">}</span></code></p></li>
+<li><p>Sequence: <code class="docutils literal notranslate"><span class="pre">[v1,</span> <span class="pre">v2,</span> <span class="pre">...]</span></code></p></li>
+<li><p>FromContext: <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">from_context:</span> <span class="pre">&lt;key&gt;</span> <span class="pre">}</span></code> (must yield a non-empty sequence)</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">collection</span></code> (string; <strong>required</strong> for DataSource/DataOperation,
+<strong>forbidden</strong> for DataProbe): collection type name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">by_position</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code>: boolean (default <code class="docutils literal notranslate"><span class="pre">false</span></code>).</p></li>
 </ul>
 </section>
-<section id="yaml-reference-inside-derive-parameter-sweep">
-<h2>YAML Reference (inside <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>)<a class="headerlink" href="#yaml-reference-inside-derive-parameter-sweep" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (mapping; <strong>required</strong>): computed call-args (expressions).
-Keys <strong>must</strong> match callee argument names.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> (mapping; <strong>required</strong>): variable definitions used by expressions.
-- Range: <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">lo:</span> <span class="pre">&lt;float&gt;,</span> <span class="pre">hi:</span> <span class="pre">&lt;float&gt;,</span> <span class="pre">steps:</span> <span class="pre">&lt;int&gt;</span> <span class="pre">[,</span> <span class="pre">scale:</span> <span class="pre">linear|log]</span> <span class="pre">}</span></code>
-- Sequence: <code class="docutils literal notranslate"><span class="pre">[v1,</span> <span class="pre">v2,</span> <span class="pre">...]</span></code>
-- FromContext: <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">from_context:</span> <span class="pre">&lt;key&gt;</span> <span class="pre">}</span></code> (must yield a non-empty sequence)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">collection</span></code> (string; <strong>required for DataSource/DataOperation</strong>, <strong>forbidden for DataProbe</strong>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">by_position</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">broadcast</span></code>: boolean (default <code class="docutils literal notranslate"><span class="pre">false</span></code>)</p></li>
-</ul>
-</section>
-<section id="merge-semantics">
-<h2>Merge semantics<a class="headerlink" href="#merge-semantics" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Source</p></th>
-<th class="head"><p>Meaning</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep.parameters</span></code></p></td>
-<td><p><strong>Computed</strong> values for callee args</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">node.parameters</span></code></p></td>
-<td><p><strong>Provided</strong> literals/resolvers for others</p></td>
-</tr>
-<tr class="row-even"><td><p>callee defaults</p></td>
-<td><p>Used when neither computed nor provided</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>If the same name appears in both places, <strong>computed wins</strong>.</p>
-</section>
-<section id="modes-failure-cases">
-<h2>Modes &amp; failure cases<a class="headerlink" href="#modes-failure-cases" title="Link to this heading">¶</a></h2>
+<section id="modes-and-validation">
+<h3>Modes and validation<a class="headerlink" href="#modes-and-validation" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>: Cartesian product across variables.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">by_position</span></code>: zip-style alignment. <strong>Error</strong> if variable sequences have
-different lengths.</p></li>
-<li><p><strong>Probe</strong> sweeps <strong>must not</strong> declare <code class="docutils literal notranslate"><span class="pre">collection</span></code>.</p></li>
-<li><p><strong>Unknown parameter names</strong> in <code class="docutils literal notranslate"><span class="pre">parameters</span></code> → hard error with the callee’s signature.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">by_position</span></code>: zip-style alignment; an error is raised if variable
+sequences have different lengths.</p></li>
+<li><p>DataProbe sweeps <strong>must not</strong> declare <code class="docutils literal notranslate"><span class="pre">collection</span></code>.</p></li>
+<li><p>Unknown parameter names in <code class="docutils literal notranslate"><span class="pre">parameters</span></code> produce a clear error describing
+the wrapped processor’s signature.</p></li>
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<p><strong>DataSource</strong></p>
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h3>
+<section id="datasource-sweep">
+<h4>DataSource sweep<a class="headerlink" href="#datasource-sweep" title="Link to this heading">¶</a></h4>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
 <span class="w">  </span><span class="nt">derive</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">parameter_sweep</span><span class="p">:</span>
@@ -378,7 +443,9 @@ different lengths.</p></li>
 <span class="w">      </span><span class="nt">collection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatDataCollection</span>
 </pre></div>
 </div>
-<p><strong>DataOperation (augmentation)</strong></p>
+</section>
+<section id="dataoperation-sweep-augmentation">
+<h4>DataOperation sweep (augmentation)<a class="headerlink" href="#dataoperation-sweep-augmentation" title="Link to this heading">¶</a></h4>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatMultiplyOperation</span>
 <span class="w">  </span><span class="nt">derive</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">parameter_sweep</span><span class="p">:</span>
@@ -390,7 +457,9 @@ different lengths.</p></li>
 <span class="w">      </span><span class="nt">collection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatDataCollection</span>
 </pre></div>
 </div>
-<p><strong>DataProbe</strong></p>
+</section>
+<section id="dataprobe-sweep">
+<h4>DataProbe sweep<a class="headerlink" href="#dataprobe-sweep" title="Link to this heading">¶</a></h4>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatCollectValueProbe</span>
 <span class="w">  </span><span class="nt">derive</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">parameter_sweep</span><span class="p">:</span>
@@ -400,11 +469,13 @@ different lengths.</p></li>
 <span class="w">  </span><span class="nt">context_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">probe_values</span>
 </pre></div>
 </div>
-<p><strong>FromContext: Runtime Sequence Discovery</strong></p>
+</section>
+</section>
+<section id="fromcontext-variables">
+<h3>FromContext variables<a class="headerlink" href="#fromcontext-variables" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">FromContext</span></code> variable specification enables sweeps over sequences that
-are discovered or computed earlier in the pipeline. This is useful for dynamic
-workflows where sweep values depend on runtime conditions or previous processing
-results.</p>
+are discovered or computed earlier in the pipeline. This is useful when sweep
+values depend on runtime conditions or previous processing results.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
 <span class="w">  </span><span class="nt">derive</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">parameter_sweep</span><span class="p">:</span>
@@ -415,120 +486,37 @@ results.</p>
 <span class="w">      </span><span class="nt">collection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatDataCollection</span>
 </pre></div>
 </div>
-<p><strong>Requirements:</strong></p>
+<p>Requirements:</p>
 <ul class="simple">
-<li><p>The context key must exist at runtime and contain a non-empty, non-string sequence</p></li>
-<li><p>The sweep processor exposes the context key via <code class="docutils literal notranslate"><span class="pre">get_context_requirements()</span></code> for inspection</p></li>
-<li><p>A <code class="docutils literal notranslate"><span class="pre">{var}_values</span></code> context entry is created (e.g., <code class="docutils literal notranslate"><span class="pre">input_value_values</span></code>) containing the
-materialized sequence for downstream use</p></li>
-</ul>
-<p><strong>Example usage with CLI:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>from_context_sweep_demo.yaml<span class="w"> </span>--context<span class="w"> </span><span class="nv">discovered_values</span><span class="o">=</span><span class="s1">&#39;[1.3, 2.5, 3.7]&#39;</span>
-</pre></div>
-</div>
-<p>This pattern supports workflows where:</p>
-<ul class="simple">
-<li><p>File lists are discovered via directory scanning</p></li>
-<li><p>Parameter sets are loaded from configuration files</p></li>
-<li><p>Previous pipeline stages produce candidate values for downstream sweeps</p></li>
+<li><p>The context key must exist at runtime and contain a non-empty, non-string
+sequence.</p></li>
+<li><p>The sweep processor exposes the context key via
+<code class="docutils literal notranslate"><span class="pre">get_context_requirements()</span></code> for inspection.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">{var}_values</span></code> context entry is created (for example
+<code class="docutils literal notranslate"><span class="pre">input_value_values</span></code>) containing the materialised sequence for downstream
+use.</p></li>
 </ul>
 </section>
-<section id="inspection">
-<h2>Inspection<a class="headerlink" href="#inspection" title="Link to this heading">¶</a></h2>
+</section>
+<section id="inspection-and-provenance">
+<h2>Inspection and provenance<a class="headerlink" href="#inspection-and-provenance" title="Link to this heading">¶</a></h2>
 <p>Inspection surfaces which parameters were <strong>computed</strong>, <strong>provided</strong>,
-<strong>defaulted</strong>, or remain <strong>required_external_parameters</strong> (unbound callee args
-you still need to provide). For nodes using <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>,
-inspection also includes <code class="docutils literal notranslate"><span class="pre">derived_summary</span></code> and <code class="docutils literal notranslate"><span class="pre">preprocessor_metadata</span></code>
-attributes. See <a class="reference internal" href="introspection_validation.html"><span class="doc">Introspection &amp; Validation</span></a> for complete inspection details.</p>
+<strong>defaulted</strong>, or remain <strong>required_external_parameters</strong>. For nodes using
+<code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>, inspection also includes <code class="docutils literal notranslate"><span class="pre">derived_summary</span></code> and
+<code class="docutils literal notranslate"><span class="pre">preprocessor_metadata</span></code> attributes. See <a class="reference internal" href="introspection_validation.html"><span class="doc">Introspection &amp; Validation</span></a> for
+complete inspection details.</p>
+<p>In the Semantic Execution Record (SER) trace format, parameter sweeps expose
+both the concrete parameter values and their origin (node config, context, or
+processor defaults). See <a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> and
+<a class="reference internal" href="schema_semantic_execution_record_v1.html"><span class="doc">SER v1 JSON Schema</span></a> for the full schema.</p>
 </section>
-<section id="parameter-provenance-tracking">
-<h2>Parameter Provenance Tracking<a class="headerlink" href="#parameter-provenance-tracking" title="Link to this heading">¶</a></h2>
-<p>Semantiva records complete provenance for all processor parameters in the
-Semantic Execution Record (SER) trace format, enabling full traceability of
-parameter origins for auditing, debugging, and reproducibility.</p>
-<p><strong>Provenance Mechanisms</strong></p>
-<p>Each SER record contains two complementary fields in the <code class="docutils literal notranslate"><span class="pre">processor</span></code> section:</p>
-<ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code>: The actual runtime values used for execution</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">parameter_sources</span></code>: The origin of each parameter value</p></li>
-</ol>
-<p><strong>Parameter Source Classification</strong></p>
-<p>Every parameter is tagged with one of three source types:</p>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Source Type</p></th>
-<th class="head"><p>Origin</p></th>
-<th class="head"><p>Example</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;node&quot;</span></code></p></td>
-<td><p>Declared in YAML <code class="docutils literal notranslate"><span class="pre">parameters</span></code> or <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep.parameters</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">factor:</span> <span class="pre">2.0</span></code> in node config</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;context&quot;</span></code></p></td>
-<td><p>Read from pipeline context (including <code class="docutils literal notranslate"><span class="pre">FromContext</span></code> variables)</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">from_context:</span> <span class="pre">discovered_values</span> <span class="pre">}</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;default&quot;</span></code></p></td>
-<td><p>Processor’s <code class="docutils literal notranslate"><span class="pre">get_default_params()</span></code> fallback</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">defaulted:</span> <span class="pre">3.0</span></code> when not provided</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>SER Trace Example</strong></p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;record_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ser&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;processor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;semantiva.examples.test_utils.FloatMultiplyOperation&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;from_ctx&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;defaulted&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.0</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;parameter_sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;node&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;from_ctx&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;context&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;defaulted&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;default&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;context_delta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;created_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;t_values&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;read_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;from_ctx&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;updated_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>FromContext Variable Provenance</strong></p>
-<p>When using <code class="docutils literal notranslate"><span class="pre">FromContext</span></code> specifications, provenance tracking includes:</p>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><strong>Pre-execution</strong>: <code class="docutils literal notranslate"><span class="pre">get_required_external_parameters()</span></code> exposes context dependencies
-during inspection</p></li>
-<li><p><strong>Runtime</strong>: The context key is recorded in <code class="docutils literal notranslate"><span class="pre">context_delta.read_keys</span></code></p></li>
-<li><p><strong>Materialization</strong>: Created sequences appear in <code class="docutils literal notranslate"><span class="pre">context_delta.created_keys</span></code> as
-<code class="docutils literal notranslate"><span class="pre">{var}_values</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">t_values</span></code>)</p></li>
-<li><p><strong>Parameter source</strong>: The resolved variable value is tagged as <code class="docutils literal notranslate"><span class="pre">&quot;context&quot;</span></code></p></li>
+<li><p><a class="reference internal" href="data_collections.html"><span class="doc">Data collections</span></a> for the underlying collection types.</p></li>
+<li><p><a class="reference internal" href="data_processors.html"><span class="doc">Data Processors</span></a> for processor contracts.</p></li>
+<li><p><a class="reference internal" href="run_space.html"><span class="doc">Run Space (v1): blocks that expand context</span></a> for run-space expansion.</p></li>
 </ul>
-<p><strong>Sweep-Generated Context Entries</strong></p>
-<p>Parameter sweeps publish <code class="docutils literal notranslate"><span class="pre">{var}_values</span></code> sequences to the context for each variable.
-These entries enable downstream processors or subsequent sweeps to access the
-computed parameter sets:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># After sweep execution with variable &#39;t&#39;</span>
-<span class="k">assert</span> <span class="s2">&quot;t_values&quot;</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="c1"># Contains: [lo, ..., hi] based on variable spec</span>
-</pre></div>
-</div>
-<p><strong>Provenance Benefits</strong></p>
-<ol class="arabic simple">
-<li><p><strong>Reproducibility</strong>: Exact parameter values and origins are preserved</p></li>
-<li><p><strong>Debugging</strong>: Trace parameter resolution back to YAML config or context</p></li>
-<li><p><strong>Auditing</strong>: Distinguish configured values from runtime-discovered values</p></li>
-<li><p><strong>Inspection</strong>: Identify missing context requirements before execution</p></li>
-</ol>
-<p>See <a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> for complete SER record structure and schema details.</p>
 </section>
 </section>
 
@@ -537,23 +525,23 @@ computed parameter sets:</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="run_space.html">
+          <a class="next-page" href="context_processors.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Run Space (v1): blocks that expand context</div>
+                <div class="title">Context Processors</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="contracts.html">
+          <a class="prev-page" href="data_processors.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Semantiva Contracts</div>
+                <div class="title">Data Processors</div>
                 
               </div>
             </a>
@@ -587,17 +575,30 @@ computed parameter sets:</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Derive Parameter Sweep</a><ul>
+<li><a class="reference internal" href="#">Collection-based modifiers</a><ul>
+<li><a class="reference internal" href="#slicers">Slicers</a><ul>
+<li><a class="reference internal" href="#dataoperation-slicers">DataOperation slicers</a></li>
+<li><a class="reference internal" href="#dataprobe-slicers">DataProbe slicers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#derive-based-parameter-sweeps">Derive-based parameter sweeps</a><ul>
 <li><a class="reference internal" href="#objective">Objective</a></li>
-<li><a class="reference internal" href="#key-idea">Key Idea</a></li>
+<li><a class="reference internal" href="#basic-shape">Basic shape</a></li>
 <li><a class="reference internal" href="#what-it-does">What it does</a></li>
 <li><a class="reference internal" href="#supported-kinds">Supported kinds</a></li>
-<li><a class="reference internal" href="#yaml-reference-inside-derive-parameter-sweep">YAML Reference (inside <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>)</a></li>
-<li><a class="reference internal" href="#merge-semantics">Merge semantics</a></li>
-<li><a class="reference internal" href="#modes-failure-cases">Modes &amp; failure cases</a></li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
-<li><a class="reference internal" href="#inspection">Inspection</a></li>
-<li><a class="reference internal" href="#parameter-provenance-tracking">Parameter Provenance Tracking</a></li>
+<li><a class="reference internal" href="#configuration-reference">Configuration reference</a></li>
+<li><a class="reference internal" href="#modes-and-validation">Modes and validation</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#datasource-sweep">DataSource sweep</a></li>
+<li><a class="reference internal" href="#dataoperation-sweep-augmentation">DataOperation sweep (augmentation)</a></li>
+<li><a class="reference internal" href="#dataprobe-sweep">DataProbe sweep</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fromcontext-variables">FromContext variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#inspection-and-provenance">Inspection and provenance</a></li>
+<li><a class="reference internal" href="#see-also">See also</a></li>
 </ul>
 </li>
 </ul>

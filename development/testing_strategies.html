@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="prev" title="Trace ↔ Graph Alignment" href="../trace_graph_alignment.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="prev" title="Glossary" href="../glossary.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Testing Strategies and Best Practices - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../inspection.html">Inspection Payload &amp; CLI</a></li>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -273,207 +284,118 @@
         <article role="main" id="furo-main-content">
           <section id="testing-strategies-and-best-practices">
 <h1>Testing Strategies and Best Practices<a class="headerlink" href="#testing-strategies-and-best-practices" title="Link to this heading">¶</a></h1>
-<p>This document outlines recommended testing approaches for Semantiva components, with particular emphasis on avoiding internal API usage and following framework patterns.</p>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>Semantiva provides multiple approaches for testing components. The choice of testing strategy depends on the component type and testing goals:</p>
+<p>This page focuses on <strong>practical</strong> testing approaches that work well with
+Semantiva’s execution model. It keeps tests close to real usage and avoids
+depending on internal details.</p>
+<section id="recommended-layers">
+<h2>Recommended layers<a class="headerlink" href="#recommended-layers" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
-<li><p><strong>Pipeline-based testing</strong> (Recommended) - Tests components through pipeline execution</p></li>
-<li><p><strong>Node-based testing</strong> (Conditional) - Direct processor testing with proper observers</p></li>
-<li><p><strong>Unit testing</strong> (Limited scope) - Testing isolated utility functions</p></li>
+<li><p><strong>Pipeline-based testing (recommended)</strong>
+Exercise components through a small pipeline defined in YAML or Python.</p></li>
+<li><p><strong>Node-based testing (conditional)</strong>
+Useful when you need to check a processor in isolation, but still construct
+it via the public factory or registry mechanisms.</p></li>
+<li><p><strong>Unit testing of utilities (limited scope)</strong>
+For small, pure helper functions that do not depend on the framework.</p></li>
 </ol>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Avoid direct instantiation of internal APIs like <code class="docutils literal notranslate"><span class="pre">_ContextObserver</span></code> or <code class="docutils literal notranslate"><span class="pre">_ValidatingContextObserver</span></code> in tests. These are framework internals and their usage patterns may change.</p>
-</div>
 </section>
-<section id="pipeline-based-testing-recommended">
-<h2>Pipeline-Based Testing (Recommended)<a class="headerlink" href="#pipeline-based-testing-recommended" title="Link to this heading">¶</a></h2>
-<p>Pipeline-based testing is the preferred approach for most scenarios as it:</p>
+<section id="pipeline-based-testing">
+<h2>Pipeline-based testing<a class="headerlink" href="#pipeline-based-testing" title="Link to this heading">¶</a></h2>
+<p>This is the most robust approach because it tests:</p>
 <ul class="simple">
-<li><p>Tests real usage patterns that users will experience</p></li>
-<li><p>Exercises the full component lifecycle including validation and parameter resolution</p></li>
-<li><p>Provides clear expectations about results in the final payload context</p></li>
-<li><p>Remains stable as internal implementation details change</p></li>
+<li><p>Parameter resolution from configuration and context.</p></li>
+<li><p>Interactions between processors.</p></li>
+<li><p>Contracts enforced by inspection and validation.</p></li>
 </ul>
-<section id="example-testing-context-processors">
-<h3>Example: Testing Context Processors<a class="headerlink" href="#example-testing-context-processors" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_processor_through_pipeline</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test processor behavior through pipeline execution.&quot;&quot;&quot;</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;extensions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;your_extension&quot;</span><span class="p">],</span>
+<section id="example-simple-pipeline-test">
+<h3>Example: simple pipeline test<a class="headerlink" href="#example-simple-pipeline-test" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Payload</span><span class="p">,</span> <span class="n">ContextType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_my_pipeline_round_trip</span><span class="p">():</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;processor&quot;</span><span class="p">:</span> <span class="s2">&quot;YourProcessor&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;param1&quot;</span><span class="p">:</span> <span class="s2">&quot;value1&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;param2&quot;</span><span class="p">:</span> <span class="s2">&quot;value2&quot;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
+                <span class="p">{</span><span class="s2">&quot;processor&quot;</span><span class="p">:</span> <span class="s2">&quot;FloatValueDataSource&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}},</span>
+                <span class="p">{</span><span class="s2">&quot;processor&quot;</span><span class="p">:</span> <span class="s2">&quot;FloatAddOperation&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;addend&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}},</span>
             <span class="p">]</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">initial_payload</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">test_data</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ContextType</span><span class="p">())</span>
-    <span class="n">result_payload</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">initial_payload</span><span class="p">)</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ContextType</span><span class="p">()))</span>
 
-    <span class="c1"># Check results in final context</span>
-    <span class="n">expected_value</span> <span class="o">=</span> <span class="n">result_payload</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;your.key&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">expected_value</span> <span class="o">==</span> <span class="n">expected_result</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mf">3.0</span>
 </pre></div>
 </div>
 </section>
-<section id="example-yaml-based-configuration-testing">
-<h3>Example: YAML-Based Configuration Testing<a class="headerlink" href="#example-yaml-based-configuration-testing" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_yaml_configuration</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test component using YAML configuration (closest to real usage).&quot;&quot;&quot;</span>
-    <span class="n">yaml_config</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<section id="yaml-based-configuration-tests">
+<h3>YAML-based configuration tests<a class="headerlink" href="#yaml-based-configuration-tests" title="Link to this heading">¶</a></h3>
+<p>For extensions, it is often more natural to keep test examples as YAML:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_pipeline_from_yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Payload</span><span class="p">,</span> <span class="n">ContextType</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_extension_pipeline</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">yaml_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">    extensions: [&quot;your-extension&quot;]</span>
 
 <span class="s1">    pipeline:</span>
 <span class="s1">      nodes:</span>
 <span class="s1">        - processor: YourProcessor</span>
 <span class="s1">          parameters:</span>
-<span class="s1">            strategy: &quot;local&quot;</span>
-<span class="s1">            options:</span>
-<span class="s1">              max_iterations: 100</span>
-<span class="s1">              tolerance: 1e-6</span>
+<span class="s1">            param1: &quot;value1&quot;</span>
 <span class="s1">    &#39;&#39;&#39;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;config.yaml&quot;</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">yaml_text</span><span class="p">)</span>
 
-    <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_config</span><span class="p">)</span>
-
-    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ContextType</span><span class="p">()))</span>
 
-    <span class="c1"># Verify results</span>
-    <span class="n">result_value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;processor.result&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">result_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</pre></div>
-</div>
-</section>
-<section id="testing-complex-processors">
-<h3>Testing Complex Processors<a class="headerlink" href="#testing-complex-processors" title="Link to this heading">¶</a></h3>
-<p>For processors that perform complex operations (like optimization, model fitting, etc.), pipeline-based tests provide the most realistic validation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_complex_processor_integration</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test complex processor with full parameter resolution.&quot;&quot;&quot;</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;extensions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;semantiva_optimize&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;processor&quot;</span><span class="p">:</span> <span class="s2">&quot;OptimizerContextProcessor&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;strategy&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>
-                        <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]],</span>
-                        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">YourModel</span><span class="p">(),</span>
-                        <span class="s2">&quot;termination&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s2">&quot;max_evals&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-                            <span class="s2">&quot;ftol_abs&quot;</span><span class="p">:</span> <span class="mf">1e-12</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ContextType</span><span class="p">()))</span>
-
-    <span class="c1"># Check optimization results</span>
-    <span class="n">best</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;optimizer.best_candidate&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">best</span> <span class="ow">and</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">best</span>
-
-    <span class="n">history</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;optimizer.history&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;your.result.key&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;expected&quot;</span>
 </pre></div>
 </div>
 </section>
 </section>
-<section id="node-based-testing-limited-use">
-<h2>Node-Based Testing (Limited Use)<a class="headerlink" href="#node-based-testing-limited-use" title="Link to this heading">¶</a></h2>
-<p>Node-based testing involves direct processor instantiation and should only be used when:</p>
-<ol class="arabic simple">
-<li><p>Pipeline testing is not feasible due to complex setup requirements</p></li>
-<li><p>Testing very specific processor behaviors in isolation</p></li>
-<li><p>Performance testing where pipeline overhead is problematic</p></li>
-</ol>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>When using node-based testing, <strong>never</strong> directly instantiate <code class="docutils literal notranslate"><span class="pre">_ContextObserver</span></code> or other internal framework APIs. Use the proper node execution infrastructure.</p>
-</div>
-<section id="correct-node-based-testing-pattern">
-<h3>Correct Node-Based Testing Pattern<a class="headerlink" href="#correct-node-based-testing-pattern" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_processor_node_correctly</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Correct approach for node-based testing.&quot;&quot;&quot;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.pipeline.payload</span><span class="w"> </span><span class="kn">import</span> <span class="n">Payload</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.context_processors.context_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span>
+<section id="node-based-testing">
+<h2>Node-based testing<a class="headerlink" href="#node-based-testing" title="Link to this heading">¶</a></h2>
+<p>Occasionally you may need to instantiate a processor directly. In that case:</p>
+<ul class="simple">
+<li><p>Use the public processor class, not internal helpers.</p></li>
+<li><p>Pass a realistic data type instance.</p></li>
+<li><p>When context is involved, construct a real context object and exercise the
+processor via its public methods.</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
 
-    <span class="c1"># Create node properly</span>
-    <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
-        <span class="n">processor_name</span><span class="o">=</span><span class="s2">&quot;YourProcessor&quot;</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;param1&quot;</span><span class="p">:</span> <span class="s2">&quot;value1&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;param2&quot;</span><span class="p">:</span> <span class="s2">&quot;value2&quot;</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatDataType</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple float wrapper.&quot;&quot;&quot;</span>
 
-    <span class="c1"># Process with proper infrastructure</span>
-    <span class="n">initial_payload</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">test_data</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ContextType</span><span class="p">())</span>
-    <span class="n">result_payload</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">initial_payload</span><span class="p">)</span>
-
-    <span class="c1"># Check results in context</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">result_payload</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;your.result.key&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">expected_value</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_add_operation_direct</span><span class="p">():</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">AddConstant</span><span class="p">(</span><span class="n">addend</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mf">3.0</span>
 </pre></div>
 </div>
 </section>
-</section>
-<section id="antipatterns-to-avoid">
-<h2>Antipatterns to Avoid<a class="headerlink" href="#antipatterns-to-avoid" title="Link to this heading">¶</a></h2>
-<p>The following patterns should be avoided in tests:</p>
-<section id="antipattern-1-direct-observer-instantiation">
-<h3>Antipattern 1: Direct Observer Instantiation<a class="headerlink" href="#antipattern-1-direct-observer-instantiation" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ DON&#39;T DO THIS</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_processor_wrong</span><span class="p">():</span>
-    <span class="n">processor</span> <span class="o">=</span> <span class="n">YourProcessor</span><span class="p">()</span>
-    <span class="n">context</span> <span class="o">=</span> <span class="n">ContextType</span><span class="p">()</span>
-    <span class="n">observer</span> <span class="o">=</span> <span class="n">_ContextObserver</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>  <span class="c1"># Internal API!</span>
-
-    <span class="n">processor</span><span class="o">.</span><span class="n">operate_context_observer</span><span class="p">(</span><span class="n">observer</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
-
-    <span class="c1"># This creates confusion about where to check results</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">observer</span><span class="o">.</span><span class="n">observer_context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span>  <span class="c1"># ❌</span>
-    <span class="c1"># vs</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span>  <span class="c1"># ❌ Which one?</span>
-</pre></div>
-</div>
-</section>
-<section id="antipattern-2-testing-against-internal-state">
-<h3>Antipattern 2: Testing Against Internal State<a class="headerlink" href="#antipattern-2-testing-against-internal-state" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ DON&#39;T DO THIS</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_processor_internal_state</span><span class="p">():</span>
-    <span class="n">processor</span> <span class="o">=</span> <span class="n">YourProcessor</span><span class="p">()</span>
-    <span class="n">processor</span><span class="o">.</span><span class="n">_internal_method</span><span class="p">()</span>  <span class="c1"># Testing private methods</span>
-    <span class="k">assert</span> <span class="n">processor</span><span class="o">.</span><span class="n">_internal_state</span> <span class="o">==</span> <span class="n">expected</span>  <span class="c1"># Testing private state</span>
-</pre></div>
-</div>
-</section>
-<section id="antipattern-3-mocking-framework-infrastructure">
-<h3>Antipattern 3: Mocking Framework Infrastructure<a class="headerlink" href="#antipattern-3-mocking-framework-infrastructure" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ DON&#39;T DO THIS</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_with_excessive_mocking</span><span class="p">():</span>
-    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;semantiva.pipeline.node.Node&#39;</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;semantiva.context_processors.observer._ContextObserver&#39;</span><span class="p">):</span>
-            <span class="c1"># Over-mocking breaks the framework contract</span>
-            <span class="n">test_logic</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
+<section id="what-to-avoid">
+<h2>What to avoid<a class="headerlink" href="#what-to-avoid" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Over-mocking core infrastructure (nodes, observers, executors).</p></li>
+<li><p>Reaching into private attributes to check behaviour.</p></li>
+<li><p>Depending on internal modules whose names start with <code class="docutils literal notranslate"><span class="pre">_</span></code> – those are
+implementation details and may change without notice.</p></li>
+</ul>
+<p>Instead, prefer to:</p>
+<ul class="simple">
+<li><p>Assert on payloads (data and context) at well-defined points.</p></li>
+<li><p>Use <strong class="command">semantiva inspect</strong> and <strong class="command">semantiva dev lint</strong> in
+separate tests or CI jobs to validate configuration and contracts.</p></li>
+</ul>
 </section>
 </section>
 
@@ -483,14 +405,14 @@
         
         <div class="related-pages">
           
-          <a class="prev-page" href="../trace_graph_alignment.html">
+          <a class="prev-page" href="../glossary.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Trace ↔ Graph Alignment</div>
+                <div class="title">Glossary</div>
                 
               </div>
             </a>
@@ -525,23 +447,14 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Testing Strategies and Best Practices</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#pipeline-based-testing-recommended">Pipeline-Based Testing (Recommended)</a><ul>
-<li><a class="reference internal" href="#example-testing-context-processors">Example: Testing Context Processors</a></li>
-<li><a class="reference internal" href="#example-yaml-based-configuration-testing">Example: YAML-Based Configuration Testing</a></li>
-<li><a class="reference internal" href="#testing-complex-processors">Testing Complex Processors</a></li>
+<li><a class="reference internal" href="#recommended-layers">Recommended layers</a></li>
+<li><a class="reference internal" href="#pipeline-based-testing">Pipeline-based testing</a><ul>
+<li><a class="reference internal" href="#example-simple-pipeline-test">Example: simple pipeline test</a></li>
+<li><a class="reference internal" href="#yaml-based-configuration-tests">YAML-based configuration tests</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#node-based-testing-limited-use">Node-Based Testing (Limited Use)</a><ul>
-<li><a class="reference internal" href="#correct-node-based-testing-pattern">Correct Node-Based Testing Pattern</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#antipatterns-to-avoid">Antipatterns to Avoid</a><ul>
-<li><a class="reference internal" href="#antipattern-1-direct-observer-instantiation">Antipattern 1: Direct Observer Instantiation</a></li>
-<li><a class="reference internal" href="#antipattern-2-testing-against-internal-state">Antipattern 2: Testing Against Internal State</a></li>
-<li><a class="reference internal" href="#antipattern-3-mocking-framework-infrastructure">Antipattern 3: Mocking Framework Infrastructure</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#node-based-testing">Node-based testing</a></li>
+<li><a class="reference internal" href="#what-to-avoid">What to avoid</a></li>
 </ul>
 </li>
 </ul>

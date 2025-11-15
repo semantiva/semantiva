@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Semantiva Studio Viewer" href="studio_viewer.html"><link rel="prev" title="Derive Parameter Sweep" href="sweeps.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Utility Components" href="utility_processors.html"><link rel="prev" title="Data IO (Sources &amp; Sinks)" href="data_io.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Run Space (v1): blocks that expand context - Semantiva 0.5.0 documentation</title>
@@ -191,47 +191,58 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sweeps.html">Derive Parameter Sweep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ser.html">Semantic Execution Record (SER) v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_stream_v1.html">Trace Stream v1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_emission.html">Run-Space Emission (Runtime)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introspection_validation.html">Introspection &amp; Validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph.html">Canonical Graph Builder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Semantiva Contracts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -273,162 +284,84 @@
         <article role="main" id="furo-main-content">
           <section id="run-space-v1-blocks-that-expand-context">
 <h1>Run Space (v1): blocks that expand context<a class="headerlink" href="#run-space-v1-blocks-that-expand-context" title="Link to this heading">¶</a></h1>
-<p>Semantiva’s run space defines a set of executions by expanding <strong>context</strong> keys.
-Each <em>block</em> expands its own keys using either <code class="docutils literal notranslate"><span class="pre">by_position</span></code> (index-aligned)
-or <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> (Cartesian). Blocks then combine globally via a top-level
-<code class="docutils literal notranslate"><span class="pre">combine</span></code> (default: <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>).</p>
-<p><strong>Rows-as-runs:</strong> CSV, JSON, YAML, and NDJSON sources emit one run per
-row/object by default. Use <code class="docutils literal notranslate"><span class="pre">by_position</span></code> when aligning multiple lists by
-index, and <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> for Cartesian expansion within a block or across
-blocks.</p>
-<section id="schema">
-<h2>Schema<a class="headerlink" href="#schema" title="Link to this heading">¶</a></h2>
+<p>A <strong>run-space</strong> describes a <em>family of runs</em> for a single pipeline. Instead of
+manually looping over <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">run</span></code> with different <code class="docutils literal notranslate"><span class="pre">--context</span></code> values,
+you declare the combinations once in YAML.</p>
+<p>Conceptually:</p>
+<ul class="simple">
+<li><p>The pipeline definition stays the same.</p></li>
+<li><p>The run-space expands into individual runs, each with a concrete context.</p></li>
+<li><p>The run-space and each run have stable identities that appear in the trace
+stream and viewer.</p></li>
+</ul>
+<section id="from-repeated-cli-calls-to-run-space">
+<h2>From repeated CLI calls to run-space<a class="headerlink" href="#from-repeated-cli-calls-to-run-space" title="Link to this heading">¶</a></h2>
+<p>Without run-space, you might write:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>run<span class="w"> </span>hello.yaml<span class="w"> </span>--context<span class="w"> </span><span class="nv">value</span><span class="o">=</span><span class="m">1</span>.0<span class="w"> </span><span class="nv">factor</span><span class="o">=</span><span class="m">10</span>.0<span class="w"> </span><span class="nv">addend</span><span class="o">=</span><span class="m">1</span>.0
+semantiva<span class="w"> </span>run<span class="w"> </span>hello.yaml<span class="w"> </span>--context<span class="w"> </span><span class="nv">value</span><span class="o">=</span><span class="m">2</span>.0<span class="w"> </span><span class="nv">factor</span><span class="o">=</span><span class="m">20</span>.0<span class="w"> </span><span class="nv">addend</span><span class="o">=</span><span class="m">1</span>.0
+semantiva<span class="w"> </span>run<span class="w"> </span>hello.yaml<span class="w"> </span>--context<span class="w"> </span><span class="nv">value</span><span class="o">=</span><span class="m">3</span>.5<span class="w"> </span><span class="nv">factor</span><span class="o">=</span><span class="m">30</span>.0<span class="w"> </span><span class="nv">addend</span><span class="o">=</span><span class="m">1</span>.0
+</pre></div>
+</div>
+<p>With run-space, you express the same idea in YAML:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">run_space</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">combine</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
-<span class="w">  </span><span class="nt">max_runs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="nt">max_runs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
 <span class="w">  </span><span class="nt">dry_run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
 <span class="w">      </span><span class="nt">context</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.5</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.5</span><span class="p p-Indicator">]</span>
 <span class="w">        </span><span class="nt">factor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">10.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">30.0</span><span class="p p-Indicator">]</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
-<span class="w">      </span><span class="nt">context</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">addend</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">addend</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># your nodes here</span>
 </pre></div>
 </div>
 </section>
-<section id="cheat-sheet">
-<h2>Cheat-sheet<a class="headerlink" href="#cheat-sheet" title="Link to this heading">¶</a></h2>
+<section id="key-fields">
+<h2>Key fields<a class="headerlink" href="#key-fields" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><strong>Block modes</strong>
-- <code class="docutils literal notranslate"><span class="pre">by_position</span></code> — index-aligned lists; index <em>i</em> travels together → one run per index.
-- <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> — Cartesian product over the listed keys.</p></li>
-<li><p><strong>Blocks combination</strong>
-- <code class="docutils literal notranslate"><span class="pre">combine:</span> <span class="pre">combinatorial</span></code> <em>(default)</em> — Cartesian product across blocks.
-- <code class="docutils literal notranslate"><span class="pre">combine:</span> <span class="pre">by_position</span></code> — align blocks by index; all blocks must expand to the same size.</p></li>
-<li><p><strong>External sources</strong>
-- Default: <strong>rows-as-runs</strong> for CSV/JSON/YAML/NDJSON when selecting rows/objects (no extra mode needed). Use <code class="docutils literal notranslate"><span class="pre">by_position</span></code> when aligning multiple lists; use <code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> for Cartesian expansions.</p></li>
-<li><p><strong>Conflicts</strong>
-- Duplicate context keys <strong>across blocks</strong> → fail fast.
-- Duplicate key <strong>within a block</strong> (<code class="docutils literal notranslate"><span class="pre">context</span></code> vs <code class="docutils literal notranslate"><span class="pre">source</span></code>) → fail fast.</p></li>
-<li><p><strong>Safety switches</strong>
-- <code class="docutils literal notranslate"><span class="pre">max_runs</span></code> limits total expansions; exceeding it raises an error.
-- <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> prints the plan (with previews) and exits without execution. See also <a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">combine</span></code> – how to combine blocks (for example <code class="docutils literal notranslate"><span class="pre">by_position</span></code> or
+<code class="docutils literal notranslate"><span class="pre">combinatorial</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_runs</span></code> – hard safety cap to avoid accidental explosion of runs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dry_run</span></code> – when <code class="docutils literal notranslate"><span class="pre">true</span></code>, Semantiva will expand the plan and print it
+without executing the pipeline.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blocks</span></code> – a list of blocks, each with a <code class="docutils literal notranslate"><span class="pre">mode</span></code> and a <code class="docutils literal notranslate"><span class="pre">context</span></code>
+mapping.</p></li>
+</ul>
+<p>See <a class="reference internal" href="tutorials/run_space_quickstart.html"><span class="doc">Run Space Quickstart (Local)</span></a> for more complete examples.</p>
+</section>
+<section id="identity-and-traceability">
+<h2>Identity and traceability<a class="headerlink" href="#identity-and-traceability" title="Link to this heading">¶</a></h2>
+<p>Each run-space has:</p>
+<ul class="simple">
+<li><p>A <strong>run-space configuration ID</strong> – derived from the run-space section itself.</p></li>
+<li><p>A <strong>run-space launch ID</strong> – derived from the configuration plus launch
+parameters.</p></li>
+</ul>
+<p>Each expanded run has:</p>
+<ul class="simple">
+<li><p>A <strong>run ID</strong> – part of the Semantic Execution Record (SER) identity block.</p></li>
+<li><p>A link back to both the pipeline configuration and the run-space
+configuration.</p></li>
+</ul>
+<p>These IDs are documented in <a class="reference internal" href="identity_cheatsheet.html"><span class="doc">Identity Cheatsheet</span></a> and appear in:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a></p></li>
+<li><p><a class="reference internal" href="trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a></p></li>
+<li><p><a class="reference internal" href="trace_aggregator_v1.html"><span class="doc">Trace Aggregator v1</span></a></p></li>
+<li><p><a class="reference internal" href="run_space_emission.html"><span class="doc">Run-Space Emission (Runtime)</span></a></p></li>
+<li><p><a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a></p></li>
 </ul>
 </section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">docs/examples/run_space/csv_rows.yaml</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">run_space</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
-<span class="w">      </span><span class="nt">source</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/examples/data/runs.csv</span>
-<span class="w">        </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">value</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">factor</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">addend</span><span class="p p-Indicator">]</span>
-</pre></div>
-</div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">docs/examples/run_space/block_combinatorial_two_sources.yaml</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">run_space</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">combine</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
-<span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
-<span class="w">      </span><span class="nt">source</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/examples/data/runs.csv</span>
-<span class="w">        </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">value</span><span class="p p-Indicator">]</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
-<span class="w">      </span><span class="nt">source</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/examples/data/tunes.json</span>
-</pre></div>
-</div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">docs/examples/run_space/csv_columns_combinatorial.yaml</span><a class="headerlink" href="#id3" title="Link to this code">¶</a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">run_space</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">blocks</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combinatorial</span>
-<span class="w">      </span><span class="nt">source</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv</span>
-<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/examples/data/runs.csv</span>
-<span class="w">        </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">value</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">factor</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">addend</span><span class="p p-Indicator">]</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="external-sources-rows-as-runs-by-default">
-<h2>External sources (rows-as-runs by default)<a class="headerlink" href="#external-sources-rows-as-runs-by-default" title="Link to this heading">¶</a></h2>
-<p>Blocks can read values from external files. Rows are treated as runs unless a
-block explicitly requests <code class="docutils literal notranslate"><span class="pre">mode:</span> <span class="pre">combinatorial</span></code> for Cartesian expansion.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><strong>Rows-as-runs by default.</strong> CSV, JSON, YAML, and NDJSON sources interpret each
-row/object as a single run when <code class="docutils literal notranslate"><span class="pre">mode</span></code> is omitted or set to <code class="docutils literal notranslate"><span class="pre">by_position</span></code>.</p>
-</div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">by_position</span>
-<span class="w">  </span><span class="nt">source</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv | json | yaml | ndjson</span>
-<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">runs.csv</span>
-<span class="w">    </span><span class="nt">select</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">value</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">factor</span><span class="p p-Indicator">]</span>
-<span class="w">    </span><span class="nt">rename</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> factor</span><span class="p">:</span><span class="w"> </span><span class="nv">multiplier</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">    </span><span class="c1"># rows are runs when mode is omitted or ``by_position``</span>
-</pre></div>
-</div>
-</section>
-<section id="linkage-to-pipelines">
-<h2>Linkage to Pipelines<a class="headerlink" href="#linkage-to-pipelines" title="Link to this heading">¶</a></h2>
-<p>Each <code class="docutils literal notranslate"><span class="pre">pipeline_start</span></code> includes a <strong>composite foreign key</strong> when spawned from a Run-Space launch:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code> — composite FK to <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> (both parts needed for retry disambiguation)</p></li>
-</ul>
-<p>Plus run-specific metadata:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_index</span></code> — 0-based position within the launch</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_space_context</span></code> — parameter values for this specific run</p></li>
-</ul>
-<p>Launch-level constants (<code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_inputs_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code>,
-<code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code>) are stored once in the <code class="docutils literal notranslate"><span class="pre">run_space_start</span></code> event to eliminate redundancy.</p>
-<p>See <a class="reference internal" href="run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a> for the Run-Space lifecycle and foreign-key
-relationships.</p>
-</section>
-<section id="rules">
-<h2>Rules<a class="headerlink" href="#rules" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Duplicate context keys <strong>across blocks</strong> raise an error (fail-fast).</p></li>
-<li><p>Within a block, keys from <code class="docutils literal notranslate"><span class="pre">context</span></code> and <code class="docutils literal notranslate"><span class="pre">source</span></code> must be disjoint.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">by_position</span></code> blocks require all lists to have identical length.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> blocks compute the Cartesian product of their lists.</p></li>
-<li><p>Blocks combine via <code class="docutils literal notranslate"><span class="pre">combine</span></code> (<code class="docutils literal notranslate"><span class="pre">combinatorial</span></code> or <code class="docutils literal notranslate"><span class="pre">by_position</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">max_runs</span></code> prevents accidental explosions; <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> prints the plan and exits.</p></li>
-</ul>
-</section>
-<section id="cli-integration">
-<h2>CLI integration<a class="headerlink" href="#cli-integration" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">run</span></code> exposes run-space helpers:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-file</span></code> - load a <code class="docutils literal notranslate"><span class="pre">run_space</span></code> block from a separate YAML file.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-max-runs</span></code> - override the safety limit on the number of runs.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--run-space-dry-run</span></code> - compute the expansion, print block sizes plus previews, and exit without executing.</p></li>
-</ul>
-</section>
-<section id="trace-emission">
-<h2>Trace Emission<a class="headerlink" href="#trace-emission" title="Link to this heading">¶</a></h2>
-<p>The Run-Space system emits structured trace events:</p>
-<ul class="simple">
-<li><p><strong>run_space_start</strong> — contains launch-level constants (<code class="docutils literal notranslate"><span class="pre">run_space_spec_id</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_combine_mode</span></code>,
-<code class="docutils literal notranslate"><span class="pre">run_space_total_runs</span></code>, etc.) emitted once per launch</p></li>
-<li><p><strong>pipeline_start</strong> — contains composite FK (<code class="docutils literal notranslate"><span class="pre">run_space_launch_id</span></code> + <code class="docutils literal notranslate"><span class="pre">run_space_attempt</span></code>) plus
-run-specific metadata (<code class="docutils literal notranslate"><span class="pre">run_space_index</span></code>, <code class="docutils literal notranslate"><span class="pre">run_space_context</span></code>)</p></li>
-<li><p><strong>ser</strong> — Semantic Execution Records contain no run-space fields (clean separation)</p></li>
-</ul>
-<p>The planner returns metadata with block sizes, modes, context keys, and source
-provenance (path, format, SHA-256, selectors, and renames).</p>
-<p>See <a class="reference internal" href="trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a> and <a class="reference internal" href="run_space_emission.html"><span class="doc">Run-Space Emission (Runtime)</span></a> for complete details.</p>
+<section id="external-sources">
+<h2>External sources<a class="headerlink" href="#external-sources" title="Link to this heading">¶</a></h2>
+<p>Run-space blocks can also pull values from external sources such as CSV files.
+Those patterns are more advanced and are covered in
+<a class="reference internal" href="tutorials/run_space_quickstart.html"><span class="doc">Run Space Quickstart (Local)</span></a>.</p>
+<p>For local, single-machine experiments, the YAML-only form is often sufficient
+and keeps the configuration self-contained.</p>
 </section>
 </section>
 
@@ -437,23 +370,23 @@ provenance (path, format, SHA-256, selectors, and renames).</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="studio_viewer.html">
+          <a class="next-page" href="utility_processors.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Semantiva Studio Viewer</div>
+                <div class="title">Utility Components</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="sweeps.html">
+          <a class="prev-page" href="data_io.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Derive Parameter Sweep</div>
+                <div class="title">Data IO (Sources &amp; Sinks)</div>
                 
               </div>
             </a>
@@ -488,14 +421,10 @@ provenance (path, format, SHA-256, selectors, and renames).</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Run Space (v1): blocks that expand context</a><ul>
-<li><a class="reference internal" href="#schema">Schema</a></li>
-<li><a class="reference internal" href="#cheat-sheet">Cheat-sheet</a></li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
-<li><a class="reference internal" href="#external-sources-rows-as-runs-by-default">External sources (rows-as-runs by default)</a></li>
-<li><a class="reference internal" href="#linkage-to-pipelines">Linkage to Pipelines</a></li>
-<li><a class="reference internal" href="#rules">Rules</a></li>
-<li><a class="reference internal" href="#cli-integration">CLI integration</a></li>
-<li><a class="reference internal" href="#trace-emission">Trace Emission</a></li>
+<li><a class="reference internal" href="#from-repeated-cli-calls-to-run-space">From repeated CLI calls to run-space</a></li>
+<li><a class="reference internal" href="#key-fields">Key fields</a></li>
+<li><a class="reference internal" href="#identity-and-traceability">Identity and traceability</a></li>
+<li><a class="reference internal" href="#external-sources">External sources</a></li>
 </ul>
 </li>
 </ul>
