@@ -173,7 +173,9 @@ class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
             }:
                 continue
             default = (
-                param.default if param.default is not inspect._empty else _NO_DEFAULT
+                param.default
+                if param.default is not inspect.Parameter.empty
+                else _NO_DEFAULT
             )
             annotation = sig_map.get(param.name, "Unknown")
             details[param.name] = ParameterInfo(default=default, annotation=annotation)
@@ -396,6 +398,15 @@ class OperationTopologyFactory:
 
 class DataProbe(_BaseDataProcessor):
     """DataProbe analyzes input data without modifying it."""
+
+    @classmethod
+    @abstractmethod
+    def input_data_type(cls) -> Type[BaseDataType]:
+        """Return expected input data type for probe."""
+
+    @abstractmethod
+    def _process_logic(self, data: T, *args, **kwargs) -> Any:
+        """Probe logic without modification."""
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
