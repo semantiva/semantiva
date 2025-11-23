@@ -138,7 +138,9 @@ class ContextProcessor(_SemantivaComponent):
                 inspect.Parameter.VAR_KEYWORD,
             }:
                 continue
-            default = p.default if p.default is not inspect._empty else _NO_DEFAULT
+            default = (
+                p.default if p.default is not inspect.Parameter.empty else _NO_DEFAULT
+            )
             annotation = sig_map.get(p.name, "Unknown")
             details[p.name] = ParameterInfo(default=default, annotation=annotation)
         return details

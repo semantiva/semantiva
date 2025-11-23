@@ -219,7 +219,7 @@ class _SemantivaComponent(metaclass=_SemantivaComponentMeta):
             }:
                 continue
             ann = param.annotation
-            if ann is inspect._empty:
+            if ann is inspect.Parameter.empty:
                 type_name = "Unknown"
             else:
                 origin = get_origin(ann)

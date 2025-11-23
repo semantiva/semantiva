@@ -380,7 +380,7 @@ class ParametricSweepFactory:
         for param in parameters:
             if param.name in bound_names:
                 continue
-            if param.default is inspect._empty:
+            if param.default is inspect.Parameter.empty:
                 required_external.append(param.name)
             else:
                 optional_external[param.name] = param.default
