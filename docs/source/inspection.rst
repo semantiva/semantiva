@@ -14,8 +14,8 @@ See also :doc:`identity_cheatsheet` for a quick reference to the identities.
 Payload shape
 -------------
 
-The payload returned by :func:`semantiva.inspection.build` is JSON-safe
-and deterministic. All ordering is canonical:
+The payload returned by :func:`semantiva.inspection.build_inspection_payload`
+is JSON-safe and deterministic. All ordering is canonical:
 
 * Nodes appear in pipeline execution order.
 * ``required_context_keys`` are sorted alphabetically.
@@ -58,6 +58,25 @@ and deterministic. All ordering is canonical:
    The ``run_space`` object contains only ``spec_id`` at inspection time.
    The ``inputs_id`` field is **never computed** during inspection—it appears
    only in runtime traces after input sources are fingerprinted.
+
+API entry points
+----------------
+
+The inspection layer exposes three primary entry points:
+
+* ``semantiva.inspection.build_pipeline_inspection`` — error-resilient builder
+  returning ``PipelineInspection``.
+* ``semantiva.inspection.build_inspection_payload`` — canonical, JSON-safe
+  payload used by GUI/CLI (preferred over the legacy name).
+* ``semantiva.inspection.build_canonical_graph`` — canonical graph
+  representation for visualization.
+
+.. deprecated:: 0.5.1
+   ``semantiva.inspection.build`` is deprecated in favour of
+   ``semantiva.inspection.build_inspection_payload`` and will be removed in a
+   future minor release (not before 0.6.0). The helper
+   ``semantiva.inspection.collect_required_context_keys`` is also deprecated;
+   access ``PipelineInspection.required_context_keys`` directly instead.
 
 Excluded fields
 ^^^^^^^^^^^^^^^

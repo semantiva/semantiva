@@ -19,19 +19,30 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any
+import warnings
 
 import yaml
 
-from semantiva.inspection.builder import build, build_pipeline_inspection
+from semantiva.inspection.builder import (
+    build,
+    build_inspection_payload,
+    build_pipeline_inspection,
+    collect_required_context_keys,
+)
 from semantiva.registry.processor_registry import ProcessorRegistry
 
 
-def _load_payload(yaml_path: Path) -> Any:
+def _load_config_and_inspection(yaml_path: Path) -> tuple[Any, Any]:
     ProcessorRegistry.register_modules("semantiva.examples.test_utils")
     config = yaml.safe_load(yaml_path.read_text())
     nodes = config.get("pipeline", {}).get("nodes", [])
     inspection = build_pipeline_inspection(nodes)
-    return build(config, inspection=inspection)
+    return config, inspection
+
+
+def _load_payload(yaml_path: Path) -> Any:
+    config, inspection = _load_config_and_inspection(yaml_path)
+    return build_inspection_payload(config, inspection=inspection)
 
 
 def test_inspection_payload_shape() -> None:
@@ -73,3 +84,28 @@ def test_sanitize_sweep_never_exposes_raw_expr() -> None:
     text = json.dumps(payload)
     assert "expr:" not in text
     assert "preprocessor_view" not in text
+
+
+def test_build_wrapper_emits_deprecation_warning() -> None:
+    yaml_path = Path("tests/parametric_sweep_demo.yaml")
+    config, inspection = _load_config_and_inspection(yaml_path)
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", DeprecationWarning)
+        legacy_payload = build(config, inspection=inspection)
+
+    assert any(isinstance(w.message, DeprecationWarning) for w in caught)
+    canonical_payload = build_inspection_payload(config, inspection=inspection)
+    assert legacy_payload == canonical_payload
+
+
+def test_collect_required_context_keys_deprecated() -> None:
+    yaml_path = Path("tests/parametric_sweep_demo.yaml")
+    _, inspection = _load_config_and_inspection(yaml_path)
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", DeprecationWarning)
+        keys = collect_required_context_keys(inspection)
+
+    assert any(isinstance(w.message, DeprecationWarning) for w in caught)
+    assert keys == sorted(set(inspection.required_context_keys))

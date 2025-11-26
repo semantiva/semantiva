@@ -239,15 +239,36 @@ def _build_sweep_payload(
     }
 
 
-def collect_required_context_keys(inspection: "PipelineInspection") -> List[str]:
-    """Collect and return a deterministic sorted list of required context keys.
+def _collect_required_context_keys(
+    inspection: "PipelineInspection" | None,
+) -> List[str]:
+    """Internal helper to compute a deterministic list of required context keys."""
 
-    This ensures stable identity computation across inspection runs.
-    """
     if inspection is None:
         return []
     keys: Iterable[str] = getattr(inspection, "required_context_keys", []) or []
     return sorted(set(keys))
+
+
+def collect_required_context_keys(inspection: "PipelineInspection" | None) -> List[str]:
+    """[DEPRECATED] Return sorted required context keys from an inspection.
+
+    This helper is preserved for compatibility but will be removed in a future
+    minor release (not before 0.6.0). Prefer using
+    :attr:`PipelineInspection.required_context_keys` directly or the new
+    :func:`build_inspection_payload` helper which already includes the
+    ``required_context_keys`` entry.
+    """
+
+    import warnings
+
+    warnings.warn(
+        "collect_required_context_keys() is deprecated; access "
+        "PipelineInspection.required_context_keys directly instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _collect_required_context_keys(inspection)
 
 
 def build_canonical_graph(
@@ -255,6 +276,24 @@ def build_canonical_graph(
     *,
     inspection: "PipelineInspection" | None = None,
 ) -> Dict[str, Any]:
+    """Build the canonical graph representation for a pipeline configuration.
+
+    The returned structure mirrors the deterministic spec consumed by the trace
+    pipeline and CLI visualizations. If ``inspection`` is provided, the graph is
+    enriched with preprocessor metadata captured during inspection; otherwise a
+    fresh :class:`PipelineInspection` is constructed.
+
+    Args:
+        config: Pipeline configuration (list of node configs or mapping with a
+            ``pipeline.nodes`` key). Invalid configurations raise
+            :class:`PipelineConfigurationError`.
+        inspection: Optional precomputed inspection results to attach
+            preprocessor metadata without re-computing it.
+
+    Returns:
+        dict: Canonical graph with ``version``, ``nodes``, and ``edges`` fields.
+    """
+
     nodes, _ = _extract_nodes_and_run_space(config)
     canonical_spec, _ = build_canonical_spec(nodes)
     if inspection is None:
@@ -281,6 +320,57 @@ def build(
     *,
     inspection: "PipelineInspection" | None = None,
 ) -> Dict[str, Any]:
+    """[DEPRECATED] Use :func:`build_inspection_payload` instead."""
+    import warnings
+
+    warnings.warn(
+        "semantiva.inspection.build() is deprecated; use "
+        "semantiva.inspection.build_inspection_payload() instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return build_inspection_payload(config, inspection=inspection)
+
+
+def build_inspection_payload(
+    config: Any,
+    *,
+    inspection: "PipelineInspection" | None = None,
+) -> Dict[str, Any]:
+    """Build the canonical inspection payload consumed by CLI and GUI.
+
+    This function constructs a JSON-safe, deterministic payload that captures
+    pipeline identity, canonicalized node metadata, and required context keys
+    without raising exceptions during inspection. It is the single source of
+    truth for configuration-only inspection and is preferred over the legacy
+    :func:`build` wrapper.
+
+    Args:
+        config: Pipeline configuration. Accepts either a list of node
+            dictionaries or a mapping containing ``pipeline.nodes`` (and an
+            optional ``run_space`` block). Invalid configurations raise
+            :class:`PipelineConfigurationError`.
+        inspection: Optional precomputed :class:`PipelineInspection` to avoid
+            recomputing inspection data. When omitted, inspection is executed
+            internally in an error-resilient manner.
+
+    Returns:
+        dict: A payload with three top-level keys:
+
+            * ``identity`` — pipeline semantic/config identities and optional
+              ``run_space.spec_id`` (inputs fingerprint is never computed at
+              inspection time).
+            * ``pipeline_spec_canonical`` — canonicalized per-node metadata used
+              by SER and CLI.
+            * ``required_context_keys`` — sorted keys required in the initial
+              payload context.
+
+    Notes:
+        * The payload intentionally excludes runtime identifiers such as
+          ``pipeline_id``, ``run_id``, and run-space launch identifiers.
+        * Sweep preprocessors include sanitized signatures only; raw expressions
+          (``expr``) and UI-only ``preprocessor_view`` data are never emitted.
+    """
     nodes, run_space = _extract_nodes_and_run_space(config)
     if inspection is None:
         inspection = build_pipeline_inspection(nodes)
@@ -359,7 +449,7 @@ def build(
     payload = {
         "identity": identity,
         "pipeline_spec_canonical": {"nodes": payload_nodes},
-        "required_context_keys": collect_required_context_keys(inspection),
+        "required_context_keys": _collect_required_context_keys(inspection),
     }
     return payload
 

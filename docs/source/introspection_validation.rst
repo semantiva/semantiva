@@ -74,10 +74,10 @@ The inspection module can emit a stable JSON-serialisable payload:
 .. code-block:: python
 
    from semantiva.configurations import load_pipeline_from_yaml
-   from semantiva import inspection
+   from semantiva.inspection import build_inspection_payload
 
    cfg = load_pipeline_from_yaml("pipeline.yaml")
-   payload = inspection.build(cfg.nodes)
+   payload = build_inspection_payload(cfg.nodes)
 
    # Serialize or hand over to GUI tooling
    import json

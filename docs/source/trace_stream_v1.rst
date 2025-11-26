@@ -224,6 +224,15 @@ Example flow (pseudo)
    schema_url = registry["records"][obj["record_type"]]
    validate(obj, load(schema_url))
 
+Trace detail flags
+------------------
+
+``semantiva.trace.drivers.jsonl.JsonlTraceDriver`` accepts a comma-separated
+``detail`` string to control optional payloads (hashes, repr snippets, and
+context extracts). See the driver docstring for the authoritative list of
+flags; unknown entries are ignored and ``hash`` defaults to ``True`` when
+nothing else is enabled.
+
 Compatibility
 -------------
 - ``trace_header_v1`` requires ``record_type``, ``schema_version``, and ``run_id``.
