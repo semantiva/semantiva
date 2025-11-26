@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [v0.5.1] - Unreleased
+
+### Added
+- Introduced :func:`semantiva.inspection.build_inspection_payload` as the
+  canonical inspection payload builder with full docstrings.
+- Documented :class:`semantiva.trace.drivers.jsonl.JsonlTraceDriver` constructor
+  parameters and detail flags for SER emission.
+
+### Deprecated
+- :func:`semantiva.inspection.build` now emits :class:`DeprecationWarning` in
+  favor of :func:`semantiva.inspection.build_inspection_payload`.
+- :func:`semantiva.inspection.collect_required_context_keys` is deprecated;
+  prefer :attr:`PipelineInspection.required_context_keys` directly.
+
+### Documentation
+- Aligned inspection and trace stream docs with the canonical payload builder
+  and trace detail flag semantics.
+- Added a glossary note describing the pre-1.0 public API deprecation policy.
+
 ## [v0.5.0] - 2025-11-15
 
 ### Summary

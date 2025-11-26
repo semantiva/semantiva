@@ -36,6 +36,34 @@ class JsonlTraceDriver(TraceDriver):
     def __init__(
         self, output_path: str | None = None, detail: str | None = None
     ) -> None:
+        """Create a JSONL-based trace driver for SER v1 records.
+
+        Args:
+            output_path: Optional path controlling where trace files are
+                written.
+
+                * ``None`` (default): use the current directory and create a
+                  timestamped ``<timestamp>_<run_id>.ser.jsonl`` file per run.
+                * Directory or path without suffix: create timestamped files
+                  under that directory.
+                * File path with an extension: append all records to the given
+                  file.
+
+            detail: Comma-separated list of detail flags. Flags are
+                case-insensitive, whitespace is ignored, and unknown flags are
+                ignored. Supported flags:
+
+                * ``hash``: include deterministic identity hashes (default if
+                  no other flags are set).
+                * ``repr``: include short ``repr`` snippets for payload/context
+                  values where available.
+                * ``context``: include context extracts in supported records.
+                * ``all``: enable all available flags.
+
+        Notes:
+            If no flags evaluate to ``True``, ``hash`` is enforced by default to
+            keep SER identity computation stable.
+        """
         self._path = Path(output_path) if output_path else Path(".")
         self._file: Optional[IO[str]] = None
         self._run_space_file: Optional[IO[str]] = (

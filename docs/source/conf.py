@@ -131,6 +131,7 @@ nitpick_ignore = [
     ("py:class", "semantiva.data_processors.data_processors.DataProbe"),
     ("py:class", "semantiva.context_processors.context_processors.ContextProcessor"),
     ("py:func", "semantiva.inspection.build"),
+    ("py:func", "semantiva.inspection.build_inspection_payload"),
 ]
 
 nitpick_ignore_regex = [

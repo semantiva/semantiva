@@ -23,7 +23,7 @@ from pathlib import Path
 
 import pytest
 
-from semantiva.inspection.builder import build
+from semantiva.inspection.builder import build_inspection_payload
 
 
 @pytest.fixture
@@ -70,8 +70,8 @@ def pipeline_with_context_keys():
 
 def test_required_context_keys_deterministic(pipeline_with_context_keys):
     """Test that required_context_keys are sorted and deterministic."""
-    payload1 = build(pipeline_with_context_keys)
-    payload2 = build(pipeline_with_context_keys)
+    payload1 = build_inspection_payload(pipeline_with_context_keys)
+    payload2 = build_inspection_payload(pipeline_with_context_keys)
 
     keys1 = payload1.get("required_context_keys", [])
     keys2 = payload2.get("required_context_keys", [])
@@ -84,7 +84,7 @@ def test_required_context_keys_deterministic(pipeline_with_context_keys):
 
 def test_forbidden_runtime_fields_absent(simple_pipeline_config):
     """Test that inspection payload excludes all runtime/preview fields."""
-    payload = build(simple_pipeline_config)
+    payload = build_inspection_payload(simple_pipeline_config)
     payload_json = json.dumps(payload)
 
     # List of forbidden field patterns that should never appear in inspection
@@ -107,7 +107,7 @@ def test_forbidden_runtime_fields_absent(simple_pipeline_config):
 
 def test_identity_structure(simple_pipeline_config):
     """Test that identity structure conforms to specification."""
-    payload = build(simple_pipeline_config)
+    payload = build_inspection_payload(simple_pipeline_config)
     identity = payload.get("identity")
 
     assert identity is not None, "Identity must be present"
@@ -140,8 +140,8 @@ def test_identity_structure(simple_pipeline_config):
 
 def test_identity_determinism(simple_pipeline_config):
     """Test that identity computation is deterministic across multiple runs."""
-    payload1 = build(simple_pipeline_config)
-    payload2 = build(simple_pipeline_config)
+    payload1 = build_inspection_payload(simple_pipeline_config)
+    payload2 = build_inspection_payload(simple_pipeline_config)
 
     identity1 = payload1.get("identity", {})
     identity2 = payload2.get("identity", {})
@@ -156,7 +156,7 @@ def test_identity_determinism(simple_pipeline_config):
 
 def test_sweep_is_sanitized_no_raw_expressions(simple_pipeline_config):
     """Test that sweep metadata contains only sanitized signatures, never raw expressions."""
-    payload = build(simple_pipeline_config)
+    payload = build_inspection_payload(simple_pipeline_config)
     json.dumps(payload)
 
     # Raw "expr" field should not appear anywhere in top-level payload
@@ -172,7 +172,7 @@ def test_sweep_is_sanitized_no_raw_expressions(simple_pipeline_config):
 
 def test_payload_structure(simple_pipeline_config):
     """Test that payload has the expected top-level structure."""
-    payload = build(simple_pipeline_config)
+    payload = build_inspection_payload(simple_pipeline_config)
 
     # Required top-level keys
     assert "identity" in payload
@@ -188,7 +188,7 @@ def test_payload_structure(simple_pipeline_config):
 
 def test_node_semantic_id_present(simple_pipeline_config):
     """Test that each node in canonical spec includes node_semantic_id."""
-    payload = build(simple_pipeline_config)
+    payload = build_inspection_payload(simple_pipeline_config)
     nodes = payload.get("pipeline_spec_canonical", {}).get("nodes", [])
 
     for idx, node in enumerate(nodes):
@@ -217,7 +217,7 @@ def test_run_space_spec_id_when_present():
         },
     }
 
-    payload = build(config_with_run_space)
+    payload = build_inspection_payload(config_with_run_space)
     identity = payload.get("identity", {})
     run_space = identity.get("run_space")
 
@@ -240,7 +240,7 @@ def test_sweep_example_sanitization():
     with yaml_path.open("r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
-    payload = build(config)
+    payload = build_inspection_payload(config)
     payload_json = json.dumps(payload)
 
     # Should contain signature fields
