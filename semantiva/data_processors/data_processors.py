@@ -396,17 +396,8 @@ class OperationTopologyFactory:
         return generated_class
 
 
-class DataProbe(_BaseDataProcessor):
+class DataProbe(_BaseDataProcessor):  # pylint: disable=abstract-method
     """DataProbe analyzes input data without modifying it."""
-
-    @classmethod
-    @abstractmethod
-    def input_data_type(cls) -> Type[BaseDataType]:
-        """Return expected input data type for probe."""
-
-    @abstractmethod
-    def _process_logic(self, data: T, *args, **kwargs) -> Any:
-        """Probe logic without modification."""
 
     @classmethod
     def get_created_keys(cls) -> List[str]:
