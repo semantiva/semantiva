@@ -1188,7 +1188,7 @@ class _ContextProcessorNode(_PipelineNode):
             # Fallback for processors that don't implement this method
             return []
 
-    def _process(self, payload: Payload) -> Payload:
+    def _process_single_item_with_context(self, payload: Payload) -> Payload:
         """
         Processes the given data and context.
 
@@ -1230,6 +1230,9 @@ class _ContextProcessorNode(_PipelineNode):
         )
 
         return Payload(data, updated_context)
+
+    def _process(self, payload: Payload) -> Payload:
+        return self._process_single_item_with_context(payload)
 
     def _fetch_parameter_value(self, name: str, context: ContextType) -> Any:
         """Resolve parameter value using single-source-of-truth policy."""
