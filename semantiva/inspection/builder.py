@@ -240,7 +240,7 @@ def _build_sweep_payload(
 
 
 def _collect_required_context_keys(
-    inspection: "PipelineInspection" | None,
+    inspection: PipelineInspection | None,
 ) -> List[str]:
     """Internal helper to compute a deterministic list of required context keys."""
 
@@ -250,7 +250,7 @@ def _collect_required_context_keys(
     return sorted(set(keys))
 
 
-def collect_required_context_keys(inspection: "PipelineInspection" | None) -> List[str]:
+def collect_required_context_keys(inspection: PipelineInspection | None) -> List[str]:
     """[DEPRECATED] Return sorted required context keys from an inspection.
 
     This helper is preserved for compatibility but will be removed in a future
@@ -274,7 +274,7 @@ def collect_required_context_keys(inspection: "PipelineInspection" | None) -> Li
 def build_canonical_graph(
     config: Any,
     *,
-    inspection: "PipelineInspection" | None = None,
+    inspection: PipelineInspection | None = None,
 ) -> Dict[str, Any]:
     """Build the canonical graph representation for a pipeline configuration.
 
@@ -318,7 +318,7 @@ def build_canonical_graph(
 def build(
     config: Any,
     *,
-    inspection: "PipelineInspection" | None = None,
+    inspection: PipelineInspection | None = None,
 ) -> Dict[str, Any]:
     """[DEPRECATED] Use :func:`build_inspection_payload` instead."""
     import warnings
@@ -333,9 +333,9 @@ def build(
 
 
 def build_inspection_payload(
-    config: Any,
+    config: Sequence[Mapping[str, Any]] | Mapping[str, Any],
     *,
-    inspection: "PipelineInspection" | None = None,
+    inspection: PipelineInspection | None = None,
 ) -> Dict[str, Any]:
     """Build the canonical inspection payload consumed by CLI and GUI.
 
