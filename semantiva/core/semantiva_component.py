@@ -30,7 +30,7 @@ from typing import (
     get_args,
     TYPE_CHECKING,
 )
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 import textwrap
 import threading
 import inspect
@@ -53,7 +53,7 @@ def get_component_registry() -> Dict[str, List[Type[_SemantivaComponent]]]:
     return _COMPONENT_REGISTRY
 
 
-class _SemantivaComponentMeta(type):
+class _SemantivaComponentMeta(ABCMeta):
     """
     Metaclass for _SemantivaComponent, responsible for registering subclasses in a global registry.
     This allows for dynamic discovery of components based on their semantic metadata.
