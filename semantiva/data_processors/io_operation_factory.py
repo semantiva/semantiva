@@ -473,12 +473,12 @@ class _IOOperationFactory:
                     continue
                 default = (
                     param.default
-                    if param.default is not inspect._empty
+                    if param.default is not inspect.Parameter.empty
                     else _NO_DEFAULT
                 )
                 annotation = (
                     getattr(param.annotation, "__name__", str(param.annotation))
-                    if param.annotation is not inspect._empty
+                    if param.annotation is not inspect.Parameter.empty
                     else "Unknown"
                 )
                 details[param.name] = ParameterInfo(

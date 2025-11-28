@@ -70,7 +70,7 @@ def test_data_operation_missing_arg_exposed_on_signature() -> None:
 
     signature = inspect.signature(sweep_cls._process_logic)
     assert "factor" in signature.parameters
-    assert signature.parameters["factor"].default is inspect._empty
+    assert signature.parameters["factor"].default is inspect.Parameter.empty
 
 
 def test_data_source_from_context_requirement_is_exposed() -> None:

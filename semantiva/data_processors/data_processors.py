@@ -173,7 +173,9 @@ class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
             }:
                 continue
             default = (
-                param.default if param.default is not inspect._empty else _NO_DEFAULT
+                param.default
+                if param.default is not inspect.Parameter.empty
+                else _NO_DEFAULT
             )
             annotation = sig_map.get(param.name, "Unknown")
             details[param.name] = ParameterInfo(default=default, annotation=annotation)
@@ -394,7 +396,7 @@ class OperationTopologyFactory:
         return generated_class
 
 
-class DataProbe(_BaseDataProcessor):
+class DataProbe(_BaseDataProcessor):  # pylint: disable=abstract-method
     """DataProbe analyzes input data without modifying it."""
 
     @classmethod
