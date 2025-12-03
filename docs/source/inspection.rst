@@ -1,6 +1,15 @@
 Inspection Payload & CLI
 ========================
 
+.. admonition:: Who this is for
+
+   This page is for **pipeline users** who want to inspect executions and
+   for **architects/system designers** who care about provenance and trace
+   flows.
+
+   It assumes you are comfortable with pipelines
+   (:doc:`personas/pipeline_users`) and have run at least a few real workflows.
+
 Inspection computes a **configuration-only** view of a pipeline. The builder
 exposes a canonical payload that both the CLI and GUI consume.
 

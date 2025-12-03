@@ -12,13 +12,25 @@ This documentation is organised by **role** and **experience level**:
 - Use *Extensibility & architecture* when authoring components or integrating Semantiva.
 - Use *Reference* for exception types, glossary entries and low-level details.
 
+.. admonition:: Where to start
+
+   - New to Semantiva? Start with :doc:`getting_started`, then see :doc:`personas/pipeline_users`.
+   - Writing or maintaining processors? See :doc:`personas/framework_developers`.
+   - Integrating Semantiva into a wider system? See :doc:`personas/architects_system_designers`.
+
 .. toctree::
    :maxdepth: 1
    :caption: Getting started
 
    getting_started
-   tutorials/run_space_quickstart
-   examples_index
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Persona entry points
+
+   personas/pipeline_users
+   personas/framework_developers
+   personas/architects_system_designers
 
 .. toctree::
    :maxdepth: 1
@@ -55,15 +67,22 @@ This documentation is organised by **role** and **experience level**:
 
 .. toctree::
    :maxdepth: 1
-   :caption: Extensibility & architecture
+   :caption: Component authoring & architecture
 
-   extensions
    creating_components
+   architecture/overview
+   extensions
    workflows_fitting_models
    architecture/context_processing
    architecture/pipeline_schema
    architecture/registry
    studio_viewer
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorials
+   
+   tutorials/run_space_quickstart
 
 .. toctree::
    :maxdepth: 1
@@ -74,6 +93,7 @@ This documentation is organised by **role** and **experience level**:
    logger
    exceptions
    glossary
+   examples_index
    development/testing_strategies
 
 Index & search

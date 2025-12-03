@@ -3,6 +3,13 @@
 Trace Stream v1
 ===============
 
+.. admonition:: Level 300 (Advanced)
+
+   This page is advanced reference material intended for **architects and
+   integrators**. You should be comfortable with pipelines and basic
+   inspection before reading this (see :doc:`personas/pipeline_users` and
+   :doc:`personas/architects_system_designers`).
+
 Semantiva emits a JSON Lines (JSONL) stream with one JSON object per line.
 Each line is a **trace record** of a specific type, e.g.:
 

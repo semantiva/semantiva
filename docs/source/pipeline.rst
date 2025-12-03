@@ -7,6 +7,15 @@ Overview & Mental Model
 - Users define *processors* with domain logic and configure pipelines in YAML; **nodes are created by factories**.
 - Pipelines are sequences of nodes across data/context/IO channels.
 
+.. admonition:: Who this is for
+
+   This page is the **pipeline user guide**.
+   It assumes you have completed :doc:`getting_started` and are familiar
+   with the basic workflow described in :doc:`personas/pipeline_users`.
+
+   If you are authoring new processors, also see :doc:`creating_components`
+   and :doc:`personas/framework_developers`.
+
 Defining Pipelines in YAML
 --------------------------
 

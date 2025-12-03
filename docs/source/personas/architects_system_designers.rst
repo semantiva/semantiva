@@ -247,6 +247,7 @@ Evaluate whether Semantiva fits a system design
 - **You want to:** decide how Semantiva would integrate into an existing or
   proposed architecture.
 - **Look at:**
+
   - :doc:`../inspection` and :doc:`../ser` (what execution metadata you get).
   - :doc:`../execution` (how execution is organised).
   - :doc:`../run_space` and :doc:`../run_space_lifecycle` (how runs and
@@ -257,6 +258,7 @@ Define organisational conventions for pipelines
 
 - **You want to:** standardise how teams design and structure pipelines.
 - **Look at:**
+
   - :doc:`../pipeline` and :doc:`../architecture/pipeline_schema` (pipeline
     structure and graph model).
   - :doc:`../contracts` (rules you can rely on as global invariants).
@@ -268,6 +270,7 @@ Integrate SER & traces with observability tooling
 - **You want to:** feed Semantiva traces into existing monitoring/logging
   systems or custom dashboards.
 - **Look at:**
+
   - :doc:`../ser` and :doc:`../schema_semantic_execution_record_v1` (data
     model).
   - :doc:`../trace_stream_v1` and :doc:`../trace_aggregator_v1` (aggregation
@@ -280,6 +283,7 @@ Design extension points and internal libraries
 - **You want to:** create internal libraries of processors or domain-specific
   building blocks.
 - **Look at:**
+
   - :doc:`../creating_components` and :doc:`framework_developers` (authoring).
   - :doc:`../architecture/registry` (component registration & discovery).
   - :doc:`../contracts` (constraints and guarantees your libraries should
@@ -291,6 +295,7 @@ Plan governance, CI and quality gates
 - **You want to:** define how Semantiva fits into CI/CD and technical
   governance.
 - **Look at:**
+
   - :doc:`../contracts` and :doc:`../development/testing_strategies` (how to
     enforce contracts and write effective tests).
   - :doc:`../cli` (commands to run in CI: lint, inspection, tests).
