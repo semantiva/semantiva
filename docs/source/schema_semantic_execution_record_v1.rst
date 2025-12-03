@@ -3,6 +3,13 @@
 SER v1 JSON Schema
 ==================
 
+.. admonition:: Level 300 (Advanced)
+
+   This page is advanced reference material intended for **architects and
+   integrators**. You should be comfortable with pipelines and basic
+   inspection before reading this (see :doc:`personas/pipeline_users` and
+   :doc:`personas/architects_system_designers`).
+
 The :term:`Semantic Execution Record (SER)` captures the execution of each :term:`Node`
 from a compiled :term:`Graph (GraphV1)` run. This page summarizes the v1 JSON
 Schema shipped with Semantiva (``semantiva.trace.schema.semantic_execution_record_v1.schema.json``) and

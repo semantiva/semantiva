@@ -1,6 +1,14 @@
 Getting Started
 ===============
 
+.. admonition:: Who this is for
+
+   This page is for people who are **completely new to Semantiva**.
+   You do not need any prior knowledge of Semantiva, but you should be
+   comfortable running commands in a terminal and editing small text files.
+
+   After completing this page, continue with :doc:`personas/pipeline_users`.
+
 This page walks you from **installation** to running your **first pipeline**.
 
 Install Semantiva

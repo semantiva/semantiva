@@ -3,6 +3,13 @@
 Trace Aggregator v1
 ===================
 
+.. admonition:: Level 300 (Advanced)
+
+   This page is advanced reference material intended for **architects and
+   integrators**. You should be comfortable with pipelines and basic
+   inspection before reading this (see :doc:`personas/pipeline_users` and
+   :doc:`personas/architects_system_designers`).
+
 The Trace Aggregator groups Semantiva Trace Stream records into **per-run** and **per-launch** aggregates and computes **completeness**.
 
 .. important::

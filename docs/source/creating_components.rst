@@ -4,6 +4,16 @@ Audience
 --------
 Developers adding domain behavior via **operations**, **probes**, **sources/sinks**, or **context processors**.
 
+.. admonition:: Who this is for
+
+   This page is for **framework developers and component authors**.
+   It assumes you are comfortable running and tweaking pipelines as
+   described in :doc:`personas/pipeline_users` and that you can read
+   basic Python code.
+
+   If you only need to run existing pipelines, stay with :doc:`pipeline`
+   and :doc:`personas/pipeline_users`.
+
 Do This / Not That
 -------------------
 

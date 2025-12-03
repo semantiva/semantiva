@@ -215,6 +215,7 @@ Integrate a new component into a pipeline
 
 - **You want to:** expose your new component to pipeline users.
 - **Look at:**
+
   - :doc:`../pipeline` (how processors are referenced and configured in YAML).
   - :doc:`../data_types` and :doc:`../data_collections`
     (to ensure the types you expect are reflected in pipeline definitions).
@@ -225,6 +226,7 @@ Troubleshoot lint failures or contract violations
 
 - **You want to:** understand and fix issues reported by ``semantiva dev lint``.
 - **Look at:**
+
   - :doc:`../contracts` (meaning of the SVA code you see).
   - :doc:`../introspection_validation` (how introspection and validation work).
   - :doc:`../development/testing_strategies` (adding tests around the failing
@@ -236,6 +238,7 @@ Expose data to Semantiva Studio Viewer
 - **You want to:** ensure your components and pipelines emit traces that can be
   explored in Studio Viewer or similar tools.
 - **Look at:**
+
   - :doc:`../inspection` (what is recorded and how).
   - :doc:`../ser` and :doc:`../run_space_emission` (how execution is captured).
   - :doc:`../studio_viewer` (how Studio Viewer consumes traces and SER).

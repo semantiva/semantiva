@@ -7,6 +7,14 @@ Rationale
 * Observer mediates all writes/deletes → safe, validated mutations.
 * Parameter resolution at runtime → config/context/defaults unified.
 
+.. admonition:: Level 250–300 (Architecture)
+
+   This page is for **framework developers** and **architects** who need to
+   understand how context processing, observers and validation are wired.
+
+   You should already be familiar with pipelines and component authoring
+   (:doc:`../personas/pipeline_users`, :doc:`../personas/framework_developers`).
+
 Key Classes
 -----------
 * ``semantiva.context_processors.context_processors.ContextProcessor`` — implements stateless ``_process_logic`` and notifiers.
