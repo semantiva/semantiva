@@ -30,7 +30,7 @@ from typing import (
 )
 from collections import OrderedDict
 from dataclasses import dataclass
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from semantiva.context_processors.context_observer import _ContextObserver
 from semantiva.core.semantiva_component import _SemantivaComponent
 from semantiva.data_types import BaseDataType
@@ -52,7 +52,7 @@ class ParameterInfo:
     annotation: str = "Unknown"
 
 
-class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
+class _BaseDataProcessor(_SemantivaComponent, ABC, Generic[T]):
     """Abstract base class for data processing algorithms in Semantiva."""
 
     def __init__(self, logger: Optional[Logger] = None):
@@ -209,7 +209,7 @@ class _BaseDataProcessor(_SemantivaComponent, Generic[T]):
         return component_metadata
 
 
-class DataOperation(_BaseDataProcessor):
+class DataOperation(_BaseDataProcessor, ABC):
     """A data processor that applies computational transformations to input data while managing context updates."""
 
     context_observer: Optional[_ContextObserver]
@@ -396,7 +396,7 @@ class OperationTopologyFactory:
         return generated_class
 
 
-class DataProbe(_BaseDataProcessor):  # pylint: disable=abstract-method
+class DataProbe(_BaseDataProcessor, ABC):
     """DataProbe analyzes input data without modifying it."""
 
     @classmethod
