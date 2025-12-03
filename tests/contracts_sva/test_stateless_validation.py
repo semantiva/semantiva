@@ -13,7 +13,12 @@
 # limitations under the License.
 
 """
-Test case to demonstrate that our contract validation catches non-stateless data_io components.
+Test case to demonstrate that our contract validation catches non-stateless
+DataSource/PayloadSource and DataSink/PayloadSink components via SVA rules.
+
+This module intentionally defines bad components that violate statelessness
+contracts (SVA005/SVA007/SVA009/SVA011) and asserts that the contract engine
+flags them. It serves as a focused regression suite for stateless SVA checks.
 """
 
 from semantiva.data_types import NoDataType

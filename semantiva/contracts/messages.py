@@ -48,6 +48,7 @@ MESSAGES = {
     "SVA232": "Parameters shape invalid for DataProbe.",
     "SVA240": "ContextProcessor has no IO requirements; classmethod rules still apply if present.",
     "SVA241": "ContextProcessor must not override operate_context method. Implement _process_logic instead.",
+    "SVA250": "Method `_process_logic` must not accept `ContextType` or a parameter named `context` (found {param!r} with annotation {annotation!r}). Use node/observer wiring instead.",
     # Node wrappers
     "SVA300": "Source Node input type must be NoDataType.",
     "SVA301": "Source Node output must equal processor.output_data_type().__name__ (got {node} vs {proc}).",

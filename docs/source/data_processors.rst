@@ -58,39 +58,51 @@ Use in YAML:
          parameters:
            addend: 2.0
 
-Context-aware data processors
------------------------------
+.. admonition:: Context invariants
 
-Some data processors also **notify context updates**. For example, a probe may
-compute a summary and store it under a context key:
+   - Data processors (``DataOperation`` and ``DataProbe``) never take
+     ``ContextType`` directly as a parameter. Their ``process``/``_process_logic``
+     methods operate on **data only** plus resolved runtime parameters.
+   - All context reads and writes are mediated by pipeline nodes and context
+     observers attached to the payload.
+
+Context-aware probes (via nodes)
+--------------------------------
+
+A probe computes a value from the data channel and *returns* it. When the
+pipeline node specifies ``context_key``, the node writes the probe result into
+context on behalf of the probe.
 
 .. code-block:: python
 
-   from semantiva.core import ContextType
+   from semantiva.data_processors.data_processors import DataProbe
+   from semantiva.examples.test_utils import FloatCollectionDataType
 
-   class MeanProbe:
-       """Compute the mean and write to context."""
+   class MeanProbe(DataProbe):
+       """Compute the mean of a collection; context-agnostic."""
 
        @classmethod
-       def input_data_type(cls):
+       def input_data_type(cls) -> type:
            return FloatCollectionDataType
 
-       def __init__(self, context_key: str):
-           self.context_key = context_key
+       def _process_logic(self, data: FloatCollectionDataType) -> float:
+           return sum(data.values) / max(len(data.values), 1)
 
-       def process(self, data, context: ContextType):
-           mean_value = sum(data.values) / len(data.values)
-           context.set_value(self.context_key, mean_value)
-           return data  # probes usually forward the data unchanged
+In YAML, configure the probe node with a ``context_key``:
 
-When you execute such a processor **outside** a pipeline, you can still call
-``process`` directly, but you must provide a context object yourself.
+.. code-block:: yaml
 
-Inside a pipeline:
+   pipeline:
+     nodes:
+       - processor: my.probes.MeanProbe
+         context_key: "stats.mean"
 
-- Context updates are gated by the pipeline configuration.
-- Required context keys are validated during inspection and validation.
-- Probes without a ``context_key`` will fail validation.
+At runtime, the node wraps ``MeanProbe`` in a probe context injector node and
+uses a context observer to store the returned value under ``stats.mean``. The
+``MeanProbe`` component itself never receives or mutates the context.
+
+Outside pipelines, you can still call ``process`` directly and handle the
+returned value yourself, but you remain responsible for any storage.
 
 Design guidelines
 -----------------

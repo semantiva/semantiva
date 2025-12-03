@@ -40,9 +40,9 @@ A typical pattern looks like this:
        """Derive learning rate from batch size."""
 
        @classmethod
-       def get_created_keys(cls) -> set[str]:
+       def get_created_keys(cls) -> list[str]:
            # Keys this processor may create
-           return {"training.learning_rate"}
+           return ["training.learning_rate"]
 
        def _process_logic(self, *, batch_size: int, base_lr: float = 0.1):
            # ``batch_size`` and ``base_lr`` are resolved by Semantiva from
@@ -58,6 +58,15 @@ Notes:
   (here: ``batch_size``).
 - All writes go through ``_notify_context_update`` / ``_notify_context_deletion``
   and are validated by the context observer.
+
+Context invariants
+------------------
+
+- ``_process_logic`` receives only the runtime parameters resolved by the node;
+  it must **not** accept ``ContextType``.
+- Reads and writes go through the validating context observer created by the
+  node; use ``_notify_context_update`` / ``_notify_context_deletion`` for all
+  mutations.
 
 YAML configuration
 ------------------

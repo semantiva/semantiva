@@ -389,3 +389,43 @@ def test_lint_error_vs_warning_distinction():
         "All components passed validation" in stdout_output
         or "Validation complete:" in stdout_output
     )
+
+
+def test_lint_emits_sva250_for_bad_process_logic():
+    """`dev lint` should emit SVA250 for components violating the context contract."""
+
+    # Create a temporary Python file defining an intentionally bad DataProbe-style component
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
+        f.write(
+            textwrap.dedent(
+                """
+            from typing import Dict, Any
+
+            from semantiva.data_processors.data_processors import DataProbe
+            from semantiva.examples.test_utils import FloatDataType
+            class BadProbeForSVA250(DataProbe):
+                # Probe with an invalid _process_logic signature for SVA250 testing.
+
+                @classmethod
+                def input_data_type(cls):
+                    return FloatDataType
+
+                def _process_logic(self, data, context):
+                    # Signature is intentionally wrong: accepts a `context` parameter.
+                    return data
+            """
+            )
+        )
+        temp_file_path = f.name
+
+    try:
+        result = run_cli(["dev", "lint", "--paths", temp_file_path])
+
+        # Any SVA error should cause EXIT_CONFIG_ERROR
+        assert result.returncode == 3
+
+        stdout_output = result.stdout
+        # Expect SVA250 to be reported for the bad component
+        assert "SVA250" in stdout_output
+    finally:
+        os.unlink(temp_file_path)

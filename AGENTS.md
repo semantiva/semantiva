@@ -39,6 +39,40 @@ Key concepts include:
    * `_ContextDataProcessorNode` for applying a data processor to a value stored in context
    * `_DataOperationContextInjectorProbeNode` for running a data operation and storing its result back into context while passing the original data downstream
 
+### Context Invariants (must preserve)
+
+- **No `ContextType` parameter in processors.** User-defined
+  :class:`~semantiva.data_processors.data_processors.DataOperation`,
+  :class:`~semantiva.data_processors.data_processors.DataProbe`, and
+  :class:`~semantiva.context_processors.context_processors.ContextProcessor`
+  components must **not** accept ``ContextType`` in ``process`` or
+  ``_process_logic``. Context access is mediated by nodes and observers.
+- **Nodes own context writes.**
+  :class:`~semantiva.pipeline.nodes.nodes._ProbeContextInjectorNode`,
+  :class:`~semantiva.pipeline.nodes.nodes._ContextDataProcessorNode`, and
+  :class:`~semantiva.pipeline.nodes.nodes._ContextProcessorNode` resolve
+  parameters from payload context and apply updates through context observers.
+  Probes remain read-only; nodes persist their return values when configured via
+  ``context_key``.
+- **Use notifier helpers.** Context processors call
+  ``_notify_context_update`` / ``_notify_context_deletion`` to request changes;
+  validation is handled by observers (for example ``_ValidatingContextObserver``).
+
+**Do this**
+
+- Keep ``_process_logic`` signatures limited to data + explicit parameters.
+- Declare context creation via ``get_created_keys`` and rely on observer hooks
+  for writes.
+- When adding docs/examples, show context keys being stored by nodes (via
+  ``context_key``) rather than by processors directly.
+
+**Do NOT do this**
+
+- Introduce a ``context`` argument (or ``ContextType`` annotation) to
+  ``_process_logic``.
+- Show processors calling ``context.set_value``; that is handled by nodes and
+  observers instead.
+
 ## Working with the Codebase
 
 - Tests rely heavily on small example processors defined in `semantiva/examples/test_utils.py`. Reviewing these utilities provides a good starting point for understanding how data and context types are used.
