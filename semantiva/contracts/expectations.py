@@ -442,6 +442,66 @@ def _r_context_processor_no_operate_context_override(
     return []
 
 
+def _r_process_logic_no_context(cls: type, md: Optional[dict]) -> List[Diagnostic]:
+    """Enforce that _process_logic does not accept ContextType or a `context` parameter.
+
+    Applies to DataOperation, DataProbe, and ContextProcessor components. The rule is
+    evaluated against the public call signature of ``_process_logic`` as seen by
+    :func:`inspect.signature`, so dynamically attached ``__signature__`` attributes
+    are honored.
+    """
+    if not isinstance(md, dict):
+        return []
+
+    component_type = md.get("component_type")
+    if component_type not in {"DataOperation", "DataProbe", "ContextProcessor"}:
+        return []
+
+    fn = getattr(cls, "_process_logic", None)
+    if fn is None:
+        return []
+
+    try:
+        sig = inspect.signature(fn)
+    except Exception:  # pragma: no cover - defensive: malformed signatures
+        return []
+
+    for p in sig.parameters.values():
+        # Skip obvious framework internals
+        if p.name == "self":
+            continue
+
+        # Check for forbidden parameter name
+        has_forbidden_name = p.name == "context"
+
+        # Check for forbidden annotation referring to ContextType
+        ann = p.annotation
+        if ann is inspect._empty:
+            ann_str = ""
+        else:
+            try:
+                ann_str = str(ann)
+            except Exception:  # pragma: no cover - extremely defensive
+                ann_str = repr(ann)
+
+        has_forbidden_annotation = "ContextType" in ann_str
+
+        if has_forbidden_name or has_forbidden_annotation:
+            return [
+                _diag(
+                    "SVA250",
+                    "error",
+                    cls,
+                    {
+                        "param": p.name,
+                        "annotation": ann_str or "<none>",
+                    },
+                )
+            ]
+
+    return []
+
+
 def _r_source_node_input_no_data(cls: type, md: Optional[dict]) -> List[Diagnostic]:
     if not isinstance(md, dict):
         return []
@@ -1127,6 +1187,16 @@ RULES += [
         "Remove operate_context override and implement only _process_logic",
         "Class defines operate_context method in __dict__",
         _r_context_processor_no_operate_context_override,
+    ),
+    RuleSpec(
+        "SVA250",
+        "error",
+        "_process_logic must not accept ContextType",
+        "DataOperation / DataProbe / ContextProcessor (component)",
+        "SVA250",
+        "Remove ContextType parameter; use node/observer wiring",
+        "Parameter named context or annotated as ContextType in _process_logic",
+        _r_process_logic_no_context,
     ),
     RuleSpec(
         "SVA300",

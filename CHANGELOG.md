@@ -24,6 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Aligned inspection and trace stream docs with the canonical payload builder
   and trace detail flag semantics.
 - Added a glossary note describing the pre-1.0 public API deprecation policy.
+- Clarified data/context separation in data processors, probes, and context
+  processor docs; added context-invariant guidance to AGENTS and contracts
+  catalog (including new SVA250 entry).
 
 ## [v0.5.0] - 2025-11-15
 

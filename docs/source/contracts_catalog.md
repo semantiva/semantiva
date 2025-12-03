@@ -23,6 +23,7 @@
 | SVA231 | warn | DataProbe (component) | Discourage output_data_type | Has output | Remove it (node enforces pass-through) |
 | SVA232 | error | DataProbe (component) | Parameters shape valid | Same validator as SVA103 | Fix params |
 | SVA240 | info | ContextProcessor (component) | No IO req; classmethod rules still apply if present | — | — |
+| SVA250 | error | DataOperation / DataProbe / ContextProcessor (component) | _process_logic must not accept ContextType | Parameter named context or annotated as ContextType in _process_logic | Remove ContextType parameter; use node/observer wiring |
 | SVA300 | error | DataSourceNode / PayloadSourceNode (node) | Node input is NoDataType | Node metadata input != NoDataType | Set to NoDataType |
 | SVA301 | error | DataSourceNode / PayloadSourceNode (node) | Node out == processor out | If processor available, mismatch | Mirror processor |
 | SVA310 | error | DataSinkNode / PayloadSinkNode (node) | Node input==output (pass-through) | Mismatch | Make equal |

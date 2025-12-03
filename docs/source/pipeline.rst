@@ -31,6 +31,8 @@ Each ``processor`` entry references a component (by fully qualified class name o
 short name if registered). The ``parameters`` map configures that processor. Nodes
 may also define ``ports`` if they connect to non-default inputs/outputs.
 
+.. _probe-nodes:
+
 Probe nodes
 -----------
 
@@ -38,7 +40,8 @@ Probe nodes
 
    **Probes require a context key.** Probes observe the data channel but must
    always persist their result to the pipeline context. Configure this at the
-   node level with ``context_key``:
+   node level with ``context_key``-the node (not the probe) writes the returned
+   value into context:
 
    .. code-block:: yaml
 
@@ -206,9 +209,9 @@ Objects in Pipeline Configurations
 ----------------------------------
 :term:`Resolver`\s enable declarative references to objects and values:
 
-- ``model:PolynomialFittingModel:degree=2`` — instantiate a descriptor-backed model
-- ``slice:/context/roi/window`` — pull a value from the context map
-- ``rename:``, ``delete:`` — transform parameter maps
+- ``model:PolynomialFittingModel:degree=2`` - instantiate a descriptor-backed model
+- ``slice:/context/roi/window`` - pull a value from the context map
+- ``rename:``, ``delete:`` - transform parameter maps
 
 Example:
 

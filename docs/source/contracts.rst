@@ -32,6 +32,16 @@ Probe node contract (mandatory)
 - Pipelines that omit ``context_key`` for probes fail validation via
   :command:`semantiva inspect`.
 
+Context argument contract (processors)
+--------------------------------------
+
+- ``SVA250`` enforces that ``_process_logic`` implementations for
+  ``DataOperation``, ``DataProbe``, and ``ContextProcessor`` **must not** accept
+  ``ContextType``.
+- Context reads and writes are mediated by pipeline nodes and context observers;
+  processors receive only their runtime parameters and (for data processors) the
+  data payload.
+
 CI integration
 --------------
 

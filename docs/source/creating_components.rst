@@ -49,9 +49,9 @@ DataOperation (transforms; may update context)
             return FloatDataType
 
         @classmethod
-        def get_created_keys(cls) -> set[str]:
+        def get_created_keys(cls) -> list[str]:
             """Context keys this processor may create."""
-            return {"norm.mean", "norm.std"}
+            return ["norm.mean", "norm.std"]
 
         def _process_logic(self, data: FloatDataType, *, epsilon: float = 1e-8):
             # Example context write via observer hook
@@ -89,6 +89,30 @@ DataProbe (read-only; no context creation)
    Probe components never write to context themselves. When the pipeline node
    specifies ``context_key``, the node stores the probe result in context after
    ``process`` returns, keeping the component stateless.
+
+.. admonition:: Do not pass ContextType into processors
+
+   Components must never accept ``ContextType`` directly in their ``process``
+   or ``_process_logic`` methods. Context access is always mediated by pipeline
+   nodes and observers.
+
+.. code-block:: python
+
+   # ❌ Anti-pattern: do NOT copy this
+
+   from semantiva.context_processors.context_types import ContextType
+
+   class BadProbe:
+       @classmethod
+       def input_data_type(cls):
+           return FloatDataType
+
+       def _process_logic(self, data, context: ContextType):  # <-- wrong
+           context.set_value("some.key", 1.23)
+           return data
+
+Use a ``DataProbe`` that returns values, and let the node write them into
+context using a ``context_key`` as shown in :ref:`probe-nodes`.
 
 DataSource (produces data; declares only output type)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
