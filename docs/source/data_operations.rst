@@ -12,7 +12,7 @@ A data operation is a subclass of
 :class:`semantiva.data_processors.data_processors.DataOperation`. It:
 
 - Declares its ``input_data_type`` and ``output_data_type`` as
-  :py:meth:`@classmethod` s.
+  class methods.
 - Implements ``_process_logic(self, data, **params)`` with the business
   logic.
 - Optionally declares metadata such as ``get_created_keys`` for contracts.
@@ -57,7 +57,7 @@ This example shows a minimal operation that adds a constant to a float.
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the numeric result]
+   3.0
 
 Note how ``addend`` is a *runtime parameter* to ``_process_logic`` - it is
 **not** passed through the constructor. Constructors should remain simple
@@ -67,7 +67,7 @@ components deterministically.
 Context invariants
 ------------------
 
-Data operations never receive :class:`semantiva.core.ContextType`
+Data operations never receive the ``ContextType`` object
 directly in ``process`` or ``_process_logic``. They operate on data plus
 parameters only.
 
@@ -92,7 +92,7 @@ in the example above.
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the resulting FloatDataType representation]
+   FloatDataType(10.5)
 
 Next steps
 ----------

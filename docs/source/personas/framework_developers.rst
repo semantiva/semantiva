@@ -98,7 +98,8 @@ Step 3 - Deepen your understanding of processor families
 Once you have written one or two components, use these pages as deeper
 references:
 
-- :doc:`../data_processors` - details of data operations and probes.
+- :doc:`../data_operations` - details of data operations and patterns.
+- :doc:`../data_probes` - details of read-only probes.
 - :doc:`../context_processors` - details of context-only processors and their
   lifecycle.
 - :doc:`../collection_modifiers` - utilities for working with collections as
@@ -185,7 +186,7 @@ Implement a new DataOperation
   context keys.
 - **Look at:**
   - :doc:`../creating_components` (DataOperation section and examples).
-  - :doc:`../data_processors` (existing DataOperation implementations).
+  - :doc:`../data_operations` (existing DataOperation implementations).
   - :doc:`../contracts` (contracts that apply to data operations).
 
 Implement a new DataProbe
@@ -195,7 +196,7 @@ Implement a new DataProbe
   them in context via nodes.
 - **Look at:**
   - :doc:`../creating_components` (probe authoring guidelines).
-  - :doc:`../data_processors` (existing probes and patterns).
+  - :doc:`../data_probes` (existing probes and patterns).
   - :doc:`../pipeline` (probe nodes and ``context_key`` behaviour).
   - :doc:`../contracts` (probe-related SVA rules).
 

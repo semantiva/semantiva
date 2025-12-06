@@ -20,7 +20,7 @@ At any point in a run you can think of the payload as a simple pair:
 
 .. code-block:: python
 
-   from semantiva.core import ContextType, Payload
+   from semantiva import ContextType, Payload
 
    context = ContextType()
    context.set_value("example.addend", 2.0)
@@ -35,7 +35,8 @@ At any point in a run you can think of the payload as a simple pair:
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; paste the printed data/context lines]
+   data: some domain object
+   context: ContextType(context={'example.addend': 2.0})
 
 Processors always see the payload, not just the raw data. They can:
 
@@ -49,8 +50,8 @@ Data types: wrapping domain objects
 -----------------------------------
 
 Data types are small, typed wrappers around your domain objects. They are
-subclasses of :class:`semantiva.data_types.BaseDataType` and carry both the
-raw value and its semantic contract.
+subclasses of ``BaseDataType`` and carry both the raw value and its semantic
+contract.
 
 .. code-block:: python
 
@@ -69,7 +70,8 @@ raw value and its semantic contract.
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the representation of x and the value line]
+   FloatDataType(1.5)
+   value: 1.5
 
 Why wrap values at all?
 
@@ -120,7 +122,8 @@ their input/output data types.
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the numeric results]
+   result: 3.0
+   result2: 3.0
 
 Key properties:
 
@@ -143,27 +146,29 @@ it in the context under a key).
 .. code-block:: python
 
    from semantiva.data_processors.data_processors import DataProbe
-   from semantiva.examples import FloatCollectionDataType
+   from semantiva.examples.test_utils import FloatDataCollection, FloatDataType
 
    class MeanProbe(DataProbe):
-       """Compute the mean of a :class:`FloatCollectionDataType`."""
+       """Compute the mean of a collection."""
 
        @classmethod
        def input_data_type(cls):
-           return FloatCollectionDataType
+           return FloatDataCollection
 
-       def _process_logic(self, data: FloatCollectionDataType) -> float:
-           values = list(data.values)
+       def _process_logic(self, data: FloatDataCollection) -> float:
+           values = [item.data for item in data]
            return sum(values) / max(len(values), 1)
 
-   collection = FloatCollectionDataType(values=[1.0, 2.0, 3.0, 4.0])
+   collection = FloatDataCollection(
+       [FloatDataType(1.0), FloatDataType(2.0), FloatDataType(3.0), FloatDataType(4.0)]
+   )
    probe = MeanProbe()
    mean_value = probe(collection)
    print("mean:", mean_value)
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the computed mean]
+   mean: 2.5
 
 Later, in the pipeline pages, you will see how a probe result becomes part of
 the context via a node ``context_key`` - without the probe itself knowing
@@ -216,7 +221,8 @@ From a user perspective:
 For a more visual explanation of how all this fits together:
 
 - :doc:`data_types`
-- :doc:`data_processors`
+- :doc:`data_operations`
+- :doc:`data_probes`
 - :doc:`context_processors`
 - :doc:`data_collections`
 
@@ -247,8 +253,23 @@ At class level, every component can expose its metadata as a dictionary via
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; paste representative lines
-   #  showing metadata keys and the multi-line semantic_id string]
+   class_name: FloatAddOperation
+   component_type: DataOperation
+   parameters: OrderedDict([('addend', ParameterInfo(default=<object object at 0x7f9b6eba4b00>, annotation='float'))])
+
+   semantic id:
+
+   ========  SEMANTIC ID  ========
+   Class Name: FloatAddOperation
+   ===============================
+    - Docstring:
+       Add a constant to FloatDataType data.
+    - component_type: DataOperation
+    - parameters:
+     addend: ParameterInfo(default=<object object at 0x7f9b6eba4b00>, annotation='float')
+    - input_data_type: FloatDataType
+    - output_data_type: FloatDataType
+   ===============================
 
 Conceptually:
 

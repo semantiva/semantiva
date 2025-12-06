@@ -11,14 +11,14 @@ pipelines become easier to reason about and easier to validate.
 What is a data type?
 --------------------
 
-A data type is a subclass of :class:`semantiva.data_types.BaseDataType`. It
-is a thin wrapper around a Python value with a well-defined meaning.
+A data type is a subclass of ``BaseDataType``. It is a thin wrapper around a
+Python value with a well-defined meaning.
 
 Key properties:
 
 - It encapsulates a single piece of data (``.data``).
 - It documents **what the value *means*** (units, bounds, interpretation).
-- It can enforce invariants through a :meth:`validate` hook.
+- It can enforce invariants through a ``validate`` hook.
 
 Conceptually:
 
@@ -40,36 +40,37 @@ Conceptually:
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet and paste the printed lines]
+   value: 1.0
+   repr: FloatDataType(1.0)
 
 In this example:
 
-- :class:`FloatDataType` is the semantic carrier: “this is a float used inside
+- ``FloatDataType`` is the semantic carrier: “this is a float used inside
   a Semantiva pipeline”.
 - The underlying value is available via ``.data``.
-- The :meth:`validate` method is the hook for enforcing additional invariants.
+- The ``validate`` method is the hook for enforcing additional invariants.
 
 
 BaseDataType API
 ----------------
 
-All data types inherit from :class:`~semantiva.data_types.BaseDataType`. The
+All data types inherit from ``BaseDataType``. The
 core API is:
 
 - ``__init__(self, data, logger=None)`` - constructs the type, calls
-  :meth:`validate` on the value and then stores it internally.
+  ``validate`` on the value and then stores it internally.
 - ``data`` property - gets or sets the underlying value.
-- :meth:`validate(self, data) -> bool` - hook for subclasses to enforce
+- ``validate(self, data) -> bool`` - hook for subclasses to enforce
   invariants.
 - ``__str__`` / ``__repr__`` - by default display
   ``ClassName(<data-repr>)``.
 
 The typical pattern is:
 
-1. **Subclass** :class:`BaseDataType[T]` with a concrete ``T`` (for example
+1. **Subclass** ``BaseDataType[T]`` with a concrete ``T`` (for example
    ``float``, ``str``, an array type, a record type).
-2. **Override** :meth:`validate` to check invariants for that type.
-3. Avoid overriding ``__init__``; let :class:`BaseDataType` own construction
+2. **Override** ``validate`` to check invariants for that type.
+3. Avoid overriding ``__init__``; let ``BaseDataType`` own construction
    so that introspection, metadata and SVA rules remain consistent.
 
 Example: positive float
@@ -80,8 +81,8 @@ example, “this value must be strictly positive”. The correct place to encode
 this is **in the data type**, not as ad-hoc checks scattered across
 processors.
 
-Here is a minimal :class:`PositiveFloat` implementation that enforces
-positivity via :meth:`validate`:
+Here is a minimal ``PositiveFloat`` implementation that enforces
+positivity via ``validate``:
 
 .. code-block:: python
 
@@ -107,8 +108,8 @@ positivity via :meth:`validate`:
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show one successful creation
-   #  and one ValueError line]
+   ok: PositiveFloat(1.5)
+   error: 0.0 is not positive
 
 Notes:
 
@@ -117,9 +118,9 @@ Notes:
 - Any processor that declares ``input_data_type() -> PositiveFloat`` is saying
   “I expect a strictly positive scalar float”, which is much clearer than
   accepting a plain ``float`` and relying only on docstrings.
-- Because we implemented the check in :meth:`validate` and did not override
-  ``__init__``, we keep the construction behaviour of
-  :class:`BaseDataType` intact.
+- Because we implemented the check in ``validate`` and did not override
+  ``__init__``, we keep the construction behaviour of ``BaseDataType``
+  intact.
 
 
 Using data types in processors
@@ -139,7 +140,7 @@ For example, consider a simple addition operation that works on floats:
 .. code-block:: python
 
    from semantiva.data_types import BaseDataType
-   from semantiva.data_operations import DataOperation
+   from semantiva.data_processors.data_processors import DataOperation
 
    class FloatDataType(BaseDataType[float]):
        """Simple float wrapper (as above)."""
@@ -175,13 +176,14 @@ For example, consider a simple addition operation that works on floats:
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the numeric result]
+   input: FloatDataType(1.0)
+   result: FloatDataType(3.0)
 
 This combination of types and operations is what gives Semantiva pipelines
 their semantic clarity:
 
-- :class:`BaseDataType` defines **how** to create and validate values.
-- Concrete types like :class:`FloatDataType` and :class:`PositiveFloat`
+- ``BaseDataType`` defines **how** to create and validate values.
+- Concrete types like ``FloatDataType`` and ``PositiveFloat``
   express domain-specific invariants.
 - Data operations declare which types they consume and produce, making
   pipelines easier to inspect, validate and evolve.

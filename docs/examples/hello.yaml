@@ -1,0 +1,18 @@
+extensions: ["semantiva-examples"]
+
+pipeline:
+  nodes:
+    - processor: FloatValueDataSource
+      parameters:
+        value: 1.0
+
+    - processor: FloatAddOperation
+      parameters:
+        addend: 2.0
+
+    - processor: FloatCollectValueProbe
+      context_key: "result"
+
+    - processor: template:"result_{result}.txt":path
+
+    - processor: FloatTxtFileSaver
