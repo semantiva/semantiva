@@ -16,98 +16,195 @@ Every Semantiva pipeline step processes a *payload* with two channels:
   indicators, and other state used by processors to share information and
   adapt execution.
 
-The two channels always move together. A run is fully described by:
+At any point in a run you can think of the payload as a simple pair:
 
-- The pipeline definition and configuration.
-- The run-space plan (if any).
-- The sequence of payloads (data + context) as they pass through nodes.
+.. code-block:: python
 
-Identifiers such as run IDs are assigned by the execution and tracing layers
-and are not stored in the context channel.
+   from semantiva.core import ContextType, Payload
 
-Data channel: types, operations and collections
------------------------------------------------
+   context = ContextType()
+   context.set_value("example.addend", 2.0)
 
-Key concepts on the data side:
+   payload = Payload(
+       data="some domain object",
+       context=context,
+   )
 
-- **Data types** - subclasses of the core ``BaseDataType`` class.
-  They encode contracts for shape, units and semantics (for example a
-  ``SingleChannelImage`` vs. a ``FloatCollection``).
-- **Data sources** - components that *produce* data from outside the pipeline.
-  They are not processors themselves; factories wrap them so they can participate
-  in pipelines as payload processors.
-- **Data operations** - processors that transform one data type into another,
-  with clear input/output type contracts.
-- **Data probes** - processors that observe the data channel and write
-  summaries into the context channel.
-- **Data sinks** - components that write data out of the pipeline (files, sockets,
-  viewers, message buses…). Like sources, they are wrapped by factories and are not
-  native processors.
+   print("data:", payload.data)
+   print("context:", payload.context)
 
-Collections:
+.. code-block:: console
 
-- **Data collections** model sequences of data objects of the same base type.
-- Modifiers such as ``slice`` and **parameter sweeps** build on top of
-  collections to describe families of runs without hand-writing loops.
+   # [agent-fill-output: run the snippet; paste the printed data/context lines]
 
-Context channel
----------------
+Processors always see the payload, not just the raw data. They can:
 
-The context channel is handled by context processors. They:
+- Read and transform the **data** channel.
+- Read and update the **context** channel.
+- Decide how to behave based on what is already in context (for example,
+  reading parameters from context instead of configuration).
 
-- Propose context updates and deletions via notifier helpers,
-  without direct access to the underlying context object.
-- Derive new parameters from existing context and configuration.
-- Maintain state across nodes (for example running statistics).
-- Record metrics and metadata used by downstream analysis.
 
-Run-space expansion injects values into the initial context for each run. At
-runtime there is no distinction between parameters provided by the run-space
-and parameters set by other means; all are resolved from the context channel.
+Data types: wrapping domain objects
+-----------------------------------
 
-Parameter resolution
---------------------
+Data types are small, typed wrappers around your domain objects. They are
+subclasses of :class:`semantiva.data_types.BaseDataType` and carry both the
+raw value and its semantic contract.
 
-Processor parameters are resolved just before a node runs. Semantiva combines
-values from three sources into a single parameter set:
+.. code-block:: python
 
-- The node's ``parameters`` mapping from the pipeline configuration.
-- Values available in the context channel.
-- Defaults declared by the processor's contract.
+   from semantiva.data_types import BaseDataType
 
-When multiple sources provide a value for the same parameter, the following
-priority applies (from highest to lowest):
+   class FloatDataType(BaseDataType[float]):
+       """Simple float wrapper used in user-guide examples."""
 
-1. Explicit values in the node's ``parameters``.
-2. Values resolved from the context channel (including run-space injected
-   values).
-3. Processor-level default values.
+       def validate(self, data: float) -> bool:
+           # Accept any float; processors may add stronger checks.
+           return True
 
-This keeps pipeline configuration explicit, while still allowing context and
-defaults to supply values when configuration is silent.
+   x = FloatDataType(1.5)
+   print(x)
+   print("value:", x.data)
 
-Payload operations, pipelines and nodes
----------------------------------------
+.. code-block:: console
 
-A pipeline is a directed graph of **nodes**. Each node wraps a processor and has:
+   # [agent-fill-output: run the snippet; show the representation of x and the value line]
 
-- A reference to the processor class or registered name.
-- Parameter values (possibly resolved from context or the run-space).
-- Ports for incoming and outgoing data.
+Why wrap values at all?
 
-At runtime:
+- Types make contracts explicit (e.g. “single float” vs “array of floats”).
+- Processors can declare exactly which data types they expect and produce.
+- Inspection and tracing can show “what kind of thing” is flowing through
+  the pipeline instead of just raw Python types.
 
-1. The pipeline expands any pre-processors (such as ``derive`` and sweeps)
-   and run-space blocks.
-2. Data flows along edges, constrained by data type contracts.
-3. Context processors observe and update the context channel.
+
+Data operations: transformations as callables
+---------------------------------------------
+
+Data operations are processors that **transform** one data type into another
+(or the same type). They subclass
+:class:`semantiva.data_processors.data_processors.DataOperation` and declare
+their input/output data types.
+
+.. code-block:: python
+
+   from semantiva.data_processors.data_processors import DataOperation
+   from semantiva.examples import FloatDataType
+
+   class FloatAddOperation(DataOperation):
+       """Add a constant to :class:`FloatDataType` values."""
+
+       @classmethod
+       def input_data_type(cls):
+           return FloatDataType
+
+       @classmethod
+       def output_data_type(cls):
+           return FloatDataType
+
+       def _process_logic(self, data: FloatDataType, addend: float) -> FloatDataType:
+           return FloatDataType(data.data + addend)
+
+   value = FloatDataType(1.0)
+
+   # Option 1: use the class-level convenience
+   result = FloatAddOperation.run(value, addend=2.0)
+
+   # Option 2: instantiate and call
+   op = FloatAddOperation()
+   result2 = op(value, addend=2.0)
+
+   print("result:", result.data)
+   print("result2:", result2.data)
+
+.. code-block:: console
+
+   # [agent-fill-output: run the snippet; show the numeric results]
+
+Key properties:
+
+- The operation declares both ``input_data_type`` and ``output_data_type``.
+- User logic lives in ``_process_logic``.
+- Runtime parameters such as ``addend`` are regular keyword arguments to
+  ``_process_logic`` / ``process`` / ``run`` - not constructor arguments.
+- Instances are callable; ``op(data, **params)`` is equivalent to
+  ``op.process(data, **params)``.
+
+
+Data probes: read-only observers
+--------------------------------
+
+Data probes are processors that **observe** data and return a summary value.
+They never mutate the data or the context; they just compute and return a
+result. Pipelines decide what to do with that result (for example, storing
+it in the context under a key).
+
+.. code-block:: python
+
+   from semantiva.data_processors.data_processors import DataProbe
+   from semantiva.examples import FloatCollectionDataType
+
+   class MeanProbe(DataProbe):
+       """Compute the mean of a :class:`FloatCollectionDataType`."""
+
+       @classmethod
+       def input_data_type(cls):
+           return FloatCollectionDataType
+
+       def _process_logic(self, data: FloatCollectionDataType) -> float:
+           values = list(data.values)
+           return sum(values) / max(len(values), 1)
+
+   collection = FloatCollectionDataType(values=[1.0, 2.0, 3.0, 4.0])
+   probe = MeanProbe()
+   mean_value = probe(collection)
+   print("mean:", mean_value)
+
+.. code-block:: console
+
+   # [agent-fill-output: run the snippet; show the computed mean]
+
+Later, in the pipeline pages, you will see how a probe result becomes part of
+the context via a node ``context_key`` - without the probe itself knowing
+anything about context.
+
+
+Context processors and observers
+--------------------------------
+
+Context processors and observers work primarily on the **context** channel:
+
+- **Context processors** can read and update context keys. They are used for
+  tasks like routing, enrichment, aggregation and cross-node coordination.
+- **Context observers** are read-only; they watch for certain conditions in
+  the context and may emit warnings, metrics or trace annotations.
+
+From the payload's point of view, they behave like data processors but
+operate on different state:
+
+- Data operations focus on ``payload.data``.
+- Context processors focus on ``payload.context``.
+- Probes read data and return a value; nodes decide whether to send that
+  value into the context.
+
+
+Putting it together: payload, processors, pipelines
+---------------------------------------------------
+
+At a high level, Semantiva's execution model looks like this:
+
+1. A pipeline is a **graph of nodes**.
+2. Each node wraps a **processor** (data operation, probe, context processor,
+   source or sink) and controls how it sees the payload.
+3. Processors declare their data contracts via data types and their expected
+   context keys via contracts.
 4. Optional trace drivers observe execution and emit **Semantic Execution
    Records (SER)**.
 
-Processors (data operations, probes, and context processors) and pipeline
-nodes operate only on the data and context channels. SER records are produced
-by trace drivers attached to the orchestrator and executor and do not change
-data or context.
+Processors and pipeline nodes operate only on the data and context channels.
+SER records are produced by trace drivers attached to the orchestrator and
+executor and do not change data or context.
 
 From a user perspective:
 
@@ -123,6 +220,59 @@ For a more visual explanation of how all this fits together:
 - :doc:`context_processors`
 - :doc:`data_collections`
 
+
+Component identity
+------------------
+
+Semantiva components (data operations, probes, context processors, data
+types, sources, sinks…) all inherit from a common base that provides
+**component metadata** and a **semantic identity string**.
+
+At class level, every component can expose its metadata as a dictionary via
+``get_metadata`` and as a human-readable string via ``semantic_id``:
+
+.. code-block:: python
+
+   from semantiva.examples import FloatAddOperation
+
+   # Structured metadata as a dictionary
+   metadata = FloatAddOperation.get_metadata()
+   print("class_name:", metadata["class_name"])
+   print("component_type:", metadata.get("component_type"))
+   print("parameters:", metadata.get("parameters"))
+
+   # Human-friendly identity string
+   print("\nsemantic id:\n")
+   print(FloatAddOperation.semantic_id())
+
+.. code-block:: console
+
+   # [agent-fill-output: run the snippet; paste representative lines
+   #  showing metadata keys and the multi-line semantic_id string]
+
+Conceptually:
+
+- ``get_metadata()`` gathers base fields (at least ``class_name`` and the
+  class docstring) and merges them with component-specific fields provided by
+  ``_define_metadata()`` (for example ``component_type``, parameter
+  signatures, input/output data type information).
+- ``semantic_id()`` formats the same information as a structured, multi-line
+  string that is easy to read in logs, dashboards or LLM-based tools. The
+  default format includes a header, the class name, the docstring and the
+  key metadata fields.
+- The metadata and semantic ID are **derived from the class**, not from a
+  particular instance, so they describe the component's role and contract
+  rather than any single run.
+
+You normally do not need to call these methods when writing pipelines, but
+they become invaluable when:
+
+- Inspecting components interactively.
+- Debugging mismatched contracts between processors and data types.
+- Building tooling on top of Semantiva's metadata model, such as explorers,
+  documentation generators or LLM-based helpers.
+
+
 Trace records and trace drivers
 -------------------------------
 
@@ -132,8 +282,18 @@ Tracing is an optional layer that records how pipelines execute over time.
   were connected, and summary information about payloads and context at each
   step.
 - **Trace drivers** attach to the orchestrator and executor. They observe
-  execution events and write SER streams, typically to files or external sinks.
+  execution events and write SER streams, typically to files or external
+  sinks.
 
 Trace drivers are configured in the pipeline YAML (see
 :doc:`architecture/pipeline_schema`) and described in more detail in
 :doc:`trace_stream_v1` and :doc:`ser`.
+
+
+Where to go next
+----------------
+
+- Continue with :doc:`data_types` to see how to define and validate custom
+  data types.
+- Then read :doc:`data_operations` and :doc:`data_probes` to learn how to
+  write reusable processors.
