@@ -2,8 +2,7 @@ Context Type
 ============
 
 The context channel carries structured metadata alongside your data. It is
-represented by :class:`semantiva.core.ContextType` and is part of every
-:class:`semantiva.core.Payload`.
+represented by ``ContextType`` and is part of every ``Payload``.
 
 In user code, you rarely manipulate the context directly - pipeline nodes and
 observers usually do this for you. However, it is useful to understand how
@@ -14,7 +13,7 @@ Creating and using a context
 
 .. code-block:: python
 
-   from semantiva.core import ContextType
+   from semantiva import ContextType
 
    ctx = ContextType()
 
@@ -28,7 +27,8 @@ Creating and using a context
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the printed threshold and label]
+   threshold: 0.5
+   label: demo
 
 Context values are used for:
 
@@ -39,12 +39,11 @@ Context values are used for:
 Context and payload
 -------------------
 
-The context always travels together with the data inside a
-:class:`semantiva.core.Payload`:
+The context always travels together with the data inside a ``Payload``:
 
 .. code-block:: python
 
-   from semantiva.core import Payload
+   from semantiva import Payload
 
    payload = Payload(data="example", context=ctx)
    print(payload.data)
@@ -52,14 +51,14 @@ The context always travels together with the data inside a
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the printed values]
+   example
+   0.5
 
 **Important invariant**
 
 User-defined components (data operations, data probes, context processors)
-do **not** receive :class:`ContextType` directly in their business logic.
-They see parameters, and nodes/observers perform the actual context
-updates.
+do **not** receive ``ContextType`` directly in their business logic. They see
+parameters, and nodes/observers perform the actual context updates.
 
 Next steps
 ----------

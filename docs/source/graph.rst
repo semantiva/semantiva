@@ -2,7 +2,7 @@ Canonical Graph Builder
 =======================
 
 The :py:mod:`semantiva.pipeline.graph_builder` module normalizes a pipeline definition
-(from YAML, dictionaries or an existing :py:class:`semantiva.pipeline.pipeline.Pipeline`)
+(from YAML, dictionaries or an existing ``Pipeline``)
 into a canonical :term:`GraphV1` representation. Each node receives a deterministic
 :term:`node_uuid` and the entire graph hashes to a :term:`PipelineId` using SHA-256.
 

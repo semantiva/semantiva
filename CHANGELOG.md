@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Clarified data/context separation in data processors, probes, and context
   processor docs; added context-invariant guidance to AGENTS and contracts
   catalog (including new SVA250 entry).
+- Finalised the user guide and persona entry pages, split data operations vs. data probes, and made all showcased examples runnable with shared assets under `docs/examples/`.
 
 ## [v0.5.0] - 2025-11-15
 

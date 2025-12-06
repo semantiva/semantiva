@@ -25,27 +25,29 @@ Example: mean of a float collection
 .. code-block:: python
 
    from semantiva.data_processors.data_processors import DataProbe
-   from semantiva.examples.test_utils import FloatCollectionDataType
+   from semantiva.examples.test_utils import FloatDataCollection, FloatDataType
 
    class MeanProbe(DataProbe):
-       """Compute the mean of a :class:`FloatCollectionDataType`."""
+       """Compute the mean of a :class:`FloatDataCollection`."""
 
        @classmethod
        def input_data_type(cls):
-           return FloatCollectionDataType
+           return FloatDataCollection
 
-       def _process_logic(self, data: FloatCollectionDataType) -> float:
-           values = list(data.values)
-           return sum(values) / max(len(values), 1)
+       def _process_logic(self, data: FloatDataCollection) -> float:
+            values = [item.data for item in data]
+            return sum(values) / max(len(values), 1)
 
    probe = MeanProbe()
-   collection = FloatCollectionDataType(values=[1.0, 2.0, 3.0, 4.0])
+   collection = FloatDataCollection(
+       [FloatDataType(1.0), FloatDataType(2.0), FloatDataType(3.0), FloatDataType(4.0)]
+   )
    mean_value = probe(collection)
    print("mean:", mean_value)
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; show the computed mean]
+   mean: 2.5
 
 Using probes in pipelines
 -------------------------

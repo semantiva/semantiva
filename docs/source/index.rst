@@ -4,13 +4,16 @@ Semantiva Documentation
 Semantiva is a semantic execution framework for **typed, traceable, inspectable**
 pipelines.
 
-This documentation is organised by **role** and **experience level**:
+This documentation is organised by **role** and **experience level**. The main
+sections are:
 
-- Start with *Getting started* if you are new to Semantiva.
-- Use the *User guide* for day-to-day pipeline work.
-- Use *Tracing & identity* when you care about provenance and inspection.
-- Use *Extensibility & architecture* when authoring components or integrating Semantiva.
-- Use *Reference* for exception types, glossary entries and low-level details.
+- *Getting started* - a short onboarding path to the core ideas.
+- *Persona entry points* - recommended journeys for different types of users.
+- *User guide* - day-to-day pipeline work and CLI usage.
+- *Tracing, identity & inspection* - provenance, SER traces and debugging tools.
+- *Component authoring & architecture* - how to extend, embed and structure Semantiva.
+- *Tutorials* - step-by-step walkthroughs of common workflows.
+- *Reference* - exception types, glossary entries and low-level API details.
 
 .. admonition:: Where to start
 

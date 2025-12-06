@@ -224,8 +224,8 @@ Extension & integration points
 As an architect, you will often look at:
 
 - **Component families** (documented in :doc:`../creating_components` and
-  :doc:`../data_processors` / :doc:`../context_processors`) as extension points
-  for domain logic.
+  :doc:`../data_operations` / :doc:`../data_probes` / :doc:`../context_processors`)
+  as extension points for domain logic.
 - **Registry** (:doc:`../architecture/registry`) as the way to manage and
   expose these components.
 - **Execution & transports** (:doc:`../execution`) as integration points for:

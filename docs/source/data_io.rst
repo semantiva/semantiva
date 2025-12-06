@@ -21,37 +21,28 @@ Example (conceptual):
 .. code-block:: python
 
    from pathlib import Path
-   from semantiva.data_types import BaseDataType
-   from semantiva.data_processors.data_processors import DataOperation
+   from semantiva import DataSource
+   from semantiva.examples import FloatDataType
 
-   class FloatDataType(BaseDataType[float]):
-       """Scalar float value."""
-
-   class ToyFloatSource(DataOperation):
+   class ToyFloatSource(DataSource):
        """Load a float from a text file (conceptual example)."""
 
        @classmethod
-       def input_data_type(cls):
-           # Sources are often wrapped by factories; this example keeps the
-           # signature simple and uses ``None`` at call time.
-           return FloatDataType
+       def _get_data(cls, path: str) -> FloatDataType:
+           value = float(Path(path).read_text().strip())
+           return FloatDataType(value)
 
        @classmethod
        def output_data_type(cls):
            return FloatDataType
 
-       def _process_logic(self, data: FloatDataType, path: str) -> FloatDataType:
-           value = float(Path(path).read_text().strip())
-           return FloatDataType(value)
-
-   # In a real pipeline this would be wrapped and called by a node.
-   source = ToyFloatSource()
-   result = source(FloatDataType(0.0), path="input.txt")
+   # Use the sample file shipped with the documentation.
+   result = ToyFloatSource.get_data("docs/examples/data/io_input.txt")
    print(result.data)
 
 .. code-block:: console
 
-   # [agent-fill-output: create a simple input.txt, run the snippet and show the loaded value]
+   2.5
 
 Sinks
 -----
@@ -62,34 +53,35 @@ an external target.
 
 .. code-block:: python
 
-   class ToyFloatSink(DataOperation):
+   from pathlib import Path
+   from semantiva import DataSink
+   from semantiva.examples import FloatDataType
+
+   class ToyFloatSink(DataSink[FloatDataType]):
        """Write a float to a text file (conceptual example)."""
+
+       @classmethod
+       def _send_data(cls, data: FloatDataType, path: str) -> None:
+           Path(path).write_text(f"{data.data}\n")
 
        @classmethod
        def input_data_type(cls):
            return FloatDataType
 
-       @classmethod
-       def output_data_type(cls):
-           # Many sinks use a pass-through output type; we do the same here.
-           return FloatDataType
-
-       def _process_logic(self, data: FloatDataType, path: str) -> FloatDataType:
-           Path(path).write_text(str(data.data))
-           return data
-
-   sink = ToyFloatSink()
-   out = sink(FloatDataType(3.0), path="output.txt")
-   print(out.data)
+   # Use the sink to write an output file and confirm its contents.
+   value = FloatDataType(3.0)
+   ToyFloatSink.send_data(value, path="output.txt")
+   print(value.data)
+   print("file contains:", Path("output.txt").read_text().strip())
 
 .. code-block:: console
 
-   # [agent-fill-output: run the snippet; confirm the value is written and printed]
+   3.0
+   file contains: 3.0
 
-In real projects you will rarely implement I/O operations by hand - you will
-use extensions such as :mod:`semantiva_imaging` or project-specific
-components. The examples above are deliberately minimal to illustrate the
-type contracts.
+In real projects you may implement I/O operations by hand or rely on
+extensions such as ``semantiva_imaging`` or project-specific components.
+The examples above are deliberately minimal to illustrate the type contracts.
 
 Next steps
 ----------

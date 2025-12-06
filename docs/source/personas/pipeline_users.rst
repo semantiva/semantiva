@@ -61,7 +61,22 @@ Read :doc:`../concepts` with the mindset:
 You do **not** need to understand every internal detail on first read; the goal
 is to have names for the core building blocks you will see in YAML.
 
-Step 2 – Learn the pipeline YAML model
+Step 2 – Know your data building blocks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Before wiring nodes, skim the core building blocks so YAML labels make sense:
+
+- :doc:`../data_types` — building blocks for individual data items.
+- :doc:`../data_operations` — transformations that declare input/output types.
+- :doc:`../data_probes` — read-only probes that surface metrics or summaries.
+- :doc:`../data_io` — sources and sinks for moving data into and out of Semantiva.
+- :doc:`../context_type` — how metadata travels alongside data.
+- :doc:`../data_collections` — how to represent sequences / collections.
+
+You can skim these once and return when you see unfamiliar types or processors
+in a pipeline definition.
+
+Step 3 – Learn the pipeline YAML model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Next, read :doc:`../pipeline` as your **pipeline user guide**:
@@ -76,18 +91,6 @@ Next, read :doc:`../pipeline` as your **pipeline user guide**:
 You do not need to understand extension points or advanced inspection yet; treat
 this page as the “language reference” for pipeline YAML.
 
-Step 3 – Know your data building blocks
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For pipelines that use **typed data**, it helps to know the basic types and
-collections:
-
-- :doc:`../data_types` — the building blocks for individual data items
-- :doc:`../data_collections` — how to represent sequences / collections
-
-Most pipeline users can skim these once and return only when they see unfamiliar
-types in a pipeline definition.
-
 Step 4 – Explore the pipeline user toolbox
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -98,8 +101,8 @@ Once you are comfortable reading pipeline YAML, you will often ask:
 
 Use these pages as your toolbox index:
 
-- :doc:`../data_processors` — core data operations and probes you can plug into
-  your pipelines.
+- :doc:`../data_operations` — core data operations you can plug into pipelines.
+- :doc:`../data_probes` — probes that compute metrics or summaries.
 - :doc:`../collection_modifiers` — helpers for working with data collections.
 - :doc:`../context_processors` — processors that operate on context only (useful
   when you need to adjust configuration or state between data steps).
@@ -191,7 +194,7 @@ Inspect probe outputs and context keys
 - **You want to:** see metrics or summaries produced by probes.
 - **Look at:**
   - :doc:`../pipeline` (probe nodes and ``context_key`` behaviour).
-  - :doc:`../data_processors` (probe components used in the pipeline).
+  - :doc:`../data_probes` (probe components used in the pipeline).
   - :doc:`../inspection` and :doc:`../ser` (how to view results in traces).
 
 Understand why a pipeline failed
