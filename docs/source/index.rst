@@ -37,15 +37,17 @@ This documentation is organised by **role** and **experience level**:
    :caption: User guide
 
    concepts
-   pipeline
    data_types
-   data_collections
-   data_processors
-   collection_modifiers
-   context_processors
+   data_operations
+   data_probes
    data_io
-   run_space
+   context_type
+   pipeline
+   data_collections
+   collection_modifiers
    utility_processors
+   run_space
+   context_processors
    cli
 
 .. toctree::
@@ -81,7 +83,7 @@ This documentation is organised by **role** and **experience level**:
 .. toctree::
    :maxdepth: 1
    :caption: Tutorials
-   
+
    tutorials/run_space_quickstart
 
 .. toctree::
