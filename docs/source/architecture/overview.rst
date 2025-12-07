@@ -25,7 +25,12 @@ Nodes wrap **processors** that handle either the **data channel** or the
 
 The execution engine compiles YAML into a :term:`Graph (GraphV1)`, assigns
 stable semantic identifiers, and drives each node while keeping data/context
-separated for traceability. See :doc:`../pipeline` for pipeline semantics.
+separated for traceability. In production, these graphs are **built from YAML
+pipeline configurations** validated and versioned as configuration artefacts of
+record (see :doc:`../pipelines_yaml`). For development and R&D purposes, the
+same execution engine can also be driven from Python (see
+:doc:`../pipelines_python`), but those programmatic pipelines are treated as
+**internal tooling**, not as governed configuration.
 
 Inspection & trace stack
 ------------------------

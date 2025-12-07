@@ -33,6 +33,13 @@ extensions = [
 ]
 
 try:
+    import sphinx_copybutton  # noqa: F401
+
+    extensions.append("sphinx_copybutton")
+except ModuleNotFoundError:
+    pass
+
+try:
     import myst_parser  # noqa: F401
 
     extensions.append("myst_parser")
@@ -76,6 +83,12 @@ except ModuleNotFoundError:
     html_theme = "alabaster"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+
+# sphinx-copybutton configuration
+# Only strip actual shell/REPL prompts, not Python comments (# on its own line)
+copybutton_prompt_text = r">>> |\.\.\. |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_only_copy_prompt_lines = False
 
 
 def skip_docstring(app, what, name, obj, options, lines):

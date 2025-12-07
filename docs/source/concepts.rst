@@ -5,47 +5,6 @@ Semantiva narrows the gap between ideas and executable pipelines. It is built
 around **typed payloads**, a **dual data/context channel**, and clear contracts
 for every processor.
 
-The payload: data + context
----------------------------
-
-Every Semantiva pipeline step processes a *payload* with two channels:
-
-- **Data channel** - your domain objects (images, arrays, records, models…).
-- **Context channel** - structured metadata that flows with the data through
-  the pipeline. It carries configuration parameters, derived values, quality
-  indicators, and other state used by processors to share information and
-  adapt execution.
-
-At any point in a run you can think of the payload as a simple pair:
-
-.. code-block:: python
-
-   from semantiva import ContextType, Payload
-
-   context = ContextType()
-   context.set_value("example.addend", 2.0)
-
-   payload = Payload(
-       data="some domain object",
-       context=context,
-   )
-
-   print("data:", payload.data)
-   print("context:", payload.context)
-
-.. code-block:: console
-
-   data: some domain object
-   context: ContextType(context={'example.addend': 2.0})
-
-Processors always see the payload, not just the raw data. They can:
-
-- Read and transform the **data** channel.
-- Read and update the **context** channel.
-- Decide how to behave based on what is already in context (for example,
-  reading parameters from context instead of configuration).
-
-
 Data types: wrapping domain objects
 -----------------------------------
 
@@ -79,6 +38,8 @@ Why wrap values at all?
 - Processors can declare exactly which data types they expect and produce.
 - Inspection and tracing can show “what kind of thing” is flowing through
   the pipeline instead of just raw Python types.
+
+For a deeper tour of data types and validation patterns, see :doc:`data_types`.
 
 
 Data operations: transformations as callables
@@ -134,14 +95,18 @@ Key properties:
 - Instances are callable; ``op(data, **params)`` is equivalent to
   ``op.process(data, **params)``.
 
+See :doc:`data_operations` and :doc:`creating_components` for more examples of
+declaring and wiring data operations.
+
 
 Data probes: read-only observers
 --------------------------------
 
-Data probes are processors that **observe** data and return a summary value.
-They never mutate the data or the context; they just compute and return a
-result. Pipelines decide what to do with that result (for example, storing
-it in the context under a key).
+Data probes are processors that **observe** data and return a value. They
+never mutate the data; in a pipeline, the node that wraps a probe typically
+injects the observed value into the context when it is configured with a
+``context_key``. The probe itself stays unaware of context, keeping the
+business logic simple and reusable.
 
 .. code-block:: python
 
@@ -174,28 +139,85 @@ Later, in the pipeline pages, you will see how a probe result becomes part of
 the context via a node ``context_key`` - without the probe itself knowing
 anything about context.
 
-
-Context processors and observers
---------------------------------
-
-Context processors and observers work primarily on the **context** channel:
-
-- **Context processors** can read and update context keys. They are used for
-  tasks like routing, enrichment, aggregation and cross-node coordination.
-- **Context observers** are read-only; they watch for certain conditions in
-  the context and may emit warnings, metrics or trace annotations.
-
-From the payload's point of view, they behave like data processors but
-operate on different state:
-
-- Data operations focus on ``payload.data``.
-- Context processors focus on ``payload.context``.
-- Probes read data and return a value; nodes decide whether to send that
-  value into the context.
+See :doc:`data_probes` and :doc:`creating_components` for more on probe
+contracts and usage patterns.
 
 
-Putting it together: payload, processors, pipelines
----------------------------------------------------
+Context types: structured metadata
+----------------------------------
+
+Semantiva represents the context channel with ``ContextType``, a small
+mapping-like container for per-run metadata. Context keys can hold
+configuration parameters, derived values, tags used for bookkeeping, and
+indicators such as data-quality scores or validation flags, and can be 
+used to track and coordinate behaviour over the life of a run.
+
+.. code-block:: python
+
+  from semantiva import ContextType
+
+  context = ContextType()
+  context.set_value("experiment.id", "exp-001")
+  context.set_value("example.addend", 2.0)
+
+  print(context)
+  print("addend:", context.get_value("example.addend"))
+
+.. code-block:: console
+
+  ContextType(context={'experiment.id': 'exp-001', 'example.addend': 2.0})
+  addend: 2.0
+
+ContextType is central to how pipelines share state across nodes, but most
+user code treats it as an opaque mapping. See :doc:`context_type` and
+:doc:`context_processors` for details on context semantics and management.
+
+
+Payload: combining data and context
+-----------------------------------
+
+Every Semantiva pipeline step processes a *payload* with two channels:
+
+- **Data channel** - typed domain objects wrapped in data types.
+- **Context channel** - structured metadata carried alongside the data.
+
+At any point in a run you can think of the payload as a simple pair that
+combines data and context:
+
+.. code-block:: python
+
+  from semantiva import ContextType, Payload
+  from semantiva.examples import FloatDataType
+
+  context = ContextType()
+  context.set_value("example.addend", 2.0)
+
+  payload = Payload(
+     data=FloatDataType(1.0),
+     context=context,
+  )
+
+  print("data:", payload.data)
+  print("context:", payload.context)
+
+.. code-block:: console
+
+   data: FloatDataType(1.0)
+   context: ContextType(context={'example.addend': 2.0})
+
+Nodes pass ``Payload`` objects between steps, but processors themselves only
+see the data value and explicit parameters. Nodes and pipeline infrastructure
+mediate between business logic and the context channel.
+
+Context is treated as a protected space: updates flow through context
+processors and observer hooks so that changes can be validated and traced.
+
+Payloads and their role in execution are discussed further in
+:doc:`pipeline`, :doc:`pipelines_yaml` and :doc:`pipelines_python`.
+
+
+Nodes and pipelines
+-------------------
 
 At a high level, Semantiva's execution model looks like this:
 
@@ -204,27 +226,89 @@ At a high level, Semantiva's execution model looks like this:
    source or sink) and controls how it sees the payload.
 3. Processors declare their data contracts via data types and their expected
    context keys via contracts.
-4. Optional trace drivers observe execution and emit **Semantic Execution
-   Records (SER)**.
+4. Optional trace drivers observe execution and emit Semantic Execution
+   Records (SER) (see :doc:`ser`).
 
-Processors and pipeline nodes operate only on the data and context channels.
+Semantiva has a parameter resolution mechanism: node parameters may be
+provided by the YAML configuration, processor defaults, or the payload
+context, with well-defined precedence rules. Nodes are responsible for
+resolving these parameters, unpacking the payload, calling processors with
+data only, and applying any configured context updates. See
+:doc:`pipelines_yaml`, :doc:`pipelines_python` and
+:doc:`introspection_validation` for details.
+
 SER records are produced by trace drivers attached to the orchestrator and
 executor and do not change data or context.
 
 From a user perspective:
 
 - You **define processors** in Python (see :doc:`creating_components`).
-- You **configure pipelines** in YAML (see :doc:`pipeline`).
+- You **configure production pipelines** declaratively in YAML
+  (see :doc:`pipelines_yaml`), which serves as the **configuration
+  artefact of record**.
+- The same execution model can be exercised directly in Python for
+  **development, R&D and notebook workflows** (see
+  :doc:`pipelines_python`), but Python pipelines are not treated as
+  system-of-record configuration.
 - You **execute** via :doc:`cli` or the Python API, always working with the
   payload abstraction.
 
-For a more visual explanation of how all this fits together:
 
-- :doc:`data_types`
-- :doc:`data_operations`
-- :doc:`data_probes`
-- :doc:`context_processors`
-- :doc:`data_collections`
+Run space: multiple runs from one spec
+--------------------------------------
+
+Run space lets you describe a family of runs (for example, parameter sweeps)
+in a single YAML configuration by adding a ``run_space`` block. The CLI
+expands this specification into individual runs that share a run-space
+configuration ID while each run has its own run ID.
+
+See :doc:`run_space` and :doc:`tutorials/run_space_quickstart` for a guided
+walkthrough of run-space configuration and lifecycle.
+
+
+Context processors
+------------------
+
+Context processors work primarily on the **context** channel. They read values
+from context, apply some transformation, and request updates via observer
+hooks; nodes and context observers handle the actual mutations.
+
+A minimal example is a context-only pipeline that renames a key from
+``"input_key"`` to ``"output_key"``. Use the shorthand ``rename:src:dst``
+syntax to define context processors inline:
+
+.. code-block:: python
+
+   from semantiva import ContextType, Payload, Pipeline
+
+   # Single-node pipeline with rename context processor
+   nodes = [
+       {
+           "processor": "rename:input_key:output_key",
+       },
+   ]
+
+   pipeline = Pipeline(nodes)
+
+   # Create context with "input_key" and process through pipeline
+   context = ContextType({"input_key": "hello"})
+   payload = Payload(data=None, context=context)
+   result = pipeline.process(payload)
+   print("output context:", result.context)
+
+.. code-block:: console
+
+   output context: ContextType(context={'output_key': 'hello'})
+
+Other built-in context processors follow the same idea and can be created
+with similar shorthand syntax:
+
+- ``delete:some.key`` creates a context processor that deletes a key.
+- ``template:"result_{value}.txt":path`` creates a template-based processor
+  that combines existing context keys into a new string.
+
+See :doc:`context_processors` for a complete reference to context processors,
+including composition patterns for enrichment and routing.
 
 
 Component identity
@@ -255,7 +339,7 @@ At class level, every component can expose its metadata as a dictionary via
 
    class_name: FloatAddOperation
    component_type: DataOperation
-   parameters: OrderedDict([('addend', ParameterInfo(default=<object object at 0x7f9b6eba4b00>, annotation='float'))])
+   parameters: OrderedDict([('addend', float)])
 
    semantic id:
 
@@ -266,7 +350,7 @@ At class level, every component can expose its metadata as a dictionary via
        Add a constant to FloatDataType data.
     - component_type: DataOperation
     - parameters:
-     addend: ParameterInfo(default=<object object at 0x7f9b6eba4b00>, annotation='float')
+       addend: float
     - input_data_type: FloatDataType
     - output_data_type: FloatDataType
    ===============================
@@ -293,9 +377,12 @@ they become invaluable when:
 - Building tooling on top of Semantiva's metadata model, such as explorers,
   documentation generators or LLM-based helpers.
 
+For more on how component identities participate in pipeline and execution
+inspection, see :doc:`identity_cheatsheet` and :doc:`inspection`.
 
-Trace records and trace drivers
--------------------------------
+
+Semantic Execution Records
+--------------------------
 
 Tracing is an optional layer that records how pipelines execute over time.
 
@@ -308,13 +395,5 @@ Tracing is an optional layer that records how pipelines execute over time.
 
 Trace drivers are configured in the pipeline YAML (see
 :doc:`architecture/pipeline_schema`) and described in more detail in
-:doc:`trace_stream_v1` and :doc:`ser`.
-
-
-Where to go next
-----------------
-
-- Continue with :doc:`data_types` to see how to define and validate custom
-  data types.
-- Then read :doc:`data_operations` and :doc:`data_probes` to learn how to
-  write reusable processors.
+:doc:`ser`, :doc:`trace_stream_v1`, :doc:`trace_graph_alignment` and
+:doc:`schema_semantic_execution_record_v1`.

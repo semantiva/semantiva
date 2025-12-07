@@ -32,6 +32,19 @@ Probe node contract (mandatory)
 - Pipelines that omit ``context_key`` for probes fail validation via
   :command:`semantiva inspect`.
 
+Examples
+--------
+
+For concrete examples of probe nodes that satisfy this contract,
+see:
+
+- The YAML-based probe pipeline in :doc:`pipelines_yaml`.
+- The corresponding Python-based example in :doc:`pipelines_python`
+  (intended for R&D and component development).
+
+These examples illustrate the rules; the authoritative specification
+remains the SVA catalogue above.
+
 Context argument contract (processors)
 --------------------------------------
 
