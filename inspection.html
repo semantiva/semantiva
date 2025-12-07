@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -284,6 +298,14 @@
         <article role="main" id="furo-main-content">
           <section id="inspection-payload-cli">
 <h1>Inspection Payload &amp; CLI<a class="headerlink" href="#inspection-payload-cli" title="Link to this heading">¶</a></h1>
+<div class="admonition-who-this-is-for admonition">
+<p class="admonition-title">Who this is for</p>
+<p>This page is for <strong>pipeline users</strong> who want to inspect executions and
+for <strong>architects/system designers</strong> who care about provenance and trace
+flows.</p>
+<p>It assumes you are comfortable with pipelines
+(<a class="reference internal" href="personas/pipeline_users.html"><span class="doc">Pipeline users</span></a>) and have run at least a few real workflows.</p>
+</div>
 <p>Inspection computes a <strong>configuration-only</strong> view of a pipeline. The builder
 exposes a canonical payload that both the CLI and GUI consume.</p>
 <div class="admonition note">
@@ -294,8 +316,8 @@ config-only mode. It never contains runtime or run-space live identifiers.</p>
 <p>See also <a class="reference internal" href="identity_cheatsheet.html"><span class="doc">Identity Cheatsheet</span></a> for a quick reference to the identities.</p>
 <section id="payload-shape">
 <h2>Payload shape<a class="headerlink" href="#payload-shape" title="Link to this heading">¶</a></h2>
-<p>The payload returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.build()</span></code> is JSON-safe
-and deterministic. All ordering is canonical:</p>
+<p>The payload returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">semantiva.inspection.build_inspection_payload()</span></code>
+is JSON-safe and deterministic. All ordering is canonical:</p>
 <ul class="simple">
 <li><p>Nodes appear in pipeline execution order.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">required_context_keys</span></code> are sorted alphabetically.</p></li>
@@ -337,6 +359,25 @@ and deterministic. All ordering is canonical:</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">run_space</span></code> object contains only <code class="docutils literal notranslate"><span class="pre">spec_id</span></code> at inspection time.
 The <code class="docutils literal notranslate"><span class="pre">inputs_id</span></code> field is <strong>never computed</strong> during inspection—it appears
 only in runtime traces after input sources are fingerprinted.</p>
+</div>
+</section>
+<section id="api-entry-points">
+<h2>API entry points<a class="headerlink" href="#api-entry-points" title="Link to this heading">¶</a></h2>
+<p>The inspection layer exposes three primary entry points:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">semantiva.inspection.build_pipeline_inspection</span></code> — error-resilient builder
+returning <code class="docutils literal notranslate"><span class="pre">PipelineInspection</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semantiva.inspection.build_inspection_payload</span></code> — canonical, JSON-safe
+payload used by GUI/CLI (preferred over the legacy name).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semantiva.inspection.build_canonical_graph</span></code> — canonical graph
+representation for visualization.</p></li>
+</ul>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.5.1: </span><code class="docutils literal notranslate"><span class="pre">semantiva.inspection.build</span></code> is deprecated in favour of
+<code class="docutils literal notranslate"><span class="pre">semantiva.inspection.build_inspection_payload</span></code> and will be removed in a
+future minor release (not before 0.6.0). The helper
+<code class="docutils literal notranslate"><span class="pre">semantiva.inspection.collect_required_context_keys</span></code> is also deprecated;
+access <code class="docutils literal notranslate"><span class="pre">PipelineInspection.required_context_keys</span></code> directly instead.</p>
 </div>
 <section id="excluded-fields">
 <h3>Excluded fields<a class="headerlink" href="#excluded-fields" title="Link to this heading">¶</a></h3>
@@ -472,7 +513,8 @@ and <code class="docutils literal notranslate"><span class="pre">--strict</span>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Inspection Payload &amp; CLI</a><ul>
-<li><a class="reference internal" href="#payload-shape">Payload shape</a><ul>
+<li><a class="reference internal" href="#payload-shape">Payload shape</a></li>
+<li><a class="reference internal" href="#api-entry-points">API entry points</a><ul>
 <li><a class="reference internal" href="#excluded-fields">Excluded fields</a></li>
 </ul>
 </li>

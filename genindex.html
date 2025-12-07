@@ -192,21 +192,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -224,15 +232,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -241,6 +254,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -297,8 +311,6 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType.append">append() (semantiva.data_types.data_types.DataCollectionType method)</a>
-</li>
         <li><a href="glossary.html#term-Assertions"><strong>Assertions</strong></a>
 </li>
     </ul></td>
@@ -309,12 +321,10 @@
   <h2>B</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_types.html#semantiva.data_types.data_types.BaseDataType">BaseDataType (class in semantiva.data_types.data_types)</a>
+        <li><a href="execution.html#semantiva.execution.orchestrator.factory.build_orchestrator">build_orchestrator() (in module semantiva.execution.orchestrator.factory)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="execution.html#semantiva.execution.orchestrator.factory.build_orchestrator">build_orchestrator() (in module semantiva.execution.orchestrator.factory)</a>
-</li>
         <li><a href="glossary.html#term-by_position"><strong>by_position</strong></a>
 </li>
     </ul></td>
@@ -337,8 +347,6 @@
           <li><a href="execution.html#semantiva.execution.transport.in_memory.InMemorySubscription.close">(semantiva.execution.transport.in_memory.InMemorySubscription method)</a>
 </li>
         </ul></li>
-        <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType.collection_base_type">collection_base_type() (semantiva.data_types.data_types.DataCollectionType class method)</a>
-</li>
         <li><a href="glossary.html#term-combinatorial"><strong>combinatorial</strong></a>
 </li>
         <li><a href="glossary.html#term-Completeness-Trace"><strong>Completeness (Trace)</strong></a>
@@ -379,29 +387,19 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_types.html#semantiva.data_types.data_types.BaseDataType.data">data (semantiva.data_types.data_types.BaseDataType property)</a>
-
-        <ul>
-          <li><a href="execution.html#semantiva.execution.transport.base.Message.data">(semantiva.execution.transport.base.Message attribute)</a>
+        <li><a href="execution.html#semantiva.execution.transport.base.Message.data">data (semantiva.execution.transport.base.Message attribute)</a>
 </li>
-        </ul></li>
         <li><a href="glossary.html#term-Data-Channel"><strong>Data Channel</strong></a>
 </li>
         <li><a href="glossary.html#term-Data-Operation"><strong>Data Operation</strong></a>
 </li>
         <li><a href="glossary.html#term-Data-Probe"><strong>Data Probe</strong></a>
 </li>
-        <li><a href="glossary.html#term-Data-Processor"><strong>Data Processor</strong></a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType">DataCollectionType (class in semantiva.data_types.data_types)</a>
+        <li><a href="glossary.html#term-Data-Processor"><strong>Data Processor</strong></a>
 </li>
         <li><a href="utility_processors.html#semantiva.data_processors.DataDump">DataDump (class in semantiva.data_processors)</a>
-</li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.DataSink">DataSink (class in semantiva.data_io.data_io)</a>
-</li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.DataSource">DataSource (class in semantiva.data_io.data_io)</a>
 </li>
         <li><a href="glossary.html#term-Dependencies"><strong>Dependencies</strong></a>
 </li>
@@ -443,8 +441,6 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="workflows_fitting_models.html#semantiva.workflows.fitting_model.FittingModel">FittingModel (class in semantiva.workflows.fitting_model)</a>
 </li>
-        <li><a href="data_types.html#semantiva.data_types.data_types.DataCollectionType.from_list">from_list() (semantiva.data_types.data_types.DataCollectionType class method)</a>
-</li>
     </ul></td>
   </tr></table>
 </section>
@@ -453,25 +449,17 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_io.html#semantiva.data_io.data_io.DataSource.get_data">get_data() (semantiva.data_io.data_io.DataSource class method)</a>
-</li>
         <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_executor">get_executor() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_orchestrator">get_orchestrator() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource.get_payload">get_payload() (semantiva.data_io.data_io.PayloadSource class method)</a>
-</li>
-        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_probe_results">get_probe_results() (semantiva.pipeline.pipeline.Pipeline method)</a>
-</li>
         <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_executors">get_registered_executors() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
+</li>
+        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_orchestrators">get_registered_orchestrators() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_orchestrators">get_registered_orchestrators() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
-</li>
         <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_registered_transports">get_registered_transports() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
-</li>
-        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.get_timers">get_timers() (semantiva.pipeline.pipeline.Pipeline method)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.get_transport">get_transport() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
@@ -491,21 +479,15 @@
 </li>
         <li><a href="execution.html#semantiva.execution.component_registry.ExecutionComponentRegistry.initialize_defaults">initialize_defaults() (semantiva.execution.component_registry.ExecutionComponentRegistry class method)</a>
 </li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource.injected_context_keys">injected_context_keys() (semantiva.data_io.data_io.PayloadSource class method)</a>
-</li>
         <li><a href="execution.html#semantiva.execution.transport.in_memory.InMemorySemantivaTransport">InMemorySemantivaTransport (class in semantiva.execution.transport.in_memory)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.transport.in_memory.InMemorySubscription">InMemorySubscription (class in semantiva.execution.transport.in_memory)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_io.html#semantiva.data_io.data_io.DataSink.input_data_type">input_data_type() (semantiva.data_io.data_io.DataSink class method)</a>
+        <li><a href="utility_processors.html#semantiva.data_processors.CopyDataProbe.input_data_type">input_data_type() (semantiva.data_processors.CopyDataProbe class method)</a>
 
         <ul>
-          <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSink.input_data_type">(semantiva.data_io.data_io.PayloadSink class method)</a>
-</li>
-          <li><a href="utility_processors.html#semantiva.data_processors.CopyDataProbe.input_data_type">(semantiva.data_processors.CopyDataProbe class method)</a>
-</li>
           <li><a href="utility_processors.html#semantiva.data_processors.DataDump.input_data_type">(semantiva.data_processors.DataDump class method)</a>
 </li>
         </ul></li>
@@ -567,10 +549,6 @@
     module
 
         <ul>
-          <li><a href="data_io.html#module-semantiva.data_io.data_io">semantiva.data_io.data_io</a>
-</li>
-          <li><a href="data_types.html#module-semantiva.data_types.data_types">semantiva.data_types.data_types</a>
-</li>
           <li><a href="exceptions.html#module-semantiva.exceptions.pipeline_exceptions">semantiva.exceptions.pipeline_exceptions</a>
 </li>
           <li><a href="execution.html#module-semantiva.execution.component_registry">semantiva.execution.component_registry</a>
@@ -589,10 +567,6 @@
 </li>
           <li><a href="logger.html#module-semantiva.logger.logger">semantiva.logger.logger</a>
 </li>
-          <li><a href="pipeline.html#module-semantiva.pipeline.payload">semantiva.pipeline.payload</a>
-</li>
-          <li><a href="pipeline.html#module-semantiva.pipeline.pipeline">semantiva.pipeline.pipeline</a>
-</li>
           <li><a href="workflows_fitting_models.html#module-semantiva.workflows.fitting_model">semantiva.workflows.fitting_model</a>
 </li>
         </ul></li>
@@ -604,15 +578,11 @@
   <h2>N</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_types.html#semantiva.data_types.data_types.NoDataType">NoDataType (class in semantiva.data_types.data_types)</a>
-</li>
         <li><a href="glossary.html#term-Node"><strong>Node</strong></a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="glossary.html#term-node_uuid"><strong>node_uuid</strong></a>
-</li>
-        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.nodes">nodes (semantiva.pipeline.pipeline.Pipeline attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -622,14 +592,8 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_io.html#semantiva.data_io.data_io.DataSource.output_data_type">output_data_type() (semantiva.data_io.data_io.DataSource class method)</a>
-
-        <ul>
-          <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource.output_data_type">(semantiva.data_io.data_io.PayloadSource class method)</a>
+        <li><a href="utility_processors.html#semantiva.data_processors.DataDump.output_data_type">output_data_type() (semantiva.data_processors.DataDump class method)</a>
 </li>
-          <li><a href="utility_processors.html#semantiva.data_processors.DataDump.output_data_type">(semantiva.data_processors.DataDump class method)</a>
-</li>
-        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -643,25 +607,11 @@
         <li><a href="glossary.html#term-parameters-computed"><strong>parameters (computed)</strong></a>
 </li>
         <li><a href="glossary.html#term-Payload"><strong>Payload</strong></a>
-
-        <ul>
-          <li><a href="pipeline.html#semantiva.pipeline.payload.Payload">(class in semantiva.pipeline.payload)</a>
-</li>
-        </ul></li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSink">PayloadSink (class in semantiva.data_io.data_io)</a>
-</li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSource">PayloadSource (class in semantiva.data_io.data_io)</a>
-</li>
-        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline">Pipeline (class in semantiva.pipeline.pipeline)</a>
-</li>
-        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.pipeline_configuration">pipeline_configuration (semantiva.pipeline.pipeline.Pipeline attribute)</a>
 </li>
         <li><a href="exceptions.html#semantiva.exceptions.pipeline_exceptions.PipelineConfigurationError">PipelineConfigurationError</a>
 </li>
         <li><a href="glossary.html#term-PipelineId"><strong>PipelineId</strong></a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="exceptions.html#semantiva.exceptions.pipeline_exceptions.PipelineTopologyError">PipelineTopologyError</a>
 </li>
         <li><a href="glossary.html#term-Planned-Run-Count"><strong>Planned Run Count</strong></a>
@@ -670,6 +620,8 @@
           <li><a href="glossary.html#term-Planned-Run-Count-SER"><strong>(SER)</strong></a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="workflows_fitting_models.html#semantiva.workflows.fitting_model.PolynomialFittingModel">PolynomialFittingModel (class in semantiva.workflows.fitting_model)</a>
 </li>
         <li><a href="execution.html#semantiva.execution.executor.executor.SemantivaExecutor.SERHooks.post_checks_provider">post_checks_provider (semantiva.execution.executor.executor.SemantivaExecutor.SERHooks attribute)</a>
@@ -747,20 +699,6 @@
         <li><a href="glossary.html#term-Semantic-Execution-Record-SER"><strong>Semantic Execution Record (SER)</strong></a>
 </li>
         <li>
-    semantiva.data_io.data_io
-
-        <ul>
-          <li><a href="data_io.html#module-semantiva.data_io.data_io">module</a>
-</li>
-        </ul></li>
-        <li>
-    semantiva.data_types.data_types
-
-        <ul>
-          <li><a href="data_types.html#module-semantiva.data_types.data_types">module</a>
-</li>
-        </ul></li>
-        <li>
     semantiva.exceptions.pipeline_exceptions
 
         <ul>
@@ -823,22 +761,8 @@
           <li><a href="logger.html#module-semantiva.logger.logger">module</a>
 </li>
         </ul></li>
-        <li>
-    semantiva.pipeline.payload
-
-        <ul>
-          <li><a href="pipeline.html#module-semantiva.pipeline.payload">module</a>
-</li>
-        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li>
-    semantiva.pipeline.pipeline
-
-        <ul>
-          <li><a href="pipeline.html#module-semantiva.pipeline.pipeline">module</a>
-</li>
-        </ul></li>
         <li>
     semantiva.workflows.fitting_model
 
@@ -854,10 +778,6 @@
 </li>
         <li><a href="execution.html#semantiva.execution.transport.base.SemantivaTransport">SemantivaTransport (class in semantiva.execution.transport.base)</a>
 </li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.DataSink.send_data">send_data() (semantiva.data_io.data_io.DataSink class method)</a>
-</li>
-        <li><a href="data_io.html#semantiva.data_io.data_io.PayloadSink.send_payload">send_payload() (semantiva.data_io.data_io.PayloadSink class method)</a>
-</li>
         <li><a href="execution.html#semantiva.execution.executor.executor.SequentialSemantivaExecutor">SequentialSemantivaExecutor (class in semantiva.execution.executor.executor)</a>
 </li>
         <li><a href="glossary.html#term-SERRecord"><strong>SERRecord</strong></a>
@@ -865,8 +785,6 @@
         <li><a href="logger.html#semantiva.logger.logger.Logger.set_console_output">set_console_output() (semantiva.logger.logger.Logger method)</a>
 </li>
         <li><a href="logger.html#semantiva.logger.logger.Logger.set_file_output">set_file_output() (semantiva.logger.logger.Logger method)</a>
-</li>
-        <li><a href="pipeline.html#semantiva.pipeline.pipeline.Pipeline.set_run_metadata">set_run_metadata() (semantiva.pipeline.pipeline.Pipeline method)</a>
 </li>
         <li><a href="logger.html#semantiva.logger.logger.Logger.set_verbose_level">set_verbose_level() (semantiva.logger.logger.Logger method)</a>
 </li>
@@ -930,16 +848,10 @@
   <h2>V</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_types.html#semantiva.data_types.data_types.BaseDataType.validate">validate() (semantiva.data_types.data_types.BaseDataType method)</a>
-
-        <ul>
-          <li><a href="data_types.html#semantiva.data_types.data_types.NoDataType.validate">(semantiva.data_types.data_types.NoDataType method)</a>
-</li>
-        </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="glossary.html#term-variables"><strong>variables</strong></a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="logger.html#semantiva.logger.logger.Logger.verbosity_map">verbosity_map (semantiva.logger.logger.Logger attribute)</a>
 </li>
     </ul></td>

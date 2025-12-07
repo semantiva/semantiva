@@ -1,0 +1,741 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Basic Concepts" href="../concepts.html"><link rel="prev" title="Framework developers &amp; component authors" href="framework_developers.html">
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+        <title>Architects &amp; system designers - Semantiva 0.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=7205999f" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Semantiva 0.5.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <span class="sidebar-brand-text">Semantiva 0.5.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Architects &amp; system designers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Basic Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Pipelines in Semantiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_collections.html">Data collections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../collection_modifiers.html">Collection-based modifiers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context_processors.html">Context Processors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Semantiva CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ser.html">Semantic Execution Record (SER) v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema_semantic_execution_record_v1.html">SER v1 JSON Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_stream_v1.html">Trace Stream v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_aggregator_v1.html">Trace Aggregator v1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trace_graph_alignment.html">Trace ↔ Graph Alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../identity_cheatsheet.html">Identity Cheatsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph.html">Canonical Graph Builder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inspection.html">Inspection Payload &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introspection_validation.html">Introspection &amp; Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space_emission.html">Run-Space Emission (Runtime)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_space_lifecycle.html">Run-Space Lifecycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution.html">Execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/context_processing.html">Context Processing Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/registry.html">Registry System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contracts.html">Semantiva Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/personas/architects_system_designers.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="architects-system-designers">
+<h1>Architects &amp; system designers<a class="headerlink" href="#architects-system-designers" title="Link to this heading">¶</a></h1>
+<p>This page is for people who <strong>design systems around Semantiva</strong>:</p>
+<ul class="simple">
+<li><p>You care about how Semantiva fits into a larger architecture: orchestration,
+storage, observability, lineage.</p></li>
+<li><p>You want a clear picture of <strong>execution, inspection and trace flows</strong>,
+not just individual pipelines or components.</p></li>
+<li><p>You may own <strong>standards and conventions</strong> around pipelines, SER, run spaces
+and contracts for your organisation.</p></li>
+</ul>
+<p>If you mainly run and tweak existing pipelines, see
+<a class="reference internal" href="pipeline_users.html"><span class="doc">Pipeline users</span></a> instead.</p>
+<p>If you primarily write components without owning wider system design, see
+<a class="reference internal" href="framework_developers.html"><span class="doc">Framework developers &amp; component authors</span></a>.</p>
+<div class="admonition-new-to-semantiva admonition">
+<p class="admonition-title">New to Semantiva?</p>
+<p>If you have never run a Semantiva pipeline before, <strong>start with</strong>
+<a class="reference internal" href="../getting_started.html"><span class="doc">Getting Started</span></a>, then follow <a class="reference internal" href="pipeline_users.html"><span class="doc">Pipeline users</span></a> and
+<a class="reference internal" href="framework_developers.html"><span class="doc">Framework developers &amp; component authors</span></a>.</p>
+<p>Come back to this page once you are comfortable with pipelines, components
+and basic inspection.</p>
+</div>
+<section id="what-you-should-know-already">
+<h2>What you should know already<a class="headerlink" href="#what-you-should-know-already" title="Link to this heading">¶</a></h2>
+<p>Before you use this page as your main guide, you should:</p>
+<ul class="simple">
+<li><p>Have followed <a class="reference internal" href="../getting_started.html"><span class="doc">Getting Started</span></a>, <a class="reference internal" href="pipeline_users.html"><span class="doc">Pipeline users</span></a> and
+<a class="reference internal" href="framework_developers.html"><span class="doc">Framework developers &amp; component authors</span></a>.</p></li>
+<li><p>Be comfortable with:</p>
+<ul>
+<li><p>Reading and reviewing pipeline YAMLs for non-trivial workloads.</p></li>
+<li><p>Understanding the responsibilities of DataOperation, DataProbe and
+ContextProcessor components.</p></li>
+<li><p>Running <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code> as part of a development
+workflow.</p></li>
+</ul>
+</li>
+<li><p>Have a rough picture that:</p>
+<ul>
+<li><p>Semantiva executes <strong>graphs</strong> of nodes (pipelines) over payloads with
+<strong>data and context</strong>.</p></li>
+<li><p>Execution is recorded as <strong>Semantic Execution Records (SER)</strong> and related
+trace artefacts.</p></li>
+<li><p>Contracts and SVA rules (including <code class="docutils literal notranslate"><span class="pre">SVA250</span></code> and friends) encode
+architectural invariants in a machine-checkable way.</p></li>
+</ul>
+</li>
+</ul>
+<p>If any of that is unfamiliar, revisit <a class="reference internal" href="pipeline_users.html"><span class="doc">Pipeline users</span></a>,
+<a class="reference internal" href="framework_developers.html"><span class="doc">Framework developers &amp; component authors</span></a> and <a class="reference internal" href="../concepts.html"><span class="doc">Basic Concepts</span></a> first.</p>
+</section>
+<section id="your-learning-path-301">
+<h2>Your learning path (301+)<a class="headerlink" href="#your-learning-path-301" title="Link to this heading">¶</a></h2>
+<p>Once you are comfortable as a pipeline user and component author, this is the
+recommended path for <strong>architects and system designers</strong>.</p>
+<section id="step-1-get-the-high-level-execution-trace-picture">
+<h3>Step 1 - Get the high-level execution &amp; trace picture<a class="headerlink" href="#step-1-get-the-high-level-execution-trace-picture" title="Link to this heading">¶</a></h3>
+<p>Start with the <strong>inspection and trace</strong> side of the system:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../inspection.html"><span class="doc">Inspection Payload &amp; CLI</span></a> — why Semantiva records execution the way it does; how
+SER, traces and run spaces fit together.</p></li>
+<li><p><a class="reference internal" href="../ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> — high-level overview of the Semantic Execution Record:
+what each SER describes, and how it relates to a node run.</p></li>
+<li><p><a class="reference internal" href="../run_space.html"><span class="doc">Run Space (v1): blocks that expand context</span></a> — how executions are grouped into run spaces
+(experiments, campaigns, workflows).</p></li>
+</ul>
+<p>At this stage, you should focus on:</p>
+<ul class="simple">
+<li><p>How <strong>node-level execution</strong> becomes <strong>SER JSONL files</strong>.</p></li>
+<li><p>How run spaces organise multiple runs and variations.</p></li>
+<li><p>Where, in your architecture, SER and run spaces would be stored and
+consumed (file systems, object stores, trace viewers, etc.).</p></li>
+</ul>
+</section>
+<section id="step-2-understand-the-core-architecture-slices">
+<h3>Step 2 - Understand the core architecture slices<a class="headerlink" href="#step-2-understand-the-core-architecture-slices" title="Link to this heading">¶</a></h3>
+<p>Next, read the core architecture docs with an “integration” mindset:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../architecture/pipeline_schema.html"><span class="doc">Pipeline Configuration Schema</span></a> — how pipelines are represented as
+graphs; which parts are user-facing vs internal.</p></li>
+<li><p><a class="reference internal" href="../architecture/context_processing.html"><span class="doc">Context Processing Architecture</span></a> — how context processing,
+observers and validators are wired (important for understanding invariants
+like those enforced by <code class="docutils literal notranslate"><span class="pre">SVA250</span></code>).</p></li>
+<li><p><a class="reference internal" href="../architecture/registry.html"><span class="doc">Registry System</span></a> — where processors and other components
+come from, and how they are discovered.</p></li>
+</ul>
+<p>As an architect, you should be able to answer:</p>
+<ul class="simple">
+<li><p>Which artefacts are <strong>static configuration</strong> (pipeline schema, registry
+entries) vs <strong>runtime</strong> (SER, traces, run spaces).</p></li>
+<li><p>Where extension points are: new processors, new transports, custom registries.</p></li>
+<li><p>How Semantiva’s own invariants (as documented in contracts and architecture)
+align with your organisation’s design principles.</p></li>
+</ul>
+<section id="configuration-artefacts">
+<h4>Configuration artefacts<a class="headerlink" href="#configuration-artefacts" title="Link to this heading">¶</a></h4>
+<p>In most organisations, <strong>YAML pipeline configurations</strong> are the governed
+configuration artefact for Semantiva:</p>
+<ul class="simple">
+<li><p>YAML pipelines are versioned, validated (via <a class="reference internal" href="../contracts.html"><span class="doc">Semantiva Contracts</span></a> and
+<strong class="command">semantiva dev lint</strong>) and promoted across environments.</p></li>
+<li><p>YAML is the source for building execution graphs in production
+(see <a class="reference internal" href="../pipelines_yaml.html"><span class="doc">Pipelines - YAML &amp; CLI</span></a> and <a class="reference internal" href="../architecture/pipeline_schema.html"><span class="doc">Pipeline Configuration Schema</span></a>).</p></li>
+</ul>
+<p>Semantiva also exposes a Python API for constructing pipelines
+(<a class="reference internal" href="../pipelines_python.html"><span class="doc">Pipelines in Python</span></a>), which is extremely useful for internal
+testing, simulation and R&amp;D workflows. These Python pipelines should
+be treated as <strong>internal tooling</strong>, not as the system-of-record
+configuration.</p>
+</section>
+</section>
+<section id="step-3-tie-ser-trace-streams-and-aggregation-together">
+<h3>Step 3 - Tie SER, trace streams and aggregation together<a class="headerlink" href="#step-3-tie-ser-trace-streams-and-aggregation-together" title="Link to this heading">¶</a></h3>
+<p>Once you have the basic slices, go deeper into the trace pipeline:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../schema_semantic_execution_record_v1.html"><span class="doc">SER v1 JSON Schema</span></a> — reference for SER v1 schema.</p></li>
+<li><p><a class="reference internal" href="../trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a> — how SERs are turned into trace streams.</p></li>
+<li><p><a class="reference internal" href="../trace_aggregator_v1.html"><span class="doc">Trace Aggregator v1</span></a> — how traces are aggregated into higher-level
+structures.</p></li>
+<li><p><a class="reference internal" href="../trace_graph_alignment.html"><span class="doc">Trace ↔ Graph Alignment</span></a> — how traces map back to pipeline graphs.</p></li>
+</ul>
+<p>You do not need to memorise every field, but you should understand:</p>
+<ul class="simple">
+<li><p>How a <strong>single node run</strong> flows into SER → trace stream → aggregated view.</p></li>
+<li><p>Which artefacts external tools (e.g. Semantiva Studio Viewer) consume.</p></li>
+<li><p>What guarantees you get about <strong>identity and provenance</strong> across these
+stages.</p></li>
+</ul>
+</section>
+<section id="step-4-look-at-contracts-as-architecture-spec">
+<h3>Step 4 - Look at contracts as architecture spec<a class="headerlink" href="#step-4-look-at-contracts-as-architecture-spec" title="Link to this heading">¶</a></h3>
+<p>Contracts and SVA rules act as a <strong>compact architecture specification</strong>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../contracts.html"><span class="doc">Semantiva Contracts</span></a> — how contracts are defined and enforced; how
+<code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code> operationalises them.</p></li>
+<li><p>The embedded catalog (<code class="docutils literal notranslate"><span class="pre">contracts_catalog</span></code>) — the list of rules, including:</p>
+<ul>
+<li><p>Rules around data and context typing.</p></li>
+<li><p>Context key metadata (created/suppressed/injected keys).</p></li>
+<li><p>Signature invariants such as <code class="docutils literal notranslate"><span class="pre">SVA250</span></code> (no <code class="docutils literal notranslate"><span class="pre">ContextType</span></code> in
+<code class="docutils literal notranslate"><span class="pre">_process_logic</span></code>).</p></li>
+</ul>
+</li>
+</ul>
+<p>As an architect you should:</p>
+<ul class="simple">
+<li><p>Treat these rules as part of the <strong>system’s architecture</strong>, not just
+implementation details.</p></li>
+<li><p>Use them to derive <strong>organisational conventions</strong> (e.g. how components
+are allowed to see and modify context, how identity is attached to nodes).</p></li>
+</ul>
+</section>
+<section id="step-5-connect-semantiva-to-your-wider-system">
+<h3>Step 5 - Connect Semantiva to your wider system<a class="headerlink" href="#step-5-connect-semantiva-to-your-wider-system" title="Link to this heading">¶</a></h3>
+<p>Finally, map Semantiva onto your environment:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../execution.html"><span class="doc">Execution</span></a> — overview of orchestrators, executors and transports:
+where execution lives and how it can be embedded or driven externally.</p></li>
+<li><p><a class="reference internal" href="../run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a> and <a class="reference internal" href="../run_space_emission.html"><span class="doc">Run-Space Emission (Runtime)</span></a> — how runs
+are created, updated and closed, and how SER is emitted.</p></li>
+<li><p><a class="reference internal" href="../studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a> — how Semantiva Studio Viewer consumes run and trace
+artefacts to provide interactive exploration.</p></li>
+<li><p><a class="reference internal" href="../development/testing_strategies.html"><span class="doc">Testing Strategies and Best Practices</span></a> — how Semantiva components and
+pipelines fit into CI and system-level testing.</p></li>
+</ul>
+<p>At this point you should be able to sketch:</p>
+<ul class="simple">
+<li><p>Where Semantiva sits relative to schedulers, workflow engines, data stores
+and observability tools.</p></li>
+<li><p>Which boundaries you need to protect (e.g. what is allowed to mutate
+context; where identity is assigned and propagated).</p></li>
+<li><p>How you would onboard new teams into Semantiva across the three personas
+(pipeline users, component authors, architects).</p></li>
+</ul>
+</section>
+</section>
+<section id="architecture-overview-for-integrators">
+<h2>Architecture overview for integrators<a class="headerlink" href="#architecture-overview-for-integrators" title="Link to this heading">¶</a></h2>
+<p>This section summarises the Semantiva architecture from an integration point of
+view. Use it as a mental map while you read the detailed docs.</p>
+<section id="execution-core">
+<h3>Execution core<a class="headerlink" href="#execution-core" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Pipelines</strong> are declared as graphs (see <a class="reference internal" href="../architecture/pipeline_schema.html"><span class="doc">Pipeline Configuration Schema</span></a>):</p>
+<ul>
+<li><p>Nodes wrap processors (DataOperation, DataProbe, ContextProcessor).</p></li>
+<li><p>Edges describe data flow and dependencies.</p></li>
+<li><p>Pipelines are static artefacts, typically versioned alongside code.</p></li>
+</ul>
+</li>
+<li><p><strong>Execution</strong> operates on a <strong>Payload</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Payload.data</span></code> carries domain data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Payload.context</span></code> carries metadata and state.</p></li>
+<li><p>Nodes never receive the context object directly in their processors’
+business logic; context is mediated via observers and contracts.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="inspection-trace-stack">
+<h3>Inspection &amp; trace stack<a class="headerlink" href="#inspection-trace-stack" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>For every node run, Semantiva emits a <strong>Semantic Execution Record (SER)</strong>:</p>
+<ul>
+<li><p>Contains identity (run, pipeline, node).</p></li>
+<li><p>Records parameter sources, context deltas, data summaries, timing and
+status.</p></li>
+<li><p>Stored as JSONL (one SER per line).</p></li>
+</ul>
+</li>
+<li><p>SERs are then:</p>
+<ul>
+<li><p>Turned into <strong>trace streams</strong> (for streaming analysis).</p></li>
+<li><p>Aggregated by the <strong>trace aggregator</strong> into higher-level artefacts
+(e.g. run graphs, summaries).</p></li>
+<li><p>Consumed by tools like <strong>Semantiva Studio Viewer</strong> to support exploration,
+debugging and reporting.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="contracts-invariants">
+<h3>Contracts &amp; invariants<a class="headerlink" href="#contracts-invariants" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Semantiva’s <strong>contracts</strong> (SVA rules) express <strong>architectural invariants</strong>
+such as:</p>
+<ul>
+<li><p>How types are declared on processors.</p></li>
+<li><p>How context keys are introduced, suppressed or injected.</p></li>
+<li><p>How processors may (and may not) relate to context.</p></li>
+</ul>
+</li>
+<li><p>These rules are enforced by <code class="docutils literal notranslate"><span class="pre">semantiva</span> <span class="pre">dev</span> <span class="pre">lint</span></code> and should be treated as:</p>
+<ul>
+<li><p>A <strong>machine-checkable architecture spec</strong>.</p></li>
+<li><p>A key input when you define internal guidelines for Semantiva usage.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="extension-integration-points">
+<h3>Extension &amp; integration points<a class="headerlink" href="#extension-integration-points" title="Link to this heading">¶</a></h3>
+<p>As an architect, you will often look at:</p>
+<ul class="simple">
+<li><p><strong>Component families</strong> (documented in <a class="reference internal" href="../creating_components.html"><span class="doc">Creating Components (Authoring Guide)</span></a> and
+<a class="reference internal" href="../data_operations.html"><span class="doc">Data Operations</span></a> / <a class="reference internal" href="../data_probes.html"><span class="doc">Data Probes</span></a> / <a class="reference internal" href="../context_processors.html"><span class="doc">Context Processors</span></a>)
+as extension points for domain logic.</p></li>
+<li><p><strong>Registry</strong> (<a class="reference internal" href="../architecture/registry.html"><span class="doc">Registry System</span></a>) as the way to manage and
+expose these components.</p></li>
+<li><p><strong>Execution &amp; transports</strong> (<a class="reference internal" href="../execution.html"><span class="doc">Execution</span></a>) as integration points for:</p>
+<ul>
+<li><p>External schedulers / workflow engines.</p></li>
+<li><p>Custom storage for SER and run spaces.</p></li>
+<li><p>Organisation-specific tooling around traces and reports.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="common-tasks-and-where-to-look-in-the-docs">
+<h2>Common tasks and where to look in the docs<a class="headerlink" href="#common-tasks-and-where-to-look-in-the-docs" title="Link to this heading">¶</a></h2>
+<p>This section is a quick <strong>router</strong> for common architectural tasks and where to
+start in the documentation.</p>
+<section id="evaluate-whether-semantiva-fits-a-system-design">
+<h3>Evaluate whether Semantiva fits a system design<a class="headerlink" href="#evaluate-whether-semantiva-fits-a-system-design" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>You want to:</strong> decide how Semantiva would integrate into an existing or
+proposed architecture.</p></li>
+<li><p><strong>Look at:</strong></p>
+<ul>
+<li><p><a class="reference internal" href="../inspection.html"><span class="doc">Inspection Payload &amp; CLI</span></a> and <a class="reference internal" href="../ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> (what execution metadata you get).</p></li>
+<li><p><a class="reference internal" href="../execution.html"><span class="doc">Execution</span></a> (how execution is organised).</p></li>
+<li><p><a class="reference internal" href="../run_space.html"><span class="doc">Run Space (v1): blocks that expand context</span></a> and <a class="reference internal" href="../run_space_lifecycle.html"><span class="doc">Run-Space Lifecycle</span></a> (how runs and
+experiments are structured).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="define-organisational-conventions-for-pipelines">
+<h3>Define organisational conventions for pipelines<a class="headerlink" href="#define-organisational-conventions-for-pipelines" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>You want to:</strong> standardise how teams design and structure pipelines.</p></li>
+<li><p><strong>Look at:</strong></p>
+<ul>
+<li><p><a class="reference internal" href="../pipeline.html"><span class="doc">Pipelines in Semantiva</span></a> and <a class="reference internal" href="../architecture/pipeline_schema.html"><span class="doc">Pipeline Configuration Schema</span></a> (pipeline
+structure and graph model).</p></li>
+<li><p><a class="reference internal" href="../contracts.html"><span class="doc">Semantiva Contracts</span></a> (rules you can rely on as global invariants).</p></li>
+<li><p><a class="reference internal" href="../glossary.html"><span class="doc">Glossary</span></a> (shared terminology for documentation and reviews).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="integrate-ser-traces-with-observability-tooling">
+<h3>Integrate SER &amp; traces with observability tooling<a class="headerlink" href="#integrate-ser-traces-with-observability-tooling" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>You want to:</strong> feed Semantiva traces into existing monitoring/logging
+systems or custom dashboards.</p></li>
+<li><p><strong>Look at:</strong></p>
+<ul>
+<li><p><a class="reference internal" href="../ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a> and <a class="reference internal" href="../schema_semantic_execution_record_v1.html"><span class="doc">SER v1 JSON Schema</span></a> (data
+model).</p></li>
+<li><p><a class="reference internal" href="../trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a> and <a class="reference internal" href="../trace_aggregator_v1.html"><span class="doc">Trace Aggregator v1</span></a> (aggregation
+and streaming).</p></li>
+<li><p><a class="reference internal" href="../studio_viewer.html"><span class="doc">Semantiva Studio Viewer</span></a> (how one consumer visualises SER and trace data).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="design-extension-points-and-internal-libraries">
+<h3>Design extension points and internal libraries<a class="headerlink" href="#design-extension-points-and-internal-libraries" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>You want to:</strong> create internal libraries of processors or domain-specific
+building blocks.</p></li>
+<li><p><strong>Look at:</strong></p>
+<ul>
+<li><p><a class="reference internal" href="../creating_components.html"><span class="doc">Creating Components (Authoring Guide)</span></a> and <a class="reference internal" href="framework_developers.html"><span class="doc">Framework developers &amp; component authors</span></a> (authoring).</p></li>
+<li><p><a class="reference internal" href="../architecture/registry.html"><span class="doc">Registry System</span></a> (component registration &amp; discovery).</p></li>
+<li><p><a class="reference internal" href="../contracts.html"><span class="doc">Semantiva Contracts</span></a> (constraints and guarantees your libraries should
+uphold).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="plan-governance-ci-and-quality-gates">
+<h3>Plan governance, CI and quality gates<a class="headerlink" href="#plan-governance-ci-and-quality-gates" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>You want to:</strong> define how Semantiva fits into CI/CD and technical
+governance.</p></li>
+<li><p><strong>Look at:</strong></p>
+<ul>
+<li><p><a class="reference internal" href="../contracts.html"><span class="doc">Semantiva Contracts</span></a> and <a class="reference internal" href="../development/testing_strategies.html"><span class="doc">Testing Strategies and Best Practices</span></a> (how to
+enforce contracts and write effective tests).</p></li>
+<li><p><a class="reference internal" href="../cli.html"><span class="doc">Semantiva CLI</span></a> (commands to run in CI: lint, inspection, tests).</p></li>
+<li><p><a class="reference internal" href="../logger.html"><span class="doc">Logger</span></a> (logging behaviour, if you integrate with central logging).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../concepts.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Basic Concepts</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="framework_developers.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Framework developers &amp; component authors</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Rafael Pezzi, Marcos Deros
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Architects &amp; system designers</a><ul>
+<li><a class="reference internal" href="#what-you-should-know-already">What you should know already</a></li>
+<li><a class="reference internal" href="#your-learning-path-301">Your learning path (301+)</a><ul>
+<li><a class="reference internal" href="#step-1-get-the-high-level-execution-trace-picture">Step 1 - Get the high-level execution &amp; trace picture</a></li>
+<li><a class="reference internal" href="#step-2-understand-the-core-architecture-slices">Step 2 - Understand the core architecture slices</a><ul>
+<li><a class="reference internal" href="#configuration-artefacts">Configuration artefacts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#step-3-tie-ser-trace-streams-and-aggregation-together">Step 3 - Tie SER, trace streams and aggregation together</a></li>
+<li><a class="reference internal" href="#step-4-look-at-contracts-as-architecture-spec">Step 4 - Look at contracts as architecture spec</a></li>
+<li><a class="reference internal" href="#step-5-connect-semantiva-to-your-wider-system">Step 5 - Connect Semantiva to your wider system</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#architecture-overview-for-integrators">Architecture overview for integrators</a><ul>
+<li><a class="reference internal" href="#execution-core">Execution core</a></li>
+<li><a class="reference internal" href="#inspection-trace-stack">Inspection &amp; trace stack</a></li>
+<li><a class="reference internal" href="#contracts-invariants">Contracts &amp; invariants</a></li>
+<li><a class="reference internal" href="#extension-integration-points">Extension &amp; integration points</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-tasks-and-where-to-look-in-the-docs">Common tasks and where to look in the docs</a><ul>
+<li><a class="reference internal" href="#evaluate-whether-semantiva-fits-a-system-design">Evaluate whether Semantiva fits a system design</a></li>
+<li><a class="reference internal" href="#define-organisational-conventions-for-pipelines">Define organisational conventions for pipelines</a></li>
+<li><a class="reference internal" href="#integrate-ser-traces-with-observability-tooling">Integrate SER &amp; traces with observability tooling</a></li>
+<li><a class="reference internal" href="#design-extension-points-and-internal-libraries">Design extension points and internal libraries</a></li>
+<li><a class="reference internal" href="#plan-governance-ci-and-quality-gates">Plan governance, CI and quality gates</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=1dd76d02"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

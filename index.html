@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -286,35 +300,61 @@
 <h1>Semantiva Documentation<a class="headerlink" href="#semantiva-documentation" title="Link to this heading">¶</a></h1>
 <p>Semantiva is a semantic execution framework for <strong>typed, traceable, inspectable</strong>
 pipelines.</p>
-<p>This documentation is organised by <strong>role</strong> and <strong>experience level</strong>:</p>
+<p>This documentation is organised by <strong>role</strong> and <strong>experience level</strong>. The main
+sections are:</p>
 <ul class="simple">
-<li><p>Start with <em>Getting started</em> if you are new to Semantiva.</p></li>
-<li><p>Use the <em>User guide</em> for day-to-day pipeline work.</p></li>
-<li><p>Use <em>Tracing &amp; identity</em> when you care about provenance and inspection.</p></li>
-<li><p>Use <em>Extensibility &amp; architecture</em> when authoring components or integrating Semantiva.</p></li>
-<li><p>Use <em>Reference</em> for exception types, glossary entries and low-level details.</p></li>
+<li><p><em>Getting started</em> - a short onboarding path to the core ideas.</p></li>
+<li><p><em>Persona entry points</em> - recommended journeys for different types of users.</p></li>
+<li><p><em>User guide</em> - day-to-day pipeline work and CLI usage.</p></li>
+<li><p><em>Tracing, identity &amp; inspection</em> - provenance, SER traces and debugging tools.</p></li>
+<li><p><em>Component authoring &amp; architecture</em> - how to extend, embed and structure Semantiva.</p></li>
+<li><p><em>Tutorials</em> - step-by-step walkthroughs of common workflows.</p></li>
+<li><p><em>Reference</em> - exception types, glossary entries and low-level API details.</p></li>
 </ul>
+<div class="admonition-where-to-start admonition">
+<p class="admonition-title">Where to start</p>
+<ul class="simple">
+<li><p>New to Semantiva? Start with <a class="reference internal" href="getting_started.html"><span class="doc">Getting Started</span></a>, then see <a class="reference internal" href="personas/pipeline_users.html"><span class="doc">Pipeline users</span></a>.</p></li>
+<li><p>Writing or maintaining processors? See <a class="reference internal" href="personas/framework_developers.html"><span class="doc">Framework developers &amp; component authors</span></a>.</p></li>
+<li><p>Integrating Semantiva into a wider system? See <a class="reference internal" href="personas/architects_system_designers.html"><span class="doc">Architects &amp; system designers</span></a>.</p></li>
+</ul>
+</div>
+<p>Pipelines can be defined <strong>declaratively in YAML</strong> and run via the
+<strong class="command">semantiva</strong> CLI (see <a class="reference internal" href="pipelines_yaml.html"><span class="doc">Pipelines - YAML &amp; CLI</span></a>), which is the
+canonical and supported path for production. Framework developers can
+also construct and run pipelines directly in Python for development and
+R&amp;D workflows (see <a class="reference internal" href="pipelines_python.html"><span class="doc">Pipelines in Python</span></a>).</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 </div>
@@ -336,15 +376,22 @@ pipelines.</p>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -355,6 +402,7 @@ pipelines.</p>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 </div>

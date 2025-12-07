@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data collections" href="data_collections.html"><link rel="prev" title="Pipelines in Semantiva" href="pipeline.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data Operations" href="data_operations.html"><link rel="prev" title="Basic Concepts" href="concepts.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Data Types - Semantiva 0.5.0 documentation</title>
@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -284,88 +298,183 @@
         <article role="main" id="furo-main-content">
           <section id="data-types">
 <h1>Data Types<a class="headerlink" href="#data-types" title="Link to this heading">¶</a></h1>
-<p>Semantiva data types are <strong>contracts</strong> for the data channel. Each type
-describes the expected shape, units, and semantics of the payloads that flow
-through a pipeline. These contracts let the pipeline builder and the runtime
-reason about compatibility between nodes and provide predictable execution.</p>
-<p>At a high level:</p>
+<p>Data types are the <strong>vocabulary</strong> of your pipelines. They wrap raw Python
+objects (numbers, arrays, records, images…) into small, explicit classes that
+encode shape, units and semantics.</p>
+<p>When every processor declares which data types it expects and produces, whole
+pipelines become easier to reason about and easier to validate.</p>
+<section id="what-is-a-data-type">
+<h2>What is a data type?<a class="headerlink" href="#what-is-a-data-type" title="Link to this heading">¶</a></h2>
+<p>A data type is a subclass of <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code>. It is a thin wrapper around a
+Python value with a well-defined meaning.</p>
+<p>Key properties:</p>
 <ul class="simple">
-<li><dl class="simple">
-<dt><a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a> is the common</dt><dd><p>base for all concrete data types.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><a class="reference internal" href="#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataCollectionType</span></code></a> models</dt><dd><p>ordered collections of elements that share the same base type (see also
-<a class="reference internal" href="data_collections.html"><span class="doc">Data collections</span></a>).</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><a class="reference internal" href="#semantiva.data_types.data_types.NoDataType" title="semantiva.data_types.data_types.NoDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoDataType</span></code></a> is used when a</dt><dd><p>processor operates purely on context or side effects and does not carry
-domain data.</p>
-</dd>
-</dl>
-</li>
+<li><p>It encapsulates a single piece of data (<code class="docutils literal notranslate"><span class="pre">.data</span></code>).</p></li>
+<li><p>It documents <strong>what the value *means*</strong> (units, bounds, interpretation).</p></li>
+<li><p>It can enforce invariants through a <code class="docutils literal notranslate"><span class="pre">validate</span></code> hook.</p></li>
 </ul>
-<section id="public-api-surface">
-<h2>Public API Surface<a class="headerlink" href="#public-api-surface" title="Link to this heading">¶</a></h2>
+<p>Conceptually:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatDataType</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple float wrapper used in examples.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Data must be a float&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<span class="n">value</span> <span class="o">=</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value:&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;repr:&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">value: 1.0</span>
+<span class="go">repr: FloatDataType(1.0)</span>
+</pre></div>
+</div>
+<p>In this example:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_types.data_types.BaseDataType</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.data_types.data_types.DataCollectionType" title="semantiva.data_types.data_types.DataCollectionType"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_types.data_types.DataCollectionType</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.data_types.data_types.NoDataType" title="semantiva.data_types.data_types.NoDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_types.data_types.NoDataType</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FloatDataType</span></code> is the semantic carrier: “this is a float used inside
+a Semantiva pipeline”.</p></li>
+<li><p>The underlying value is available via <code class="docutils literal notranslate"><span class="pre">.data</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">validate</span></code> method is the hook for enforcing additional invariants.</p></li>
 </ul>
 </section>
-<section id="module-semantiva.data_types.data_types">
-<span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.data_types.data_types" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.BaseDataType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.data_types.</span></span><span class="sig-name descname"><span class="pre">BaseDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#BaseDataType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.BaseDataType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SemantivaComponent</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.BaseDataType.data">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#semantiva.data_types.data_types.BaseDataType.data" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<section id="basedatatype-api">
+<h2>BaseDataType API<a class="headerlink" href="#basedatatype-api" title="Link to this heading">¶</a></h2>
+<p>All data types inherit from <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code>. The
+core API is:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">__init__(self,</span> <span class="pre">data,</span> <span class="pre">logger=None)</span></code> - constructs the type, calls
+<code class="docutils literal notranslate"><span class="pre">validate</span></code> on the value and then stores it internally.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> property - gets or sets the underlying value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate(self,</span> <span class="pre">data)</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> - hook for subclasses to enforce
+invariants.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__str__</span></code> / <code class="docutils literal notranslate"><span class="pre">__repr__</span></code> - by default display
+<code class="docutils literal notranslate"><span class="pre">ClassName(&lt;data-repr&gt;)</span></code>.</p></li>
+</ul>
+<p>The typical pattern is:</p>
+<ol class="arabic simple">
+<li><p><strong>Subclass</strong> <code class="docutils literal notranslate"><span class="pre">BaseDataType[T]</span></code> with a concrete <code class="docutils literal notranslate"><span class="pre">T</span></code> (for example
+<code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>, an array type, a record type).</p></li>
+<li><p><strong>Override</strong> <code class="docutils literal notranslate"><span class="pre">validate</span></code> to check invariants for that type.</p></li>
+<li><p>Avoid overriding <code class="docutils literal notranslate"><span class="pre">__init__</span></code>; let <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code> own construction
+so that introspection, metadata and SVA rules remain consistent.</p></li>
+</ol>
+</section>
+<section id="example-positive-float">
+<h2>Example: positive float<a class="headerlink" href="#example-positive-float" title="Link to this heading">¶</a></h2>
+<p>Sometimes you want to express a stronger invariant than “any float”. For
+example, “this value must be strictly positive”. The correct place to encode
+this is <strong>in the data type</strong>, not as ad-hoc checks scattered across
+processors.</p>
+<p>Here is a minimal <code class="docutils literal notranslate"><span class="pre">PositiveFloat</span></code> implementation that enforces
+positivity via <code class="docutils literal notranslate"><span class="pre">validate</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.BaseDataType.validate">
-<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#BaseDataType.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.BaseDataType.validate" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="k">class</span><span class="w"> </span><span class="nc">PositiveFloat</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Strictly positive scalar float.&quot;&quot;&quot;</span>
 
-</dd></dl>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># BaseDataType.__init__ will call this before storing ``data``.</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2"> is not positive&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.DataCollectionType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.data_types.</span></span><span class="sig-name descname"><span class="pre">DataCollectionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#DataCollectionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.DataCollectionType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">S</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">E</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">S</span></code>]</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.DataCollectionType.append">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#DataCollectionType.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.DataCollectionType.append" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="n">ok</span> <span class="o">=</span> <span class="n">PositiveFloat</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ok:&quot;</span><span class="p">,</span> <span class="n">ok</span><span class="p">)</span>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.DataCollectionType.collection_base_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">collection_base_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#DataCollectionType.collection_base_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.DataCollectionType.collection_base_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="c1"># This will raise a ValueError at construction time:</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">bad</span> <span class="o">=</span> <span class="n">PositiveFloat</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;error:&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ok: PositiveFloat(1.5)</span>
+<span class="go">error: 0.0 is not positive</span>
+</pre></div>
+</div>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>The invariant “strictly positive” is attached to the <strong>type</strong>, not to a
+specific processor or function.</p></li>
+<li><p>Any processor that declares <code class="docutils literal notranslate"><span class="pre">input_data_type()</span> <span class="pre">-&gt;</span> <span class="pre">PositiveFloat</span></code> is saying
+“I expect a strictly positive scalar float”, which is much clearer than
+accepting a plain <code class="docutils literal notranslate"><span class="pre">float</span></code> and relying only on docstrings.</p></li>
+<li><p>Because we implemented the check in <code class="docutils literal notranslate"><span class="pre">validate</span></code> and did not override
+<code class="docutils literal notranslate"><span class="pre">__init__</span></code>, we keep the construction behaviour of <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code>
+intact.</p></li>
+</ul>
+</section>
+<section id="using-data-types-in-processors">
+<h2>Using data types in processors<a class="headerlink" href="#using-data-types-in-processors" title="Link to this heading">¶</a></h2>
+<p>Data types become most useful when processors and pipelines use them
+consistently.</p>
+<p>A typical data operation will:</p>
+<ul class="simple">
+<li><p>Declare its <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code> and <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code>.</p></li>
+<li><p>Accept instances of those types in its <code class="docutils literal notranslate"><span class="pre">process</span></code> method.</p></li>
+<li><p>Return a new instance of the output type.</p></li>
+</ul>
+<p>For example, consider a simple addition operation that works on floats:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataOperation</span>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.DataCollectionType.from_list">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#DataCollectionType.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.DataCollectionType.from_list" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatDataType</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple float wrapper (as above).&quot;&quot;&quot;</span>
 
-</dd></dl>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Data must be a float&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.NoDataType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_types.data_types.</span></span><span class="sig-name descname"><span class="pre">NoDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#NoDataType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.NoDataType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType" title="semantiva.data_types.data_types.BaseDataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataType</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_types.data_types.NoDataType.validate">
-<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_types/data_types.html#NoDataType.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_types.data_types.NoDataType.validate" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
-</dd></dl>
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatAddOperation</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a constant to FloatDataType data.&quot;&quot;&quot;</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">addend</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="n">addend</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+
+<span class="c1"># Example usage</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">FloatAddOperation</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">addend</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;input:&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">input: FloatDataType(1.0)</span>
+<span class="go">result: FloatDataType(3.0)</span>
+</pre></div>
+</div>
+<p>This combination of types and operations is what gives Semantiva pipelines
+their semantic clarity:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code> defines <strong>how</strong> to create and validate values.</p></li>
+<li><p>Concrete types like <code class="docutils literal notranslate"><span class="pre">FloatDataType</span></code> and <code class="docutils literal notranslate"><span class="pre">PositiveFloat</span></code>
+express domain-specific invariants.</p></li>
+<li><p>Data operations declare which types they consume and produce, making
+pipelines easier to inspect, validate and evolve.</p></li>
+</ul>
+</section>
+<section id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="data_operations.html"><span class="doc">Data Operations</span></a> for more on data operations.</p></li>
+<li><p>See <a class="reference internal" href="data_probes.html"><span class="doc">Data Probes</span></a> for read-only probes that derive metrics from data.</p></li>
+</ul>
 </section>
 </section>
 
@@ -374,23 +483,23 @@ domain data.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="data_collections.html">
+          <a class="next-page" href="data_operations.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Data collections</div>
+                <div class="title">Data Operations</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="pipeline.html">
+          <a class="prev-page" href="concepts.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Pipelines in Semantiva</div>
+                <div class="title">Basic Concepts</div>
                 
               </div>
             </a>
@@ -425,25 +534,11 @@ domain data.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Data Types</a><ul>
-<li><a class="reference internal" href="#public-api-surface">Public API Surface</a></li>
-<li><a class="reference internal" href="#module-semantiva.data_types.data_types">Autodoc</a><ul>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType"><code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType.data"><code class="docutils literal notranslate"><span class="pre">BaseDataType.data</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.BaseDataType.validate"><code class="docutils literal notranslate"><span class="pre">BaseDataType.validate()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.DataCollectionType"><code class="docutils literal notranslate"><span class="pre">DataCollectionType</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.DataCollectionType.append"><code class="docutils literal notranslate"><span class="pre">DataCollectionType.append()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.DataCollectionType.collection_base_type"><code class="docutils literal notranslate"><span class="pre">DataCollectionType.collection_base_type()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.DataCollectionType.from_list"><code class="docutils literal notranslate"><span class="pre">DataCollectionType.from_list()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.NoDataType"><code class="docutils literal notranslate"><span class="pre">NoDataType</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_types.data_types.NoDataType.validate"><code class="docutils literal notranslate"><span class="pre">NoDataType.validate()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#what-is-a-data-type">What is a data type?</a></li>
+<li><a class="reference internal" href="#basedatatype-api">BaseDataType API</a></li>
+<li><a class="reference internal" href="#example-positive-float">Example: positive float</a></li>
+<li><a class="reference internal" href="#using-data-types-in-processors">Using data types in processors</a></li>
+<li><a class="reference internal" href="#next-steps">Next steps</a></li>
 </ul>
 </li>
 </ul>

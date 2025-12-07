@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data IO (Sources &amp; Sinks)" href="data_io.html"><link rel="prev" title="Collection-based modifiers" href="collection_modifiers.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Semantiva CLI" href="cli.html"><link rel="prev" title="Run Space (v1): blocks that expand context" href="run_space.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Context Processors - Semantiva 0.5.0 documentation</title>
@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -308,6 +322,30 @@ such as <code class="docutils literal notranslate"><span class="pre">_notify_con
 <li><p>You declare which context keys you may create or suppress so that validation
 and inspection can remain deterministic.</p></li>
 </ul>
+<section id="built-in-context-processor-utilities">
+<h3>Built-in context processor utilities<a class="headerlink" href="#built-in-context-processor-utilities" title="Link to this heading">¶</a></h3>
+<p>Semantiva provides factory functions and string-based shortcuts for common
+context processor patterns. These are resolved automatically when you use them
+as processor names in pipelines:</p>
+<dl>
+<dt><strong>rename:src:dst</strong></dt><dd><p>Rename a context key from <code class="docutils literal notranslate"><span class="pre">src</span></code> to <code class="docutils literal notranslate"><span class="pre">dst</span></code>. Reads the original value and
+writes the new key, then suppresses the original.</p>
+<p><em>Example:</em> <code class="docutils literal notranslate"><span class="pre">&quot;processor&quot;:</span> <span class="pre">&quot;rename:input_key:output_key&quot;</span></code></p>
+</dd>
+<dt><strong>delete:key</strong></dt><dd><p>Delete a context key after resolution. If the key is present in context,
+it is removed and suppressed from downstream processors.</p>
+<p><em>Example:</em> <code class="docutils literal notranslate"><span class="pre">&quot;processor&quot;:</span> <span class="pre">&quot;delete:temp_value&quot;</span></code></p>
+</dd>
+<dt><strong>template:”template_string”:output_key</strong></dt><dd><p>Render a template string using existing context keys and store the result
+in a new key. Placeholders like <code class="docutils literal notranslate"><span class="pre">{key_name}</span></code> are replaced with resolved
+context values.</p>
+<p><em>Example:</em> <code class="docutils literal notranslate"><span class="pre">&quot;processor&quot;:</span> <span class="pre">&quot;template:result_{run_id}.txt:path&quot;</span></code></p>
+</dd>
+</dl>
+<p>All built-in utilities are resolved by the pipeline at runtime and behave like
+regular context processors: they declare which keys they create/suppress and
+request mutations via notifier hooks.</p>
+</section>
 </section>
 <section id="minimal-example">
 <h2>Minimal example<a class="headerlink" href="#minimal-example" title="Link to this heading">¶</a></h2>
@@ -318,9 +356,9 @@ and inspection can remain deterministic.</p></li>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive learning rate from batch size.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_created_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="c1"># Keys this processor may create</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;training.learning_rate&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;training.learning_rate&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base_lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
         <span class="c1"># ``batch_size`` and ``base_lr`` are resolved by Semantiva from</span>
@@ -337,6 +375,16 @@ the constructor; they are resolved and injected into <code class="docutils liter
 (here: <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>).</p></li>
 <li><p>All writes go through <code class="docutils literal notranslate"><span class="pre">_notify_context_update</span></code> / <code class="docutils literal notranslate"><span class="pre">_notify_context_deletion</span></code>
 and are validated by the context observer.</p></li>
+</ul>
+</section>
+<section id="context-invariants">
+<h2>Context invariants<a class="headerlink" href="#context-invariants" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> receives only the runtime parameters resolved by the node;
+it must <strong>not</strong> accept <code class="docutils literal notranslate"><span class="pre">ContextType</span></code>.</p></li>
+<li><p>Reads and writes go through the validating context observer created by the
+node; use <code class="docutils literal notranslate"><span class="pre">_notify_context_update</span></code> / <code class="docutils literal notranslate"><span class="pre">_notify_context_deletion</span></code> for all
+mutations.</p></li>
 </ul>
 </section>
 <section id="yaml-configuration">
@@ -376,23 +424,23 @@ focused on computations over the data channel itself.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="data_io.html">
+          <a class="next-page" href="cli.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Data IO (Sources &amp; Sinks)</div>
+                <div class="title">Semantiva CLI</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="collection_modifiers.html">
+          <a class="prev-page" href="run_space.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Collection-based modifiers</div>
+                <div class="title">Run Space (v1): blocks that expand context</div>
                 
               </div>
             </a>
@@ -427,8 +475,12 @@ focused on computations over the data channel itself.</p></li>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Context Processors</a><ul>
-<li><a class="reference internal" href="#high-level-model">High-level model</a></li>
+<li><a class="reference internal" href="#high-level-model">High-level model</a><ul>
+<li><a class="reference internal" href="#built-in-context-processor-utilities">Built-in context processor utilities</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#minimal-example">Minimal example</a></li>
+<li><a class="reference internal" href="#context-invariants">Context invariants</a></li>
 <li><a class="reference internal" href="#yaml-configuration">YAML configuration</a></li>
 <li><a class="reference internal" href="#design-guidelines">Design guidelines</a></li>
 </ul>

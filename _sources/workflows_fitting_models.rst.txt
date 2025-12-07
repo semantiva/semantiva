@@ -233,7 +233,7 @@ Link-outs:
 - :doc:`pipeline` (Payload and dual channels)
 - :doc:`extensions` (``model:`` resolver and extensions)
 - :doc:`context_processors` (Context processor fundamentals)
-- :doc:`data_processors` (Data slice integration)
+- :doc:`data_operations` (Data slice integration)
 
 Example YAML Configurations
 ---------------------------

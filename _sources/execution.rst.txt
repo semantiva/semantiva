@@ -51,7 +51,7 @@ It canonicalises the pipeline, snapshots context before/after each node, collect
 pins for every SER. Concrete orchestrators implement only two hooks:
 
 ``_submit_and_wait(node_callable, *, ser_hooks)``
-    Runs a node and returns its :py:class:`~semantiva.pipeline.payload.Payload`.
+    Runs a node and returns its ``Payload``.
 
 ``_publish(node, data, context, transport)``
     Forwards the node output through the orchestrator's transport.

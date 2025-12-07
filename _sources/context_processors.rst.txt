@@ -27,6 +27,37 @@ The key points for authors:
 - You declare which context keys you may create or suppress so that validation
   and inspection can remain deterministic.
 
+
+Built-in context processor utilities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Semantiva provides factory functions and string-based shortcuts for common
+context processor patterns. These are resolved automatically when you use them
+as processor names in pipelines:
+
+**rename:src:dst**
+  Rename a context key from ``src`` to ``dst``. Reads the original value and
+  writes the new key, then suppresses the original.
+
+  *Example:* ``"processor": "rename:input_key:output_key"``
+
+**delete:key**
+  Delete a context key after resolution. If the key is present in context,
+  it is removed and suppressed from downstream processors.
+
+  *Example:* ``"processor": "delete:temp_value"``
+
+**template:"template_string":output_key**
+  Render a template string using existing context keys and store the result
+  in a new key. Placeholders like ``{key_name}`` are replaced with resolved
+  context values.
+
+  *Example:* ``"processor": "template:result_{run_id}.txt:path"``
+
+All built-in utilities are resolved by the pipeline at runtime and behave like
+regular context processors: they declare which keys they create/suppress and
+request mutations via notifier hooks.
+
 Minimal example
 ---------------
 
@@ -40,9 +71,9 @@ A typical pattern looks like this:
        """Derive learning rate from batch size."""
 
        @classmethod
-       def get_created_keys(cls) -> set[str]:
+       def get_created_keys(cls) -> list[str]:
            # Keys this processor may create
-           return {"training.learning_rate"}
+           return ["training.learning_rate"]
 
        def _process_logic(self, *, batch_size: int, base_lr: float = 0.1):
            # ``batch_size`` and ``base_lr`` are resolved by Semantiva from
@@ -58,6 +89,15 @@ Notes:
   (here: ``batch_size``).
 - All writes go through ``_notify_context_update`` / ``_notify_context_deletion``
   and are validated by the context observer.
+
+Context invariants
+------------------
+
+- ``_process_logic`` receives only the runtime parameters resolved by the node;
+  it must **not** accept ``ContextType``.
+- Reads and writes go through the validating context observer created by the
+  node; use ``_notify_context_update`` / ``_notify_context_deletion`` for all
+  mutations.
 
 YAML configuration
 ------------------

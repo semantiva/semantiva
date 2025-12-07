@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Pipelines in Semantiva" href="pipeline.html"><link rel="prev" title="Examples Index" href="examples_index.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data Types" href="data_types.html"><link rel="prev" title="Architects &amp; system designers" href="personas/architects_system_designers.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>Basic Concepts - Semantiva 0.5.0 documentation</title>
@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -287,133 +301,351 @@
 <p>Semantiva narrows the gap between ideas and executable pipelines. It is built
 around <strong>typed payloads</strong>, a <strong>dual data/context channel</strong>, and clear contracts
 for every processor.</p>
-<section id="the-payload-data-context">
-<h2>The payload: data + context<a class="headerlink" href="#the-payload-data-context" title="Link to this heading">¶</a></h2>
+<section id="data-types-wrapping-domain-objects">
+<h2>Data types: wrapping domain objects<a class="headerlink" href="#data-types-wrapping-domain-objects" title="Link to this heading">¶</a></h2>
+<p>Data types are small, typed wrappers around your domain objects. They are
+subclasses of <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code> and carry both the raw value and its semantic
+contract.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatDataType</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple float wrapper used in user-guide examples.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># Accept any float; processors may add stronger checks.</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">FloatDataType(1.5)</span>
+<span class="go">value: 1.5</span>
+</pre></div>
+</div>
+<p>Why wrap values at all?</p>
+<ul class="simple">
+<li><p>Types make contracts explicit (e.g. “single float” vs “array of floats”).</p></li>
+<li><p>Processors can declare exactly which data types they expect and produce.</p></li>
+<li><p>Inspection and tracing can show “what kind of thing” is flowing through
+the pipeline instead of just raw Python types.</p></li>
+</ul>
+<p>For a deeper tour of data types and validation patterns, see <a class="reference internal" href="data_types.html"><span class="doc">Data Types</span></a>.</p>
+</section>
+<section id="data-operations-transformations-as-callables">
+<h2>Data operations: transformations as callables<a class="headerlink" href="#data-operations-transformations-as-callables" title="Link to this heading">¶</a></h2>
+<p>Data operations are processors that <strong>transform</strong> one data type into another
+(or the same type). They subclass
+<code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.data_processors.DataOperation</span></code> and declare
+their input/output data types.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataOperation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatAddOperation</span><span class="p">(</span><span class="n">DataOperation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a constant to :class:`FloatDataType` values.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataType</span><span class="p">,</span> <span class="n">addend</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatDataType</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="n">addend</span><span class="p">)</span>
+
+<span class="n">value</span> <span class="o">=</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="c1"># Option 1: use the class-level convenience</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">FloatAddOperation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">addend</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># Option 2: instantiate and call</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">FloatAddOperation</span><span class="p">()</span>
+<span class="n">result2</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">addend</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;result2:&quot;</span><span class="p">,</span> <span class="n">result2</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">result: 3.0</span>
+<span class="go">result2: 3.0</span>
+</pre></div>
+</div>
+<p>Key properties:</p>
+<ul class="simple">
+<li><p>The operation declares both <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code> and <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code>.</p></li>
+<li><p>User logic lives in <code class="docutils literal notranslate"><span class="pre">_process_logic</span></code>.</p></li>
+<li><p>Runtime parameters such as <code class="docutils literal notranslate"><span class="pre">addend</span></code> are regular keyword arguments to
+<code class="docutils literal notranslate"><span class="pre">_process_logic</span></code> / <code class="docutils literal notranslate"><span class="pre">process</span></code> / <code class="docutils literal notranslate"><span class="pre">run</span></code> - not constructor arguments.</p></li>
+<li><p>Instances are callable; <code class="docutils literal notranslate"><span class="pre">op(data,</span> <span class="pre">**params)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">op.process(data,</span> <span class="pre">**params)</span></code>.</p></li>
+</ul>
+<p>See <a class="reference internal" href="data_operations.html"><span class="doc">Data Operations</span></a> and <a class="reference internal" href="creating_components.html"><span class="doc">Creating Components (Authoring Guide)</span></a> for more examples of
+declaring and wiring data operations.</p>
+</section>
+<section id="data-probes-read-only-observers">
+<h2>Data probes: read-only observers<a class="headerlink" href="#data-probes-read-only-observers" title="Link to this heading">¶</a></h2>
+<p>Data probes are processors that <strong>observe</strong> data and return a value. They
+never mutate the data; in a pipeline, the node that wraps a probe typically
+injects the observed value into the context when it is configured with a
+<code class="docutils literal notranslate"><span class="pre">context_key</span></code>. The probe itself stays unaware of context, keeping the
+business logic simple and reusable.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataProbe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataCollection</span><span class="p">,</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MeanProbe</span><span class="p">(</span><span class="n">DataProbe</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the mean of a collection.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataCollection</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataCollection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">collection</span> <span class="o">=</span> <span class="n">FloatDataCollection</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="n">probe</span> <span class="o">=</span> <span class="n">MeanProbe</span><span class="p">()</span>
+<span class="n">mean_value</span> <span class="o">=</span> <span class="n">probe</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean:&quot;</span><span class="p">,</span> <span class="n">mean_value</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mean: 2.5</span>
+</pre></div>
+</div>
+<p>Later, in the pipeline pages, you will see how a probe result becomes part of
+the context via a node <code class="docutils literal notranslate"><span class="pre">context_key</span></code> - without the probe itself knowing
+anything about context.</p>
+<p>See <a class="reference internal" href="data_probes.html"><span class="doc">Data Probes</span></a> and <a class="reference internal" href="creating_components.html"><span class="doc">Creating Components (Authoring Guide)</span></a> for more on probe
+contracts and usage patterns.</p>
+</section>
+<section id="context-types-structured-metadata">
+<h2>Context types: structured metadata<a class="headerlink" href="#context-types-structured-metadata" title="Link to this heading">¶</a></h2>
+<p>Semantiva represents the context channel with <code class="docutils literal notranslate"><span class="pre">ContextType</span></code>, a small
+mapping-like container for per-run metadata. Context keys can hold
+configuration parameters, derived values, tags used for bookkeeping, and
+indicators such as data-quality scores or validation flags, and can be
+used to track and coordinate behaviour over the life of a run.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span>
+
+<span class="n">context</span> <span class="o">=</span> <span class="n">ContextType</span><span class="p">()</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;experiment.id&quot;</span><span class="p">,</span> <span class="s2">&quot;exp-001&quot;</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;example.addend&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;addend:&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;example.addend&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ContextType(context={&#39;experiment.id&#39;: &#39;exp-001&#39;, &#39;example.addend&#39;: 2.0})</span>
+<span class="go">addend: 2.0</span>
+</pre></div>
+</div>
+<p>ContextType is central to how pipelines share state across nodes, but most
+user code treats it as an opaque mapping. See <a class="reference internal" href="context_type.html"><span class="doc">Context Type</span></a> and
+<a class="reference internal" href="context_processors.html"><span class="doc">Context Processors</span></a> for details on context semantics and management.</p>
+</section>
+<section id="payload-combining-data-and-context">
+<h2>Payload: combining data and context<a class="headerlink" href="#payload-combining-data-and-context" title="Link to this heading">¶</a></h2>
 <p>Every Semantiva pipeline step processes a <em>payload</em> with two channels:</p>
 <ul class="simple">
-<li><p><strong>Data channel</strong> - your domain objects (images, arrays, records, models…).</p></li>
-<li><p><strong>Context channel</strong> - structured metadata that flows with the data through
-the pipeline. It carries configuration parameters, derived values, quality
-indicators, and other state used by processors to share information and
-adapt execution.</p></li>
+<li><p><strong>Data channel</strong> - typed domain objects wrapped in data types.</p></li>
+<li><p><strong>Context channel</strong> - structured metadata carried alongside the data.</p></li>
 </ul>
-<p>The two channels always move together. A run is fully described by:</p>
-<ul class="simple">
-<li><p>The pipeline definition and configuration.</p></li>
-<li><p>The run-space plan (if any).</p></li>
-<li><p>The sequence of payloads (data + context) as they pass through nodes.</p></li>
-</ul>
-<p>Identifiers such as run IDs are assigned by the execution and tracing layers
-and are not stored in the context channel.</p>
+<p>At any point in a run you can think of the payload as a simple pair that
+combines data and context:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span><span class="p">,</span> <span class="n">Payload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="n">context</span> <span class="o">=</span> <span class="n">ContextType</span><span class="p">()</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;example.addend&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span>
+   <span class="n">data</span><span class="o">=</span><span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+   <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data:&quot;</span><span class="p">,</span> <span class="n">payload</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;context:&quot;</span><span class="p">,</span> <span class="n">payload</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">data: FloatDataType(1.0)</span>
+<span class="go">context: ContextType(context={&#39;example.addend&#39;: 2.0})</span>
+</pre></div>
+</div>
+<p>Nodes pass <code class="docutils literal notranslate"><span class="pre">Payload</span></code> objects between steps, but processors themselves only
+see the data value and explicit parameters. Nodes and pipeline infrastructure
+mediate between business logic and the context channel.</p>
+<p>Context is treated as a protected space: updates flow through context
+processors and observer hooks so that changes can be validated and traced.</p>
+<p>Payloads and their role in execution are discussed further in
+<a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a>, <a class="reference internal" href="pipelines_yaml.html"><span class="doc">Pipelines - YAML &amp; CLI</span></a> and <a class="reference internal" href="pipelines_python.html"><span class="doc">Pipelines in Python</span></a>.</p>
 </section>
-<section id="data-channel-types-operations-and-collections">
-<h2>Data channel: types, operations and collections<a class="headerlink" href="#data-channel-types-operations-and-collections" title="Link to this heading">¶</a></h2>
-<p>Key concepts on the data side:</p>
-<ul class="simple">
-<li><p><strong>Data types</strong> - subclasses of the core <code class="docutils literal notranslate"><span class="pre">BaseDataType</span></code> class.
-They encode contracts for shape, units and semantics (for example a
-<code class="docutils literal notranslate"><span class="pre">SingleChannelImage</span></code> vs. a <code class="docutils literal notranslate"><span class="pre">FloatCollection</span></code>).</p></li>
-<li><p><strong>Data sources</strong> - components that <em>produce</em> data from outside the pipeline.
-They are not processors themselves; factories wrap them so they can participate
-in pipelines as payload processors.</p></li>
-<li><p><strong>Data operations</strong> - processors that transform one data type into another,
-with clear input/output type contracts.</p></li>
-<li><p><strong>Data probes</strong> - processors that observe the data channel and write
-summaries into the context channel.</p></li>
-<li><p><strong>Data sinks</strong> - components that write data out of the pipeline (files, sockets,
-viewers, message buses…). Like sources, they are wrapped by factories and are not
-native processors.</p></li>
-</ul>
-<p>Collections:</p>
-<ul class="simple">
-<li><p><strong>Data collections</strong> model sequences of data objects of the same base type.</p></li>
-<li><p>Modifiers such as <code class="docutils literal notranslate"><span class="pre">slice</span></code> and <strong>parameter sweeps</strong> build on top of
-collections to describe families of runs without hand-writing loops.</p></li>
-</ul>
-</section>
-<section id="context-channel">
-<h2>Context channel<a class="headerlink" href="#context-channel" title="Link to this heading">¶</a></h2>
-<p>The context channel is handled by context processors. They:</p>
-<ul class="simple">
-<li><p>Propose context updates and deletions via notifier helpers,
-without direct access to the underlying context object.</p></li>
-<li><p>Derive new parameters from existing context and configuration.</p></li>
-<li><p>Maintain state across nodes (for example running statistics).</p></li>
-<li><p>Record metrics and metadata used by downstream analysis.</p></li>
-</ul>
-<p>Run-space expansion injects values into the initial context for each run. At
-runtime there is no distinction between parameters provided by the run-space
-and parameters set by other means; all are resolved from the context channel.</p>
-</section>
-<section id="parameter-resolution">
-<h2>Parameter resolution<a class="headerlink" href="#parameter-resolution" title="Link to this heading">¶</a></h2>
-<p>Processor parameters are resolved just before a node runs. Semantiva combines
-values from three sources into a single parameter set:</p>
-<ul class="simple">
-<li><p>The node’s <code class="docutils literal notranslate"><span class="pre">parameters</span></code> mapping from the pipeline configuration.</p></li>
-<li><p>Values available in the context channel.</p></li>
-<li><p>Defaults declared by the processor’s contract.</p></li>
-</ul>
-<p>When multiple sources provide a value for the same parameter, the following
-priority applies (from highest to lowest):</p>
+<section id="nodes-and-pipelines">
+<h2>Nodes and pipelines<a class="headerlink" href="#nodes-and-pipelines" title="Link to this heading">¶</a></h2>
+<p>At a high level, Semantiva’s execution model looks like this:</p>
 <ol class="arabic simple">
-<li><p>Explicit values in the node’s <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p></li>
-<li><p>Values resolved from the context channel (including run-space injected
-values).</p></li>
-<li><p>Processor-level default values.</p></li>
+<li><p>A pipeline is a <strong>graph of nodes</strong>.</p></li>
+<li><p>Each node wraps a <strong>processor</strong> (data operation, probe, context processor,
+source or sink) and controls how it sees the payload.</p></li>
+<li><p>Processors declare their data contracts via data types and their expected
+context keys via contracts.</p></li>
+<li><p>Optional trace drivers observe execution and emit Semantic Execution
+Records (SER) (see <a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a>).</p></li>
 </ol>
-<p>This keeps pipeline configuration explicit, while still allowing context and
-defaults to supply values when configuration is silent.</p>
-</section>
-<section id="payload-operations-pipelines-and-nodes">
-<h2>Payload operations, pipelines and nodes<a class="headerlink" href="#payload-operations-pipelines-and-nodes" title="Link to this heading">¶</a></h2>
-<p>A pipeline is a directed graph of <strong>nodes</strong>. Each node wraps a processor and has:</p>
-<ul class="simple">
-<li><p>A reference to the processor class or registered name.</p></li>
-<li><p>Parameter values (possibly resolved from context or the run-space).</p></li>
-<li><p>Ports for incoming and outgoing data.</p></li>
-</ul>
-<p>At runtime:</p>
-<ol class="arabic simple">
-<li><p>The pipeline expands any pre-processors (such as <code class="docutils literal notranslate"><span class="pre">derive</span></code> and sweeps)
-and run-space blocks.</p></li>
-<li><p>Data flows along edges, constrained by data type contracts.</p></li>
-<li><p>Context processors observe and update the context channel.</p></li>
-<li><p>Optional trace drivers observe execution and emit <strong>Semantic Execution
-Records (SER)</strong>.</p></li>
-</ol>
-<p>Processors (data operations, probes, and context processors) and pipeline
-nodes operate only on the data and context channels. SER records are produced
-by trace drivers attached to the orchestrator and executor and do not change
-data or context.</p>
+<p>Semantiva has a parameter resolution mechanism: node parameters may be
+provided by the YAML configuration, processor defaults, or the payload
+context, with well-defined precedence rules. Nodes are responsible for
+resolving these parameters, unpacking the payload, calling processors with
+data only, and applying any configured context updates. See
+<a class="reference internal" href="pipelines_yaml.html"><span class="doc">Pipelines - YAML &amp; CLI</span></a>, <a class="reference internal" href="pipelines_python.html"><span class="doc">Pipelines in Python</span></a> and
+<a class="reference internal" href="introspection_validation.html"><span class="doc">Introspection &amp; Validation</span></a> for details.</p>
+<p>SER records are produced by trace drivers attached to the orchestrator and
+executor and do not change data or context.</p>
 <p>From a user perspective:</p>
 <ul class="simple">
 <li><p>You <strong>define processors</strong> in Python (see <a class="reference internal" href="creating_components.html"><span class="doc">Creating Components (Authoring Guide)</span></a>).</p></li>
-<li><p>You <strong>configure pipelines</strong> in YAML (see <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a>).</p></li>
+<li><p>You <strong>configure production pipelines</strong> declaratively in YAML
+(see <a class="reference internal" href="pipelines_yaml.html"><span class="doc">Pipelines - YAML &amp; CLI</span></a>), which serves as the <strong>configuration
+artefact of record</strong>.</p></li>
+<li><p>The same execution model can be exercised directly in Python for
+<strong>development, R&amp;D and notebook workflows</strong> (see
+<a class="reference internal" href="pipelines_python.html"><span class="doc">Pipelines in Python</span></a>), but Python pipelines are not treated as
+system-of-record configuration.</p></li>
 <li><p>You <strong>execute</strong> via <a class="reference internal" href="cli.html"><span class="doc">Semantiva CLI</span></a> or the Python API, always working with the
 payload abstraction.</p></li>
 </ul>
-<p>For a more visual explanation of how all this fits together:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="data_types.html"><span class="doc">Data Types</span></a></p></li>
-<li><p><a class="reference internal" href="data_processors.html"><span class="doc">Data Processors</span></a></p></li>
-<li><p><a class="reference internal" href="context_processors.html"><span class="doc">Context Processors</span></a></p></li>
-<li><p><a class="reference internal" href="data_collections.html"><span class="doc">Data collections</span></a></p></li>
-</ul>
 </section>
-<section id="trace-records-and-trace-drivers">
-<h2>Trace records and trace drivers<a class="headerlink" href="#trace-records-and-trace-drivers" title="Link to this heading">¶</a></h2>
+<section id="run-space-multiple-runs-from-one-spec">
+<h2>Run space: multiple runs from one spec<a class="headerlink" href="#run-space-multiple-runs-from-one-spec" title="Link to this heading">¶</a></h2>
+<p>Run space lets you describe a family of runs (for example, parameter sweeps)
+in a single YAML configuration by adding a <code class="docutils literal notranslate"><span class="pre">run_space</span></code> block. The CLI
+expands this specification into individual runs that share a run-space
+configuration ID while each run has its own run ID.</p>
+<p>See <a class="reference internal" href="run_space.html"><span class="doc">Run Space (v1): blocks that expand context</span></a> and <a class="reference internal" href="tutorials/run_space_quickstart.html"><span class="doc">Run Space Quickstart (Local)</span></a> for a guided
+walkthrough of run-space configuration and lifecycle.</p>
+</section>
+<section id="context-processors">
+<h2>Context processors<a class="headerlink" href="#context-processors" title="Link to this heading">¶</a></h2>
+<p>Context processors work primarily on the <strong>context</strong> channel. They read values
+from context, apply some transformation, and request updates via observer
+hooks; nodes and context observers handle the actual mutations.</p>
+<p>A minimal example is a context-only pipeline that renames a key from
+<code class="docutils literal notranslate"><span class="pre">&quot;input_key&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;output_key&quot;</span></code>. Use the shorthand <code class="docutils literal notranslate"><span class="pre">rename:src:dst</span></code>
+syntax to define context processors inline:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span><span class="p">,</span> <span class="n">Payload</span><span class="p">,</span> <span class="n">Pipeline</span>
+
+<span class="c1"># Single-node pipeline with rename context processor</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;processor&quot;</span><span class="p">:</span> <span class="s2">&quot;rename:input_key:output_key&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+
+<span class="c1"># Create context with &quot;input_key&quot; and process through pipeline</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">ContextType</span><span class="p">({</span><span class="s2">&quot;input_key&quot;</span><span class="p">:</span> <span class="s2">&quot;hello&quot;</span><span class="p">})</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;output context:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">output context: ContextType(context={&#39;output_key&#39;: &#39;hello&#39;})</span>
+</pre></div>
+</div>
+<p>Other built-in context processors follow the same idea and can be created
+with similar shorthand syntax:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">delete:some.key</span></code> creates a context processor that deletes a key.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">template:&quot;result_{value}.txt&quot;:path</span></code> creates a template-based processor
+that combines existing context keys into a new string.</p></li>
+</ul>
+<p>See <a class="reference internal" href="context_processors.html"><span class="doc">Context Processors</span></a> for a complete reference to context processors,
+including composition patterns for enrichment and routing.</p>
+</section>
+<section id="component-identity">
+<h2>Component identity<a class="headerlink" href="#component-identity" title="Link to this heading">¶</a></h2>
+<p>Semantiva components (data operations, probes, context processors, data
+types, sources, sinks…) all inherit from a common base that provides
+<strong>component metadata</strong> and a <strong>semantic identity string</strong>.</p>
+<p>At class level, every component can expose its metadata as a dictionary via
+<code class="docutils literal notranslate"><span class="pre">get_metadata</span></code> and as a human-readable string via <code class="docutils literal notranslate"><span class="pre">semantic_id</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatAddOperation</span>
+
+<span class="c1"># Structured metadata as a dictionary</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">FloatAddOperation</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;class_name:&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;class_name&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;component_type:&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;component_type&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;parameters:&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">))</span>
+
+<span class="c1"># Human-friendly identity string</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">semantic id:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">FloatAddOperation</span><span class="o">.</span><span class="n">semantic_id</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">class_name: FloatAddOperation</span>
+<span class="go">component_type: DataOperation</span>
+<span class="go">parameters: OrderedDict([(&#39;addend&#39;, float)])</span>
+
+<span class="go">semantic id:</span>
+
+<span class="go">========  SEMANTIC ID  ========</span>
+<span class="go">Class Name: FloatAddOperation</span>
+<span class="go">===============================</span>
+<span class="go"> - Docstring:</span>
+<span class="go">    Add a constant to FloatDataType data.</span>
+<span class="go"> - component_type: DataOperation</span>
+<span class="go"> - parameters:</span>
+<span class="go">    addend: float</span>
+<span class="go"> - input_data_type: FloatDataType</span>
+<span class="go"> - output_data_type: FloatDataType</span>
+<span class="go">===============================</span>
+</pre></div>
+</div>
+<p>Conceptually:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">get_metadata()</span></code> gathers base fields (at least <code class="docutils literal notranslate"><span class="pre">class_name</span></code> and the
+class docstring) and merges them with component-specific fields provided by
+<code class="docutils literal notranslate"><span class="pre">_define_metadata()</span></code> (for example <code class="docutils literal notranslate"><span class="pre">component_type</span></code>, parameter
+signatures, input/output data type information).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semantic_id()</span></code> formats the same information as a structured, multi-line
+string that is easy to read in logs, dashboards or LLM-based tools. The
+default format includes a header, the class name, the docstring and the
+key metadata fields.</p></li>
+<li><p>The metadata and semantic ID are <strong>derived from the class</strong>, not from a
+particular instance, so they describe the component’s role and contract
+rather than any single run.</p></li>
+</ul>
+<p>You normally do not need to call these methods when writing pipelines, but
+they become invaluable when:</p>
+<ul class="simple">
+<li><p>Inspecting components interactively.</p></li>
+<li><p>Debugging mismatched contracts between processors and data types.</p></li>
+<li><p>Building tooling on top of Semantiva’s metadata model, such as explorers,
+documentation generators or LLM-based helpers.</p></li>
+</ul>
+<p>For more on how component identities participate in pipeline and execution
+inspection, see <a class="reference internal" href="identity_cheatsheet.html"><span class="doc">Identity Cheatsheet</span></a> and <a class="reference internal" href="inspection.html"><span class="doc">Inspection Payload &amp; CLI</span></a>.</p>
+</section>
+<section id="semantic-execution-records">
+<h2>Semantic Execution Records<a class="headerlink" href="#semantic-execution-records" title="Link to this heading">¶</a></h2>
 <p>Tracing is an optional layer that records how pipelines execute over time.</p>
 <ul class="simple">
 <li><p><strong>Semantic Execution Records (SER)</strong> capture which processors ran, how they
 were connected, and summary information about payloads and context at each
 step.</p></li>
 <li><p><strong>Trace drivers</strong> attach to the orchestrator and executor. They observe
-execution events and write SER streams, typically to files or external sinks.</p></li>
+execution events and write SER streams, typically to files or external
+sinks.</p></li>
 </ul>
 <p>Trace drivers are configured in the pipeline YAML (see
 <a class="reference internal" href="architecture/pipeline_schema.html"><span class="doc">Pipeline Configuration Schema</span></a>) and described in more detail in
-<a class="reference internal" href="trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a> and <a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a>.</p>
+<a class="reference internal" href="ser.html"><span class="doc">Semantic Execution Record (SER) v1</span></a>, <a class="reference internal" href="trace_stream_v1.html"><span class="doc">Trace Stream v1</span></a>, <a class="reference internal" href="trace_graph_alignment.html"><span class="doc">Trace ↔ Graph Alignment</span></a> and
+<a class="reference internal" href="schema_semantic_execution_record_v1.html"><span class="doc">SER v1 JSON Schema</span></a>.</p>
 </section>
 </section>
 
@@ -422,23 +654,23 @@ execution events and write SER streams, typically to files or external sinks.</p
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="pipeline.html">
+          <a class="next-page" href="data_types.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Pipelines in Semantiva</div>
+                <div class="title">Data Types</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="examples_index.html">
+          <a class="prev-page" href="personas/architects_system_designers.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Examples Index</div>
+                <div class="title">Architects &amp; system designers</div>
                 
               </div>
             </a>
@@ -473,12 +705,16 @@ execution events and write SER streams, typically to files or external sinks.</p
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Basic Concepts</a><ul>
-<li><a class="reference internal" href="#the-payload-data-context">The payload: data + context</a></li>
-<li><a class="reference internal" href="#data-channel-types-operations-and-collections">Data channel: types, operations and collections</a></li>
-<li><a class="reference internal" href="#context-channel">Context channel</a></li>
-<li><a class="reference internal" href="#parameter-resolution">Parameter resolution</a></li>
-<li><a class="reference internal" href="#payload-operations-pipelines-and-nodes">Payload operations, pipelines and nodes</a></li>
-<li><a class="reference internal" href="#trace-records-and-trace-drivers">Trace records and trace drivers</a></li>
+<li><a class="reference internal" href="#data-types-wrapping-domain-objects">Data types: wrapping domain objects</a></li>
+<li><a class="reference internal" href="#data-operations-transformations-as-callables">Data operations: transformations as callables</a></li>
+<li><a class="reference internal" href="#data-probes-read-only-observers">Data probes: read-only observers</a></li>
+<li><a class="reference internal" href="#context-types-structured-metadata">Context types: structured metadata</a></li>
+<li><a class="reference internal" href="#payload-combining-data-and-context">Payload: combining data and context</a></li>
+<li><a class="reference internal" href="#nodes-and-pipelines">Nodes and pipelines</a></li>
+<li><a class="reference internal" href="#run-space-multiple-runs-from-one-spec">Run space: multiple runs from one spec</a></li>
+<li><a class="reference internal" href="#context-processors">Context processors</a></li>
+<li><a class="reference internal" href="#component-identity">Component identity</a></li>
+<li><a class="reference internal" href="#semantic-execution-records">Semantic Execution Records</a></li>
 </ul>
 </li>
 </ul>

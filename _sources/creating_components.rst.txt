@@ -4,6 +4,16 @@ Audience
 --------
 Developers adding domain behavior via **operations**, **probes**, **sources/sinks**, or **context processors**.
 
+.. admonition:: Who this is for
+
+   This page is for **framework developers and component authors**.
+   It assumes you are comfortable running and tweaking pipelines as
+   described in :doc:`personas/pipeline_users` and that you can read
+   basic Python code.
+
+   If you only need to run existing pipelines, stay with :doc:`pipelines_yaml`
+   and :doc:`personas/pipeline_users`.
+
 Do This / Not That
 -------------------
 
@@ -49,9 +59,9 @@ DataOperation (transforms; may update context)
             return FloatDataType
 
         @classmethod
-        def get_created_keys(cls) -> set[str]:
+        def get_created_keys(cls) -> list[str]:
             """Context keys this processor may create."""
-            return {"norm.mean", "norm.std"}
+            return ["norm.mean", "norm.std"]
 
         def _process_logic(self, data: FloatDataType, *, epsilon: float = 1e-8):
             # Example context write via observer hook
@@ -89,6 +99,30 @@ DataProbe (read-only; no context creation)
    Probe components never write to context themselves. When the pipeline node
    specifies ``context_key``, the node stores the probe result in context after
    ``process`` returns, keeping the component stateless.
+
+.. admonition:: Do not pass ContextType into processors
+
+   Components must never accept ``ContextType`` directly in their ``process``
+   or ``_process_logic`` methods. Context access is always mediated by pipeline
+   nodes and observers.
+
+.. code-block:: python
+
+   # ❌ Anti-pattern: do NOT copy this
+
+   from semantiva.context_processors.context_types import ContextType
+
+   class BadProbe:
+       @classmethod
+       def input_data_type(cls):
+           return FloatDataType
+
+       def _process_logic(self, data, context: ContextType):  # <-- wrong
+           context.set_value("some.key", 1.23)
+           return data
+
+Use a ``DataProbe`` that returns values, and let the node write them into
+context using a ``context_key`` as shown in :ref:`probe-nodes`.
 
 DataSource (produces data; declares only output type)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -131,10 +165,14 @@ DataSink (consumes data; declares only input type)
 Context Processors (domain context logic)
 -----------------------------------------
 Use a context processor for creating/merging domain context. Keep them focused on
-context state, not data transformations. Run the linter to verify contracts.
+context state, not data transformations.
 
 Linting Your Components
 -----------------------
+
+Use the :command:`semantiva dev lint` CLI to run static contract checks against
+your components. It can discover processors from Python modules, source paths,
+Semantiva extensions, or pipeline YAML files.
 
 Run contract checks with the CLI:
 
@@ -155,3 +193,73 @@ Run contract checks with the CLI:
     # Detailed diagnostics
     semantiva dev lint --modules my_package.ext --debug
 
+
+Minimal dev loop: component in a Python pipeline
+------------------------------------------------
+
+As a component author, you will often want to **declare a component,
+plug it into a pipeline, run it once, and inspect the result**.
+
+The example below assumes you have a simple operation already defined
+(similar to the ``FloatAddOperation`` used in other examples).
+
+.. code-block:: python
+
+   from semantiva import ContextType, Payload, Pipeline
+   from semantiva.data_types import BaseDataType
+   from semantiva.data_processors import DataOperation
+
+   class FloatDataType(BaseDataType[float]):
+       def validate(self, data: float) -> bool:
+           return True
+
+   class DemoAdd(DataOperation):
+       """Toy example: add a constant to a float."""
+
+       @classmethod
+       def input_data_type(cls):
+           return FloatDataType
+
+       @classmethod
+       def output_data_type(cls):
+           return FloatDataType
+
+       def _process_logic(self, data: FloatDataType) -> FloatDataType:
+           # For demonstration purposes, we just add 1.0
+           return FloatDataType(data.data + 1.0)
+
+   # A minimal Python pipeline that uses DemoAdd
+   HELLO_PIPELINE_NODES = [
+       {
+           "processor": DemoAdd,
+           "parameters": {},
+       },
+   ]
+
+   pipeline = Pipeline(HELLO_PIPELINE_NODES)
+   context = ContextType()
+   payload = Payload(data=FloatDataType(41.0), context=context)
+   result_payload = pipeline.process(payload)
+
+   print("Result data:", result_payload.data)
+   print("Context:", result_payload.context)
+
+.. code-block:: console
+
+   2025-12-06 19:51:34,769 - INFO     - Starting pipeline with 1 nodes (pipeline)
+   2025-12-06 19:51:34,770 - INFO     - Pipeline execution complete. (pipeline)
+   2025-12-06 19:51:34,770 - INFO     - Pipeline execution report:
+
+           Pipeline Calls: 1; Elapsed Wall Time: 0.001274s; Elapsed CPU Time: 0.001270s
+                   Node 1: DemoAdd;        Elapsed CPU Time: 0.000069s;    Elapsed Wall Time: 0.000071s
+    (pipeline)
+   Result data: FloatDataType(42.0)
+   Context: ContextType(context={})
+
+This pattern is a **development feedback loop**: declare a component,
+wire it into a Python pipeline, run it once, and inspect the
+behaviour.
+
+For **production use**, the same component would typically be
+referenced from a **YAML pipeline configuration** instead
+(see :doc:`pipelines_yaml` and :doc:`contracts` for details).

@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -301,10 +315,58 @@
 <li><p>Provide a stable JSON payload for GUI and other tools.</p></li>
 </ul>
 </section>
+<section id="example-pipeline-used-below">
+<h2>Example pipeline used below<a class="headerlink" href="#example-pipeline-used-below" title="Link to this heading">¶</a></h2>
+<p>All examples on this page use the same minimal two-node pipeline. Save this as
+<code class="docutils literal notranslate"><span class="pre">pipeline.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;semantiva-examples&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatAddOperation</span>
+<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">FloatAddOperation</span></code> declares no <code class="docutils literal notranslate"><span class="pre">addend</span></code> parameter in the
+configuration. Instead, it must be provided via the context at runtime. This
+demonstrates how inspection reports <strong>context-dependent parameters</strong>.</p>
+</section>
 <section id="cli-usage">
 <h2>CLI usage<a class="headerlink" href="#cli-usage" title="Link to this heading">¶</a></h2>
 <p>Basic inspection:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>pipeline.yaml
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Configuration Identity</span>
+<span class="go">- Semantic ID: plsemid-c64abfde7d72ce83e39f57caafecec632d5df806588c687efbdc5614106893c6</span>
+<span class="go">- Config ID:   plcid-758b8a89c8f44207ff9de48a8c6319d7b31503ab39836ff5d92837841d209ce1</span>
+<span class="go">- Run-Space Config ID: none</span>
+<span class="go">Required Context Keys: addend</span>
+
+<span class="go">Pipeline Structure:</span>
+<span class="go">    Required context keys: addend</span>
+
+<span class="go">    1. Node: FloatValueDataSource (DataSource)</span>
+<span class="go">        Parameters: value</span>
+<span class="go">            From pipeline configuration: value=1.0</span>
+<span class="go">            From processor defaults: None</span>
+<span class="go">            From context: None</span>
+<span class="go">        Context additions: None</span>
+<span class="go">        Invalid parameters:</span>
+<span class="go">        Configuration valid: True</span>
+
+<span class="go">    2. Node: FloatAddOperation (DataOperation)</span>
+<span class="go">        Parameters: addend</span>
+<span class="go">            From pipeline configuration: None</span>
+<span class="go">            From processor defaults: None</span>
+<span class="go">            From context: addend (from Initial Context)</span>
+<span class="go">        Context additions: None</span>
+<span class="go">        Invalid parameters:</span>
+<span class="go">        Configuration valid: True</span>
 </pre></div>
 </div>
 <p>This will:</p>
@@ -316,6 +378,55 @@
 </ul>
 <p>Extended inspection:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>semantiva<span class="w"> </span>inspect<span class="w"> </span>pipeline.yaml<span class="w"> </span>--extended
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Configuration Identity</span>
+<span class="go">- Semantic ID: plsemid-c64abfde7d72ce83e39f57caafecec632d5df806588c687efbdc5614106893c6</span>
+<span class="go">- Config ID:   plcid-758b8a89c8f44207ff9de48a8c6319d7b31503ab39836ff5d92837841d209ce1</span>
+<span class="go">- Run-Space Config ID: none</span>
+<span class="go">Required Context Keys: addend</span>
+
+<span class="go">Extended Pipeline Inspection:</span>
+<span class="go">    Required context keys: addend</span>
+
+<span class="go">Node 1: FloatValueDataSource (FloatValueDataSource_DataSourceNode)</span>
+<span class="go">  - UUID: 66732bf0-1c9f-5d36-9edc-250025dbc34e</span>
+<span class="go">  - Role: DataSource</span>
+<span class="go">  - FQCN: semantiva.examples.test_utils.FloatValueDataSource</span>
+<span class="go">  - Node Semantic ID: none</span>
+<span class="go">  - Component type: DataSource</span>
+<span class="go">  - Input data type: NoDataType</span>
+<span class="go">  - Output data type: FloatDataType</span>
+<span class="go">  - Parameters from pipeline configuration: value=1.0</span>
+<span class="go">  - Parameters from processor defaults: None</span>
+<span class="go">  - Parameters from context: None</span>
+<span class="go">  - Context additions: None</span>
+<span class="go">  - Context suppressions: None</span>
+<span class="go">  - Invalid parameters:</span>
+<span class="go">  - Configuration valid: True</span>
+
+<span class="go">Node 2: FloatAddOperation (FloatAddOperation_DataOperationNode)</span>
+<span class="go">  - UUID: 5527124a-f20d-57f4-94cb-e4bb5e8d20f3</span>
+<span class="go">  - Role: DataOperation</span>
+<span class="go">  - FQCN: semantiva.examples.test_utils.FloatAddOperation</span>
+<span class="go">  - Node Semantic ID: none</span>
+<span class="go">  - Component type: DataOperation</span>
+<span class="go">  - Input data type: FloatDataType</span>
+<span class="go">  - Output data type: FloatDataType</span>
+<span class="go">  - Parameters from pipeline configuration: None</span>
+<span class="go">  - Parameters from processor defaults: None</span>
+<span class="go">  - Parameters from context: addend (from Initial Context)</span>
+<span class="go">  - Context additions: None</span>
+<span class="go">  - Context suppressions: None</span>
+<span class="go">  - Invalid parameters:</span>
+<span class="go">  - Configuration valid: True</span>
+
+<span class="go">Footnotes:</span>
+<span class="go">[FloatValueDataSource]</span>
+<span class="go">Outputs a FloatDataType value.</span>
+
+<span class="go">[FloatAddOperation]</span>
+<span class="go">Add a constant to FloatDataType data.</span>
 </pre></div>
 </div>
 <p>‘The extended report includes:</p>
@@ -347,15 +458,49 @@ processor parameters.</p></li>
 <h2>Using the inspection payload from Python<a class="headerlink" href="#using-the-inspection-payload-from-python" title="Link to this heading">¶</a></h2>
 <p>The inspection module can emit a stable JSON-serialisable payload:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.configurations</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_pipeline_from_yaml</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.inspection</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_inspection_payload</span>
 
 <span class="n">cfg</span> <span class="o">=</span> <span class="n">load_pipeline_from_yaml</span><span class="p">(</span><span class="s2">&quot;pipeline.yaml&quot;</span><span class="p">)</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="n">inspection</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">build_inspection_payload</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
 
 <span class="c1"># Serialize or hand over to GUI tooling</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
+<span class="go">  &quot;identity&quot;: {</span>
+<span class="go">    &quot;semantic_id&quot;: &quot;plsemid-c64abfde7d72ce83e39f57caafecec632d5df806588c687efbdc5614106893c6&quot;,</span>
+<span class="go">    &quot;config_id&quot;: &quot;plcid-758b8a89c8f44207ff9de48a8c6319d7b31503ab39836ff5d92837841d209ce1&quot;,</span>
+<span class="go">    &quot;run_space&quot;: null</span>
+<span class="go">  },</span>
+<span class="go">  &quot;pipeline_spec_canonical&quot;: {</span>
+<span class="go">    &quot;nodes&quot;: [</span>
+<span class="go">      {</span>
+<span class="go">        &quot;uuid&quot;: &quot;66732bf0-1c9f-5d36-9edc-250025dbc34e&quot;,</span>
+<span class="go">        &quot;role&quot;: &quot;DataSource&quot;,</span>
+<span class="go">        &quot;fqcn&quot;: &quot;semantiva.examples.test_utils.FloatValueDataSource&quot;,</span>
+<span class="go">        &quot;node_semantic_id&quot;: &quot;none&quot;,</span>
+<span class="go">        &quot;preprocessor_metadata&quot;: {}</span>
+<span class="go">      },</span>
+<span class="go">      {</span>
+<span class="go">        &quot;uuid&quot;: &quot;5527124a-f20d-57f4-94cb-e4bb5e8d20f3&quot;,</span>
+<span class="go">        &quot;role&quot;: &quot;DataOperation&quot;,</span>
+<span class="go">        &quot;fqcn&quot;: &quot;semantiva.examples.test_utils.FloatAddOperation&quot;,</span>
+<span class="go">        &quot;node_semantic_id&quot;: &quot;none&quot;,</span>
+<span class="go">        &quot;preprocessor_metadata&quot;: {}</span>
+<span class="go">      }</span>
+<span class="go">    ]</span>
+<span class="go">  },</span>
+<span class="go">  &quot;required_context_keys&quot;: [</span>
+<span class="go">    &quot;addend&quot;</span>
+<span class="go">  ]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Output shown for the two-node example pipeline above; your identities and node list will differ depending on the YAML configuration. Note that <code class="docutils literal notranslate"><span class="pre">required_context_keys</span></code> includes <code class="docutils literal notranslate"><span class="pre">&quot;addend&quot;</span></code> because the second node expects it from context.</p>
 </div>
 <p>The payload contains:</p>
 <ul class="simple">
@@ -363,6 +508,29 @@ processor parameters.</p></li>
 <li><p>Identity section (semantic ID, config ID, run-space config ID if present).</p></li>
 <li><p>Per-node entries with ports, types and processor references.</p></li>
 <li><p>Context-related information such as required context keys.</p></li>
+</ul>
+<p>At a high level:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">identity.semantic_id</span></code> is the pipeline <strong>semantic identity</strong> (<code class="docutils literal notranslate"><span class="pre">plsemid-*</span></code>),
+derived from the canonical graph structure; see <a class="reference internal" href="identity_cheatsheet.html"><span class="doc">Identity Cheatsheet</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">identity.config_id</span></code> is the <strong>configuration identity</strong> (<code class="docutils literal notranslate"><span class="pre">plcid-*</span></code>),
+hashed across <code class="docutils literal notranslate"><span class="pre">(node_uuid,</span> <span class="pre">node_semantic_id)</span></code> pairs; nodes without
+preprocessors contribute <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">identity.run_space</span></code> is either <code class="docutils literal notranslate"><span class="pre">null</span></code> (no run-space declared) or a
+mapping with <code class="docutils literal notranslate"><span class="pre">spec_id</span></code> when a <code class="docutils literal notranslate"><span class="pre">run_space</span></code> block is present.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical.nodes[*].uuid</span></code> is the canonical node identifier
+used across inspection and traces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical.nodes[*].role</span></code> and <code class="docutils literal notranslate"><span class="pre">fqcn</span></code> describe the
+component type (DataSource, DataOperation, etc.) and the fully-qualified
+class name of the wrapped processor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical.nodes[*].node_semantic_id</span></code> fingerprints any
+<strong>preprocessor semantics</strong> (for example <code class="docutils literal notranslate"><span class="pre">derive.parameter_sweep</span></code>); in this
+simple example there are no preprocessors so it is <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline_spec_canonical.nodes[*].preprocessor_metadata</span></code> holds a
+sanitised view of sweep/derive metadata; it is empty here.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">required_context_keys</span></code> lists context keys that <strong>must be provided at
+runtime</strong> for the pipeline to execute. In our example, <code class="docutils literal notranslate"><span class="pre">[&quot;addend&quot;]</span></code>
+because the second node expects the <code class="docutils literal notranslate"><span class="pre">addend</span></code> parameter from context.</p></li>
 </ul>
 </section>
 <section id="where-to-go-next">
@@ -432,6 +600,7 @@ processor parameters.</p></li>
             <ul>
 <li><a class="reference internal" href="#">Introspection &amp; Validation</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#example-pipeline-used-below">Example pipeline used below</a></li>
 <li><a class="reference internal" href="#cli-usage">CLI usage</a></li>
 <li><a class="reference internal" href="#what-is-validated">What is validated?</a></li>
 <li><a class="reference internal" href="#using-the-inspection-payload-from-python">Using the inspection payload from Python</a></li>

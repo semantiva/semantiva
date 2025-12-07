@@ -6,7 +6,8 @@ See the following sections for detailed APIs:
 - :doc:`pipeline`
 - :doc:`extensions`
 - :doc:`data_types`
-- :doc:`data_processors`
+- :doc:`data_operations`
+- :doc:`data_probes`
 - :doc:`context_processors`
 - :doc:`execution`
 - :doc:`ser`

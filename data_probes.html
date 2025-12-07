@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Collection-based modifiers" href="collection_modifiers.html"><link rel="prev" title="Data collections" href="data_collections.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Data I/O: sources and sinks" href="data_io.html"><link rel="prev" title="Data Operations" href="data_operations.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Data Processors - Semantiva 0.5.0 documentation</title>
+        <title>Data Probes - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Probes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_io.html">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -264,7 +278,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/data_processors.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/data_probes.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -282,108 +296,82 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="data-processors">
-<h1>Data Processors<a class="headerlink" href="#data-processors" title="Link to this heading">¶</a></h1>
-<p>Data processors implement the <strong>domain logic</strong> of your pipeline. They transform
-data in the payload and may emit new context information, while remaining
-fully traceable.</p>
-<section id="what-is-a-data-processor">
-<h2>What is a data processor?<a class="headerlink" href="#what-is-a-data-processor" title="Link to this heading">¶</a></h2>
-<p>A data processor is a subclass of the core <em>data processor</em> base class. It
-typically:</p>
+          <section id="data-probes">
+<h1>Data Probes<a class="headerlink" href="#data-probes" title="Link to this heading">¶</a></h1>
+<p>Data probes are <strong>read-only observers</strong> of the data channel. They compute a
+value from the input data and return it. Probes do not modify the data or
+the context directly.</p>
+<p>In pipelines, probe results are typically written into the context by the
+node that wraps the probe, using a <code class="docutils literal notranslate"><span class="pre">context_key</span></code>. The probe itself remains
+completely context-agnostic.</p>
+<section id="what-is-a-data-probe">
+<h2>What is a data probe?<a class="headerlink" href="#what-is-a-data-probe" title="Link to this heading">¶</a></h2>
+<p>A data probe is a subclass of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_processors.data_processors.DataProbe</span></code>. It:</p>
 <ul class="simple">
-<li><p>Declares its input and output data types.</p></li>
-<li><p>Implements a <code class="docutils literal notranslate"><span class="pre">process</span></code> method.</p></li>
-<li><p>Is registered so it can be referenced from YAML.</p></li>
+<li><p>Declares a single <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code> class method.</p></li>
+<li><p>Implements <code class="docutils literal notranslate"><span class="pre">_process_logic(self,</span> <span class="pre">data,</span> <span class="pre">**params)</span> <span class="pre">-&gt;</span> <span class="pre">Any</span></code>.</p></li>
+<li><p>Does <strong>not</strong> declare an <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code> (SVA231 warns against it).</p></li>
 </ul>
 </section>
-<section id="example-simple-arithmetic-processor">
-<h2>Example: simple arithmetic processor<a class="headerlink" href="#example-simple-arithmetic-processor" title="Link to this heading">¶</a></h2>
-<p>This example shows the essence of a data processor without context interaction.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataType</span>
+<section id="example-mean-of-a-float-collection">
+<h2>Example: mean of a float collection<a class="headerlink" href="#example-mean-of-a-float-collection" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.data_processors.data_processors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataProbe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataCollection</span><span class="p">,</span> <span class="n">FloatDataType</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">FloatDataType</span><span class="p">(</span><span class="n">BaseDataType</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple float wrapper.&quot;&quot;&quot;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">AddConstant</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a constant value to a float.&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeanProbe</span><span class="p">(</span><span class="n">DataProbe</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the mean of a :class:`FloatDataCollection`.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FloatDataType</span>
+        <span class="k">return</span> <span class="n">FloatDataCollection</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FloatDataType</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataCollection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_addend</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">addend</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatDataType</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addend</span><span class="p">)</span>
+<span class="n">probe</span> <span class="o">=</span> <span class="n">MeanProbe</span><span class="p">()</span>
+<span class="n">collection</span> <span class="o">=</span> <span class="n">FloatDataCollection</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">FloatDataType</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="n">mean_value</span> <span class="o">=</span> <span class="n">probe</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean:&quot;</span><span class="p">,</span> <span class="n">mean_value</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Use in YAML:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mean: 2.5</span>
+</pre></div>
+</div>
+</section>
+<section id="using-probes-in-pipelines">
+<h2>Using probes in pipelines<a class="headerlink" href="#using-probes-in-pipelines" title="Link to this heading">¶</a></h2>
+<p>Inside a pipeline, a node wraps a probe and takes care of writing its
+result into the context when <code class="docutils literal notranslate"><span class="pre">context_key</span></code> is provided. The probe does
+not see the context object at all.</p>
+<p>For example, in YAML you would configure a node like:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">nodes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FloatValueDataSource</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
-
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AddConstant</span>
-<span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">addend</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">processor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my.probes.MeanProbe</span>
+<span class="w">      </span><span class="nt">context_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mean_value&quot;</span>
 </pre></div>
 </div>
-</section>
-<section id="context-aware-data-processors">
-<h2>Context-aware data processors<a class="headerlink" href="#context-aware-data-processors" title="Link to this heading">¶</a></h2>
-<p>Some data processors also <strong>notify context updates</strong>. For example, a probe may
-compute a summary and store it under a context key:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextType</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">MeanProbe</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the mean and write to context.&quot;&quot;&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FloatCollectionDataType</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context_key</span> <span class="o">=</span> <span class="n">context_key</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextType</span><span class="p">):</span>
-        <span class="n">mean_value</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_key</span><span class="p">,</span> <span class="n">mean_value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data</span>  <span class="c1"># probes usually forward the data unchanged</span>
-</pre></div>
-</div>
-<p>When you execute such a processor <strong>outside</strong> a pipeline, you can still call
-<code class="docutils literal notranslate"><span class="pre">process</span></code> directly, but you must provide a context object yourself.</p>
-<p>Inside a pipeline:</p>
-<ul class="simple">
-<li><p>Context updates are gated by the pipeline configuration.</p></li>
-<li><p>Required context keys are validated during inspection and validation.</p></li>
-<li><p>Probes without a <code class="docutils literal notranslate"><span class="pre">context_key</span></code> will fail validation.</p></li>
-</ul>
+<p>The node injects the probe result under <code class="docutils literal notranslate"><span class="pre">&quot;stats.mean&quot;</span></code> using a context
+observer. The probe remains a pure function of its input data and parameters.</p>
+<p>(The full pipeline wiring and CLI usage is covered later in <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a>.)</p>
 </section>
 <section id="design-guidelines">
 <h2>Design guidelines<a class="headerlink" href="#design-guidelines" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Keep processors <strong>pure</strong> with respect to arguments:
-configuration goes into parameters, not global state.</p></li>
-<li><p>Use data types to encode contracts; avoid passing raw dictionaries where
-a dedicated type would be clearer.</p></li>
-<li><p>Do not accept arbitrary <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> in your processor constructors; this
-hinders validation and introspection.</p></li>
-<li><p>Use <strong class="command">semantiva dev lint</strong> to enforce contracts and catch violations
-early (see <a class="reference internal" href="contracts.html"><span class="doc">Semantiva Contracts</span></a>).</p></li>
+<li><p>Keep probes small and focused on single metrics or summaries.</p></li>
+<li><p>Prefer returning plain Python values (floats, dicts, small dataclasses).</p></li>
+<li><p>Never read or write the context directly from a probe.</p></li>
+<li><p>Use <strong class="command">semantiva dev lint</strong> to ensure the <code class="docutils literal notranslate"><span class="pre">DataProbe</span></code> contracts
+(<code class="docutils literal notranslate"><span class="pre">SVA230</span></code>–<code class="docutils literal notranslate"><span class="pre">SVA232</span></code>) are satisfied.</p></li>
 </ul>
-<p>For more advanced examples, including collection processors and utility
-components, see:</p>
+</section>
+<section id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="utility_processors.html"><span class="doc">Utility Components</span></a></p></li>
-<li><p><a class="reference internal" href="collection_modifiers.html"><span class="doc">Collection-based modifiers</span></a></p></li>
+<li><p>Continue with <a class="reference internal" href="data_io.html"><span class="doc">Data I/O: sources and sinks</span></a> to see how data enters and leaves pipelines.</p></li>
 </ul>
 </section>
 </section>
@@ -393,23 +381,23 @@ components, see:</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="collection_modifiers.html">
+          <a class="next-page" href="data_io.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Collection-based modifiers</div>
+                <div class="title">Data I/O: sources and sinks</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="data_collections.html">
+          <a class="prev-page" href="data_operations.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Data collections</div>
+                <div class="title">Data Operations</div>
                 
               </div>
             </a>
@@ -443,11 +431,12 @@ components, see:</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Data Processors</a><ul>
-<li><a class="reference internal" href="#what-is-a-data-processor">What is a data processor?</a></li>
-<li><a class="reference internal" href="#example-simple-arithmetic-processor">Example: simple arithmetic processor</a></li>
-<li><a class="reference internal" href="#context-aware-data-processors">Context-aware data processors</a></li>
+<li><a class="reference internal" href="#">Data Probes</a><ul>
+<li><a class="reference internal" href="#what-is-a-data-probe">What is a data probe?</a></li>
+<li><a class="reference internal" href="#example-mean-of-a-float-collection">Example: mean of a float collection</a></li>
+<li><a class="reference internal" href="#using-probes-in-pipelines">Using probes in pipelines</a></li>
 <li><a class="reference internal" href="#design-guidelines">Design guidelines</a></li>
+<li><a class="reference internal" href="#next-steps">Next steps</a></li>
 </ul>
 </li>
 </ul>

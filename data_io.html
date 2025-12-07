@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Run Space (v1): blocks that expand context" href="run_space.html"><link rel="prev" title="Context Processors" href="context_processors.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Context Type" href="context_type.html"><link rel="prev" title="Data Probes" href="data_probes.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Data IO (Sources &amp; Sinks) - Semantiva 0.5.0 documentation</title>
+        <title>Data I/O: sources and sinks - Semantiva 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -194,21 +194,29 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Persona entry points</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="personas/pipeline_users.html">Pipeline users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/framework_developers.html">Framework developers &amp; component authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="personas/architects_system_designers.html">Architects &amp; system designers</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Basic Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_types.html">Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_operations.html">Data Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_probes.html">Data Probes</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data I/O: sources and sinks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_type.html">Context Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_yaml.html">Pipelines - YAML &amp; CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines_python.html">Pipelines in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Pipelines in Semantiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_collections.html">Data collections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_processors.html">Data Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="collection_modifiers.html">Collection-based modifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data IO (Sources &amp; Sinks)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility_processors.html">Utility Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_space.html">Run Space (v1): blocks that expand context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="context_processors.html">Context Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Semantiva CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tracing, identity &amp; inspection</span></p>
@@ -226,15 +234,20 @@
 <li class="toctree-l1"><a class="reference internal" href="run_space_lifecycle.html">Run-Space Lifecycle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="execution.html">Execution</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extensibility &amp; architecture</span></p>
+<p class="caption" role="heading"><span class="caption-text">Component authoring &amp; architecture</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="creating_components.html">Creating Components (Authoring Guide)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture/overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">Extending Semantiva (Registries &amp; Extensions)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows_fitting_models.html">Workflows — Fitting Models via <code class="docutils literal notranslate"><span class="pre">model:</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/context_processing.html">Context Processing Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/pipeline_schema.html">Pipeline Configuration Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture/registry.html">Registry System</a></li>
 <li class="toctree-l1"><a class="reference internal" href="studio_viewer.html">Semantiva Studio Viewer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/run_space_quickstart.html">Run Space Quickstart (Local)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -243,6 +256,7 @@
 <li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_index.html">Examples Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/testing_strategies.html">Testing Strategies and Best Practices</a></li>
 </ul>
 
@@ -282,99 +296,87 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="data-io-sources-sinks">
-<h1>Data IO (Sources &amp; Sinks)<a class="headerlink" href="#data-io-sources-sinks" title="Link to this heading">¶</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>Data IO classes define how data flows into and out of pipelines:</p>
+          <section id="data-i-o-sources-and-sinks">
+<h1>Data I/O: sources and sinks<a class="headerlink" href="#data-i-o-sources-and-sinks" title="Link to this heading">¶</a></h1>
+<p>Data I/O components connect Semantiva pipelines to the outside world:</p>
 <ul class="simple">
-<li><p><strong>DataSource</strong> / <strong>PayloadSource</strong>: bring data into the pipeline</p></li>
-<li><p><strong>DataSink</strong> / <strong>PayloadSink</strong>: output data from the pipeline</p></li>
+<li><p><strong>Sources</strong> produce typed data from files, databases or other systems.</p></li>
+<li><p><strong>Sinks</strong> consume typed data and write it to disk, sockets, viewers or
+external services.</p></li>
 </ul>
-<p>When wrapped as nodes in a pipeline, these classes are automatically converted to
-DataOperation processors with explicit parameter signatures.</p>
-<p><strong>Important</strong>: All IO method parameters must be explicitly declared. <cite>**kwargs</cite> is not allowed
-for reliable provenance tracking and parameter validation.</p>
+<p>Both are regular Semantiva components with clear type contracts.</p>
+<section id="sources">
+<h2>Sources<a class="headerlink" href="#sources" title="Link to this heading">¶</a></h2>
+<p>A data source typically declares an <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code> (<code class="docutils literal notranslate"><span class="pre">SVA200</span></code>) and
+no <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code>. It encapsulates how raw external data is loaded and
+wrapped into a suitable data type.</p>
+<p>Example (conceptual):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ToyFloatSource</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a float from a text file (conceptual example).&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatDataType</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+<span class="c1"># Use the sample file shipped with the documentation.</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ToyFloatSource</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s2">&quot;docs/examples/data/io_input.txt&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">2.5</span>
+</pre></div>
+</div>
 </section>
-<section id="public-api-surface">
-<h2>Public API Surface<a class="headerlink" href="#public-api-surface" title="Link to this heading">¶</a></h2>
+<section id="sinks">
+<h2>Sinks<a class="headerlink" href="#sinks" title="Link to this heading">¶</a></h2>
+<p>A data sink declares an <code class="docutils literal notranslate"><span class="pre">input_data_type</span></code> (<code class="docutils literal notranslate"><span class="pre">SVA210</span></code>) and typically does
+not declare an <code class="docutils literal notranslate"><span class="pre">output_data_type</span></code>. It takes a typed value and writes it to
+an external target.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataSink</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">semantiva.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatDataType</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ToyFloatSink</span><span class="p">(</span><span class="n">DataSink</span><span class="p">[</span><span class="n">FloatDataType</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a float to a text file (conceptual example).&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_send_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FloatDataType</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_data_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatDataType</span>
+
+<span class="c1"># Use the sink to write an output file and confirm its contents.</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">FloatDataType</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">ToyFloatSink</span><span class="o">.</span><span class="n">send_data</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;output.txt&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;file contains:&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;output.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">3.0</span>
+<span class="go">file contains: 3.0</span>
+</pre></div>
+</div>
+<p>In real projects you may implement I/O operations by hand or rely on
+extensions such as <code class="docutils literal notranslate"><span class="pre">semantiva_imaging</span></code> or project-specific components.
+The examples above are deliberately minimal to illustrate the type contracts.</p>
+</section>
+<section id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="#semantiva.data_io.data_io.DataSource" title="semantiva.data_io.data_io.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_io.data_io.DataSource</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSource" title="semantiva.data_io.data_io.PayloadSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_io.data_io.PayloadSource</span></code></a></p></li>
-<li><p><a class="reference internal" href="#semantiva.data_io.data_io.DataSink" title="semantiva.data_io.data_io.DataSink"><code class="xref py py-class docutils literal notranslate"><span class="pre">semantiva.data_io.data_io.DataSink</span></code></a></p></li>
+<li><p>Read <a class="reference internal" href="context_type.html"><span class="doc">Context Type</span></a> to see how context values are managed.</p></li>
+<li><p>Then move on to <a class="reference internal" href="pipeline.html"><span class="doc">Pipelines in Semantiva</span></a> to see how all pieces are combined.</p></li>
 </ul>
-</section>
-<section id="module-semantiva.data_io.data_io">
-<span id="autodoc"></span><h2>Autodoc<a class="headerlink" href="#module-semantiva.data_io.data_io" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">DataSink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#DataSink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.DataSink" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SemantivaComponent</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink.input_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#DataSink.input_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.DataSink.input_data_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSink.send_data">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#DataSink.send_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.DataSink.send_data" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">DataSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#DataSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.DataSource" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SemantivaComponent</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource.get_data">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#DataSource.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.DataSource.get_data" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.DataSource.output_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#DataSource.output_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.DataSource.output_data_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">PayloadSink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#PayloadSink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SemantivaComponent</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink.input_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#PayloadSink.input_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.input_data_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSink.send_payload">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#PayloadSink.send_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSink.send_payload" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">semantiva.data_io.data_io.</span></span><span class="sig-name descname"><span class="pre">PayloadSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#PayloadSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SemantivaComponent</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource.get_payload">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#PayloadSource.get_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.get_payload" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource.injected_context_keys">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">injected_context_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#PayloadSource.injected_context_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.injected_context_keys" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="semantiva.data_io.data_io.PayloadSource.output_data_type">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/semantiva/data_io/data_io.html#PayloadSource.output_data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#semantiva.data_io.data_io.PayloadSource.output_data_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -383,23 +385,23 @@ for reliable provenance tracking and parameter validation.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="run_space.html">
+          <a class="next-page" href="context_type.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Run Space (v1): blocks that expand context</div>
+                <div class="title">Context Type</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="context_processors.html">
+          <a class="prev-page" href="data_probes.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Context Processors</div>
+                <div class="title">Data Probes</div>
                 
               </div>
             </a>
@@ -433,33 +435,10 @@ for reliable provenance tracking and parameter validation.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Data IO (Sources &amp; Sinks)</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#public-api-surface">Public API Surface</a></li>
-<li><a class="reference internal" href="#module-semantiva.data_io.data_io">Autodoc</a><ul>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.DataSink"><code class="docutils literal notranslate"><span class="pre">DataSink</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.DataSink.input_data_type"><code class="docutils literal notranslate"><span class="pre">DataSink.input_data_type()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.DataSink.send_data"><code class="docutils literal notranslate"><span class="pre">DataSink.send_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.DataSource"><code class="docutils literal notranslate"><span class="pre">DataSource</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.DataSource.get_data"><code class="docutils literal notranslate"><span class="pre">DataSource.get_data()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.DataSource.output_data_type"><code class="docutils literal notranslate"><span class="pre">DataSource.output_data_type()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSink"><code class="docutils literal notranslate"><span class="pre">PayloadSink</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSink.input_data_type"><code class="docutils literal notranslate"><span class="pre">PayloadSink.input_data_type()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSink.send_payload"><code class="docutils literal notranslate"><span class="pre">PayloadSink.send_payload()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSource"><code class="docutils literal notranslate"><span class="pre">PayloadSource</span></code></a><ul>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSource.get_payload"><code class="docutils literal notranslate"><span class="pre">PayloadSource.get_payload()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSource.injected_context_keys"><code class="docutils literal notranslate"><span class="pre">PayloadSource.injected_context_keys()</span></code></a></li>
-<li><a class="reference internal" href="#semantiva.data_io.data_io.PayloadSource.output_data_type"><code class="docutils literal notranslate"><span class="pre">PayloadSource.output_data_type()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Data I/O: sources and sinks</a><ul>
+<li><a class="reference internal" href="#sources">Sources</a></li>
+<li><a class="reference internal" href="#sinks">Sinks</a></li>
+<li><a class="reference internal" href="#next-steps">Next steps</a></li>
 </ul>
 </li>
 </ul>
