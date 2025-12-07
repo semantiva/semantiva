@@ -28,7 +28,7 @@ jobs:
       - name: Install project and docs dependencies
         run: |
           pip install -e .
-          pip install sphinx sphinx-autobuild sphinx-autodoc-typehints sphinxcontrib-mermaid furo myst-parser
+          pip install sphinx sphinx-autobuild sphinx-autodoc-typehints sphinxcontrib-mermaid furo myst-parser sphinx-copybutton
 
       - name: Build HTML docs (warnings as errors)
         run: |

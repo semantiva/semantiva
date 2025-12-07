@@ -100,6 +100,23 @@ As an architect, you should be able to answer:
 - How Semantiva's own invariants (as documented in contracts and architecture)
   align with your organisation's design principles.
 
+Configuration artefacts
+-----------------------
+
+In most organisations, **YAML pipeline configurations** are the governed
+configuration artefact for Semantiva:
+
+- YAML pipelines are versioned, validated (via :doc:`../contracts` and
+  :command:`semantiva dev lint`) and promoted across environments.
+- YAML is the source for building execution graphs in production
+  (see :doc:`../pipelines_yaml` and :doc:`../architecture/pipeline_schema`).
+
+Semantiva also exposes a Python API for constructing pipelines
+(:doc:`../pipelines_python`), which is extremely useful for internal
+testing, simulation and R&D workflows. These Python pipelines should
+be treated as **internal tooling**, not as the system-of-record
+configuration.
+
 Step 3 - Tie SER, trace streams and aggregation together
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

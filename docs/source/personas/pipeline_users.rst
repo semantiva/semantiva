@@ -11,6 +11,11 @@ If you want to write new components or change Semantiva itself, see
 :doc:`../personas/framework_developers` or
 :doc:`../personas/architects_system_designers` instead.
 
+As a pipeline user, your primary reference for day-to-day work is
+:doc:`../pipelines_yaml`. You normally do not need to construct pipelines
+in Python; that pathway (:doc:`../pipelines_python`) is mainly for
+framework developers and advanced R&D workflows.
+
 .. admonition:: New to Semantiva?
 
    If you have never run a Semantiva pipeline before, **start with**
@@ -79,7 +84,7 @@ in a pipeline definition.
 Step 3 – Learn the pipeline YAML model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Next, read :doc:`../pipeline` as your **pipeline user guide**:
+Next, read :doc:`../pipelines_yaml` as your **pipeline user guide**:
 
 - Concentrate on:
 
@@ -176,7 +181,7 @@ Run an existing pipeline
 - **You want to:** execute a pipeline someone else defined.
 - **Look at:**
   - :doc:`../getting_started` (for the basic command-line pattern).
-  - :doc:`../pipeline` (for understanding the YAML layout).
+  - :doc:`../pipelines_yaml` (for understanding the YAML layout).
   - :doc:`../cli` (for CLI options relevant to running pipelines).
 
 Modify a parameter or context value
@@ -184,7 +189,7 @@ Modify a parameter or context value
 
 - **You want to:** adjust configuration or context used by a pipeline.
 - **Look at:**
-  - :doc:`../pipeline` (node configuration and parameter resolution).
+  - :doc:`../pipelines_yaml` (node configuration and parameter resolution).
   - :doc:`../context_processors` (if the pipeline uses dedicated context logic).
   - :doc:`../run_space` (when you are exploring many runs with differing inputs).
 
@@ -193,7 +198,7 @@ Inspect probe outputs and context keys
 
 - **You want to:** see metrics or summaries produced by probes.
 - **Look at:**
-  - :doc:`../pipeline` (probe nodes and ``context_key`` behaviour).
+  - :doc:`../pipelines_yaml` (probe nodes and ``context_key`` behaviour).
   - :doc:`../data_probes` (probe components used in the pipeline).
   - :doc:`../inspection` and :doc:`../ser` (how to view results in traces).
 

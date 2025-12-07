@@ -21,6 +21,12 @@ sections are:
    - Writing or maintaining processors? See :doc:`personas/framework_developers`.
    - Integrating Semantiva into a wider system? See :doc:`personas/architects_system_designers`.
 
+Pipelines can be defined **declaratively in YAML** and run via the
+:command:`semantiva` CLI (see :doc:`pipelines_yaml`), which is the
+canonical and supported path for production. Framework developers can
+also construct and run pipelines directly in Python for development and
+R&D workflows (see :doc:`pipelines_python`).
+
 .. toctree::
    :maxdepth: 1
    :caption: Getting started
@@ -45,6 +51,8 @@ sections are:
    data_probes
    data_io
    context_type
+   pipelines_yaml
+   pipelines_python
    pipeline
    data_collections
    collection_modifiers

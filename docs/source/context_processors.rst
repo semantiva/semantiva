@@ -27,6 +27,37 @@ The key points for authors:
 - You declare which context keys you may create or suppress so that validation
   and inspection can remain deterministic.
 
+
+Built-in context processor utilities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Semantiva provides factory functions and string-based shortcuts for common
+context processor patterns. These are resolved automatically when you use them
+as processor names in pipelines:
+
+**rename:src:dst**
+  Rename a context key from ``src`` to ``dst``. Reads the original value and
+  writes the new key, then suppresses the original.
+
+  *Example:* ``"processor": "rename:input_key:output_key"``
+
+**delete:key**
+  Delete a context key after resolution. If the key is present in context,
+  it is removed and suppressed from downstream processors.
+
+  *Example:* ``"processor": "delete:temp_value"``
+
+**template:"template_string":output_key**
+  Render a template string using existing context keys and store the result
+  in a new key. Placeholders like ``{key_name}`` are replaced with resolved
+  context values.
+
+  *Example:* ``"processor": "template:result_{run_id}.txt:path"``
+
+All built-in utilities are resolved by the pipeline at runtime and behave like
+regular context processors: they declare which keys they create/suppress and
+request mutations via notifier hooks.
+
 Minimal example
 ---------------
 

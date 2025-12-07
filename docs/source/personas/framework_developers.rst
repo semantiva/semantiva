@@ -13,6 +13,10 @@ This page is for people who **extend Semantiva itself**:
 If you mainly run and tweak existing pipelines, see
 :doc:`pipeline_users` instead.
 
+For a programmatic view of pipelines while you design and test components,
+see :doc:`../pipelines_python`. For how those pipelines are expressed and
+governed in production, see :doc:`../pipelines_yaml`.
+
 .. admonition:: New to Semantiva?
 
    If you have never run a Semantiva pipeline before, **start with**
@@ -64,7 +68,10 @@ To solidify this, (re)read:
 - :doc:`../concepts` - focus on payloads, processors and nodes.
 - :doc:`../architecture/context_processing` - how context processors and
   observers work.
-- :doc:`../pipeline` - how processors are wired into nodes in YAML.
+- :doc:`../pipelines_python` - how processors are wired into nodes during
+  development.
+- :doc:`../pipelines_yaml` - how the same wiring appears in production
+  YAML.
 
 You do **not** need to understand every internal implementation detail, but you
 do need to be clear about:
@@ -197,7 +204,8 @@ Implement a new DataProbe
 - **Look at:**
   - :doc:`../creating_components` (probe authoring guidelines).
   - :doc:`../data_probes` (existing probes and patterns).
-  - :doc:`../pipeline` (probe nodes and ``context_key`` behaviour).
+  - :doc:`../pipelines_yaml` (probe nodes and ``context_key`` behaviour in production).
+  - :doc:`../pipelines_python` (probe wiring in development workflows).
   - :doc:`../contracts` (probe-related SVA rules).
 
 Implement a new ContextProcessor
@@ -217,7 +225,8 @@ Integrate a new component into a pipeline
 - **You want to:** expose your new component to pipeline users.
 - **Look at:**
 
-  - :doc:`../pipeline` (how processors are referenced and configured in YAML).
+  - :doc:`../pipelines_yaml` (how processors are referenced and configured in
+    YAML).
   - :doc:`../data_types` and :doc:`../data_collections`
     (to ensure the types you expect are reflected in pipeline definitions).
   - :doc:`../inspection` and :doc:`../run_space` (to verify behaviour in traces).
