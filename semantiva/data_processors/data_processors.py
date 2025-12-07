@@ -51,6 +51,19 @@ class ParameterInfo:
     default: Any = _NO_DEFAULT
     annotation: str = "Unknown"
 
+    def __repr__(self) -> str:
+        """Return a clean, human-readable representation.
+
+        Detects the internal _NO_DEFAULT sentinel and displays it as
+        a type annotation without a default, indicating the parameter
+        is required.
+        """
+        if self.default is _NO_DEFAULT:
+            return f"{self.annotation}"
+        else:
+            default_str = repr(self.default)
+            return f"{self.annotation} = {default_str}"
+
 
 class _BaseDataProcessor(_SemantivaComponent, ABC, Generic[T]):
     """Abstract base class for data processing algorithms in Semantiva."""

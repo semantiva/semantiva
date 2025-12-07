@@ -168,7 +168,7 @@ class _SemantivaComponent(metaclass=_SemantivaComponentMeta):
             if isinstance(value, dict):
                 lines.append(f" - {key}:")
                 for subkey, subval in value.items():
-                    lines.append(f"  {subkey}: {subval}")
+                    lines.append(f"     {subkey}: {subval}")
             elif isinstance(value, list):
                 lines.append(f" - {key}:")
                 for item in value:
