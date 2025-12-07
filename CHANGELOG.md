@@ -6,13 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-## [v0.5.1] - Unreleased
+## [v0.5.1] - 2025-12-07
 
 ### Added
 - Introduced :func:`semantiva.inspection.build_inspection_payload` as the
   canonical inspection payload builder with full docstrings.
 - Documented :class:`semantiva.trace.drivers.jsonl.JsonlTraceDriver` constructor
   parameters and detail flags for SER emission.
+- Enhanced :class:`semantiva.data_processors.data_processors.ParameterInfo`
+  with a custom ``__repr__`` method for cleaner semantic ID and metadata output.
 
 ### Deprecated
 - :func:`semantiva.inspection.build` now emits :class:`DeprecationWarning` in
