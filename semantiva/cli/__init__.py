@@ -754,7 +754,7 @@ def _run(args: argparse.Namespace) -> int:
             "Provide values via one of:",
             "  * CLI:  --context key=value   (repeat for multiple)",
             "  * YAML: run_space.blocks[].context: {key: [values...]}",
-            "  * Override file: --run-space-override path/to/override.yaml",
+            "  * Run-space file: --run-space-file path/to/run_space.yaml",
             "",
         ]
         print("\n".join(msg), file=sys.stderr)

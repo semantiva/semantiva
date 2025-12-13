@@ -22,6 +22,29 @@ Fixing common SVA errors
   ``suppressed_context_keys`` must be lists of unique strings without
   overlap.
 
+.. _sva-troubleshooting-workflow:
+
+SVA troubleshooting workflow
+----------------------------
+
+When :command:`semantiva dev lint` reports SVA errors:
+
+1. **Locate the SVA code** in the output (for example ``SVA220`` or ``SVA250``).
+2. **Look up the code** in the :doc:`Semantiva Contracts catalog <contracts>`
+   table above (or via your editor's search).
+3. **Read the expectation** and the suggested fix; most rules point to the
+   relevant metadata field or method (such as ``*_data_type`` or
+   ``context_key``).
+4. **Adjust your component** accordingly and re-run
+   :command:`semantiva dev lint` until all errors are resolved.
+
+For example, ``SVA220`` highlights a :class:`~semantiva.data_processors.data_processors.DataOperation`
+without both ``input_data_type`` and ``output_data_type`` defined; the fix is
+to add both class methods or metadata fields. ``SVA250`` flags illegal uses of
+a ``context`` parameter or context type in ``_process_logic``; the fix is to
+keep node signatures context-agnostic and route context via pipeline and node
+metadata instead.
+
 Probe node contract (mandatory)
 -------------------------------
 

@@ -17,7 +17,10 @@ shows how each field relates to runtime behavior and glossary concepts.
 
 The schema is consumed by the :term:`Trace` pipeline and emitted by the
 :term:`JsonlTraceDriver`. For a conceptual mapping between SER entries and the
-graph runtime, see :doc:`trace_graph_alignment`.
+graph runtime, see :doc:`trace_graph_alignment`. For the identity vocabulary
+used throughout the schema (``plsemid-*``, ``plcid-*``, run-space and execution
+identifiers), refer to the :ref:`identity-quick-map` in
+:doc:`identity_cheatsheet`.
 
 Loading the Schema
 ------------------

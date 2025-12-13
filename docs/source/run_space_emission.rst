@@ -4,6 +4,9 @@ Run-Space Emission (Runtime)
 Semantiva emits dedicated lifecycle records when executing pipelines as part
 of a run-space launch. The flow is fully deterministic and uses the
 identifiers defined in the :doc:`trace schemas <trace_stream_v1>`.
+For the identity vocabulary (``run_space_spec_id``, ``run_space_launch_id``,
+``run_space_attempt`` and related pipeline IDs), see the
+:ref:`identity-quick-map` in :doc:`identity_cheatsheet`.
 
 Lifecycle
 ---------
