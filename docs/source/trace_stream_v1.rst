@@ -19,6 +19,21 @@ Each line is a **trace record** of a specific type, e.g.:
 
 See also: :ref:`trace_aggregator_v1` for per-run and per-launch aggregation and completeness.
 
+Identity in Trace Stream v1
+---------------------------
+
+Each event carries a subset of the identity fields documented in the
+:doc:`identity_cheatsheet` and :doc:`schema_semantic_execution_record_v1`:
+
+- Run-space lifecycle events include ``run_space_spec_id``,
+  ``run_space_launch_id`` and ``run_space_attempt``.
+- Pipeline lifecycle events include the pipeline's semantic and config IDs.
+- Node-level events (SER) include ``node_uuid`` and, where relevant,
+  ``node_semantic_id``.
+
+Think of a single pipeline run as a small tree of events within the stream,
+all tied together by this shared identity vocabulary.
+
 Validation model
 ----------------
 Validation is **flat** and **compositional**:

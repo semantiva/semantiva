@@ -4,19 +4,25 @@ Canonical Graph Builder
 The :py:mod:`semantiva.pipeline.graph_builder` module normalizes a pipeline definition
 (from YAML, dictionaries or an existing ``Pipeline``)
 into a canonical :term:`GraphV1` representation. Each node receives a deterministic
-:term:`node_uuid` and the entire graph hashes to a :term:`PipelineId` using SHA-256.
+:term:`node_uuid`, and the canonical graph feeds Semantiva's identity stack
+(:ref:`identity-quick-map`).
 
 Graph and Identity
 ------------------
 
 When Semantiva loads a YAML pipeline, it is converted into a canonical ``GraphV1``.
-From this graph Semantiva derives stable identifiers:
+From this graph Semantiva derives stable identifiers used across inspection,
+run-space planning, and runtime traces (see :doc:`identity_cheatsheet`):
 
-* ``node_uuid`` - a positional identifier for each node.
-* ``PipelineId`` - a deterministic identifier for the whole pipeline.
+* ``node_uuid`` - positional identifier for each declared node.
+* ``node_semantic_id`` - captures preprocessor semantics for nodes that use
+  ``derive`` blocks (e.g., parameter sweeps).
+* **Semantic ID** (``plsemid-…``) - the pipeline meaning hash computed from the
+  canonical graph and node semantics.
 
-These identities are embedded in trace records and introspection outputs, ensuring
-that pipelines can be compared, cached, and reproduced across environments.
+Runtime identifiers such as ``plid-…`` (execution container) are derived later
+during execution; they reference the same canonical graph but are covered in
+the :doc:`identity_cheatsheet` quick map and :doc:`trace_stream_v1`.
 
 GraphV1 guarantees:
 
@@ -29,8 +35,8 @@ GraphV1 guarantees:
    To avoid identity churn, :term:`derive` blocks (e.g., ``derive.parameter_sweep``)
    are **not** hashed into the node UUID. Only the resolved processor class and the
    **effective** parameter map (after preprocessing/merging) participate. Semantic
-   changes introduced by preprocessors are tracked separately in trace metadata via
-   ``pipeline_config_id``.
+   changes introduced by preprocessors are tracked separately via
+   ``node_semantic_id`` and rolled into the pipeline Semantic ID.
 
 Example::
 

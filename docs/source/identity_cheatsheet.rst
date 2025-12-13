@@ -11,6 +11,32 @@ and traceability.
    :depth: 1
 
 
+.. _identity-quick-map:
+
+Identity & Trace quick map
+--------------------------
+
+At a glance, Semantiva uses the following identity layers:
+
+- **Semantic ID** (``plsemid-…``) - "Is this the same pipeline meaning?"
+  Computed from the canonical GraphV1 structure via
+  :func:`semantiva.inspection.build_inspection_payload`.
+- **Config ID** (``plcid-…``) - "Is this the same configured instance?"
+  Derived from the canonicalized YAML configuration.
+- **Run-Space Spec ID** (``run_space_spec_id``) - "Is this the same launch
+  plan?" Computed from the run-space configuration (RSCF v1).
+- **Run-Space Launch & Attempt** (``run_space_launch_id``,
+  ``run_space_attempt``) - "Which launch container and retry attempt?"
+  Emitted in run-space lifecycle and runtime trace.
+- **Execution IDs** (``plid-…`` and ``run-…``) - "Which execution container and
+  attempt?" Emitted in SER records and trace events.
+- **Node UUID & Node Semantic ID** - "Which declared node?" and "Has this
+  node's preprocessor changed?" Derived from GraphV1 nodes and semantics.
+
+The rest of this page expands each layer and points to where it appears in
+inspection payloads, SER schemas, and trace streams.
+
+
 Identity Layers at a Glance
 ----------------------------
 

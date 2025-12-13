@@ -35,9 +35,15 @@ Minimal usage:
 Common options:
 
 - ``--context key=value`` - Provide initial context key/values.
-- ``--run-space-override path.yaml`` - Override the ``run_space`` block.
 - ``--dry-run`` - Build the graph without executing nodes.
 - ``--validate`` - Validate configuration only.
+
+.. note::
+
+   For multi-run launches, parameter sweeps, or reusable launch plans, define a
+   :doc:`run-space <run_space>` around your pipeline instead of relying on
+   ad-hoc overrides. You can also load a run-space definition directly with
+   ``--run-space-file`` when invoking ``semantiva run``.
 
 ``--context`` vs ``--set``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

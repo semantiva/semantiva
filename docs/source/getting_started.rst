@@ -62,8 +62,12 @@ Common usage patterns:
    # Extended inspection with per-node details
    semantiva inspect pipeline.yaml --extended
 
-For full options and advanced usage, see :doc:`cli`. For detailed inspection examples
-and validation workflows, see :doc:`introspection_validation` and :doc:`pipelines_yaml`.
+The ``dev`` subcommand is primarily for framework developers; 
+:command:`semantiva dev lint` audits components against the 
+:doc:`Semantiva Contracts <contracts>` catalog. For full options 
+and advanced usage, see :doc:`cli`. For detailed inspection examples
+and validation workflows, see :doc:`introspection_validation` and 
+:doc:`pipelines_yaml`.
 
 Quickstart - Hello pipeline (YAML only)
 ---------------------------------------

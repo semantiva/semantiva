@@ -171,6 +171,8 @@ accident. As a component author, you should lean on them:
 - When ``semantiva dev lint`` reports a violation:
 
   - Use the SVA code to jump into the catalog in :doc:`../contracts`.
+  - Follow the :ref:`sva-troubleshooting-workflow` to resolve the issue and
+    rerun the linter.
   - Adjust your design or metadata rather than silencing the rule.
 
 If you find yourself repeatedly fighting a contract, that is usually a sign

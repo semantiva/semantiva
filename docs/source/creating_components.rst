@@ -193,6 +193,9 @@ Run contract checks with the CLI:
     # Detailed diagnostics
     semantiva dev lint --modules my_package.ext --debug
 
+When linting flags SVA codes, consult :doc:`contracts` and follow the
+:ref:`sva-troubleshooting-workflow` to fix issues before shipping.
+
 
 Minimal dev loop: component in a Python pipeline
 ------------------------------------------------

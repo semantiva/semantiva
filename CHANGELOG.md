@@ -34,6 +34,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   concepts and architecture overview, and adding a minimal component dev-loop
   example while keeping showcased examples runnable from `docs/examples/`.
 - Enable code copy buttons in code blocks across the docs.
+- Removed references to the non-existent ``--run-space-override`` flag, added
+  the Identity & Trace quick map, and documented the SVA troubleshooting
+  workflow for ``semantiva dev lint``.
 
 
 ## [v0.5.0] - 2025-11-15

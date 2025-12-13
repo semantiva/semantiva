@@ -59,17 +59,20 @@ Identity and traceability
 
 Each run-space has:
 
-- A **run-space configuration ID** – derived from the run-space section itself.
-- A **run-space launch ID** – derived from the configuration plus launch
+- A **run-space configuration ID** (``run_space_spec_id``) – derived from the
+  run-space section itself (RSCF v1).
+- A **run-space launch ID** (``run_space_launch_id``) and **attempt**
+  (``run_space_attempt``) – derived from the configuration plus launch
   parameters.
 
 Each expanded run has:
 
-- A **run ID** – part of the Semantic Execution Record (SER) identity block.
-- A link back to both the pipeline configuration and the run-space
+- Execution identifiers (``plid-…`` / ``run-…``) that pair the pipeline with
+  a specific execution attempt.
+- A link back to the pipeline semantic/config IDs and the run-space
   configuration.
 
-These IDs are documented in :doc:`identity_cheatsheet` and appear in:
+These IDs are documented in the :ref:`identity-quick-map` and appear in:
 
 - :doc:`ser`
 - :doc:`trace_stream_v1`

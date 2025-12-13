@@ -2,6 +2,10 @@ Run-Space Lifecycle
 ===================
 
 Semantiva traces Run-Spaces as a lifecycle enclosing one or many pipeline runs.
+For the identity vocabulary used here (``run_space_spec_id``,
+``run_space_launch_id``, ``run_space_attempt`` and related pipeline IDs), see
+the :ref:`identity-quick-map` in :doc:`identity_cheatsheet` along with
+:doc:`schema_semantic_execution_record_v1`.
 
 Records
 -------
